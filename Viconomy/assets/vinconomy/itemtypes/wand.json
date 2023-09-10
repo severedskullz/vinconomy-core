@@ -1,0 +1,9 @@
+{
+  "code": "wand",
+  "creativeinventory": {
+    "general": [ "*" ]
+  },
+  "texture": {
+    "base": "items/wand"
+  }
+}

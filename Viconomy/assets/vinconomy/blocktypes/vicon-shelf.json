@@ -1,0 +1,91 @@
+{
+  "code": "shelf",
+  "class": "ViconShelf",
+  "entityClass": "BEViconShelf",
+  "variantgroups": [
+    {
+      "code": "type",
+      "states": [ "normal" ]
+    },
+    {
+      "code": "side",
+      "loadFromProperties": "abstract/horizontalorientation"
+    }
+  ],
+  "behaviors": [
+    {
+      "name": "HorizontalAttachable",
+      "properties": { "dropBlockFace": "east" }
+    }
+  ],
+  "shapeByType": {
+    "*-north": {
+      "base": "block/wood/shelf",
+      "rotateY": 0
+    },
+    "*-east": {
+      "base": "block/wood/shelf",
+      "rotateY": 270
+    },
+    "*-west": {
+      "base": "block/wood/shelf",
+      "rotateY": 90
+    },
+    "*-south": {
+      "base": "block/wood/shelf",
+      "rotateY": 180
+    }
+  },
+  "heldTpIdleAnimation": "holdunderarm",
+  "creativeinventory": {
+    "general": [ "*-east" ],
+    "decorative": [ "*-east" ]
+  },
+  "blockmaterial": "Wood",
+  "replaceable": 900,
+  "resistance": 1.5,
+  "lightAbsorption": 1,
+  "emitSideAo": { "all": false },
+  "sidesolid": {
+    "all": false
+  },
+  "sideopaque": {
+    "all": false
+  },
+  "sounds": {
+    "place": "block/planks",
+    "hit": "block/planks",
+    "break": "block/planks",
+    "walk": "walk/wood"
+  },
+  "combustibleProps": {
+    "burnTemperature": 600,
+    "burnDuration": 35
+  },
+  "materialDensity": 400,
+  "tpHandTransform": {
+    "translation": {
+      "x": -0.8,
+      "y": -0.68,
+      "z": -0.41
+    },
+    "rotation": {
+      "x": 99,
+      "y": -10,
+      "z": -6
+    },
+    "scale": 0.5
+  },
+  "fpHandTransform": {
+    "translation": {
+      "x": 0.08,
+      "y": -0.2,
+      "z": 0.6
+    },
+    "rotation": {
+      "x": 33,
+      "y": 134,
+      "z": -102
+    }
+  }
+}
