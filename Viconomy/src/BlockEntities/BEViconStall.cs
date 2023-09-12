@@ -27,7 +27,7 @@ namespace Viconomy.BlockEntities
     public class BEViconStall : BlockEntityDisplay
     {
         private int slotCount = 4;
-        private int stacksPerSlot = 3;
+        private int stacksPerSlot = 9;
         private ViconomyInventory inventory;
         protected GuiDialogBlockEntity invDialog;
         private BlockVContainer block;
@@ -42,15 +42,14 @@ namespace Viconomy.BlockEntities
         public string RegisterID;
         public bool isAdminShip;
 
-        private int ITEMS_PER_PURCHASE = 1; //TODO: Placeholder till we get a price amount per slot.
-        
-
-
-
+      
         //public virtual AssetLocation OpenSound { get; set; } = new AssetLocation("sounds/block/chestopen");
         //public virtual AssetLocation CloseSound { get; set; } = new AssetLocation("sounds/block/chestclose");
         public override InventoryBase Inventory { get { return this.inventory; } }
         public override string InventoryClassName { get { return "VinconomyInventory"; } }
+
+        public int StallSlotCount => slotCount;
+        public int StacksPerSlot => stacksPerSlot;
 
         public BEViconStall()
         {
@@ -69,20 +68,6 @@ namespace Viconomy.BlockEntities
             this.block = (BlockVContainer)api.World.BlockAccessor.GetBlock(this.Pos);
 
             base.Initialize(api);
-           
-            this.Inventory.LateInitialize(string.Concat(new string[]
-            {
-                this.InventoryClassName,
-                "-",
-                this.Pos.X.ToString(),
-                "/",
-                this.Pos.Y.ToString(),
-                "/",
-                this.Pos.Z.ToString()
-            }), api);
-
-            this.Inventory.ResolveBlocksOrItems();
-
 
             JsonObject attributes = block.Attributes;
             string openSound = null;
@@ -115,7 +100,12 @@ namespace Viconomy.BlockEntities
 
             if (byPlayer.PlayerUID == Owner)
             {
-                if (shiftMod)
+                 if (shiftMod && ctrlMod)
+                {
+                    int desiredAmount = ctrlMod ? 5 : 1;
+                    RequestPurchaseItem(blockSel.SelectionBoxIndex, desiredAmount);
+                }
+                else if(shiftMod)
                 {
                     //Add items to slot
                     TryPut(hotbarslot, blockSel, ctrlMod);
@@ -145,10 +135,21 @@ namespace Viconomy.BlockEntities
             return true;
         }
 
-        private void TryPurchaseItem(IPlayer player, int slot, int desiredAmount) {
+        private void TryPurchaseItem(IPlayer player, byte[] data) {
+
+            int stallSlot;
+            int desiredAmount;
+            using (MemoryStream memoryStream = new MemoryStream(data))
+            {
+                BinaryReader binaryReader = new BinaryReader(memoryStream);
+                stallSlot = binaryReader.ReadInt32();
+                desiredAmount = binaryReader.ReadInt32();
+            }
+
+
             Console.WriteLine(Api.Side + ": We tried to purchase item!");
             ItemSlot handItem = player.InventoryManager.ActiveHotbarSlot;
-            ItemSlot currency = this.inventory.GetCurrencyForSelection(slot);
+            ItemSlot currency = this.inventory.GetCurrencyForSelection(stallSlot);
 
             if (currency.Itemstack == null) {
                 PrintClientMessage(player, "vicionomy:item-cost");
@@ -165,9 +166,9 @@ namespace Viconomy.BlockEntities
                     Console.WriteLine(Api.Side + ": Not enough money!");
                     PrintClientMessage(player, "vicionomy:not-enough-money");
                 } else {
-                    ItemSlot[] stockSlots = this.inventory.GetSlotsForSelection(slot);
+                    ItemSlot[] stockSlots = this.inventory.GetSlotsForSelection(stallSlot);
                     ItemSlot purchaseSlot = null;
-                    int itemsPerPurchase = ITEMS_PER_PURCHASE; // TODO;
+                    int itemsPerPurchase = this.inventory.StallSlots[stallSlot].itemsPerPurchase;
 
                     //Find the first slot available that we can purchase from
                     foreach (var stockSlot in stockSlots)
@@ -238,6 +239,7 @@ namespace Viconomy.BlockEntities
                     writer.Write("VinconomyInventory");
                     writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Stall");
                     writer.Write((byte)this.slotCount);
+                    writer.Write((byte)this.stacksPerSlot);
                     TreeAttribute tree = new TreeAttribute();
                     this.inventory.ToTreeAttributes(tree);
                     tree.ToBytes(writer);
@@ -259,6 +261,7 @@ namespace Viconomy.BlockEntities
                     writer.Write("VinconomyInventory");
                     writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Stall");
                     writer.Write((byte)this.slotCount);
+                    writer.Write((byte)this.stacksPerSlot);
                     TreeAttribute tree = new TreeAttribute();
                     this.inventory.ToTreeAttributes(tree);
                     tree.ToBytes(writer);
@@ -273,18 +276,20 @@ namespace Viconomy.BlockEntities
         {
             TreeAttribute tree = new TreeAttribute();
             string dialogTitle;
-            int slots;
+            int stallSlots;
+            int itemsPerStallSlot;
             using (MemoryStream ms = new MemoryStream(data))
             {
                 BinaryReader reader = new BinaryReader(ms);
                 reader.ReadString();
                 dialogTitle = reader.ReadString();
-                slots = (int)reader.ReadByte();
+                stallSlots = (int)reader.ReadByte();
+                itemsPerStallSlot = (int)reader.ReadByte();
                 tree.FromBytes(reader);
             }
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
-            this.invDialog = new GuiDialogBlockEntityViconContainer(dialogTitle, slots, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
+            this.invDialog = new GuiDialogBlockEntityViconContainer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
             this.invDialog.OpenSound = this.OpenSound;
             this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();
@@ -316,6 +321,28 @@ namespace Viconomy.BlockEntities
 
             this.invDialog = null;
             Console.WriteLine(Api.Side + ": Attempted to close GUI");
+        }
+
+        private void SetStallItemsPerPurchase(IPlayer byPlayer, byte[] data)
+        {
+            if (byPlayer.PlayerUID != this.Owner)
+            {
+                PrintClientMessage(byPlayer, "vicionomy:doesnt-own", new object[] {});
+                return;
+            }
+
+            int stallSlot;
+            int amountItems;
+            using (MemoryStream ms = new MemoryStream(data))
+            {
+                BinaryReader reader = new BinaryReader(ms);
+                stallSlot = (int)reader.ReadInt32();
+                amountItems = (int)reader.ReadInt32();
+            }
+
+            this.inventory.StallSlots[stallSlot].itemsPerPurchase = amountItems;
+            PrintClientMessage(byPlayer, "set quantity to " + amountItems, new object[] { amountItems});
+            this.MarkDirty();
         }
 
 
@@ -549,8 +576,12 @@ namespace Viconomy.BlockEntities
                     using (MemoryStream memoryStream = new MemoryStream(data))
                     {
                         BinaryReader binaryReader = new BinaryReader(memoryStream);
-                        TryPurchaseItem(player, binaryReader.ReadInt32(), binaryReader.ReadInt32());
+                        TryPurchaseItem(player, data);
                     }
+                    break;
+
+                case VinConstants.SET_ITEMS_PER_PURCHASE:
+                    SetStallItemsPerPurchase(player, data); 
                     break;
 
                 default:

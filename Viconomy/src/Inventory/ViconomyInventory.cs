@@ -9,7 +9,7 @@ using Vintagestory.API.Datastructures;
 
 namespace Viconomy.Inventory
 {
-    public class ViconomyInventory : InventoryBase, ISlotProvider
+    public class ViconomyInventory : InventoryBase
     {
         // the amount of items per item group
         private int itemsPerBin = 9;
@@ -20,7 +20,8 @@ namespace Viconomy.Inventory
         private StallSlot[] stallSlots;
 
         private ItemSlot[] slots;
-        public ItemSlot[] Slots { get { return this.slots; } }
+        public StallSlot[] StallSlots { get { return this.stallSlots; } }
+
         public override int Count { get { return this.stallSlots.Length * (itemsPerBin + 1); } }
 
         public ViconomyInventory(string inventoryID, ICoreAPI api, int binSize, int itemsPerBin) : base(inventoryID, api)
@@ -71,6 +72,7 @@ namespace Viconomy.Inventory
                 }
                 else
                 {
+                    //Console.WriteLine("Accessing ID " + slotId);
                     if (itemSlot == itemsPerBin)
                     {
                         return this.stallSlots[stallSlot].currency;
@@ -133,13 +135,7 @@ namespace Viconomy.Inventory
 
         public ItemSlot FindFirstNonEmptyStockSlot(int stallSlot)
         {
-            ItemSlot[] slots = GetSlotsForSelection(stallSlot);
-            foreach (ItemSlot slot in slots)
-            {
-                if (slot.Itemstack != null)
-                    return slot;
-            }
-            return null;
+            return stallSlots[stallSlot].FindFirstNonEmptyStockSlot();
         }
 
         public ItemSlot GetCurrencyForSelection(int stallSlot)
@@ -167,11 +163,19 @@ namespace Viconomy.Inventory
         public override void FromTreeAttributes(ITreeAttribute tree)
         {
             this.slots = this.SlotsFromTreeAttributes(tree, slots, null);
+            for (int i = 0; i < binSize; i++)
+            {
+                stallSlots[i].itemsPerPurchase = tree.GetAsInt("slotPrice-" + i, 1);
+            }
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.SlotsToTreeAttributes(this.slots, tree);
+            for (int i = 0; i < binSize; i++)
+            {
+                 tree.SetInt("slotPrice-" + i, stallSlots[i].itemsPerPurchase);
+            }
         }
 
         public override float GetTransitionSpeedMul(EnumTransitionType transType, ItemStack stack)

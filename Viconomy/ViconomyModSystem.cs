@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Viconomy.BlockEntities;
 using Viconomy.BlockTypes;
+using Viconomy.Network;
 using Viconomy.Registry;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -17,7 +18,11 @@ namespace Viconomy
         private ICoreServerAPI _coreServerAPI;
         private ICoreClientAPI _coreClientAPI;
 
-        public ShopRegistry registers;
+        private IClientNetworkChannel _clientChannel;
+        private IServerNetworkChannel _serverChannel;
+
+        public ShopRegistry registers = new ShopRegistry();
+
         // Called on server and client
         // Useful for registering block/entity classes on both sides
         public override void Start(ICoreAPI api)
@@ -29,20 +34,51 @@ namespace Viconomy
 
             api.RegisterBlockEntityClass("BEViconStall", typeof(BEViconStall));
             api.RegisterBlockEntityClass("BEViconShelf", typeof(BEViconShelf));
+
+            api.Network.RegisterChannel("Viconomy")
+                .RegisterMessageType(typeof(RegistryUpdatePacket));
+
         }
 
         public override void StartServerSide(ICoreServerAPI api)
         {
             _coreServerAPI = api;
+            _serverChannel = api.Network.GetChannel("Viconomy");
             api.Logger.Notification("Hello from template mod server side: " + Lang.Get("Viconomy:hello"));
 
-            registers = api.WorldManager.SaveGame.GetData("viconomy:registers", new ShopRegistry());
+            
+
+            api.Event.SaveGameLoaded += OnSaveGameLoading;
+            api.Event.GameWorldSave += OnSaveGameSaving;
+            api.Event.PlayerJoin += OnPlayerJoined;
+
+            
         }
+
+
 
         public override void StartClientSide(ICoreClientAPI api)
         {
             _coreClientAPI = api;
+            _clientChannel = api.Network.GetChannel("Viconomy");
             api.Logger.Notification("Hello from template mod client side: " + Lang.Get("Viconomy:hello"));
+            _clientChannel.SetMessageHandler(new NetworkServerMessageHandler<RegistryUpdatePacket>(this.OnRecieveRegistryUpdate));
+            this.registers = new ShopRegistry();
+        }
+
+        private void OnRecieveRegistryUpdate(RegistryUpdatePacket packet)
+        {
+            _coreClientAPI.Logger.Notification("Recieved Registry Update Packet");
+            this.registers = new ShopRegistry();
+            if (packet.registry != null) {
+                foreach (RegistryUpdate item in packet.registry)
+                {
+                    //TODO: Figure out how to get local player.
+                    this.registers.AddRegister(new ViconRegister() { Name = item.Name, ID = item.ID , Owner = "LOCAL"});
+                }
+            }
+            
+            
         }
 
         public BEVRegister GetShopRegister(string owner, string registerID)
@@ -57,6 +93,40 @@ namespace Viconomy
                 registers.ClearRegister(owner, registerID);
             }
             return null;
+        }
+
+        public ShopRegistry GetRegistry()
+        {
+            return registers;
+        }
+
+        private void OnSaveGameLoading()
+        {
+            registers = _coreServerAPI.WorldManager.SaveGame.GetData("viconomy:registers", new ShopRegistry());
+            this._coreServerAPI.Logger.Debug("Loaded " + registers.GetCount());
+        }
+
+        private void OnSaveGameSaving()
+        {
+            _coreServerAPI.WorldManager.SaveGame.StoreData("viconomy:registers", registers);
+        }
+
+        private void OnPlayerJoined(IServerPlayer player)
+        {
+            ViconRegister[] shops = this.registers.GetRegistersForOwner(player.PlayerUID);
+            RegistryUpdate[] updates = new RegistryUpdate[0];
+            if (shops != null)
+            {
+                updates = new RegistryUpdate[shops.Length];
+
+                for (int i = 0; i < shops.Length; i++)
+                {
+                    updates[i] = new RegistryUpdate(shops[i].ID, shops[i].Name);
+                }
+            }
+            
+
+            _serverChannel.SendPacket<RegistryUpdatePacket>(new RegistryUpdatePacket(updates), new IServerPlayer[]{ player });
         }
 
     }

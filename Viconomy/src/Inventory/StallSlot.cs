@@ -7,7 +7,7 @@ namespace Viconomy.Inventory
     {
         public ItemSlot[] slots;
         public ItemSlot currency;
-        public int itemsPerPurchase;
+        public int itemsPerPurchase = 1;
         private ViconomyInventory inventory;
         private int numSlots;
         private int stallSlot;
@@ -32,7 +32,17 @@ namespace Viconomy.Inventory
 
         }
 
+        public ItemSlot FindFirstNonEmptyStockSlot()
+        {
+            foreach (ItemSlot slot in slots)
+            {
+                if (slot.Itemstack != null)
+                    return slot;
+            }
+            return null;
+        }
 
+        /*
         public void FromTreeAttributes(ICoreAPI api, int stallSlot, ITreeAttribute tree)
         {
             if (tree == null)
@@ -92,5 +102,6 @@ namespace Viconomy.Inventory
 
             tree.SetInt("itemsPerPurchase", itemsPerPurchase);
         }
+        */
     }
 }

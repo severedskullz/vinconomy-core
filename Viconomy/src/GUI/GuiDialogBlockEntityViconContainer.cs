@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Viconomy.BlockEntities;
 using Viconomy.Inventory;
 using Viconomy.Util;
 using Vintagestory.API.Client;
@@ -11,17 +13,35 @@ using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Viconomy.GUI
 {
     public class GuiDialogBlockEntityViconContainer : GuiDialogBlockEntity
     {
-        int slots;
+        BEViconStall stall;
+        ViconomyInventory vinInv;
+
+
+
+
+        int stallSlotCount;
+        private int stacksPerSlot;
         int curTab;
-        public GuiDialogBlockEntityViconContainer(string DialogTitle, int slots, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi)
+        DummyInventory inv;
+        ViconPurchaseSlot purchaseSlot;
+        StallSlot stallSlot;
+
+        public GuiDialogBlockEntityViconContainer(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
-            this.slots = slots;
+
+            stall = capi.World.BlockAccessor.GetBlockEntity<BEViconStall>(BlockEntityPosition);
+            ViconomyModSystem modSystem = capi.ModLoader.GetModSystem<ViconomyModSystem>();
+            modSystem.GetRegistry().GetRegistersForOwner(stall.Owner);
+            vinInv = Inventory as ViconomyInventory;
+            this.stallSlotCount = stall.StallSlotCount;
+            this.stacksPerSlot = stall.StacksPerSlot;
             
             if (base.IsDuplicate)
             {
@@ -29,31 +49,25 @@ namespace Viconomy.GUI
             }
             capi.World.Player.InventoryManager.OpenInventory(Inventory);
             this.DialogTitle = DialogTitle;
+
+            this.inv = new DummyInventory(capi);
+            purchaseSlot = new ViconPurchaseSlot(inv, 0);
+            purchaseSlot.DoPurchase += DoPurchase;
+            this.inv[0] = purchaseSlot;
+
             this.Compose();
         }
 
-        private void OnTabClicked(int tabId, GuiTab tab)
+        public void DoPurchase()
         {
-            this.curTab = tabId;
-
-            this.SingleComposer.GetVerticalTab("slotTabs").SetValue(this.curTab);
-            this.Compose();
+            Console.WriteLine("Attempted to purchase item.");
         }
 
 
         private void Compose()
         {
 
-            GuiTab[] tabs = new GuiTab[slots];
-            for (int i = 0; i < slots; i++)
-            {
-                tabs[i] = new GuiTab
-                {
-                    Name = "Bin #" + i,
-                    DataInt = 0
-                };
-            }
-
+   
             ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);//.WithFixedAlignmentOffset(-GuiStyle.DialogToScreenPadding, 0.0);
 
 
@@ -62,96 +76,170 @@ namespace Viconomy.GUI
 
 
 
-            ElementBounds settingBounds = ElementBounds.FixedSize(200, 200);
-            ElementBounds settingInsetBounds = settingBounds.FlatCopy().WithFixedPadding(10);
-            //settingBounds.BothSizing = ElementSizing.FitToChildren;
 
-            ViconomyInventory inv = Inventory as ViconomyInventory;
-            int[] uiSlots = new int[inv.Count];
-            if (inv != null)
+
+            ViconomyInventory vinInv = Inventory as ViconomyInventory;
+            int[] uiSlots = new int[stacksPerSlot];
+            int offset = curTab * (stacksPerSlot + 1);
+            if (vinInv != null)
             {
-                int offset = curTab * (slots + 1);
-                for (int i = 0; i < uiSlots.Length; i++)
+                for (int i = 0; i < stacksPerSlot; i++)
                 {
-                    uiSlots[i] = i;
+                    uiSlots[i] = offset + i;
                 }
             }
 
-            string[] shops = new string[10];
-            for (int i = 0; i < shops.Length; i++)
+            int selectedIndex = 0;
+            string[] shopsNames = new string[10];
+            string[] shopsKeys = new string[10];
+            for (int i = 0; i < shopsNames.Length; i++)
             {
-                shops[i] = "Shop " + i;
+                shopsNames[i] = "Shop " + i;
+                shopsKeys[i] = shopsNames[i]; 
             }
 
-            ElementBounds itemPage = ElementBounds.FixedSize(100, 10).WithFixedOffset(0, GuiStyle.TitleBarHeight) ;
-            itemPage.BothSizing = ElementSizing.FitToChildren;
 
-           
-            ElementBounds pagePrev = ElementBounds.FixedSize(50, 50);
-            ElementBounds pageLabel = ElementBounds.FixedSize(225, 20).WithAlignment(EnumDialogArea.CenterTop).WithFixedAlignmentOffset(0,15);
-            ElementBounds pageNext = ElementBounds.FixedSize(50, 50).WithAlignment(EnumDialogArea.RightTop);
-            ElementBounds slotGrid = ElementStdBounds.SlotGrid(EnumDialogArea.CenterBottom, 0, 30, (int)Math.Sqrt(uiSlots.Length), (int)Math.Sqrt(uiSlots.Length));//.WithParent(itemPage);
+            stallSlot = vinInv.StallSlots[curTab];
+            ItemSlot item = stallSlot.FindFirstNonEmptyStockSlot();
+            
+            
+            if (item != null)
+            {
+                this.purchaseSlot.Itemstack = item.Itemstack.Clone();
+                this.purchaseSlot.Itemstack.StackSize = Math.Min(Math.Max(1, stallSlot.itemsPerPurchase), item.MaxSlotStackSize);
+            } else
+            {
+                this.purchaseSlot.Itemstack = null;
+            }
 
-            CairoFont labelTextFont = CairoFont.WhiteSmallText().WithOrientation(EnumTextOrientation.Center);
-            string labelText = "Slot " + 10 + " of " + 10;
-            labelTextFont.AutoBoxSize(labelText,pageLabel, true);
-            itemPage.WithChildren(pagePrev,pageLabel,pageNext,slotGrid);
 
+            ElementBounds settingBounds = ElementBounds.FixedSize(250, 200).WithFixedOffset(0,GuiStyle.TitleBarHeight);
+            
+            //settingBounds.BothSizing = ElementSizing.FitToChildren;
 
             // Auto-sized dialog at the center of the screen
             //ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
-            ElementBounds shopSelectionLabel = ElementBounds.Fixed(0, 0, 75, 25).WithParent(settingInsetBounds);
+            ElementBounds shopSelectionLabel = ElementBounds.Fixed(0, 0, 75, 30);
             ElementBounds shopSelectBounds = shopSelectionLabel.BelowCopy().WithFixedWidth(250);//ElementBounds.Fixed(0, 0, 100, 25).FixedRightOf(shopSelectionLabel,10);          
-            ElementBounds quantitySelectionLabel = shopSelectBounds.BelowCopy(); //ElementBounds.Fixed(10, 0,100,25).FixedUnder(shopSelectionLabel,10)
-            ElementBounds quantitySelectionBounds = quantitySelectionLabel.BelowCopy(); // ElementBounds.Fixed(0, 0, 100, 25).FixedRightOf(quantitySelectionLabel,10).FixedUnder(shopSelectionLabel,10);
+            ElementBounds quantitySelectionLabel = ElementBounds.FixedSize(250,30).FixedUnder(shopSelectBounds).WithFixedOffset(0,10); //ElementBounds.Fixed(10, 0,100,25).FixedUnder(shopSelectionLabel,10)
+            ElementBounds quantitySelectionBounds = ElementBounds.FixedSize(150, 30).FixedUnder(quantitySelectionLabel).WithFixedOffset(0, 0); // ElementBounds.Fixed(0, 0, 100, 25).FixedRightOf(quantitySelectionLabel,10).FixedUnder(shopSelectionLabel,10);
+            ElementBounds saveButtonBounds = ElementBounds.FixedSize(75, 30).FixedUnder(quantitySelectionLabel).FixedRightOf(quantitySelectionBounds).WithFixedOffset(20, -5);
+            
+            ElementBounds currencySlot = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).WithFixedOffset(10,10).FixedUnder(quantitySelectionBounds);
+            ElementBounds purchaseSlot = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1,1).FixedRightOf(currencySlot).FixedUnder(quantitySelectionBounds).WithFixedOffset(110, 10); ;
 
             // Background boundaries. Again, just make it fit it's child elements, then add the text as a child element
             //ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.ElementToDialogPadding);
 
+            ElementBounds itemPage = ElementBounds.FixedSize(200, 10).FixedRightOf(settingBounds).WithFixedOffset(10, GuiStyle.TitleBarHeight);
+            itemPage.BothSizing = ElementSizing.FitToChildren;
+
+
+            ElementBounds pagePrev = ElementBounds.FixedSize(30, 30).WithFixedPosition(0, 0);
+            //ElementBounds pageLabel = ElementBounds.FixedSize(50, 20).WithAlignment(EnumDialogArea.CenterTop).WithFixedAlignmentOffset(0,15).WithFixedPadding(75,0);
+            ElementBounds pageLabel = ElementBounds.FixedSize(50, 25).WithFixedAlignmentOffset(0, 10).FixedRightOf(pagePrev, 10);
+            //ElementBounds pageNext = ElementBounds.FixedSize(50, 50).WithAlignment(EnumDialogArea.RightTop);
+            CairoFont labelTextFont = CairoFont.WhiteSmallText().WithOrientation(EnumTextOrientation.Center);
+            string labelText = "Slot " + (curTab + 1) + " of " + stallSlotCount;
+            labelTextFont.AutoBoxSize(labelText, pageLabel, true);
+
+            ElementBounds pageNext = ElementBounds.FixedSize(30, 30).FixedRightOf(pageLabel, 10);
+            ElementBounds slotGrid = ElementStdBounds.SlotGrid(EnumDialogArea.CenterBottom, 0, 20, (int)Math.Ceiling(Math.Sqrt(uiSlots.Length)), (int)Math.Ceiling(Math.Sqrt(uiSlots.Length)));//.WithParent(itemPage);
+
+
+            itemPage.WithChildren(pagePrev, pageLabel, pageNext, slotGrid);
+
+
+
             bgBounds.WithChildren(itemPage, settingBounds);
 
-
+            //IconUtil.DrawArrowRight
 
             // Lastly, create the dialog
             SingleComposer = capi.Gui.CreateCompo("myAwesomeDialog", dialogBounds)
                 .AddShadedDialogBG(bgBounds)
-                .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked)
-                .BeginChildElements(itemPage)
-                    .AddButton("<-", new ActionConsumable(this.PreviousPage), pagePrev, EnumButtonStyle.Small)
-                    .AddDynamicText(labelText, labelTextFont, pageLabel, "pageLabel")
-                    .AddButton("->", new ActionConsumable(this.PreviousPage), pageNext, EnumButtonStyle.Small)
-                    .AddItemSlotGrid(inv, new Action<object>(this.SendInvPacket), (int)Math.Sqrt(uiSlots.Length), uiSlots, slotGrid, "inventory")
-                .EndChildElements()
-                /*
-                .BeginChildElements(settingInsetBounds)
-                    .AddStaticText("Shop:", CairoFont.TextInput(), shopSelectionLabel)
-                    .AddDropDown(shops, shops, 0, new SelectionChangedDelegate(this.onSelectionChanged) , shopSelectBounds)
+                .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);
 
-                    .AddStaticText("Quantity Items Sold Per Purchase:", CairoFont.WhiteSmallText(), quantitySelectionLabel)
+                SingleComposer.BeginChildElements(settingBounds)
+                    .AddStaticText("Shop:", CairoFont.WhiteSmallText(), shopSelectionLabel)
+                    .AddDropDown(shopsKeys, shopsNames, selectedIndex, new SelectionChangedDelegate(this.onSelectionChanged), shopSelectBounds)
+
+                    .AddStaticText("Items Sold Per Purchase:", CairoFont.WhiteSmallText(), quantitySelectionLabel)
                     .AddNumberInput(quantitySelectionBounds, new Action<string>(this.onQuantityChanged), CairoFont.WhiteSmallText(), "quantity")
-                .EndChildElements()
-                
-                .BeginChildElements(bgBounds)
-                    
-                    .AddInset(settingBounds)
-                .EndChildElements()
-                */
+                    //.AddButton("Save", new ActionConsumable(this.onSave),saveButtonBounds, EnumButtonStyle.Small, "save")
+                    .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { offset + stacksPerSlot }, currencySlot, "currency")
+                    .AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlot, "purchase")
+                //.AddPassiveItemSlot(outputSlotBounds, Inventory, )
+                .EndChildElements();
 
-                //.AddHorizontalTabs(tabs, tabBounds, new Action<int>(this.OnTabClicked), tabFont, tabFont.Clone().WithColor(GuiStyle.ActiveButtonTextColor), "tabs")
-                .Compose();
+                SingleComposer.BeginChildElements(itemPage)
+                    .AddButton("<", new ActionConsumable(this.PreviousPage), pagePrev, EnumButtonStyle.Small, "prevPage")
+                    .AddDynamicText(labelText, labelTextFont, pageLabel, "pageLabel")
+                    .AddButton(">", new ActionConsumable(this.NextPage), pageNext, EnumButtonStyle.Small, "nextPage")
+                    .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), (int)Math.Ceiling(Math.Sqrt(uiSlots.Length)), uiSlots, slotGrid, "inventory")
+                .EndChildElements();
 
 
+            if (curTab == 0)
+                SingleComposer.GetButton("prevPage").Enabled = false;
+
+            if (curTab == stallSlotCount-1)
+                SingleComposer.GetButton("nextPage").Enabled = false;
+
+            SingleComposer.GetTextInput("quantity").SetValue(stallSlot.itemsPerPurchase);
+
+
+            //.AddHorizontalTabs(tabs, tabBounds, new Action<int>(this.OnTabClicked), tabFont, tabFont.Clone().WithColor(GuiStyle.ActiveButtonTextColor), "tabs")
+            SingleComposer.Compose();
+
+            
 
         }
 
-        private bool PreviousPage()
+        private bool onSave()
         {
             return true;
         }
-
-        private void onQuantityChanged(string obj)
+        private bool PreviousPage()
         {
-            
+            curTab -= 1;
+            curTab = Math.Max(0, curTab);
+            this.Compose();
+            return true;
+        }
+
+        private bool NextPage()
+        {
+            curTab += 1;
+            curTab = Math.Min(stallSlotCount-1, curTab);
+            this.Compose();
+            return true;
+        }
+
+        private void onQuantityChanged(string amount)
+        {
+            int val = 1;
+            Int32.TryParse(amount, out val);
+
+            if (val > 0 && val <= 64 && val != stallSlot.itemsPerPurchase)
+            {
+                stallSlot.itemsPerPurchase = val;
+                byte[] data;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    BinaryWriter writer = new BinaryWriter(ms);
+                    writer.Write(curTab);
+                    writer.Write(val);
+                    data = ms.ToArray();
+                }
+                this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_ITEMS_PER_PURCHASE, data);
+
+                if (purchaseSlot.Itemstack != null)
+                {
+                    purchaseSlot.Itemstack.StackSize = val;
+                }
+
+            }
         }
 
         private void onSelectionChanged(string code, bool selected)

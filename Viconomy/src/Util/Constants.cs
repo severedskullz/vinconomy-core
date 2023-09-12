@@ -8,10 +8,18 @@ namespace Viconomy.Util
 {
     public static class VinConstants
     {
+        //Shared Packets
         public const int OPEN_GUI = 1000;
         public const int CLOSE_GUI = 1001;
 
-        public const int PURCHASE_ITEMS = 1002;
+        //Admin Packets
+        public const int SET_ITEMS_PER_PURCHASE = 2001;
+
+        // Customer Packets
+        public const int PURCHASE_ITEMS = 3002;
+
         public const int TOGGLE_GUI = 5000;
+
+        
     }
 }
