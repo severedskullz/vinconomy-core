@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProtoBuf;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Viconomy.BlockEntities;
@@ -6,10 +7,11 @@ using Vintagestory.API.MathTools;
 
 namespace Viconomy.Registry
 {
+    [ProtoContract(ImplicitFields=ImplicitFields.AllFields)]
     public class ShopRegistry
     {
         private uint _id;
-        private Dictionary<string, Dictionary<string, ViconRegister>> registers = new Dictionary<string, Dictionary<string, ViconRegister>>();
+        internal Dictionary<string, Dictionary<string, ViconRegister>> registers = new Dictionary<string, Dictionary<string, ViconRegister>>();
 
         public void ClearRegister(string owner, string registerID)
         {
@@ -18,6 +20,14 @@ namespace Viconomy.Registry
                 registers[owner].Remove(registerID);
             }
         }
+        public void ClearRegisterPos(string owner, string id)
+        {
+            if (registers.ContainsKey(owner) && registers[owner].ContainsKey(id))
+            {
+                registers[owner][id].Position = null;
+            }
+        }
+
 
         public ViconRegister GetRegister(string owner, string registerID)
         {
@@ -33,7 +43,7 @@ namespace Viconomy.Registry
             {
                 return registers[owner].Values.ToArray<ViconRegister>();
             }
-            return null;
+            return new ViconRegister[0];
         }
 
         public ViconRegister UpdateRegister(string owner, string id, string name, BlockPos pos)
@@ -43,7 +53,8 @@ namespace Viconomy.Registry
             {
                 Console.WriteLine("Updating existing Register with ID " + id);
                 register = registers[owner][id];
-                register.Name = name;
+                if (name != null)
+                    register.Name = name;
                 register.Position = pos;
             } 
             return register;
@@ -69,7 +80,7 @@ namespace Viconomy.Registry
                 registers[register.Owner] = new Dictionary<string, ViconRegister>();
             }
             registers[register.Owner][register.ID] = register;
-            Console.WriteLine("Added Register with ID " + register.ID + " and owner " + register.OwnerName);
+            Console.WriteLine("Added Register with ID " + register.ID + " and owner " + register.Owner);
         }
 
         public string GetNextID()
@@ -87,5 +98,7 @@ namespace Viconomy.Registry
 
             return i;
         }
+
+
     }
 }

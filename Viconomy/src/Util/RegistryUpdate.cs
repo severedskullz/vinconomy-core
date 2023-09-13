@@ -11,8 +11,13 @@ namespace Viconomy.Network
         [ProtoMember(2)]
         public string Name;
 
-        public RegistryUpdate(string ID, string Name)
+        [ProtoMember(3)]
+        public string Owner;
+
+        public RegistryUpdate() { }
+        public RegistryUpdate(string Owner, string ID, string Name)
         {
+            this.Owner = Owner; 
             this.ID = ID;
             this.Name = Name;
 

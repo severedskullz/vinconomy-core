@@ -137,6 +137,8 @@ namespace Viconomy.BlockEntities
 
         private void TryPurchaseItem(IPlayer player, byte[] data) {
 
+            ViconomyModSystem mod = Api.ModLoader.GetModSystem<ViconomyModSystem>();
+
             int stallSlot;
             int desiredAmount;
             using (MemoryStream memoryStream = new MemoryStream(data))
@@ -157,8 +159,20 @@ namespace Viconomy.BlockEntities
             else if (this.RegisterID == null)
             {
                 PrintClientMessage(player, "vicionomy:not-registered-with-shop");
+                return;
             }
-            else if (currency.Itemstack.Satisfies(handItem.Itemstack))
+
+            
+            BEVRegister register = mod.GetShopRegister(this.Owner, this.RegisterID);
+
+            if (register == null)
+            {
+                PrintClientMessage(player, "vicionomy:not-registered-with-shop");
+                return;
+            }
+            
+
+            if (currency.Itemstack.Satisfies(handItem.Itemstack))
             {
 
                 if (handItem.StackSize < currency.StackSize)
@@ -193,14 +207,7 @@ namespace Viconomy.BlockEntities
                         {
                             int price = currency.Itemstack.StackSize * desiredAmount;
 
-                            ViconomyModSystem mod = Api.ModLoader.GetModSystem<ViconomyModSystem>();
-                            BEVRegister register = mod.GetShopRegister(this.Owner, this.RegisterID);
-
-                            if (register == null)
-                            {
-                                PrintClientMessage(player, "vicionomy:not-registered-with-shop");
-                            } 
-                            if (!PurchaseItem(player, purchaseSlot, currency, desiredAmount))
+                            if (PurchaseItem(player, purchaseSlot, currency, desiredAmount * itemsPerPurchase))
                             {
                                 ItemStack payment = handItem.TakeOut(price);
                                 //TODO: Put payment in register
@@ -345,13 +352,111 @@ namespace Viconomy.BlockEntities
             this.MarkDirty();
         }
 
+        private void SetStallID(IPlayer byPlayer, byte[] data)
+        {
+            if (byPlayer.PlayerUID != this.Owner)
+            {
+                PrintClientMessage(byPlayer, "vicionomy:doesnt-own", new object[] { });
+                return;
+            }
+
+            int amountItems;
+            using (MemoryStream ms = new MemoryStream(data))
+            {
+                BinaryReader reader = new BinaryReader(ms);
+                this.RegisterID = reader.ReadString();
+            }
+
+            PrintClientMessage(byPlayer, "set ID to " + this.RegisterID);
+            this.MarkDirty();
+        }
+
 
         #endregion
 
 
         #region Networking
+
+        public override void OnReceivedClientPacket(IPlayer player, int packetid, byte[] data)
+        {
+            Console.WriteLine(Api.Side + ": OnRecievedClientPacket " + packetid);
+            IPlayerInventoryManager inventoryManager = player.InventoryManager;
+            switch (packetid)
+            {
+                case VinConstants.OPEN_GUI:
+                    if (inventoryManager == null)
+                    {
+                        return;
+                    }
+                    inventoryManager.OpenInventory(this.Inventory);
+                    break;
+
+                case VinConstants.CLOSE_GUI:
+                    if (inventoryManager != null)
+                    {
+                        inventoryManager.CloseInventory(this.Inventory);
+                    }
+                    break;
+
+                case VinConstants.PURCHASE_ITEMS:
+                    using (MemoryStream memoryStream = new MemoryStream(data))
+                    {
+                        BinaryReader binaryReader = new BinaryReader(memoryStream);
+                        TryPurchaseItem(player, data);
+                    }
+                    break;
+
+                case VinConstants.SET_ITEMS_PER_PURCHASE:
+                    SetStallItemsPerPurchase(player, data);
+                    break;
+
+                case VinConstants.SET_SHOP_ID:
+                    SetStallID(player, data);
+                    break;
+
+                default:
+                    if (packetid < 1000)
+                    {
+                        Console.Write("Handling Inv Packet");
+                        this.Inventory.InvNetworkUtil.HandleClientPacket(player, packetid, data);
+                        this.Api.World.BlockAccessor.GetChunkAtBlockPos(this.Pos.X, this.Pos.Y, this.Pos.Z).MarkModified();
+                        return;
+                    }
+                    break;
+            }
+        }
+
+        public override void OnReceivedServerPacket(int packetid, byte[] data)
+        {
+            Console.WriteLine(Api.Side + ": OnRecievedServerPacket " + packetid);
+            IClientWorldAccessor clientWorld = (IClientWorldAccessor)this.Api.World;
+            if (packetid == VinConstants.TOGGLE_GUI)
+            {
+                if (this.invDialog != null)
+                {
+                    Console.WriteLine(Api.Side + ": Toggling GUI OFF");
+                    CloseGui(clientWorld);
+                }
+                else
+                {
+                    Console.WriteLine(Api.Side + ": Toggling GUI ON");
+                    OpenShopGui(data);
+                }
+
+            }
+            if (packetid == VinConstants.OPEN_GUI)
+            {
+                OpenShopGui(data);
+            }
+            if (packetid == VinConstants.CLOSE_GUI)
+            {
+                CloseGui(clientWorld);
+            }
+        }
+
         private void RequestPurchaseItem(int slot, int amount)
         {
+            this.Api.Logger.Chat("Attempting to purchase item from slot " + slot);
             if (this.Api.Side == EnumAppSide.Client)
             {
                 byte[] data;
@@ -368,12 +473,6 @@ namespace Viconomy.BlockEntities
 
         #endregion
 
-
-
-
-
-
-      
 
         protected override void updateMesh(int index)
         {
@@ -479,6 +578,7 @@ namespace Viconomy.BlockEntities
 
         private bool PurchaseItem(IPlayer byPlayer, ItemSlot purchaseSlot, ItemSlot currency, int amount)
         {
+            //TODO: This is all serverside, having clientside code in here is pointless..
             if (!purchaseSlot.Empty && purchaseSlot.StackSize >= amount)
             {
                 ItemStack stack = purchaseSlot.TakeOut(amount);
@@ -506,8 +606,13 @@ namespace Viconomy.BlockEntities
                 if (coreClientAPI != null)
                 {
                     coreClientAPI.World.Player.TriggerFpAnimation(EnumHandInteract.HeldItemInteract);
-                    PrintClientMessage(byPlayer, "vicionomy:purchased-item", new object[] { amount, stack.GetName(), currency.StackSize* amount, currency.Itemstack.GetName()});
                 }
+                ICoreServerAPI coreSererAPI = this.Api as ICoreServerAPI;
+                if (coreClientAPI != null)
+                {
+                    PrintClientMessage(byPlayer, "vicionomy:purchased-item", new object[] { amount, stack.GetName(), currency.StackSize * amount, currency.Itemstack.GetName() });
+                }
+
                 this.MarkDirty(true, null);
                 this.updateMeshes();
                 return true;
@@ -551,78 +656,7 @@ namespace Viconomy.BlockEntities
         }
         */
 
-        public override void OnReceivedClientPacket(IPlayer player, int packetid, byte[] data)
-        {
-            Console.WriteLine(Api.Side + ": OnRecievedClientPacket " + packetid);
-            IPlayerInventoryManager inventoryManager = player.InventoryManager;
-            switch (packetid)
-            {
-                case VinConstants.OPEN_GUI:
-                    if (inventoryManager == null)
-                    {
-                        return;
-                    }
-                    inventoryManager.OpenInventory(this.Inventory);
-                    break;
-
-                case VinConstants.CLOSE_GUI:
-                    if (inventoryManager != null)
-                    {
-                        inventoryManager.CloseInventory(this.Inventory);
-                    }
-                    break;
-
-                case VinConstants.PURCHASE_ITEMS:
-                    using (MemoryStream memoryStream = new MemoryStream(data))
-                    {
-                        BinaryReader binaryReader = new BinaryReader(memoryStream);
-                        TryPurchaseItem(player, data);
-                    }
-                    break;
-
-                case VinConstants.SET_ITEMS_PER_PURCHASE:
-                    SetStallItemsPerPurchase(player, data); 
-                    break;
-
-                default:
-                    if (packetid < 1000)
-                    {
-                        Console.Write("Handling Inv Packet");
-                        this.Inventory.InvNetworkUtil.HandleClientPacket(player, packetid, data);
-                        this.Api.World.BlockAccessor.GetChunkAtBlockPos(this.Pos.X, this.Pos.Y, this.Pos.Z).MarkModified();
-                        return;
-                    }
-                    break;
-            }
-        }
-
-        public override void OnReceivedServerPacket(int packetid, byte[] data)
-        {
-            Console.WriteLine(Api.Side + ": OnRecievedServerPacket " + packetid);
-            IClientWorldAccessor clientWorld = (IClientWorldAccessor)this.Api.World;
-            if (packetid == VinConstants.TOGGLE_GUI)
-            {
-                if (this.invDialog != null)
-                {
-                    Console.WriteLine(Api.Side + ": Toggling GUI OFF");
-                    CloseGui(clientWorld);
-                } 
-                else
-                {
-                    Console.WriteLine(Api.Side + ": Toggling GUI ON");
-                    OpenShopGui(data);
-                }
-
-            }
-            if (packetid == VinConstants.OPEN_GUI)
-            {
-                OpenShopGui(data);
-            }
-            if (packetid == VinConstants.CLOSE_GUI)
-            {
-                CloseGui(clientWorld);
-            }
-        }
+       
 
         
 
@@ -683,6 +717,7 @@ namespace Viconomy.BlockEntities
             base.ToTreeAttributes(tree);
             tree.SetString("Owner",this.Owner);
             tree.SetString("OwnerName", this.OwnerName);
+            tree.SetString("RegisterID", this.RegisterID);
 
         }
 
@@ -691,6 +726,7 @@ namespace Viconomy.BlockEntities
             base.FromTreeAttributes(tree, world);
             this.Owner = tree.GetString("Owner");
             this.OwnerName = tree.GetString("OwnerName");
+            this.RegisterID = tree.GetString("RegisterID");
 
         }
 

@@ -29,10 +29,12 @@ namespace Viconomy
         {
  
             api.RegisterBlockClass("ViconContainer", typeof(BlockVContainer));
+            api.RegisterBlockClass("ViconRegister", typeof(BlockVRegister));
             api.RegisterBlockClass("ViconShelf", typeof(BlockVShelf));
 
 
             api.RegisterBlockEntityClass("BEViconStall", typeof(BEViconStall));
+            api.RegisterBlockEntityClass("BEVRegister", typeof(BEVRegister));
             api.RegisterBlockEntityClass("BEViconShelf", typeof(BEViconShelf));
 
             api.Network.RegisterChannel("Viconomy")
@@ -74,7 +76,7 @@ namespace Viconomy
                 foreach (RegistryUpdate item in packet.registry)
                 {
                     //TODO: Figure out how to get local player.
-                    this.registers.AddRegister(new ViconRegister() { Name = item.Name, ID = item.ID , Owner = "LOCAL"});
+                    this.registers.AddRegister(new ViconRegister() { Name = item.Name, ID = item.ID , Owner = item.Owner});
                 }
             }
             
@@ -102,13 +104,26 @@ namespace Viconomy
 
         private void OnSaveGameLoading()
         {
+            this._coreServerAPI.Logger.Debug("=============== Loading Viconomy ===============");
             registers = _coreServerAPI.WorldManager.SaveGame.GetData("viconomy:registers", new ShopRegistry());
-            this._coreServerAPI.Logger.Debug("Loaded " + registers.GetCount());
+            this._coreServerAPI.Logger.Debug("= Loaded " + registers.GetCount() + " registers");
+
+            foreach (string ownerId in registers.registers.Keys)
+            {
+                var shops = registers.registers[ownerId];
+                this._coreServerAPI.Logger.Debug("== Loading " + shops.Values.Count + " registers for Owner: " + ownerId);
+                foreach (string shopId in shops.Keys)
+                {
+                    var shop = registers.registers[ownerId][shopId];
+                    this._coreServerAPI.Logger.Debug("=== Loading shop " + shop.Name);
+                }
+            }
+            this._coreServerAPI.Logger.Debug("=============== Loaded Viconomy ================");
         }
 
         private void OnSaveGameSaving()
         {
-            _coreServerAPI.WorldManager.SaveGame.StoreData("viconomy:registers", registers);
+            _coreServerAPI.WorldManager.SaveGame.StoreData<ShopRegistry>("viconomy:registers", registers);
         }
 
         private void OnPlayerJoined(IServerPlayer player)
@@ -121,7 +136,7 @@ namespace Viconomy
 
                 for (int i = 0; i < shops.Length; i++)
                 {
-                    updates[i] = new RegistryUpdate(shops[i].ID, shops[i].Name);
+                    updates[i] = new RegistryUpdate(shops[i].Owner, shops[i].ID, shops[i].Name);
                 }
             }
             

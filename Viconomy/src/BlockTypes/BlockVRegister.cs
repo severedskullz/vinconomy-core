@@ -11,11 +11,21 @@ namespace Viconomy.BlockTypes
 {
     public class BlockVRegister : Block
     {
+        public string Name { get; set; }
+        public string ID { get; internal set; }
+        public string Owner { get; internal set; }
+        public string OwnerName { get; internal set; }
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
             Console.WriteLine(api.Side + ": On interaction start was called!");
             return true;
+        }
+
+        public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)
+        {
+            Console.WriteLine(api.Side + ": On Block Placed called!");
+            base.OnBlockPlaced(world, blockPos, byItemStack);
         }
 
         public override bool DoPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ItemStack byItemStack)
@@ -24,22 +34,16 @@ namespace Viconomy.BlockTypes
             if (result)
             {
                 string Owner = byItemStack.Attributes.GetString("Owner");
-                BEVRegister viconBlock = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVRegister;
-                if (viconBlock != null)
+                BEVRegister vEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVRegister;
+                if (vEntity != null)
                 {
                     if (Owner != null)
                     {
-                        viconBlock.Owner = Owner;
-                        viconBlock.OwnerName = byItemStack.Attributes.GetString("OwnerName");
-                        viconBlock.ID = byItemStack.Attributes.GetString("ID");
-                        
+                        vEntity.UpdateRegister(Owner, byItemStack.Attributes.GetString("OwnerName"), byItemStack.Attributes.GetString("ID"), null);                        
                     }
-                        
                     else
                     {
-                        viconBlock.Owner = byPlayer.PlayerUID;
-                        viconBlock.OwnerName = byPlayer.PlayerName;
-                        viconBlock.Name = byPlayer.PlayerName + "'s Shop";
+                        vEntity.UpdateRegister(byPlayer.PlayerUID, byPlayer.PlayerName, null, null);
                     }
                        
                 }
@@ -52,5 +56,7 @@ namespace Viconomy.BlockTypes
         {
             base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
         }
+
+        
     }
 }

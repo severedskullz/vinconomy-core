@@ -6,12 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Viconomy.BlockEntities;
 using Viconomy.Inventory;
+using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
+using Vintagestory.Client.NoObf;
 using Vintagestory.GameContent;
 using static System.Formats.Asn1.AsnWriter;
 
@@ -21,7 +23,7 @@ namespace Viconomy.GUI
     {
         BEViconStall stall;
         ViconomyInventory vinInv;
-
+        ViconRegister[] registers;
 
 
 
@@ -38,7 +40,7 @@ namespace Viconomy.GUI
 
             stall = capi.World.BlockAccessor.GetBlockEntity<BEViconStall>(BlockEntityPosition);
             ViconomyModSystem modSystem = capi.ModLoader.GetModSystem<ViconomyModSystem>();
-            modSystem.GetRegistry().GetRegistersForOwner(stall.Owner);
+            registers = modSystem.GetRegistry().GetRegistersForOwner(stall.Owner);
             vinInv = Inventory as ViconomyInventory;
             this.stallSlotCount = stall.StallSlotCount;
             this.stacksPerSlot = stall.StacksPerSlot;
@@ -90,12 +92,21 @@ namespace Viconomy.GUI
             }
 
             int selectedIndex = 0;
-            string[] shopsNames = new string[10];
-            string[] shopsKeys = new string[10];
-            for (int i = 0; i < shopsNames.Length; i++)
+            int shopLength = registers.Length + 1;
+            string[] shopsNames = new string[shopLength];
+            string[] shopsKeys = new string[shopLength];
+
+            shopsNames[0] = "None";
+            shopsKeys[0] = null;
+            for (int i = 0; i < registers.Length; i++)
             {
-                shopsNames[i] = "Shop " + i;
-                shopsKeys[i] = shopsNames[i]; 
+                shopsNames[i+1] = registers[i].Name;
+                shopsKeys[i+1] = registers[i].ID; 
+
+                if (stall.RegisterID == registers[i].ID)
+                {
+                    selectedIndex = i + 1;
+                }
             }
 
 
@@ -244,6 +255,14 @@ namespace Viconomy.GUI
 
         private void onSelectionChanged(string code, bool selected)
         {
+            byte[] data;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BinaryWriter writer = new BinaryWriter(ms);
+                writer.Write(code);
+                data = ms.ToArray();
+            }
+            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_SHOP_ID, data);
 
         }
 

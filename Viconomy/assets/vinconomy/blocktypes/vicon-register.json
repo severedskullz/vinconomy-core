@@ -1,14 +1,16 @@
 ﻿{
-    "code": "register",
-    "creativeinventory": { "general": [ "*" ] },
-    "blockmaterial": "Stone",
-    "drawtype": "Cube",
-    "textures": {
-        "all": { "base": "block/mygoldtexture" }
-    },
-    "resistance": 3.5,
-    "sounds": {
-        "place": "game:block/anvil",
-        "walk": "game:walk/stone"
-    }
+  "code": "register",
+  "class": "ViconRegister",
+  "entityClass": "BEVRegister",
+  "creativeinventory": { "general": [ "*" ] },
+  "blockmaterial": "Stone",
+  "drawtype": "Cube",
+  "textures": {
+    "all": { "base": "block/gold-block" }
+  },
+  "resistance": 3.5,
+  "sounds": {
+    "place": "game:block/anvil",
+    "walk": "game:walk/stone"
+  }
 }

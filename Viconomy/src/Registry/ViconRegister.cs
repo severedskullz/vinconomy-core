@@ -1,7 +1,9 @@
-﻿using Vintagestory.API.MathTools;
+﻿using ProtoBuf;
+using Vintagestory.API.MathTools;
 
 namespace Viconomy.Registry
 {
+    [ProtoContract(ImplicitFields = ImplicitFields.AllFields)]
     public class ViconRegister
     {
         public string Name { get;  set; }

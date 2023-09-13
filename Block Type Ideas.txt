@@ -25,3 +25,9 @@ Shipment Request Block
 	
 Request Board
 	Request items for money
+
+"Roleplay" Mode
+	Allow stalls to "queue" items to trade? That way it requires the players to be there at the stall if they are online, otherwise allows offline trading.
+
+Ledger
+	records trades for roleplayers (For things like taxes and such on profits)

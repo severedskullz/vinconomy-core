@@ -10,10 +10,9 @@ namespace Viconomy.BlockEntities
 {
     public class BEVRegister : BlockEntityContainer
     {
-        private BlockVContainer block;
+        private BlockVRegister block;
         private InventoryGeneric inventory;
 
-        public string Name { get; set; }
         public string ID { get; internal set; }
         public string Owner { get; internal set; }
         public string OwnerName { get; internal set; }
@@ -22,25 +21,46 @@ namespace Viconomy.BlockEntities
 
         public override string InventoryClassName => "ViconomyRegisteryInventory";
 
+        public BEVRegister()
+        {
+            this.inventory = new InventoryGeneric(25, null, null);
+        }
+
         public override void Initialize(ICoreAPI api)
         {
-            this.block = (BlockVContainer)api.World.BlockAccessor.GetBlock(this.Pos);
+            this.block = (BlockVRegister)api.World.BlockAccessor.GetBlock(this.Pos);
 
-            base.Initialize(api);
+            base.Initialize(api);          
+                       
+        }
 
-            ViconomyModSystem modSystem = api.ModLoader.GetModSystem<ViconomyModSystem>();
+        public void UpdateRegister(string Owner, string OwnerName, string ID, string Name)
+        {
+            ViconomyModSystem modSystem = this.Api.ModLoader.GetModSystem<ViconomyModSystem>();
 
             if (ID == null)
             {
                 Console.WriteLine("Register block was placed and did not have ID Set...");
                 ViconRegister register = modSystem.GetRegistry().AddRegister(Owner, OwnerName, OwnerName + "'s Shop", this.Pos);
-                ID = register.ID;
-            } else
+                //ID = register.ID;
+            }
+            else
             {
                 Console.WriteLine("Register block was placed and had ID Set... Updating");
                 ViconRegister register = modSystem.GetRegistry().UpdateRegister(Owner, ID, Name, this.Pos);
             }
-                       
+
+            this.ID = ID;
+            this.Owner = Owner;
+            this.OwnerName = OwnerName;
+            
+        }
+
+        public override void OnBlockBroken(IPlayer byPlayer = null)
+        {
+            base.OnBlockBroken(byPlayer);
+            ViconomyModSystem modSystem = this.Api.ModLoader.GetModSystem<ViconomyModSystem>();
+            modSystem.registers.ClearRegisterPos(Owner, ID);
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
