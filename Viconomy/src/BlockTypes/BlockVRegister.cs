@@ -19,9 +19,18 @@ namespace Viconomy.BlockTypes
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
             Console.WriteLine(api.Side + ": On interaction start was called!");
+            BEVRegister be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVRegister;
+            if (be != null)
+            {
+                return be.OnPlayerRightClick(byPlayer, blockSel);
+            }
             return true;
         }
 
+        public override void OnLoaded(ICoreAPI api)
+        {
+            base.OnLoaded(api);
+        }
         public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)
         {
             Console.WriteLine(api.Side + ": On Block Placed called!");

@@ -16,6 +16,7 @@ using Vintagestory.API.Util;
 using Vintagestory.Client.NoObf;
 using Vintagestory.GameContent;
 using static System.Formats.Asn1.AsnWriter;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Viconomy.GUI
 {
@@ -97,7 +98,7 @@ namespace Viconomy.GUI
             string[] shopsKeys = new string[shopLength];
 
             shopsNames[0] = "None";
-            shopsKeys[0] = null;
+            shopsKeys[0] = "None";
             for (int i = 0; i < registers.Length; i++)
             {
                 shopsNames[i+1] = registers[i].Name;
@@ -131,13 +132,23 @@ namespace Viconomy.GUI
             // Auto-sized dialog at the center of the screen
             //ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
             ElementBounds shopSelectionLabel = ElementBounds.Fixed(0, 0, 75, 30);
-            ElementBounds shopSelectBounds = shopSelectionLabel.BelowCopy().WithFixedWidth(250);//ElementBounds.Fixed(0, 0, 100, 25).FixedRightOf(shopSelectionLabel,10);          
-            ElementBounds quantitySelectionLabel = ElementBounds.FixedSize(250,30).FixedUnder(shopSelectBounds).WithFixedOffset(0,10); //ElementBounds.Fixed(10, 0,100,25).FixedUnder(shopSelectionLabel,10)
-            ElementBounds quantitySelectionBounds = ElementBounds.FixedSize(150, 30).FixedUnder(quantitySelectionLabel).WithFixedOffset(0, 0); // ElementBounds.Fixed(0, 0, 100, 25).FixedRightOf(quantitySelectionLabel,10).FixedUnder(shopSelectionLabel,10);
-            ElementBounds saveButtonBounds = ElementBounds.FixedSize(75, 30).FixedUnder(quantitySelectionLabel).FixedRightOf(quantitySelectionBounds).WithFixedOffset(20, -5);
-            
-            ElementBounds currencySlot = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).WithFixedOffset(10,10).FixedUnder(quantitySelectionBounds);
-            ElementBounds purchaseSlot = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1,1).FixedRightOf(currencySlot).FixedUnder(quantitySelectionBounds).WithFixedOffset(110, 10); ;
+            ElementBounds shopSelectBounds = shopSelectionLabel.BelowCopy().WithFixedWidth(250);      
+           
+            ElementBounds currencyLabel = ElementBounds.FixedSize(100, 25).FixedUnder(shopSelectBounds).WithFixedOffset(0, 15);
+            ElementBounds currencySlot = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).FixedUnder(currencyLabel);
+
+            ElementBounds purchaseLabel = ElementBounds.FixedSize(100, 25).FixedUnder(shopSelectBounds).WithFixedOffset(125, 15);
+            ElementBounds purchaseSlot = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1,1).FixedUnder(purchaseLabel).WithFixedOffset(125, 00);
+
+            ElementBounds quantitySelectionLabel = ElementBounds.FixedSize(150, 30).FixedUnder(currencySlot).WithFixedOffset(0, 15);
+            ElementBounds quantitySelectionBounds = ElementBounds.FixedSize(75, 30).FixedUnder(currencySlot).FixedRightOf(quantitySelectionLabel).WithFixedOffset(25, 10);
+
+
+            ElementBounds adminShopLabel = ElementBounds.FixedSize(100, 25).FixedUnder(quantitySelectionBounds).WithFixedOffset(0, 15);
+            ElementBounds adminShopBounds = ElementBounds.FixedSize(40, 40).FixedUnder(quantitySelectionBounds).FixedRightOf(adminShopLabel).WithFixedOffset(120, 10);
+
+            settingBounds.WithChildren(shopSelectBounds, shopSelectionLabel, quantitySelectionBounds, quantitySelectionLabel, currencyLabel, currencySlot, purchaseSlot, adminShopBounds, adminShopLabel);
+            settingBounds.verticalSizing = ElementSizing.FitToChildren;
 
             // Background boundaries. Again, just make it fit it's child elements, then add the text as a child element
             //ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.ElementToDialogPadding);
@@ -174,11 +185,15 @@ namespace Viconomy.GUI
                 SingleComposer.BeginChildElements(settingBounds)
                     .AddStaticText("Shop:", CairoFont.WhiteSmallText(), shopSelectionLabel)
                     .AddDropDown(shopsKeys, shopsNames, selectedIndex, new SelectionChangedDelegate(this.onSelectionChanged), shopSelectBounds)
+                    .AddStaticText("Admin Shop:", CairoFont.WhiteSmallText(), adminShopLabel)
 
-                    .AddStaticText("Items Sold Per Purchase:", CairoFont.WhiteSmallText(), quantitySelectionLabel)
+                    .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
+                    .AddStaticText("Items Per Purchase:", CairoFont.WhiteSmallText(), quantitySelectionLabel)
                     .AddNumberInput(quantitySelectionBounds, new Action<string>(this.onQuantityChanged), CairoFont.WhiteSmallText(), "quantity")
                     //.AddButton("Save", new ActionConsumable(this.onSave),saveButtonBounds, EnumButtonStyle.Small, "save")
+                    .AddStaticText("Price:", CairoFont.WhiteSmallText(), currencyLabel)
                     .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { offset + stacksPerSlot }, currencySlot, "currency")
+                    .AddStaticText("Product:", CairoFont.WhiteSmallText(), purchaseLabel)
                     .AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlot, "purchase")
                 //.AddPassiveItemSlot(outputSlotBounds, Inventory, )
                 .EndChildElements();
@@ -207,10 +222,19 @@ namespace Viconomy.GUI
 
         }
 
-        private bool onSave()
+        private void OnToggleAdminShop(bool isToggled)
         {
-            return true;
+            byte[] data;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BinaryWriter writer = new BinaryWriter(ms);
+                writer.Write(isToggled);
+                data = ms.ToArray();
+            }
+            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_ADMIN_SHOP, data);
+
         }
+
         private bool PreviousPage()
         {
             curTab -= 1;
@@ -286,10 +310,11 @@ namespace Viconomy.GUI
 
             base.OnGuiClosed();
         }
-        */
+        
 
         public override void OnGuiClosed()
         {
+            //This is identical to base, except the fact that Im using VinConstants for the packet ID
             if (this.Inventory != null)
             {
                 this.Inventory.Close(this.capi.World.Player);
@@ -297,8 +322,9 @@ namespace Viconomy.GUI
             }
             this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.CLOSE_GUI, null);
             this.capi.Gui.PlaySound(this.CloseSound, true, 1f);
-        }
 
+        }
+        */
         private void OnInventorySlotModified(int slotid)
         {
             // Direct call can cause InvalidOperationException

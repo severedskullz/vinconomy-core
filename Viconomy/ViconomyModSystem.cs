@@ -7,6 +7,7 @@ using Viconomy.Registry;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.Server;
@@ -52,7 +53,7 @@ namespace Viconomy
 
             api.Event.SaveGameLoaded += OnSaveGameLoading;
             api.Event.GameWorldSave += OnSaveGameSaving;
-            api.Event.PlayerJoin += OnPlayerJoined;
+            api.Event.PlayerJoin += SendRegisterUpdate;
 
             
         }
@@ -126,7 +127,7 @@ namespace Viconomy
             _coreServerAPI.WorldManager.SaveGame.StoreData<ShopRegistry>("viconomy:registers", registers);
         }
 
-        private void OnPlayerJoined(IServerPlayer player)
+        private void SendRegisterUpdate(IServerPlayer player)
         {
             ViconRegister[] shops = this.registers.GetRegistersForOwner(player.PlayerUID);
             RegistryUpdate[] updates = new RegistryUpdate[0];
@@ -144,5 +145,33 @@ namespace Viconomy
             _serverChannel.SendPacket<RegistryUpdatePacket>(new RegistryUpdatePacket(updates), new IServerPlayer[]{ player });
         }
 
+        public ViconRegister AddRegister(string owner, string ownerName, string name, BlockPos pos)
+        {
+            ViconRegister reg = this.GetRegistry().AddRegister(owner, ownerName, name, pos);
+            if (_coreServerAPI != null)
+            {
+                IServerPlayer player = (IServerPlayer)_coreServerAPI.World.PlayerByUid(owner);
+                if (player.ConnectionState == EnumClientState.Playing)
+                {
+                    SendRegisterUpdate(player);
+                }
+            }
+           
+            return reg;
+        }
+
+        public ViconRegister UpdateRegister(string owner, string iD, string name, BlockPos pos)
+        {
+            ViconRegister reg = this.UpdateRegister(owner, iD, name, pos);
+            if (_coreServerAPI != null)
+            {
+                IServerPlayer player = (IServerPlayer)_coreServerAPI.World.PlayerByUid(owner);
+                if (player.ConnectionState == EnumClientState.Playing)
+                {
+                    SendRegisterUpdate(player);
+                }
+            }
+            return reg;
+        }
     }
 }

@@ -31,7 +31,7 @@ namespace Viconomy.Registry
 
         public ViconRegister GetRegister(string owner, string registerID)
         {
-            if (registers.ContainsKey(owner))
+            if (registers.ContainsKey(owner) && registers[owner].ContainsKey(registerID))
             {
                 return registers[owner][registerID];
             }
@@ -81,6 +81,8 @@ namespace Viconomy.Registry
             }
             registers[register.Owner][register.ID] = register;
             Console.WriteLine("Added Register with ID " + register.ID + " and owner " + register.Owner);
+
+            
         }
 
         public string GetNextID()
