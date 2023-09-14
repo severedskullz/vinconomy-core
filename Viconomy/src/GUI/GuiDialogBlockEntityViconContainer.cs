@@ -25,7 +25,7 @@ namespace Viconomy.GUI
         BEViconStall stall;
         ViconomyInventory vinInv;
         ViconRegister[] registers;
-
+        ICoreClientAPI api;
 
 
         int stallSlotCount;
@@ -35,16 +35,18 @@ namespace Viconomy.GUI
         ViconPurchaseSlot purchaseSlot;
         StallSlot stallSlot;
 
-        public GuiDialogBlockEntityViconContainer(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi)
+        public GuiDialogBlockEntityViconContainer(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
-
+            api = capi;
             stall = capi.World.BlockAccessor.GetBlockEntity<BEViconStall>(BlockEntityPosition);
+            curTab = stallSelection;
             ViconomyModSystem modSystem = capi.ModLoader.GetModSystem<ViconomyModSystem>();
             registers = modSystem.GetRegistry().GetRegistersForOwner(stall.Owner);
             vinInv = Inventory as ViconomyInventory;
             this.stallSlotCount = stall.StallSlotCount;
             this.stacksPerSlot = stall.StacksPerSlot;
+            
             
             if (base.IsDuplicate)
             {
@@ -135,19 +137,19 @@ namespace Viconomy.GUI
             ElementBounds shopSelectBounds = shopSelectionLabel.BelowCopy().WithFixedWidth(250);      
            
             ElementBounds currencyLabel = ElementBounds.FixedSize(100, 25).FixedUnder(shopSelectBounds).WithFixedOffset(0, 15);
-            ElementBounds currencySlot = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).FixedUnder(currencyLabel);
+            ElementBounds currencySlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).FixedUnder(currencyLabel);
 
             ElementBounds purchaseLabel = ElementBounds.FixedSize(100, 25).FixedUnder(shopSelectBounds).WithFixedOffset(125, 15);
-            ElementBounds purchaseSlot = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1,1).FixedUnder(purchaseLabel).WithFixedOffset(125, 00);
+            ElementBounds purchaseSlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1,1).FixedUnder(purchaseLabel).WithFixedOffset(125, 00);
 
-            ElementBounds quantitySelectionLabel = ElementBounds.FixedSize(150, 30).FixedUnder(currencySlot).WithFixedOffset(0, 15);
-            ElementBounds quantitySelectionBounds = ElementBounds.FixedSize(75, 30).FixedUnder(currencySlot).FixedRightOf(quantitySelectionLabel).WithFixedOffset(25, 10);
+            ElementBounds quantitySelectionLabel = ElementBounds.FixedSize(150, 30).FixedUnder(currencySlotBounds).WithFixedOffset(0, 15);
+            ElementBounds quantitySelectionBounds = ElementBounds.FixedSize(75, 30).FixedUnder(currencySlotBounds).FixedRightOf(quantitySelectionLabel).WithFixedOffset(25, 10);
 
 
             ElementBounds adminShopLabel = ElementBounds.FixedSize(100, 25).FixedUnder(quantitySelectionBounds).WithFixedOffset(0, 15);
             ElementBounds adminShopBounds = ElementBounds.FixedSize(40, 40).FixedUnder(quantitySelectionBounds).FixedRightOf(adminShopLabel).WithFixedOffset(120, 10);
 
-            settingBounds.WithChildren(shopSelectBounds, shopSelectionLabel, quantitySelectionBounds, quantitySelectionLabel, currencyLabel, currencySlot, purchaseSlot, adminShopBounds, adminShopLabel);
+            settingBounds.WithChildren(shopSelectBounds, shopSelectionLabel, quantitySelectionBounds, quantitySelectionLabel, currencyLabel, currencySlotBounds, purchaseSlotBounds, adminShopBounds, adminShopLabel);
             settingBounds.verticalSizing = ElementSizing.FitToChildren;
 
             // Background boundaries. Again, just make it fit it's child elements, then add the text as a child element
@@ -185,16 +187,18 @@ namespace Viconomy.GUI
                 SingleComposer.BeginChildElements(settingBounds)
                     .AddStaticText("Shop:", CairoFont.WhiteSmallText(), shopSelectionLabel)
                     .AddDropDown(shopsKeys, shopsNames, selectedIndex, new SelectionChangedDelegate(this.onSelectionChanged), shopSelectBounds)
-                    .AddStaticText("Admin Shop:", CairoFont.WhiteSmallText(), adminShopLabel)
-
-                    .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
+                    .AddIf(api.World.Player.HasPrivilege("gamemode"))
+                        .AddStaticText("Admin Shop:", CairoFont.WhiteSmallText(), adminShopLabel)
+                        .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
+                    .EndIf()
                     .AddStaticText("Items Per Purchase:", CairoFont.WhiteSmallText(), quantitySelectionLabel)
                     .AddNumberInput(quantitySelectionBounds, new Action<string>(this.onQuantityChanged), CairoFont.WhiteSmallText(), "quantity")
                     //.AddButton("Save", new ActionConsumable(this.onSave),saveButtonBounds, EnumButtonStyle.Small, "save")
                     .AddStaticText("Price:", CairoFont.WhiteSmallText(), currencyLabel)
-                    .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { offset + stacksPerSlot }, currencySlot, "currency")
+                    .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { offset + stacksPerSlot }, currencySlotBounds, "currency")
                     .AddStaticText("Product:", CairoFont.WhiteSmallText(), purchaseLabel)
-                    .AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlot, "purchase")
+                    .AddPassiveItemSlot(purchaseSlotBounds, inv, purchaseSlot, false)
+                    //.AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlotBounds, "purchase")
                 //.AddPassiveItemSlot(outputSlotBounds, Inventory, )
                 .EndChildElements();
 
@@ -211,6 +215,9 @@ namespace Viconomy.GUI
 
             if (curTab == stallSlotCount-1)
                 SingleComposer.GetButton("nextPage").Enabled = false;
+
+            if (capi.World.Player.HasPrivilege("gamemode")) 
+                SingleComposer.GetSwitch("admin").SetValue(stall.isAdminShip);
 
             SingleComposer.GetTextInput("quantity").SetValue(stallSlot.itemsPerPurchase);
 

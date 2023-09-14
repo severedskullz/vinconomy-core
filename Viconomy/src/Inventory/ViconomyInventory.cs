@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 
 namespace Viconomy.Inventory
 {
@@ -181,6 +182,35 @@ namespace Viconomy.Inventory
         public override float GetTransitionSpeedMul(EnumTransitionType transType, ItemStack stack)
         {
             return .05f;
+        }
+
+        public override void DropAll(Vec3d pos, int maxStackSize = 0)
+        {
+            using IEnumerator<ItemSlot> enumerator = GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                ItemSlot current = enumerator.Current;
+                if (current.Itemstack == null || current is ViconCurrencySlot)
+                {
+                    continue;
+                }
+
+                if (maxStackSize > 0)
+                {
+                    while (current.StackSize > 0)
+                    {
+                        ItemStack itemstack = current.TakeOut(GameMath.Clamp(current.StackSize, 1, maxStackSize));
+                        Api.World.SpawnItemEntity(itemstack, pos);
+                    }
+                }
+                else
+                {
+                    Api.World.SpawnItemEntity(current.Itemstack, pos);
+                }
+
+                current.Itemstack = null;
+                current.MarkDirty();
+            }
         }
 
     }

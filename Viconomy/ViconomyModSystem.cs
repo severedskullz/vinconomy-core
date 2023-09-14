@@ -86,6 +86,11 @@ namespace Viconomy
 
         public BEVRegister GetShopRegister(string owner, string registerID)
         {
+            if (registerID == null || owner == null)
+            {
+                return null;
+            }
+
             ViconRegister register = registers.GetRegister(owner, registerID);
             BEVRegister viconRegister = _coreServerAPI.World.BlockAccessor.GetBlockEntity(register.Position) as BEVRegister;
             if (viconRegister != null)

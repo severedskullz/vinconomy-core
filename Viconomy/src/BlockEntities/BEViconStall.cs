@@ -21,6 +21,7 @@ using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.Common;
 using Vintagestory.GameContent;
+using Vintagestory.Server;
 
 namespace Viconomy.BlockEntities
 {
@@ -113,7 +114,7 @@ namespace Viconomy.BlockEntities
                 } else
                 {
                     // Open shop admin gui
-                    OpenAdminForPlayer(byPlayer);
+                    OpenAdminForPlayer(byPlayer, blockSel.SelectionBoxIndex);
                 }
             } 
             else
@@ -161,7 +162,7 @@ namespace Viconomy.BlockEntities
             } 
             
             // Does the shop have a register ID set?
-            if (this.RegisterID == null)
+            if (this.RegisterID == null && !this.isAdminShip)
             {
                 PrintClientMessage(player, "vicionomy:not-registered-with-shop");
                 return;
@@ -170,22 +171,25 @@ namespace Viconomy.BlockEntities
             
             // Is there a shop with the given Register ID?
             BEVRegister register = mod.GetShopRegister(this.Owner, this.RegisterID);
-            if (register == null)
+            if (register == null && !this.isAdminShip)
             {
                 PrintClientMessage(player, "vicionomy:not-registered-with-shop");
                 return;
             }
 
             // Is there an actual Register entity at those coordinates?
-            BEVRegister shopRegister = Api.World.BlockAccessor.GetBlockEntity<BEVRegister>(register.Pos);
-            if (shopRegister == null)
+            BEVRegister shopRegister = null;
+            if (register != null)
             {
-                // Clear out the register location
-                mod.registers.UpdateRegister(register.Owner, register.ID, null, null);
-                PrintClientMessage(player, "vicionomy:not-registered-with-shop");
-                return;
+                shopRegister = Api.World.BlockAccessor.GetBlockEntity<BEVRegister>(register.Pos);
+                if (shopRegister == null)
+                {
+                    // Clear out the register location
+                    mod.registers.UpdateRegister(register.Owner, register.ID, null, null);
+                    PrintClientMessage(player, "vicionomy:not-registered-with-shop");
+                    return;
+                }
             }
-            
 
             if (currency.Itemstack.Satisfies(handItem.Itemstack))
             {
@@ -229,12 +233,16 @@ namespace Viconomy.BlockEntities
 
                     Console.WriteLine(Api.Side + ": Checking if we can hold!");
                     PrintClientMessage(player, Api.Side + ": We tried to purchase item!");
-                    if (shopRegister.CanHold(currencyStack) && PurchaseItem(player, purchaseSlot, currency, desiredAmount * itemsPerPurchase))
+                    if ((shopRegister == null || shopRegister.CanHold(currencyStack)) && PurchaseItem(player, purchaseSlot, currency, desiredAmount * itemsPerPurchase))
                     {
                         Console.WriteLine(Api.Side + ": taking out " + price);
                         PrintClientMessage(player, Api.Side + ": taking out " + price);
-                        //ItemStack payment = handItem.TakeOut(price);
-                        shopRegister.AddItem(handItem, price);
+                        if (shopRegister != null) { 
+                            shopRegister.AddItem(handItem, price);
+                        } else
+                        {
+                            ItemStack payment = handItem.TakeOut(price);
+                        }
 
                         handItem.MarkDirty();
                         Console.WriteLine("Purchase called from " + this.Api.Side);
@@ -255,7 +263,7 @@ namespace Viconomy.BlockEntities
 
         #region GUI
 
-        private void OpenAdminForPlayer(IPlayer byPlayer)
+        private void OpenAdminForPlayer(IPlayer byPlayer, int selectedStall)
         {
             if (this.Api.World is IServerWorldAccessor)
             {
@@ -265,8 +273,9 @@ namespace Viconomy.BlockEntities
                     BinaryWriter writer = new BinaryWriter(ms);
                     writer.Write("VinconomyInventory");
                     writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Stall");
-                    writer.Write((byte)this.slotCount);
-                    writer.Write((byte)this.stacksPerSlot);
+                    writer.Write((byte) this.slotCount);
+                    writer.Write((byte) this.stacksPerSlot);
+                    writer.Write((byte)selectedStall);
                     TreeAttribute tree = new TreeAttribute();
                     this.inventory.ToTreeAttributes(tree);
                     tree.ToBytes(writer);
@@ -305,6 +314,7 @@ namespace Viconomy.BlockEntities
             string dialogTitle;
             int stallSlots;
             int itemsPerStallSlot;
+            int stallSelection;
             using (MemoryStream ms = new MemoryStream(data))
             {
                 BinaryReader reader = new BinaryReader(ms);
@@ -312,11 +322,12 @@ namespace Viconomy.BlockEntities
                 dialogTitle = reader.ReadString();
                 stallSlots = (int)reader.ReadByte();
                 itemsPerStallSlot = (int)reader.ReadByte();
+                stallSelection = (int)reader.ReadByte();
                 tree.FromBytes(reader);
             }
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
-            this.invDialog = new GuiDialogBlockEntityViconContainer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
+            this.invDialog = new GuiDialogBlockEntityViconContainer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
             this.invDialog.OpenSound = this.OpenSound;
             this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();
@@ -438,6 +449,10 @@ namespace Viconomy.BlockEntities
                     SetStallID(player, data);
                     break;
 
+                case VinConstants.SET_ADMIN_SHOP:
+                    SetAdminShop(player, data);
+                    break;
+
                 default:
                     if (packetid < 1000)
                     {
@@ -448,6 +463,31 @@ namespace Viconomy.BlockEntities
                     }
                     break;
             }
+        }
+
+        private void SetAdminShop(IPlayer byPlayer, byte[] data)
+        {
+            if (byPlayer.PlayerUID != this.Owner)
+            {
+                PrintClientMessage(byPlayer, "vicionomy:doesnt-own", new object[] { });
+                return;
+            }
+
+            if (!byPlayer.HasPrivilege("gamemode"))
+            {
+                PrintClientMessage(byPlayer, "vicionomy:no-privelege", new object[] { });
+                return;
+            }
+
+            int amountItems;
+            using (MemoryStream ms = new MemoryStream(data))
+            {
+                BinaryReader reader = new BinaryReader(ms);
+                this.isAdminShip = reader.ReadBoolean();
+            }
+
+            PrintClientMessage(byPlayer, "set Admin Shop to " + this.isAdminShip);
+            this.MarkDirty();
         }
 
         public override void OnReceivedServerPacket(int packetid, byte[] data)
@@ -612,7 +652,15 @@ namespace Viconomy.BlockEntities
             //TODO: This is all serverside, having clientside code in here is pointless..
             if (!purchaseSlot.Empty && purchaseSlot.StackSize >= amount)
             {
-                ItemStack stack = purchaseSlot.TakeOut(amount);
+                ItemStack stack = null;
+                if (isAdminShip) {
+                    stack = purchaseSlot.Itemstack.Clone();
+                    stack.StackSize = amount;
+                } else
+                {
+                    stack = purchaseSlot.TakeOut(amount);
+                }
+
                 if (byPlayer.InventoryManager.TryGiveItemstack(stack, false))
                 {
                     Block block = stack.Block;
@@ -749,6 +797,7 @@ namespace Viconomy.BlockEntities
             tree.SetString("Owner",this.Owner);
             tree.SetString("OwnerName", this.OwnerName);
             tree.SetString("RegisterID", this.RegisterID);
+            tree.SetBool("isAdminShop", this.isAdminShip);
 
         }
 
@@ -758,6 +807,7 @@ namespace Viconomy.BlockEntities
             this.Owner = tree.GetString("Owner");
             this.OwnerName = tree.GetString("OwnerName");
             this.RegisterID = tree.GetString("RegisterID");
+            this.isAdminShip = tree.GetBool("isAdminShop");
 
         }
 
