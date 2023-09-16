@@ -45,8 +45,11 @@
   <Content Include="assets\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>
+  <None Remove="assets\vinconomy\blocktypes\vicon-helmetstand.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-register.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-shelf.json" />
+  <None Remove="assets\vinconomy\blocktypes\vicon-trademat.json" />
+  <None Remove="assets\vinconomy\blocktypes\vicon-tradematdouble.json" />
   <None Remove="assets\vinconomy\lang\en.json" />
   <Content Include="modinfo.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

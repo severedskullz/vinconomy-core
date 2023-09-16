@@ -17,9 +17,6 @@ namespace Viconomy.src.BlockEntities
         private ViconomyInventory inventory;
         private static int slotCount = 4;
         private Block block;
-        private ICoreAPI api;
-        public string owner;
-        GuiDialogBlockEntityViconContainer clientDialog;
 
         public override InventoryBase Inventory
         {
@@ -50,7 +47,6 @@ namespace Viconomy.src.BlockEntities
 
             api.Logger.Log(EnumLogType.Debug, "Initialized BEVContainer.");
 
-            this.api = api;
 
         }
 

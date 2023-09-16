@@ -20,7 +20,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Viconomy.GUI
 {
-    public class GuiDialogBlockEntityViconContainer : GuiDialogBlockEntity
+    public class GuiDialogViconStallOwner : GuiDialogBlockEntity
     {
         BEViconStall stall;
         ViconomyInventory vinInv;
@@ -35,7 +35,7 @@ namespace Viconomy.GUI
         ViconPurchaseSlot purchaseSlot;
         StallSlot stallSlot;
 
-        public GuiDialogBlockEntityViconContainer(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
+        public GuiDialogViconStallOwner(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
             api = capi;

@@ -1,0 +1,64 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"base": "block/metal/plate/copper",
+		"stand": "block/wood/planks/oak3"
+	},
+	"elements": [
+		{
+			"name": "Base",
+			"from": [ 2.0, 0.0, 2.0 ],
+			"to": [ 14.0, 1.0, 14.0 ],
+			"rotationOrigin": [ 8.0, 0.0, 8.0 ],
+			"faces": {
+				"north": { "texture": "#base", "uv": [ 0.0, 0.0, 12.0, 1.0 ] },
+				"east": { "texture": "#base", "uv": [ 0.0, 0.0, 12.0, 1.0 ] },
+				"south": { "texture": "#base", "uv": [ 0.0, 0.0, 12.0, 1.0 ] },
+				"west": { "texture": "#base", "uv": [ 0.0, 0.0, 12.0, 1.0 ] },
+				"up": { "texture": "#base", "uv": [ 0.0, 0.0, 12.0, 12.0 ] },
+				"down": { "texture": "#base", "uv": [ 0.0, 0.0, 12.0, 12.0 ] }
+			}
+		},
+		{
+			"name": "StandBase",
+			"from": [ 5.0, 1.0, 5.0 ],
+			"to": [ 11.0, 2.0, 11.0 ],
+			"rotationOrigin": [ 8.0, 1.0, 8.0 ],
+			"faces": {
+				"north": { "texture": "#stand", "uv": [ 0.0, 0.0, 6.0, 1.0 ] },
+				"east": { "texture": "#stand", "uv": [ 0.0, 0.0, 6.0, 1.0 ] },
+				"south": { "texture": "#stand", "uv": [ 0.0, 0.0, 6.0, 1.0 ] },
+				"west": { "texture": "#stand", "uv": [ 0.0, 0.0, 6.0, 1.0 ] },
+				"up": { "texture": "#stand", "uv": [ 0.0, 0.0, 6.0, 6.0 ] },
+				"down": { "texture": "#stand", "uv": [ 0.0, 0.0, 6.0, 6.0 ] }
+			}
+		},
+		{
+			"name": "Stand",
+			"from": [ 7.5, 2.0, 7.5 ],
+			"to": [ 8.5, 12.0, 8.5 ],
+			"rotationOrigin": [ 8.0, 2.0, 8.0 ],
+			"faces": {
+				"north": { "texture": "#stand", "uv": [ 0.0, 0.0, 1.0, 10.0 ] },
+				"east": { "texture": "#stand", "uv": [ 0.0, 0.0, 1.0, 10.0 ] },
+				"south": { "texture": "#stand", "uv": [ 0.0, 0.0, 1.0, 10.0 ] },
+				"west": { "texture": "#stand", "uv": [ 0.0, 0.0, 1.0, 10.0 ] },
+				"up": { "texture": "#stand", "uv": [ 0.0, 0.5, 1.0, 1.5 ] },
+				"down": { "texture": "#stand", "uv": [ 0.0, 0.0, 1.0, 1.0 ] }
+			},
+			"attachmentpoints": [
+				{
+					"code": "Mount",
+					"posX": "1.0","posY": "10.0","posZ": "1.0",
+					"rotationX": "0.0","rotationY": "0.0","rotationZ": "0.0"
+				}
+			]
+		}
+	]}

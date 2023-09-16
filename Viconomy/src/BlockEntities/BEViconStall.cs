@@ -27,16 +27,16 @@ namespace Viconomy.BlockEntities
 {
     public class BEViconStall : BlockEntityDisplay
     {
-        private int slotCount = 4;
-        private int stacksPerSlot = 9;
-        private ViconomyInventory inventory;
+        protected int slotCount = 4;
+        protected int stacksPerSlot = 9;
+        protected ViconomyInventory inventory;
         protected GuiDialogBlockEntity invDialog;
-        private BlockVContainer block;
+        protected BlockVContainer block;
 
         public override int DisplayedItems => slotCount;
 
-        private AssetLocation OpenSound;
-        private AssetLocation CloseSound;
+        protected AssetLocation OpenSound;
+        protected AssetLocation CloseSound;
 
         public string Owner;
         public string OwnerName;
@@ -58,7 +58,7 @@ namespace Viconomy.BlockEntities
             this.inventory.SlotModified += Inventory_SlotModified;
         }
 
-        private void Inventory_SlotModified(int slot)
+        protected void Inventory_SlotModified(int slot)
         {
             updateMeshes();
             this.MarkDirty(true, null);
@@ -114,7 +114,8 @@ namespace Viconomy.BlockEntities
                 } else
                 {
                     // Open shop admin gui
-                    OpenAdminForPlayer(byPlayer, blockSel.SelectionBoxIndex);
+                    //OpenAdminForPlayer(byPlayer, blockSel.SelectionBoxIndex);
+                    OpenShopForPlayer(byPlayer, blockSel.SelectionBoxIndex);
                 }
             } 
             else
@@ -128,7 +129,7 @@ namespace Viconomy.BlockEntities
                 } else
                 {
                     // Open the shop inventory for that block selection
-                    OpenShopForPlayer(byPlayer);
+                    OpenShopForPlayer(byPlayer, blockSel.SelectionBoxIndex);
                 }
                 
       
@@ -286,7 +287,7 @@ namespace Viconomy.BlockEntities
             }
         }
 
-        private void OpenShopForPlayer(IPlayer byPlayer)
+        private void OpenShopForPlayer(IPlayer byPlayer, int blockSelection)
         {
             if (this.Api.World is IServerWorldAccessor)
             {
@@ -298,6 +299,7 @@ namespace Viconomy.BlockEntities
                     writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Stall");
                     writer.Write((byte)this.slotCount);
                     writer.Write((byte)this.stacksPerSlot);
+                    writer.Write((byte)blockSelection);
                     TreeAttribute tree = new TreeAttribute();
                     this.inventory.ToTreeAttributes(tree);
                     tree.ToBytes(writer);
@@ -327,7 +329,7 @@ namespace Viconomy.BlockEntities
             }
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
-            this.invDialog = new GuiDialogBlockEntityViconContainer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+            this.invDialog = new GuiDialogViconStallOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
             this.invDialog.OpenSound = this.OpenSound;
             this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();
@@ -391,7 +393,6 @@ namespace Viconomy.BlockEntities
                 return;
             }
 
-            int amountItems;
             using (MemoryStream ms = new MemoryStream(data))
             {
                 BinaryReader reader = new BinaryReader(ms);
@@ -479,7 +480,6 @@ namespace Viconomy.BlockEntities
                 return;
             }
 
-            int amountItems;
             using (MemoryStream ms = new MemoryStream(data))
             {
                 BinaryReader reader = new BinaryReader(ms);
@@ -566,6 +566,7 @@ namespace Viconomy.BlockEntities
 
         protected override float[][] genTransformationMatrices()
         {
+            
             float[][] tfMatrices = new float[slotCount][];
             for (int index = 0; index < slotCount; index++)
             {
@@ -574,17 +575,14 @@ namespace Viconomy.BlockEntities
                 if (slot != null)
                     if (slot.Itemstack.Class != EnumItemClass.Block)
                     {
-                        scale = .65f;
+                        scale = .85f;
                     }
-
-                //float left = 0.15f; // .25 - (.5 / 2)
-                //float right = 0.6f; // .75 - (.5 / 2)
 
                 float left = .25f - (.5f / 2) - (scale/2) + .25f;
                 float right = .75f - (.5f / 2) - (scale/2) + .25f ;
 
                 float x = (index % 2 == 0) ? left : right;
-                float y = (index < 2) ? 0.3f : 0.225f;
+                float y = this.block.SelectionBoxes[index].MaxY-0.37f;
                 float z = (index / 2 == 0) ? left : right;
                 Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(this.block.Shape.rotateY).Translate(x , y, z ).Translate(-0.5f, 0f, -0.5f).Scale(scale,scale,scale);
                 tfMatrices[index] = matrix.Values;

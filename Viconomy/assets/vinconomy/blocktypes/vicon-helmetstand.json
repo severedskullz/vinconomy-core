@@ -1,7 +1,8 @@
-﻿{
-  "code": "register",
-  "class": "ViconRegister",
-  "entityClass": "BEVRegister",
+{
+  "code": "helmetstand",
+  "class": "ViconContainer",
+  "entityClass": "BEViconHelmetStand",
+
   "priorityInteract": true,
   "creativeinventory": { "general": [ "*-north" ] },
   "behaviors": [ { "name": "HorizontalOrientable" } ],
@@ -10,11 +11,11 @@
   "blockmaterial": "Wood",
   "variantgroups": [
     {
-      "code": "wood",
+      "code": "stand",
       "loadFromProperties": "block/wood"
     },
-	{
-      "code": "metal",
+    {
+      "code": "base",
       "loadFromProperties": "block/metal"
     },
     {
@@ -23,24 +24,24 @@
     }
   ],
   "textures": {
-    "wood": { "base": "game:block/wood/planks/{wood}1" },
-	  "metal": { "base": "game:block/metal/plate/{metal}" }
+    "stand": { "base": "game:block/wood/planks/{stand}1" },
+    "base": { "base": "game:block/metal/plate/{base}" }
   },
   "shapebytype": {
     "*-north": {
-      "base": "block/register",
+      "base": "block/helmetstand",
       "rotateY": 0
     },
     "*-east": {
-      "base": "block/register",
+      "base": "block/helmetstand",
       "rotateY": 270
     },
     "*-south": {
-      "base": "block/register",
+      "base": "block/helmetstand",
       "rotateY": 180
     },
     "*-west": {
-      "base": "block/register",
+      "base": "block/helmetstand",
       "rotateY": 90
     }
   },
