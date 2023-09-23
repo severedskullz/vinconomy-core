@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Viconomy.Config;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
@@ -25,8 +26,11 @@ namespace Viconomy.Inventory
 
         public override int Count { get { return this.stallSlots.Length * (itemsPerBin + 1); } }
 
+        ViconomyModSystem modSystem;
+
         public ViconomyInventory(string inventoryID, ICoreAPI api, int binSize, int itemsPerBin) : base(inventoryID, api)
         {
+            
             this.binSize = binSize;
             this.itemsPerBin = itemsPerBin;
 
@@ -45,10 +49,13 @@ namespace Viconomy.Inventory
                 this.stallSlots[i] = new StallSlot(this, i, itemsPerBin, slots);
             }
 
+        }
 
-
-
-
+        public override void LateInitialize(string inventoryID, ICoreAPI api)
+        {
+            base.LateInitialize(inventoryID, api);
+            modSystem = Api.ModLoader.GetModSystem<ViconomyModSystem>();
+            
         }
 
         protected override ItemSlot NewSlot(int id)
@@ -95,44 +102,24 @@ namespace Viconomy.Inventory
                 }
                 if (itemSlot == itemsPerBin)
                 {
-                    this.stallSlots[stallSlot].currency = value;
+                    this.stallSlots[stallSlot].currency = (ViconCurrencySlot) value;
                 } else
                 {
-                    this.stallSlots[stallSlot].slots[slotId] = value;
+                    this.stallSlots[stallSlot].slots[slotId] = (ViconItemSlot) value;
                 }
                 
             }
         }
-        
 
-        /*
-        public override ItemSlot this[int slotId]
+        public void SetSlotFilter(int slot, Vintagestory.API.Common.Func<ItemSlot, bool> filter)
         {
-            get
+            ViconItemSlot[] filteredSlots = stallSlots[slot].slots;
+            foreach (var itemSlot in filteredSlots)
             {
-                if (slotId < 0 || slotId >= this.Count)
-                {
-                    return null;
-                }
-                else
-                {
-                    return this.slots[slotId];
-                }
+                itemSlot.setFilter(filter);
             }
-            set
-            {
-                if (slotId < 0 || slotId >= this.Count)
-                {
-                    throw new ArgumentOutOfRangeException("slotId");
-                }
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
-                this.slots[slotId] = value;
-            }
+
         }
-        */
 
         public ItemSlot FindFirstNonEmptyStockSlot(int stallSlot)
         {
@@ -141,22 +128,11 @@ namespace Viconomy.Inventory
 
         public ItemSlot GetCurrencyForSelection(int stallSlot)
         {
-            //return this.slots[stallSlot * (itemsPerBin + 1)];
             return stallSlots[stallSlot].currency; 
         }
 
         public ItemSlot[] GetSlotsForSelection(int stallSlot)
         {
-            /*
-            int totalItemsPerSlot = itemsPerBin + 1; // Need to add the currency slot.
-            ItemSlot[] slots = new ItemSlot[itemsPerBin];
-            for (int i = 0; i < itemsPerBin; i++)
-            {
-                slots[i] = Slots[(stallSlot * totalItemsPerSlot) + i];
-            }
-
-            return slots;
-            */
             return stallSlots[stallSlot].slots;
         }
 
@@ -181,7 +157,15 @@ namespace Viconomy.Inventory
 
         public override float GetTransitionSpeedMul(EnumTransitionType transType, ItemStack stack)
         {
-            return .05f;
+            ViconConfig config = modSystem.Config;
+            if ( config != null && config.FoodDecaysInShops)
+            {
+                return base.GetDefaultTransitionSpeedMul(transType) * modSystem.Config.StallPerishRate;
+            } else
+            {
+                return 0;
+            }
+            
         }
 
         public override void DropAll(Vec3d pos, int maxStackSize = 0)

@@ -54,7 +54,7 @@ namespace Viconomy.BlockEntities
 
         public BEViconStall()
         {
-            this.inventory = new ViconomyInventory(null, null, slotCount, stacksPerSlot);
+            this.inventory = new ViconomyInventory(null, this.Api, slotCount, stacksPerSlot);
             this.inventory.SlotModified += Inventory_SlotModified;
         }
 
@@ -114,7 +114,6 @@ namespace Viconomy.BlockEntities
                 } else
                 {
                     // Open shop admin gui
-                    //OpenAdminForPlayer(byPlayer, blockSel.SelectionBoxIndex);
                     OpenShopForPlayer(byPlayer, blockSel.SelectionBoxIndex);
                 }
             } 
@@ -264,30 +263,7 @@ namespace Viconomy.BlockEntities
 
         #region GUI
 
-        private void OpenAdminForPlayer(IPlayer byPlayer, int selectedStall)
-        {
-            if (this.Api.World is IServerWorldAccessor)
-            {
-                byte[] data;
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    BinaryWriter writer = new BinaryWriter(ms);
-                    writer.Write("VinconomyInventory");
-                    writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Stall");
-                    writer.Write((byte) this.slotCount);
-                    writer.Write((byte) this.stacksPerSlot);
-                    writer.Write((byte)selectedStall);
-                    TreeAttribute tree = new TreeAttribute();
-                    this.inventory.ToTreeAttributes(tree);
-                    tree.ToBytes(writer);
-                    data = ms.ToArray();
-                }
-              ((ICoreServerAPI)this.Api).Network.SendBlockEntityPacket((IServerPlayer)byPlayer, this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.TOGGLE_GUI, data);
-                byPlayer.InventoryManager.OpenInventory(this.inventory);
-            }
-        }
-
-        private void OpenShopForPlayer(IPlayer byPlayer, int blockSelection)
+        private void OpenShopForPlayer(IPlayer byPlayer, int selectedStall)
         {
             if (this.Api.World is IServerWorldAccessor)
             {
@@ -299,13 +275,14 @@ namespace Viconomy.BlockEntities
                     writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Stall");
                     writer.Write((byte)this.slotCount);
                     writer.Write((byte)this.stacksPerSlot);
-                    writer.Write((byte)blockSelection);
+                    writer.Write((byte)selectedStall);
+                    writer.Write(byPlayer.PlayerUID == Owner);
                     TreeAttribute tree = new TreeAttribute();
                     this.inventory.ToTreeAttributes(tree);
                     tree.ToBytes(writer);
                     data = ms.ToArray();
                 }
-                ((ICoreServerAPI)this.Api).Network.SendBlockEntityPacket((IServerPlayer)byPlayer, this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.TOGGLE_GUI, data);
+                ((ICoreServerAPI)this.Api).Network.SendBlockEntityPacket((IServerPlayer)byPlayer, this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.OPEN_GUI, data);
                 byPlayer.InventoryManager.OpenInventory(this.inventory);
                 }
         }
@@ -317,6 +294,7 @@ namespace Viconomy.BlockEntities
             int stallSlots;
             int itemsPerStallSlot;
             int stallSelection;
+            bool isOwner;
             using (MemoryStream ms = new MemoryStream(data))
             {
                 BinaryReader reader = new BinaryReader(ms);
@@ -325,11 +303,15 @@ namespace Viconomy.BlockEntities
                 stallSlots = (int)reader.ReadByte();
                 itemsPerStallSlot = (int)reader.ReadByte();
                 stallSelection = (int)reader.ReadByte();
+                isOwner = reader.ReadBoolean();
                 tree.FromBytes(reader);
             }
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
-            this.invDialog = new GuiDialogViconStallOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+            //if (isOwner)
+           //     this.invDialog = new GuiDialogViconStallOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+           // else
+                this.invDialog = new GuiDialogViconStallCustomer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
             this.invDialog.OpenSound = this.OpenSound;
             this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();
@@ -590,6 +572,7 @@ namespace Viconomy.BlockEntities
             return tfMatrices;
         }
 
+        
 
         private bool TryPut(ItemSlot slot, BlockSelection blockSel, bool bulk)
         {
@@ -708,35 +691,6 @@ namespace Viconomy.BlockEntities
            
         }
 
-        /*
-        protected void toggleInventoryDialogClient(IPlayer byPlayer, CreateDialogDelegate onCreateDialog)
-        {
-            if (this.invDialog == null)
-            {
-                ICoreClientAPI capi = this.Api as ICoreClientAPI;
-                this.invDialog = onCreateDialog();
-                this.invDialog.OnClosed += delegate ()
-                {
-                    this.invDialog = null;
-                    capi.Network.SendBlockEntityPacket(this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.CLOSE_GUI, null);
-                    capi.Network.SendPacketClient(this.Inventory.Close(byPlayer));
-                };
-                this.invDialog.TryOpen();
-                capi.Network.SendPacketClient(this.Inventory.Open(byPlayer));
-                capi.Network.SendBlockEntityPacket(this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.OPEN_GUI, null);
-                return;
-            }
-            else
-            {
-                this.invDialog.TryClose();
-            }
-        }
-        */
-
-       
-
-        
-
         public override void OnBlockUnloaded()
         {
             base.OnBlockUnloaded();
@@ -780,6 +734,19 @@ namespace Viconomy.BlockEntities
         // Token: 0x06000886 RID: 2182 RVA: 0x00061B18 File Offset: 0x0005FD18
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
+            int i = 0;
+            foreach (StallSlot slot in inventory.StallSlots)
+            {
+                ItemSlot stock = slot.FindFirstNonEmptyStockSlot();
+                ItemSlot currency = slot.currency;
+                string stallString = "Not for Sale";
+                if (stock != null && stock.Itemstack != null && currency.Itemstack != null)
+                {
+                    stallString = stock.Itemstack.GetName() + " (" + slot.itemsPerPurchase + ") for " + currency.Itemstack.GetName() + " (" + currency.Itemstack.StackSize + ")";
+                }
+                dsc.AppendLine("Slot " + ++i + ": " +  stallString);
+            }
+            dsc.AppendLine();
             base.GetBlockInfo(forPlayer, dsc);
         }
 
@@ -807,6 +774,11 @@ namespace Viconomy.BlockEntities
             this.RegisterID = tree.GetString("RegisterID");
             this.isAdminShip = tree.GetBool("isAdminShop");
 
+        }
+
+        public override float GetPerishRate()
+        {
+            return inventory.GetTransitionSpeedMul(EnumTransitionType.Perish, null);
         }
 
     }

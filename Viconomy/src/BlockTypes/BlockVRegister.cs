@@ -5,17 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Viconomy.BlockEntities;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
+using Vintagestory.API.Server;
 
 namespace Viconomy.BlockTypes
 {
     public class BlockVRegister : Block
     {
-        public string Name { get; set; }
-        public string ID { get; internal set; }
-        public string Owner { get; internal set; }
-        public string OwnerName { get; internal set; }
-
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
             Console.WriteLine(api.Side + ": On interaction start was called!");
@@ -61,9 +58,15 @@ namespace Viconomy.BlockTypes
             return result;
         }
 
+
+
         public override void OnBlockBroken(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
         {
-            base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
+            BEVRegister vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEVRegister;
+            if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID)
+                    base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
+            else if (api.Side == EnumAppSide.Server)
+                ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("You do not own this register", new object[0]), EnumChatType.CommandError, null);
         }
 
         

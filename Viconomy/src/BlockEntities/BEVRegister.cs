@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.IO;
 using Viconomy.BlockTypes;
 using Viconomy.GUI;
@@ -7,7 +8,6 @@ using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.Client.NoObf;
 using Vintagestory.GameContent;
@@ -149,12 +149,22 @@ namespace Viconomy.BlockEntities
         {
             if (this.Api.World is IServerWorldAccessor)
             {
+                ViconomyModSystem modSystem = Api.ModLoader.GetModSystem<ViconomyModSystem>();
+                ViconRegister register = modSystem.GetRegistry().GetRegister(Owner, ID);
+
                 byte[] data;
                 using (MemoryStream ms = new MemoryStream())
                 {
                     BinaryWriter writer = new BinaryWriter(ms);
                     writer.Write("VinconomyInventory");
-                    writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Stall");
+                    if (register.Name != null)
+                    {
+                        writer.Write(register.Name);
+                    } else
+                    {
+                        writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Stall");
+                    }
+                    
                     TreeAttribute tree = new TreeAttribute();
                     this.inventory.ToTreeAttributes(tree);
                     tree.ToBytes(writer);
@@ -186,7 +196,24 @@ namespace Viconomy.BlockEntities
                         inventoryManager.CloseInventory(this.Inventory);
                     }
                     break;
+                case VinConstants.SET_SHOP_NAME:
+                    //This is crashing somehow???
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
+                        BinaryReader reader = new BinaryReader(ms);
+                        string Name = reader.ReadString();
+                        if (player.PlayerUID == Owner)
+                        {
+                            UpdateRegister(Owner, OwnerName, ID, Name);
+                        }
+                        else
+                        {
+                            Console.WriteLine("You do not own this");
+                        }
+                    }
 
+                    
+                    break;
                 default:
                     if (packetid < 1000)
                     {
@@ -225,6 +252,7 @@ namespace Viconomy.BlockEntities
             {
                 CloseGui(clientWorld);
             }
+
         }
 
         private void OpenShopGui(byte[] data)

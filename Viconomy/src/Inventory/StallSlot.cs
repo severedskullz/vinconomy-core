@@ -5,8 +5,8 @@ namespace Viconomy.Inventory
 {
     public class StallSlot
     {
-        public ItemSlot[] slots;
-        public ItemSlot currency;
+        public ViconItemSlot[] slots;
+        public ViconCurrencySlot currency;
         public int itemsPerPurchase = 1;
         private ViconomyInventory inventory;
         private int numSlots;
@@ -25,10 +25,10 @@ namespace Viconomy.Inventory
             for (int i = 0; i < numSlots; i++)
             {
                 //slots[i] = new ViconItemSlot(inventory, stallSlot, i);
-                this.slots[i] = rawSlots[offset + i];
+                this.slots[i] = (ViconItemSlot) rawSlots[offset + i];
             }
 
-            this.currency = rawSlots[offset + numSlots];
+            this.currency = (ViconCurrencySlot) rawSlots[offset + numSlots];
 
         }
 

@@ -1,22 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Viconomy.BlockEntities;
 using Viconomy.Inventory;
 using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
-using Vintagestory.API.Util;
-using Vintagestory.Client.NoObf;
-using Vintagestory.GameContent;
-using static System.Formats.Asn1.AsnWriter;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Viconomy.GUI
 {
@@ -84,35 +74,6 @@ namespace Viconomy.GUI
 
 
             ViconomyInventory vinInv = Inventory as ViconomyInventory;
-            int[] uiSlots = new int[stacksPerSlot];
-            int offset = curTab * (stacksPerSlot + 1);
-            if (vinInv != null)
-            {
-                for (int i = 0; i < stacksPerSlot; i++)
-                {
-                    uiSlots[i] = offset + i;
-                }
-            }
-
-            int selectedIndex = 0;
-            int shopLength = registers.Length + 1;
-            string[] shopsNames = new string[shopLength];
-            string[] shopsKeys = new string[shopLength];
-
-            shopsNames[0] = "None";
-            shopsKeys[0] = "None";
-            for (int i = 0; i < registers.Length; i++)
-            {
-                shopsNames[i+1] = registers[i].Name;
-                shopsKeys[i+1] = registers[i].ID; 
-
-                if (stall.RegisterID == registers[i].ID)
-                {
-                    selectedIndex = i + 1;
-                }
-            }
-
-
             stallSlot = vinInv.StallSlots[curTab];
             ItemSlot item = stallSlot.FindFirstNonEmptyStockSlot();
             
@@ -146,10 +107,7 @@ namespace Viconomy.GUI
             ElementBounds quantitySelectionBounds = ElementBounds.FixedSize(75, 30).FixedUnder(currencySlotBounds).FixedRightOf(quantitySelectionLabel).WithFixedOffset(25, 10);
 
 
-            ElementBounds adminShopLabel = ElementBounds.FixedSize(100, 25).FixedUnder(quantitySelectionBounds).WithFixedOffset(0, 15);
-            ElementBounds adminShopBounds = ElementBounds.FixedSize(40, 40).FixedUnder(quantitySelectionBounds).FixedRightOf(adminShopLabel).WithFixedOffset(120, 10);
-
-            settingBounds.WithChildren(shopSelectBounds, shopSelectionLabel, quantitySelectionBounds, quantitySelectionLabel, currencyLabel, currencySlotBounds, purchaseSlotBounds, adminShopBounds, adminShopLabel);
+            settingBounds.WithChildren(shopSelectBounds, shopSelectionLabel, quantitySelectionBounds, quantitySelectionLabel, currencyLabel, currencySlotBounds, purchaseSlotBounds);
             settingBounds.verticalSizing = ElementSizing.FitToChildren;
 
             // Background boundaries. Again, just make it fit it's child elements, then add the text as a child element
@@ -185,28 +143,19 @@ namespace Viconomy.GUI
                 .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);
 
                 SingleComposer.BeginChildElements(settingBounds)
+                    .AddButton("<", new ActionConsumable(this.PreviousPage), pagePrev, EnumButtonStyle.Small, "prevPage")
+                    .AddDynamicText(labelText, labelTextFont, pageLabel, "pageLabel")
+                    .AddButton(">", new ActionConsumable(this.NextPage), pageNext, EnumButtonStyle.Small, "nextPage")
+
                     .AddStaticText("Shop:", CairoFont.WhiteSmallText(), shopSelectionLabel)
-                    .AddDropDown(shopsKeys, shopsNames, selectedIndex, new SelectionChangedDelegate(this.onSelectionChanged), shopSelectBounds)
-                    .AddIf(api.World.Player.HasPrivilege("gamemode"))
-                        .AddStaticText("Admin Shop:", CairoFont.WhiteSmallText(), adminShopLabel)
-                        .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
-                    .EndIf()
-                    .AddStaticText("Items Per Purchase:", CairoFont.WhiteSmallText(), quantitySelectionLabel)
-                    .AddNumberInput(quantitySelectionBounds, new Action<string>(this.onQuantityChanged), CairoFont.WhiteSmallText(), "quantity")
-                    //.AddButton("Save", new ActionConsumable(this.onSave),saveButtonBounds, EnumButtonStyle.Small, "save")
+
                     .AddStaticText("Price:", CairoFont.WhiteSmallText(), currencyLabel)
                     .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { offset + stacksPerSlot }, currencySlotBounds, "currency")
                     .AddStaticText("Product:", CairoFont.WhiteSmallText(), purchaseLabel)
                     .AddPassiveItemSlot(purchaseSlotBounds, inv, purchaseSlot, false)
-                    //.AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlotBounds, "purchase")
-                //.AddPassiveItemSlot(outputSlotBounds, Inventory, )
-                .EndChildElements();
 
-                SingleComposer.BeginChildElements(itemPage)
-                    .AddButton("<", new ActionConsumable(this.PreviousPage), pagePrev, EnumButtonStyle.Small, "prevPage")
-                    .AddDynamicText(labelText, labelTextFont, pageLabel, "pageLabel")
-                    .AddButton(">", new ActionConsumable(this.NextPage), pageNext, EnumButtonStyle.Small, "nextPage")
-                    .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), (int)Math.Ceiling(Math.Sqrt(uiSlots.Length)), uiSlots, slotGrid, "inventory")
+
+
                 .EndChildElements();
 
 

@@ -1,22 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Viconomy.BlockEntities;
 using Viconomy.Inventory;
 using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
-using Vintagestory.API.Util;
-using Vintagestory.Client.NoObf;
-using Vintagestory.GameContent;
-using static System.Formats.Asn1.AsnWriter;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Viconomy.GUI
 {

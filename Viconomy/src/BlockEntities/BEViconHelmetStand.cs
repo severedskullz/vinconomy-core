@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Viconomy.Inventory;
 using Vintagestory.API.Client;
-using Vintagestory.API.Common;
+using Viconomy.Filters;
 
 namespace Viconomy.BlockEntities
 {
@@ -17,25 +17,15 @@ namespace Viconomy.BlockEntities
             this.slotCount = 1;
             this.inventory = new ViconomyInventory(null, null, slotCount, stacksPerSlot);
             this.inventory.SlotModified += base.Inventory_SlotModified;
+            this.inventory.SetSlotFilter(0, ViconomyFilters.IsHelmetSlot);
 
         }
 
         protected override float[][] genTransformationMatrices()
         {
-            float[][] tfMatrices = new float[slotCount][];
-            for (int index = 0; index < slotCount; index++)
-            {
-                float scale = 1f;
-                ItemSlot slot = this.inventory.FindFirstNonEmptyStockSlot(index);
-
-
-
-                float x = 0f;
-                float y = -1.1f;
-                float z = 0f;
-                Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(this.block.Shape.rotateY+90).Translate(x, y, z).Translate(-0.5f, 0f, -0.5f).Scale(scale, scale, scale);
-                tfMatrices[index] = matrix.Values;
-            }
+            float[][] tfMatrices = new float[1][];
+            Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(this.block.Shape.rotateY + 90).Translate(0, -1.1f, 0).Translate(-0.5f, 0f, -0.5f);
+            tfMatrices[0] = matrix.Values;
             return tfMatrices;
         }
     }

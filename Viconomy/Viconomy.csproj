@@ -45,6 +45,7 @@
   <Content Include="assets\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>
+  <None Remove="assets\vinconomy\blocktypes\vicon-armorstand.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-helmetstand.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-register.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-shelf.json" />

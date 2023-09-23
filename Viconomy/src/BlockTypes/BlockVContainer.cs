@@ -1,9 +1,14 @@
 ﻿
 using System;
 using System.Linq;
+using System.Text;
 using Viconomy.BlockEntities;
+using Viconomy.src.BlockEntities;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
+using Vintagestory.API.MathTools;
+using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 
 namespace Viconomy.BlockTypes
@@ -30,6 +35,8 @@ namespace Viconomy.BlockTypes
 
             return result;
         }
+
+        public override bool DoParticalSelection(IWorldAccessor world, BlockPos pos) => true;
 
         /*
         public override Cuboidf[] GetSelectionBoxes(IBlockAccessor blockAccessor, BlockPos pos)
@@ -92,6 +99,34 @@ namespace Viconomy.BlockTypes
                     HotKeyCode = "ctrl"
                 }
             });
+        }
+
+        /*
+        public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            string text = Code.Domain + ":" + ItemClass.ToString().ToLowerInvariant() + "desc-" + Code.Path;
+            string matching = Lang.GetMatching(text);
+            matching = ((matching != text) ? matching : "");
+            stringBuilder.Append(matching);
+
+            if (EntityClass != null)
+            {
+                world.BlockAccessor.GetBlockEntity(pos)?.GetBlockInfo(forPlayer, stringBuilder);
+            }
+
+            return base.GetPlacedBlockInfo(world, pos, forPlayer);
+        }
+        */
+
+        public override void OnBlockBroken(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
+        {
+            BEViconStall vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEViconStall;
+            if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID)
+                base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
+            else if (api.Side == EnumAppSide.Server)
+                ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("You do not own this stall", new object[0]), EnumChatType.CommandError, null);
         }
 
 

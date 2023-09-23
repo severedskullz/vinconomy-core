@@ -1,0 +1,135 @@
+{
+  "code": "armorstand",
+  "class": "ViconContainer",
+  "entityClass": "BEViconHelmetStand",
+
+  "priorityInteract": true,
+  "creativeinventory": { "general": [ "*-north" ] },
+  "behaviors": [ { "name": "HorizontalOrientable" } ],
+  "heldTpIdleAnimation": "holdbothhandslarge",
+  "heldTpUseAnimation": "twohandplaceblock",
+  "blockmaterial": "Wood",
+  "variantgroups": [
+    {
+      "code": "stand",
+      "loadFromProperties": "block/wood"
+    },
+    {
+      "code": "base",
+      "loadFromProperties": "block/metal"
+    },
+    {
+      "code": "side",
+      "loadFromProperties": "abstract/horizontalorientation"
+    }
+  ],
+  "textures": {
+    "stand": { "base": "game:block/wood/planks/{stand}1" },
+    "base": { "base": "game:block/metal/plate/{base}" }
+  },
+  "shapebytype": {
+    "*-north": {
+      "base": "block/helmetstand",
+      "rotateY": 0
+    },
+    "*-east": {
+      "base": "block/helmetstand",
+      "rotateY": 270
+    },
+    "*-south": {
+      "base": "block/helmetstand",
+      "rotateY": 180
+    },
+    "*-west": {
+      "base": "block/helmetstand",
+      "rotateY": 90
+    }
+  },
+
+  "collisionSelectionBoxes": [
+    {
+      "x1": 0.25,
+      "y1": 0,
+      "z1": 0.25,
+      "x2": 0.75,
+      "y2": 1,
+      "z2": 0.75,
+      "rotateYByType": {
+        "*-north": 0,
+        "*-east": 270,
+        "*-west": 90,
+        "*-south": 180
+      }
+    },
+    {
+      "x1": 0.25,
+      "y1": 1,
+      "z1": 0.25,
+      "x2": 0.75,
+      "y2": 1.25,
+      "z2": 0.75,
+      "rotateYByType": {
+        "*-north": 0,
+        "*-east": 270,
+        "*-west": 90,
+        "*-south": 180
+      }
+    },
+    {
+      "x1": 0.25,
+      "y1": 1.25,
+      "z1": 0.25,
+      "x2": 0.75,
+      "y2": 1.65,
+      "z2": 0.75,
+      "rotateYByType": {
+        "*-north": 0,
+        "*-east": 270,
+        "*-west": 90,
+        "*-south": 180
+      }
+    },
+    {
+      "x1": 0.25,
+      "y1": 1.65,
+      "z1": 0.25,
+      "x2": 0.75,
+      "y2": 1.85,
+      "z2": 0.75,
+      "rotateYByType": {
+        "*-north": 0,
+        "*-east": 270,
+        "*-west": 90,
+        "*-south": 180
+      }
+    },
+    {
+      "x1": 0.125,
+      "y1": 0,
+      "z1": 0.125,
+      "x2": 0.875,
+      "y2": 0.65,
+      "z2": 0.875,
+      "rotateYByType": {
+        "*-north": 0,
+        "*-east": 270,
+        "*-west": 90,
+        "*-south": 180
+      }
+    }
+  ],
+  "lightAbsorption": 0,
+  "sidesolid": {
+    "all": "false"
+  },
+  "sideopaque": {
+    "all": "false"
+  },
+  "resistance": 3.5,
+  "sounds": {
+    "hit": "game:block/planks",
+    "break": "game:block/planks",
+    "place": "game:block/planks",
+    "walk": "game:walk/wood"
+  }
+}

@@ -4,6 +4,7 @@ using Viconomy.BlockEntities;
 using Viconomy.BlockTypes;
 using Viconomy.Network;
 using Viconomy.Registry;
+using Viconomy.Config;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -24,6 +25,8 @@ namespace Viconomy
 
         public ShopRegistry registers = new ShopRegistry();
 
+        public ViconConfig Config { get; internal set; }
+
         // Called on server and client
         // Useful for registering block/entity classes on both sides
         public override void Start(ICoreAPI api)
@@ -42,6 +45,31 @@ namespace Viconomy
             api.Network.RegisterChannel("Viconomy")
                 .RegisterMessageType(typeof(RegistryUpdatePacket));
 
+        }
+
+        public override void StartPre(ICoreAPI api)
+        {
+            string filename = "viconomy-core.json";
+            try
+            {
+                ViconConfig config = api.LoadModConfig<ViconConfig>(filename);
+                if (config == null)
+                {
+                    config = new ViconConfig();
+                    api.StoreModConfig<ViconConfig>(config, filename);
+                }
+                else
+                {
+                    this.Config = config;
+                }
+            }
+            catch
+            {
+                Config = new ViconConfig();
+                //api.StoreModConfig<ViconConfig>(new ViconConfig(), filename);
+            }
+
+            base.StartPre(api);
         }
 
         public override void StartServerSide(ICoreServerAPI api)
@@ -93,6 +121,8 @@ namespace Viconomy
             }
 
             ViconRegister register = registers.GetRegister(owner, registerID);
+            if (register == null || register.Position == null) { return null; }
+
             BEVRegister viconRegister = _coreServerAPI.World.BlockAccessor.GetBlockEntity(register.Position) as BEVRegister;
             if (viconRegister != null)
             {
@@ -168,7 +198,7 @@ namespace Viconomy
 
         public ViconRegister UpdateRegister(string owner, string iD, string name, BlockPos pos)
         {
-            ViconRegister reg = this.UpdateRegister(owner, iD, name, pos);
+            ViconRegister reg = registers.UpdateRegister(owner, iD, name, pos);
             if (_coreServerAPI != null)
             {
                 IServerPlayer player = (IServerPlayer)_coreServerAPI.World.PlayerByUid(owner);
