@@ -1,0 +1,23 @@
+{
+  "ingredientPattern": "_S_,CCC",
+  "ingredients": {
+    "C": {
+      "type": "item",
+      "code": "game:cloth-*",
+      "name": "cloth",
+      "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "purple", "red", "white", "yellow" ]
+    },
+    "S": {
+      "type": "block",
+      "code": "game:chest-east",
+      "name": "chest"
+    }
+  },
+  "width": 3,
+  "height": 2,
+  "output": {
+    "type": "block",
+    "code": "trademat-{cloth}-north",
+    "quantity": 1
+  }
+}

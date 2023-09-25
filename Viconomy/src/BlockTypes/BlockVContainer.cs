@@ -84,7 +84,8 @@ namespace Viconomy.BlockTypes
                 {
                     ActionLangCode = "blockhelp-crate-add",
                     MouseButton = EnumMouseButton.Right,
-                    HotKeyCode = "shift"
+                    HotKeyCode = "shift",
+                    
                 },
                 new WorldInteraction
                 {

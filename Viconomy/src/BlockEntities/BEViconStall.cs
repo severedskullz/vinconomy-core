@@ -1,27 +1,17 @@
-﻿
-using Microsoft.VisualBasic;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Numerics;
-using System.Reflection;
 using System.Text;
 using Viconomy.BlockTypes;
 using Viconomy.GUI;
 using Viconomy.Inventory;
 using Viconomy.Util;
-using Vintagestory;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
-using Vintagestory.API.Util;
-using Vintagestory.Common;
 using Vintagestory.GameContent;
-using Vintagestory.Server;
 
 namespace Viconomy.BlockEntities
 {
@@ -91,7 +81,7 @@ namespace Viconomy.BlockEntities
         // Token: 0x0600087F RID: 2175
         public bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
         {
-            Console.WriteLine("Calling OnPlayerRightClick from " + Api.Side);
+            //Console.WriteLine("Calling OnPlayerRightClick from " + Api.Side);
             bool shiftMod = byPlayer.Entity.Controls.Sneak;
             bool ctrlMod = byPlayer.Entity.Controls.Sprint;
             ItemSlot ownSlot = this.inventory.FirstNonEmptySlot;
@@ -143,28 +133,32 @@ namespace Viconomy.BlockEntities
 
             int stallSlot;
             int desiredAmount;
+            bool useHandSlot;
             using (MemoryStream memoryStream = new MemoryStream(data))
             {
                 BinaryReader binaryReader = new BinaryReader(memoryStream);
                 stallSlot = binaryReader.ReadInt32();
                 desiredAmount = binaryReader.ReadInt32();
+                useHandSlot = binaryReader.ReadBoolean();
             }
 
 
-            Console.WriteLine(Api.Side + ": We tried to purchase item!");
-            PrintClientMessage(player, Api.Side + ": We tried to purchase item!");
-            ItemSlot handItem = player.InventoryManager.ActiveHotbarSlot;
+            //Console.WriteLine(Api.Side + ": We tried to purchase item!");
+            //PrintClientMessage(player, Api.Side + ": We tried to purchase item!");
+            
             ItemSlot currency = this.inventory.GetCurrencyForSelection(stallSlot);
+            
 
             if (currency.Itemstack == null) {
-                PrintClientMessage(player, "vicionomy:item-cost");
+                //PrintClientMessage(player, "vicionomy:item-cost", new Object[] { currency.Itemstack.StackSize, currency.Itemstack.GetName() });
+                ViconomyModSystem.PrintClientMessage(player, "vicionomy:no-price", null);
                 return;
             } 
             
             // Does the shop have a register ID set?
             if (this.RegisterID == null && !this.isAdminShip)
             {
-                PrintClientMessage(player, "vicionomy:not-registered-with-shop");
+                ViconomyModSystem.PrintClientMessage(player, "vicionomy:not-registered-with-shop");
                 return;
             }
 
@@ -173,10 +167,11 @@ namespace Viconomy.BlockEntities
             BEVRegister register = mod.GetShopRegister(this.Owner, this.RegisterID);
             if (register == null && !this.isAdminShip)
             {
-                PrintClientMessage(player, "vicionomy:not-registered-with-shop");
+                ViconomyModSystem.PrintClientMessage(player, "vicionomy:not-registered-with-shop");
                 return;
             }
 
+            /*
             // Is there an actual Register entity at those coordinates?
             BEVRegister shopRegister = null;
             if (register != null)
@@ -190,74 +185,97 @@ namespace Viconomy.BlockEntities
                     return;
                 }
             }
+            */
 
-            if (currency.Itemstack.Satisfies(handItem.Itemstack))
+                            
+                
+            ItemSlot[] stockSlots = this.inventory.GetSlotsForSelection(stallSlot);
+            ItemSlot purchaseSlot = null;
+            int itemsPerPurchase = this.inventory.StallSlots[stallSlot].itemsPerPurchase;
+
+            //Find the first slot available that we can purchase from
+            foreach (var stockSlot in stockSlots)
             {
-
-                if (handItem.StackSize < currency.StackSize)
+                if (stockSlot.StackSize >= itemsPerPurchase)
                 {
-                    Console.WriteLine(Api.Side + ": Not enough money!");
-                    PrintClientMessage(player, "vicionomy:not-enough-money");
-                    return;
-                } 
-                
-                
-                ItemSlot[] stockSlots = this.inventory.GetSlotsForSelection(stallSlot);
-                ItemSlot purchaseSlot = null;
-                int itemsPerPurchase = this.inventory.StallSlots[stallSlot].itemsPerPurchase;
-
-                //Find the first slot available that we can purchase from
-                foreach (var stockSlot in stockSlots)
-                {
-                    if (stockSlot.StackSize >= itemsPerPurchase)
-                    {
-                        purchaseSlot = stockSlot;
-                        break;
-                    }
+                    purchaseSlot = stockSlot;
+                    break;
                 }
+            }
 
-                if (purchaseSlot == null)
+            if (purchaseSlot == null)
+            {
+                //Console.WriteLine(Api.Side + ": Not enough stock to purchase item");
+                ViconomyModSystem.PrintClientMessage(player, "vicionomy:no-product");
+                return;
+            }
+
+            if (useHandSlot)
+            {
+                PurchaseWithHandSlot(player, purchaseSlot, stallSlot, desiredAmount, register);
+            }
+            else
+            {
+                PurchaseWithInventory(player, purchaseSlot, stallSlot, desiredAmount, register);
+            }
+
+        }
+
+        public void PurchaseWithInventory(IPlayer player, ItemSlot purchaseSlot, int stallSlot, int desiredAmount, BEVRegister shopRegister)
+        {
+            //TODO
+        }
+
+        public void PurchaseWithHandSlot(IPlayer player, ItemSlot purchaseSlot, int stallSlot, int desiredAmount, BEVRegister shopRegister)
+        {
+            int itemsPerPurchase = this.inventory.StallSlots[stallSlot].itemsPerPurchase;
+            ItemSlot currency = this.inventory.GetCurrencyForSelection(stallSlot);
+
+            ItemSlot handItem = player.InventoryManager.ActiveHotbarSlot;
+            if (!currency.Itemstack.Equals(Api.World, handItem.Itemstack, null) || handItem.StackSize < currency.StackSize)
+            {
+                //Console.WriteLine(Api.Side + ": Not enough money!");
+                ViconomyModSystem.PrintClientMessage(player, "vicionomy:not-enough-money");
+                return;
+            }
+
+            desiredAmount = Math.Min(desiredAmount, handItem.Itemstack.StackSize / currency.Itemstack.StackSize);
+            desiredAmount = Math.Min(purchaseSlot.StackSize / itemsPerPurchase, desiredAmount);
+            if (desiredAmount > 0)
+            {
+                int price = currency.Itemstack.StackSize * desiredAmount;
+                ItemStack currencyStack = handItem.Itemstack.Clone();
+                currencyStack.StackSize = price;
+
+                //Console.WriteLine(Api.Side + ": Checking if we can hold!");
+                //PrintClientMessage(player, Api.Side + ": We tried to purchase item!");
+                if ((shopRegister == null || shopRegister.CanHold(currencyStack)) && PurchaseItem(player, purchaseSlot, currency, desiredAmount * itemsPerPurchase, price))
                 {
-                    Console.WriteLine(Api.Side + ": Not enough stock to purchase item");
-                    PrintClientMessage(player, "vicionomy:not-enough-stock");
-                    return;
-                }
-
-                desiredAmount = Math.Min(desiredAmount, handItem.Itemstack.StackSize / currency.Itemstack.StackSize);
-                desiredAmount = Math.Min(purchaseSlot.StackSize / itemsPerPurchase, desiredAmount);
-                if (desiredAmount > 0)
-                {
-                    int price = currency.Itemstack.StackSize * desiredAmount;
-                    ItemStack currencyStack = handItem.Itemstack.Clone();
-                    currencyStack.StackSize = price; // TODO: Somehow this is running twice? First with 5, then with 2.
-
-                    Console.WriteLine(Api.Side + ": Checking if we can hold!");
-                    PrintClientMessage(player, Api.Side + ": We tried to purchase item!");
-                    if ((shopRegister == null || shopRegister.CanHold(currencyStack)) && PurchaseItem(player, purchaseSlot, currency, desiredAmount * itemsPerPurchase))
+                    //Console.WriteLine(Api.Side + ": taking out " + price);
+                    //PrintClientMessage(player, Api.Side + ": taking out " + price);
+                    if (shopRegister != null)
                     {
-                        Console.WriteLine(Api.Side + ": taking out " + price);
-                        PrintClientMessage(player, Api.Side + ": taking out " + price);
-                        if (shopRegister != null) { 
-                            shopRegister.AddItem(handItem, price);
-                        } else
-                        {
-                            ItemStack payment = handItem.TakeOut(price);
-                        }
-
-                        handItem.MarkDirty();
-                        Console.WriteLine("Purchase called from " + this.Api.Side);
+                        shopRegister.AddItem(handItem, price);
                     }
                     else
                     {
-                        PrintClientMessage(player, "vicionomy:not-enough-stock");
-                        Console.WriteLine(Api.Side + ": Something went horribly wrong - Not enough stock to purchase item");
+                        // Just remove the payment - dont place it in register, since none is set up.
+                        handItem.TakeOut(price);
                     }
+
+                    handItem.MarkDirty();
+                    //Console.WriteLine("Purchase called from " + this.Api.Side);
                 }
                 else
                 {
-                    PrintClientMessage(player, "vicionomy:purchased-zero-quantity");
-                    Console.WriteLine(Api.Side + ": Something went horribly wrong - Tried to take 0 stock!");
+                    ViconomyModSystem.PrintClientMessage(player, "vicionomy:not-enough-stock");
+                    //Console.WriteLine(Api.Side + ": Something went horribly wrong - Not enough stock to purchase item");
                 }
+            }
+            else
+            {
+                ViconomyModSystem.PrintClientMessage(player, "vicionomy:purchased-zero-quantity");
+                //Console.WriteLine(Api.Side + ": Something went horribly wrong - Tried to take 0 stock!");
             }
         }
 
@@ -308,9 +326,9 @@ namespace Viconomy.BlockEntities
             }
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
-            //if (isOwner)
-           //     this.invDialog = new GuiDialogViconStallOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
-           // else
+            if (isOwner)
+                this.invDialog = new GuiDialogViconStallOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+            else
                 this.invDialog = new GuiDialogViconStallCustomer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
             this.invDialog.OpenSound = this.OpenSound;
             this.invDialog.CloseSound = this.CloseSound;
@@ -320,7 +338,7 @@ namespace Viconomy.BlockEntities
                 this.invDialog = null;
                 capi.Network.SendBlockEntityPacket(this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.CLOSE_GUI, null);
             };
-            Console.WriteLine(Api.Side + ": Attempted to open Shop GUI");
+            //Console.WriteLine(Api.Side + ": Attempted to open Shop GUI");
         }
 
         private void CloseGui(IClientWorldAccessor clientWorld)
@@ -345,54 +363,6 @@ namespace Viconomy.BlockEntities
             Console.WriteLine(Api.Side + ": Attempted to close GUI");
         }
 
-        private void SetStallItemsPerPurchase(IPlayer byPlayer, byte[] data)
-        {
-            if (byPlayer.PlayerUID != this.Owner)
-            {
-                PrintClientMessage(byPlayer, "vicionomy:doesnt-own", new object[] {});
-                return;
-            }
-
-            int stallSlot;
-            int amountItems;
-            using (MemoryStream ms = new MemoryStream(data))
-            {
-                BinaryReader reader = new BinaryReader(ms);
-                stallSlot = (int)reader.ReadInt32();
-                amountItems = (int)reader.ReadInt32();
-            }
-
-            this.inventory.StallSlots[stallSlot].itemsPerPurchase = amountItems;
-            PrintClientMessage(byPlayer, "set quantity to " + amountItems, new object[] { amountItems});
-            this.MarkDirty();
-        }
-
-        private void SetStallID(IPlayer byPlayer, byte[] data)
-        {
-            if (byPlayer.PlayerUID != this.Owner)
-            {
-                PrintClientMessage(byPlayer, "vicionomy:doesnt-own", new object[] { });
-                return;
-            }
-
-            using (MemoryStream ms = new MemoryStream(data))
-            {
-                BinaryReader reader = new BinaryReader(ms);
-                string ID = reader.ReadString();
-                if (ID != "None")
-                {
-                    this.RegisterID = ID;
-                } else
-                {
-                    this.RegisterID = null;
-                }
-            }
-
-            PrintClientMessage(byPlayer, "set ID to " + this.RegisterID);
-            this.MarkDirty();
-        }
-
-
         #endregion
 
 
@@ -401,7 +371,7 @@ namespace Viconomy.BlockEntities
         public override void OnReceivedClientPacket(IPlayer player, int packetid, byte[] data)
         {
             Console.WriteLine(Api.Side + ": OnRecievedClientPacket " + packetid);
-            PrintClientMessage(player, Api.Side + ": OnRecievedClientPacket");
+            //PrintClientMessage(player, Api.Side + ": OnRecievedClientPacket");
             IPlayerInventoryManager inventoryManager = player.InventoryManager;
             switch (packetid)
             {
@@ -439,7 +409,7 @@ namespace Viconomy.BlockEntities
                 default:
                     if (packetid < 1000)
                     {
-                        Console.Write("Handling Inv Packet");
+                        //Console.Write("Handling Inv Packet");
                         this.Inventory.InvNetworkUtil.HandleClientPacket(player, packetid, data);
                         this.Api.World.BlockAccessor.GetChunkAtBlockPos(this.Pos.X, this.Pos.Y, this.Pos.Z).MarkModified();
                         return;
@@ -448,17 +418,65 @@ namespace Viconomy.BlockEntities
             }
         }
 
+        private void SetStallItemsPerPurchase(IPlayer byPlayer, byte[] data)
+        {
+            if (byPlayer.PlayerUID != this.Owner)
+            {
+                ViconomyModSystem.PrintClientMessage(byPlayer, "vicionomy:doesnt-own", new object[] { });
+                return;
+            }
+
+            int stallSlot;
+            int amountItems;
+            using (MemoryStream ms = new MemoryStream(data))
+            {
+                BinaryReader reader = new BinaryReader(ms);
+                stallSlot = (int)reader.ReadInt32();
+                amountItems = (int)reader.ReadInt32();
+            }
+
+            this.inventory.StallSlots[stallSlot].itemsPerPurchase = amountItems;
+            //PrintClientMessage(byPlayer, "set quantity to " + amountItems, new object[] { amountItems });
+            this.MarkDirty();
+        }
+
+        private void SetStallID(IPlayer byPlayer, byte[] data)
+        {
+            if (byPlayer.PlayerUID != this.Owner)
+            {
+                ViconomyModSystem.PrintClientMessage(byPlayer, "vicionomy:doesnt-own", new object[] { });
+                return;
+            }
+
+            using (MemoryStream ms = new MemoryStream(data))
+            {
+                BinaryReader reader = new BinaryReader(ms);
+                string ID = reader.ReadString();
+                if (ID != "None")
+                {
+                    this.RegisterID = ID;
+                }
+                else
+                {
+                    this.RegisterID = null;
+                }
+            }
+
+            //PrintClientMessage(byPlayer, "set ID to " + this.RegisterID);
+            this.MarkDirty();
+        }
+
         private void SetAdminShop(IPlayer byPlayer, byte[] data)
         {
             if (byPlayer.PlayerUID != this.Owner)
             {
-                PrintClientMessage(byPlayer, "vicionomy:doesnt-own", new object[] { });
+                ViconomyModSystem.PrintClientMessage(byPlayer, "vicionomy:doesnt-own", new object[] { });
                 return;
             }
 
             if (!byPlayer.HasPrivilege("gamemode"))
             {
-                PrintClientMessage(byPlayer, "vicionomy:no-privelege", new object[] { });
+                ViconomyModSystem.PrintClientMessage(byPlayer, "vicionomy:no-privelege", new object[] { });
                 return;
             }
 
@@ -468,7 +486,7 @@ namespace Viconomy.BlockEntities
                 this.isAdminShip = reader.ReadBoolean();
             }
 
-            PrintClientMessage(byPlayer, "set Admin Shop to " + this.isAdminShip);
+            //PrintClientMessage(byPlayer, "set Admin Shop to " + this.isAdminShip);
             this.MarkDirty();
         }
 
@@ -504,7 +522,7 @@ namespace Viconomy.BlockEntities
         {
             if (this.Api.Side == EnumAppSide.Client)
             {
-                this.Api.Logger.Chat("Attempting to purchase item from slot " + slot);
+                //this.Api.Logger.Chat("Attempting to purchase item from slot " + slot);
                 if (this.Api.Side == EnumAppSide.Client)
                 {
                     byte[] data;
@@ -513,6 +531,7 @@ namespace Viconomy.BlockEntities
                         BinaryWriter writer = new BinaryWriter(ms);
                         writer.Write(slot);
                         writer.Write(amount);
+                        writer.Write(true);
                         data = ms.ToArray();
                     }
                   ((ICoreClientAPI)this.Api).Network.SendBlockEntityPacket(this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.PURCHASE_ITEMS, data);
@@ -624,7 +643,7 @@ namespace Viconomy.BlockEntities
         }
 
 
-        private bool PurchaseItem(IPlayer byPlayer, ItemSlot purchaseSlot, ItemSlot currency, int amount)
+        private bool PurchaseItem(IPlayer byPlayer, ItemSlot purchaseSlot, ItemSlot currency, int amount, int price)
         {
             if (this.Api.Side == EnumAppSide.Client)
             {
@@ -668,9 +687,9 @@ namespace Viconomy.BlockEntities
                     coreClientAPI.World.Player.TriggerFpAnimation(EnumHandInteract.HeldItemInteract);
                 }
                 ICoreServerAPI coreSererAPI = this.Api as ICoreServerAPI;
-                if (coreClientAPI != null)
+                if (coreSererAPI != null)
                 {
-                    PrintClientMessage(byPlayer, "vicionomy:purchased-item", new object[] { amount, stack.GetName(), currency.StackSize * amount, currency.Itemstack.GetName() });
+                    ViconomyModSystem.PrintClientMessage(byPlayer, "vicionomy:purchased-item", new object[] { amount, stack.GetName(), price, currency.Itemstack.GetName() });
                 }
 
                 this.MarkDirty(true, null);
@@ -681,15 +700,7 @@ namespace Viconomy.BlockEntities
         }
 
 
-        private void PrintClientMessage(IPlayer player, string message, object[] args = null)
-        {
-            if (args == null) {
-                args = Array.Empty<object>();
-            }
-            //TODO: Convert to Packet so we can localize on the User's end, not the Server.
-            ((IServerPlayer)player).SendMessage(0, Lang.Get(message, args) + this.Api.Side, EnumChatType.CommandError, null);
-           
-        }
+
 
         public override void OnBlockUnloaded()
         {
@@ -739,12 +750,14 @@ namespace Viconomy.BlockEntities
             {
                 ItemSlot stock = slot.FindFirstNonEmptyStockSlot();
                 ItemSlot currency = slot.currency;
-                string stallString = "Not for Sale";
                 if (stock != null && stock.Itemstack != null && currency.Itemstack != null)
                 {
-                    stallString = stock.Itemstack.GetName() + " (" + slot.itemsPerPurchase + ") for " + currency.Itemstack.GetName() + " (" + currency.Itemstack.StackSize + ")";
+                    dsc.AppendLine(Lang.Get("viconomy:for-sale", new Object[] {i, slot.itemsPerPurchase, stock.Itemstack.GetName(), currency.Itemstack.StackSize,  currency.Itemstack.GetName()}));
+                } else
+                {
+                    dsc.AppendLine(Lang.Get("viconomy:not-for-sale", new Object[] { i }));
                 }
-                dsc.AppendLine("Slot " + ++i + ": " +  stallString);
+                
             }
             dsc.AppendLine();
             base.GetBlockInfo(forPlayer, dsc);

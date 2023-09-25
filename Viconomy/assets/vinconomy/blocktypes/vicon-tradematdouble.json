@@ -1,9 +1,9 @@
 {
-  "code": "trademat",
+  "code": "tradematdouble",
   "class": "ViconContainer",
   "entityClass": "BEViconStall",
   "priorityInteract": true,
-  "creativeinventory": { "general": [ "*-north" ] },
+  "creativeinventory": { "viconomy": [ "*-oak-north" ] },
   "behaviors": [ { "name": "HorizontalOrientable" } ],
   "heldTpIdleAnimation": "holdbothhandslarge",
   "heldTpUseAnimation": "twohandplaceblock",

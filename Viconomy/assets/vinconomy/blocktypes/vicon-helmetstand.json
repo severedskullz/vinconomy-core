@@ -4,7 +4,7 @@
   "entityClass": "BEViconHelmetStand",
 
   "priorityInteract": true,
-  "creativeinventory": { "general": [ "*-north" ] },
+  "creativeinventory": { "viconomy": [ "*-oak-*-north" ] },
   "behaviors": [ { "name": "HorizontalOrientable" } ],
   "heldTpIdleAnimation": "holdbothhandslarge",
   "heldTpUseAnimation": "twohandplaceblock",
@@ -16,7 +16,7 @@
     },
     {
       "code": "base",
-      "loadFromProperties": "block/metal"
+      "states": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
     },
     {
       "code": "side",

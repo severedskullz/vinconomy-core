@@ -1,12 +1,14 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.IO;
+using System.Numerics;
 using Viconomy.BlockTypes;
 using Viconomy.GUI;
 using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.Client.NoObf;
@@ -47,14 +49,14 @@ namespace Viconomy.BlockEntities
 
             if (ID == null)
             {
-                Console.WriteLine("Register block was placed and did not have ID Set...");
+                //Console.WriteLine("Register block was placed and did not have ID Set...");
                 ViconRegister register = modSystem.AddRegister(Owner, OwnerName, OwnerName + "'s Shop", this.Pos);
 
                 ID = register.ID;
             }
             else
             {
-                Console.WriteLine("Register block was placed and had ID Set... Updating");
+                //Console.WriteLine("Register block was placed and had ID Set... Updating");
                 ViconRegister register = modSystem.UpdateRegister(Owner, ID, Name, this.Pos);
             }
 
@@ -139,7 +141,11 @@ namespace Viconomy.BlockEntities
             }
             else
             {
-             
+                if (Api.Side == EnumAppSide.Server)
+                {
+                    ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("viconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
+                }
+               
             }
 
             return true;
@@ -178,7 +184,7 @@ namespace Viconomy.BlockEntities
 
         public override void OnReceivedClientPacket(IPlayer player, int packetid, byte[] data)
         {
-            Console.WriteLine(Api.Side + ": OnRecievedClientPacket " + packetid);
+            //Console.WriteLine(Api.Side + ": OnRecievedClientPacket " + packetid);
             IPlayerInventoryManager inventoryManager = player.InventoryManager;
             switch (packetid)
             {
@@ -197,7 +203,6 @@ namespace Viconomy.BlockEntities
                     }
                     break;
                 case VinConstants.SET_SHOP_NAME:
-                    //This is crashing somehow???
                     using (MemoryStream ms = new MemoryStream(data))
                     {
                         BinaryReader reader = new BinaryReader(ms);
@@ -208,7 +213,7 @@ namespace Viconomy.BlockEntities
                         }
                         else
                         {
-                            Console.WriteLine("You do not own this");
+                            //Console.WriteLine("You do not own this");
                         }
                     }
 
@@ -217,7 +222,7 @@ namespace Viconomy.BlockEntities
                 default:
                     if (packetid < 1000)
                     {
-                        Console.Write("Handling Inv Packet");
+                        //Console.Write("Handling Inv Packet");
                         this.Inventory.InvNetworkUtil.HandleClientPacket(player, packetid, data);
                         this.Api.World.BlockAccessor.GetChunkAtBlockPos(this.Pos.X, this.Pos.Y, this.Pos.Z).MarkModified();
                         return;
@@ -228,18 +233,18 @@ namespace Viconomy.BlockEntities
 
         public override void OnReceivedServerPacket(int packetid, byte[] data)
         {
-            Console.WriteLine(Api.Side + ": OnRecievedServerPacket " + packetid);
+            //Console.WriteLine(Api.Side + ": OnRecievedServerPacket " + packetid);
             IClientWorldAccessor clientWorld = (IClientWorldAccessor)this.Api.World;
             if (packetid == VinConstants.TOGGLE_GUI)
             {
                 if (this.invDialog != null)
                 {
-                    Console.WriteLine(Api.Side + ": Toggling GUI OFF");
+                    //Console.WriteLine(Api.Side + ": Toggling GUI OFF");
                     CloseGui(clientWorld);
                 }
                 else
                 {
-                    Console.WriteLine(Api.Side + ": Toggling GUI ON");
+                    //Console.WriteLine(Api.Side + ": Toggling GUI ON");
                     OpenShopGui(data);
                 }
 
@@ -278,7 +283,7 @@ namespace Viconomy.BlockEntities
 
                 ((ClientCoreAPI) Api).Network.SendBlockEntityPacket(this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.CLOSE_GUI, null);
             };
-            Console.WriteLine(Api.Side + ": Attempted to open Shop GUI");
+            //Console.WriteLine(Api.Side + ": Attempted to open Shop GUI");
         }
 
         private void CloseGui(IClientWorldAccessor clientWorld)
@@ -300,7 +305,7 @@ namespace Viconomy.BlockEntities
             }
 
             this.invDialog = null;
-            Console.WriteLine(Api.Side + ": Attempted to close GUI");
+            //Console.WriteLine(Api.Side + ": Attempted to close GUI");
         }
     }
 

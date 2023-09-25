@@ -1,0 +1,29 @@
+{
+  "ingredientPattern": "WWW,PCP,WWW",
+  "ingredients": {
+    "W": {
+      "type": "item",
+      "code": "game:plank-*",
+      "name": "wood",
+      "allowedVariants": [ "birch", "oak", "maple", "pine", "acacia", "kapok", "baldcypress", "larch", "redwood", "ebony", "walnut", "purpleheart" ]
+    },
+    "P": {
+      "type": "block",
+      "code": "game:plate-*",
+      "name": "chest",
+      "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ] 
+    },
+    "C": {
+      "type": "block",
+      "code": "game:chest-east",
+      "name": "chest"
+    }
+  },
+  "width": 1,
+  "height": 2,
+  "output": {
+    "type": "block",
+    "code": "trademat-{wood}-north",
+    "quantity": 1
+  }
+}

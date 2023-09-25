@@ -1,3 +1,25 @@
 {
-    "hello": "hello world!"
+  "hello": "hello world!",
+  "viconomy:doesnt-own": "You do not own this.",
+  "vicionomy:no-privelege": "You do not have permission to set this to an Admin stall.",
+  "vicionomy:purchased-item": "You purchased {0}x {1} for {2}x {3}.",
+  "vicionomy:not-enough-stock": "Not enough items left in stock for this purchase.",
+  "vicionomy:no-price": "This item does not yet have a price",
+  "vicionomy:no-product": "There is nothing for sale for this slot",
+  "vicionomy:purchased-zero-quantity": "You must purchase atleast 1 item at a time.",
+  "vicionomy:not-enough-money": "Not enough items in your hand to purchase this item.",
+  "vicionomy:not-registered-with-shop": "This stall is not registered with a shop yet. Unable to make a purchase.",
+  "vicionomy:item-cost": "This item costs {0}x {1}. Please have payment in your hand.",
+  "viconomy:for-sale": "Slot {0}: {1}x {2} for {3}x {4}",
+  "viconomy:not-for-sale": "Slot {0}: Not for Sale",
+
+  "vinconomy:block-armorstand-*": "Shop Armor Stand",
+  "vinconomy:block-helmetstand-*": "Shop Helmet Stand",
+  "vinconomy:block-opencrate-*": "Shop Crate",
+  "vinconomy:block-register-*": "Shop Register",
+  "vinconomy:block-shelf-*": "Shop Shelf",
+  "vinconomy:block-trademat-*": "Shop Mat (Single)",
+  "vinconomy:block-tradematdouble-*": "Shop Mat (Double)"
+
+
 }

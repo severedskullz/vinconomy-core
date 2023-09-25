@@ -35,9 +35,9 @@ namespace Viconomy.Inventory
 
         protected override void ActivateSlotLeftClick(ItemSlot sourceSlot, ref ItemStackMoveOperation op)
         {
-            if (DoPurchase != null)
+            if (OnActivateLeftClick != null)
             {
-                this.DoPurchase();
+                this.OnActivateLeftClick();
             }
         }
 
@@ -46,7 +46,8 @@ namespace Viconomy.Inventory
             
         }
 
-        public event Action DoPurchase;
+        public event Action OnActivateLeftClick;
+
         public void SetProduct(ItemStack stack)
         {
             this.itemstack = stack;

@@ -3,7 +3,7 @@
   "class": "ViconContainer",
   "entityClass": "BEViconStall",
   "priorityInteract": true,
-  "creativeinventory": { "general": [ "*-north" ] },
+  "creativeinventory": { "viconomy": [ "*-north" ] },
   "behaviors": [ { "name": "HorizontalOrientable" } ],
   "heldTpIdleAnimation": "holdbothhandslarge",
   "heldTpUseAnimation": "twohandplaceblock",

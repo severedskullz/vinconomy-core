@@ -38,8 +38,7 @@
   },
   "heldTpIdleAnimation": "holdunderarm",
   "creativeinventory": {
-    "general": [ "*-east" ],
-    "decorative": [ "*-east" ]
+    "viconomy": [ "*-east" ]
   },
   "blockmaterial": "Wood",
   "replaceable": 900,

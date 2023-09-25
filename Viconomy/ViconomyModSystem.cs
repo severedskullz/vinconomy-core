@@ -209,5 +209,23 @@ namespace Viconomy
             }
             return reg;
         }
+
+        public static void PrintClientMessage(IPlayer player, string message, object[] args = null)
+        {
+            if (args == null)
+            {
+                args = Array.Empty<object>();
+            }
+            if (player is IServerPlayer)
+            {
+                ((IServerPlayer)player).SendMessage(0, Lang.Get(message, args), EnumChatType.OwnMessage, null);
+            }
+            else
+            {
+                ((IClientPlayer)player).ShowChatNotification(Lang.Get(message, args));
+            }
+            
+
+        }
     }
 }
