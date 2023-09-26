@@ -1,20 +1,18 @@
-﻿
-using System;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Viconomy.BlockEntities;
-using Viconomy.src.BlockEntities;
+using Viconomy.Inventory;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
-using Vintagestory.API.Util;
 
 namespace Viconomy.BlockTypes
 {
     public class BlockVContainer : Block
     {
+        
+
         public BlockVContainer()
         {
             this.PriorityInteract = true;
@@ -66,7 +64,7 @@ namespace Viconomy.BlockTypes
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
-            Console.WriteLine(api.Side + ": On interaction start was called!");
+            //Console.WriteLine(api.Side + ": On interaction start was called!");
             BEViconStall be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEViconStall;
             if (be != null)
             {
@@ -78,28 +76,73 @@ namespace Viconomy.BlockTypes
 
         public override WorldInteraction[] GetPlacedBlockInteractionHelp(IWorldAccessor world, BlockSelection selection, IPlayer forPlayer)
         {
-            return base.GetPlacedBlockInteractionHelp(world, selection, forPlayer).Append(new WorldInteraction[]
+            BEViconStall be = world.BlockAccessor.GetBlockEntity(selection.Position) as BEViconStall;
+            List<WorldInteraction> interactions = new List<WorldInteraction>();
+            if (be != null)
             {
-                new WorldInteraction
+                StallSlot[] slots = ((ViconomyInventory)be.Inventory).StallSlots;
+                //In case we have some oddity with selections, just exit gracefully.
+                if (selection.SelectionBoxIndex >= slots.Length)
                 {
-                    ActionLangCode = "blockhelp-crate-add",
-                    MouseButton = EnumMouseButton.Right,
-                    HotKeyCode = "shift",
-                    
-                },
-                new WorldInteraction
+                    return interactions.ToArray();
+                }
+
+                StallSlot slot = slots[selection.SelectionBoxIndex];
+
+                if (be.Owner == forPlayer.PlayerUID)
                 {
-                    ActionLangCode = "blockhelp-crate-remove",
+                    if (slot.currency.Itemstack != null && slot.FindFirstNonEmptyStockSlot() != null)
+                    {
+                        interactions.Add(new WorldInteraction
+                        {
+                            ActionLangCode = "viconomy:stall-purchase",
+                            MouseButton = EnumMouseButton.Right,
+                            HotKeyCode = "shift",
+                            Itemstacks = new ItemStack[] { slot.currency.Itemstack }
+
+                        });
+
+                        ItemStack fiveStack = slot.currency.Itemstack.Clone();
+                        fiveStack.StackSize = 5 * fiveStack.StackSize;
+                        interactions.Add(new WorldInteraction
+                        {
+                            ActionLangCode = "viconomy:stall-purchase-five",
+                            MouseButton = EnumMouseButton.Right,
+                            HotKeyCodes = new string[] { "shift", "ctrl" },
+                            Itemstacks = new ItemStack[] { fiveStack }
+                        });
+                    }
+                } else {
+                    ItemSlot firstSlot = slot.FindFirstNonEmptyStockSlot();
+                    if (slot != null)
+                    {
+                        interactions.Add(new WorldInteraction
+                        {
+                            ActionLangCode = "viconomy:stall-add",
+                            MouseButton = EnumMouseButton.Right,
+                            HotKeyCode = "shift",
+                            Itemstacks = new ItemStack[] { firstSlot.Itemstack }
+                        });
+                    } else {
+                        interactions.Add(new WorldInteraction
+                        {
+                            ActionLangCode = "viconomy:stall-add",
+                            MouseButton = EnumMouseButton.Right,
+                            HotKeyCode = "shift"
+                        });
+                    }
+                }
+
+                interactions.Add(new WorldInteraction
+                {
+                    ActionLangCode = "viconomy:stall-open-menu",
                     MouseButton = EnumMouseButton.Right,
                     HotKeyCode = null
-                },
-                new WorldInteraction
-                {
-                    ActionLangCode = "blockhelp-crate-removeall",
-                    MouseButton = EnumMouseButton.Right,
-                    HotKeyCode = "ctrl"
-                }
-            });
+                });
+                
+            }
+
+            return interactions.ToArray();
         }
 
         /*
@@ -127,7 +170,7 @@ namespace Viconomy.BlockTypes
             if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID)
                 base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
             else if (api.Side == EnumAppSide.Server)
-                ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("You do not own this stall", new object[0]), EnumChatType.CommandError, null);
+                ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("viconomy:doesnt-own", new object[0]), EnumChatType.CommandError, null);
         }
 
 

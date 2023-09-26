@@ -84,7 +84,6 @@ namespace Viconomy.BlockEntities
             //Console.WriteLine("Calling OnPlayerRightClick from " + Api.Side);
             bool shiftMod = byPlayer.Entity.Controls.Sneak;
             bool ctrlMod = byPlayer.Entity.Controls.Sprint;
-            ItemSlot ownSlot = this.inventory.FirstNonEmptySlot;
 
 
             ItemSlot hotbarslot = byPlayer.InventoryManager.ActiveHotbarSlot;
@@ -92,20 +91,15 @@ namespace Viconomy.BlockEntities
 
             if (byPlayer.PlayerUID == Owner)
             {
-                 if (shiftMod && ctrlMod)
-                {
-                    int desiredAmount = ctrlMod ? 5 : 1;
-                    RequestPurchaseItem(blockSel.SelectionBoxIndex, desiredAmount);
-                }
-                else if(shiftMod)
-                {
+               if(shiftMod)
+               {
                     //Add items to slot
                     TryPut(hotbarslot, blockSel, ctrlMod);
-                } else
-                {
+               } else
+               {
                     // Open shop admin gui
                     OpenShopForPlayer(byPlayer, blockSel.SelectionBoxIndex);
-                }
+               }
             } 
             else
             {

@@ -12,6 +12,10 @@
   "vicionomy:item-cost": "This item costs {0}x {1}. Please have payment in your hand.",
   "viconomy:for-sale": "Slot {0}: {1}x {2} for {3}x {4}",
   "viconomy:not-for-sale": "Slot {0}: Not for Sale",
+  "viconomy:stall-add" : "Add item to stall",
+  "viconomy:stall-open-menu" : "Open Stall Menu",
+  "viconomy:stall-purchase" : "Purchase 1 item",
+  "viconomy:stall-purchase-five": "Purchase 5 items",
 
   "vinconomy:block-armorstand-*": "Shop Armor Stand",
   "vinconomy:block-helmetstand-*": "Shop Helmet Stand",
