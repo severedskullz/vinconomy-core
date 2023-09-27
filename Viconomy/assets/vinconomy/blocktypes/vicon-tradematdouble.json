@@ -3,7 +3,7 @@
   "class": "ViconContainer",
   "entityClass": "BEViconStall",
   "priorityInteract": true,
-  "creativeinventory": { "viconomy": [ "*-oak-east" ] },
+  "creativeinventory": { "viconomy": [ "*-east" ] },
   "attributes": { "handbook": { "groupBy": [ "tradematdouble-*-*-east" ] } },
   "behaviors": [ { "name": "HorizontalOrientable" } ],
   "heldTpIdleAnimation": "holdbothhandslarge",

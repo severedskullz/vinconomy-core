@@ -89,7 +89,7 @@ namespace Viconomy.BlockTypes
 
                 StallSlot slot = slots[selection.SelectionBoxIndex];
 
-                if (be.Owner == forPlayer.PlayerUID)
+                if (be.Owner != forPlayer.PlayerUID)
                 {
                     if (slot.currency.Itemstack != null && slot.FindFirstNonEmptyStockSlot() != null)
                     {
@@ -114,7 +114,7 @@ namespace Viconomy.BlockTypes
                     }
                 } else {
                     ItemSlot firstSlot = slot.FindFirstNonEmptyStockSlot();
-                    if (slot != null)
+                    if (firstSlot != null)
                     {
                         interactions.Add(new WorldInteraction
                         {

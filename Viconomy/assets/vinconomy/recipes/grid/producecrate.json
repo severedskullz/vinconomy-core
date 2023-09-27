@@ -1,0 +1,21 @@
+{
+  "ingredientPattern": "WOW,WWW",
+  "ingredients": {
+    "W": {
+      "type": "item",
+      "code": "game:plank-*",
+      "name": "wood",
+      "allowedVariants": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+    },
+    "O": {
+      "type": "block",
+      "code": "game:chest-east"
+    }
+  },
+  "width": 3,
+  "height": 2,
+  "output": {
+    "type": "block",
+    "code": "producecrate-{wood}-east"
+  }
+}

@@ -56,6 +56,7 @@
   <None Remove="assets\vinconomy\blocktypes\vicon-trademat.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-tradematdouble.json" />
   <None Remove="assets\vinconomy\lang\en.json" />
+  <None Remove="assets\vinconomy\recipes\grid\producecrate.json" />
   <None Remove="assets\vinconomy\recipes\grid\shelf.json" />
   <None Remove="assets\vinconomy\recipes\register - Copy (2).json" />
   <None Remove="assets\vinconomy\recipes\trademat-double.json" />

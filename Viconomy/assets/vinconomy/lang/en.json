@@ -19,9 +19,9 @@
 
   "vinconomy:block-armorstand-*": "Shop Armor Stand",
   "vinconomy:block-helmetstand-*": "Shop Helmet Stand",
-  "vinconomy:block-opencrate-*": "Shop Crate",
+  "vinconomy:block-producecrate-*": "Shop Crate",
   "vinconomy:block-register-*": "Shop Register",
-  "vinconomy:block-shelf-*": "Shop Shelf",
+  "vinconomy:block-shelf-*-*": "Shop Shelf",
   "vinconomy:block-trademat-*": "Shop Mat (Single)",
   "vinconomy:block-tradematdouble-*": "Shop Mat (Double)"
 

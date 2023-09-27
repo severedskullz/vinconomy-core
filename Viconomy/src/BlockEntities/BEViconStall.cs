@@ -346,7 +346,7 @@ namespace Viconomy.BlockEntities
 
         public override void OnReceivedClientPacket(IPlayer player, int packetid, byte[] data)
         {
-            Console.WriteLine(Api.Side + ": OnRecievedClientPacket " + packetid);
+            //Console.WriteLine(Api.Side + ": OnRecievedClientPacket " + packetid);
             //PrintClientMessage(player, Api.Side + ": OnRecievedClientPacket");
             IPlayerInventoryManager inventoryManager = player.InventoryManager;
             switch (packetid)
