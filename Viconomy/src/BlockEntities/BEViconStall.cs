@@ -164,25 +164,7 @@ namespace Viconomy.BlockEntities
                 ViconomyModSystem.PrintClientMessage(player, "vicionomy:not-registered-with-shop");
                 return;
             }
-
-            /*
-            // Is there an actual Register entity at those coordinates?
-            BEVRegister shopRegister = null;
-            if (register != null)
-            {
-                shopRegister = Api.World.BlockAccessor.GetBlockEntity<BEVRegister>(register.Pos);
-                if (shopRegister == null)
-                {
-                    // Clear out the register location
-                    mod.registers.UpdateRegister(register.Owner, register.ID, null, null);
-                    PrintClientMessage(player, "vicionomy:not-registered-with-shop");
-                    return;
-                }
-            }
-            */
-
-                            
-                
+  
             ItemSlot[] stockSlots = this.inventory.GetSlotsForSelection(stallSlot);
             ItemSlot purchaseSlot = null;
             int itemsPerPurchase = this.inventory.StallSlots[stallSlot].itemsPerPurchase;
@@ -561,7 +543,7 @@ namespace Viconomy.BlockEntities
 
         protected override float[][] genTransformationMatrices()
         {
-            
+
             float[][] tfMatrices = new float[slotCount][];
             for (int index = 0; index < slotCount; index++)
             {
@@ -573,21 +555,23 @@ namespace Viconomy.BlockEntities
                         scale = .85f;
                     }
 
-                float left = .25f - (.5f / 2) - (scale/2) + .25f;
-                float right = .75f - (.5f / 2) - (scale/2) + .25f ;
+                Cuboidf sb = block.SelectionBoxes[index];
+                float left = .25f - (scale / 2);
+                float right = left + .5f;
 
                 float x = (index % 2 == 0) ? left : right;
-                float y = this.block.SelectionBoxes[index].MaxY-0.37f;
+                float y = sb.YSize <= .45f ? sb.MaxY - 0.37f + (.45f - sb.YSize) : sb.MaxY - 0.37f;
                 float z = (index / 2 == 0) ? left : right;
-                Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(this.block.Shape.rotateY).Translate(x , y, z ).Translate(-0.5f, 0f, -0.5f).Scale(scale,scale,scale);
+                Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(this.block.Shape.rotateY).Translate(x, y, z).Translate(-0.5f, 0f, -0.5f).Scale(scale, scale, scale);
                 tfMatrices[index] = matrix.Values;
             }
             return tfMatrices;
         }
+    
 
-        
 
-        private bool TryPut(ItemSlot slot, BlockSelection blockSel, bool bulk)
+
+    private bool TryPut(ItemSlot slot, BlockSelection blockSel, bool bulk)
         {
 
             if (slot?.Itemstack == null)
@@ -736,12 +720,12 @@ namespace Viconomy.BlockEntities
             guiDialogBlockEntity3.Dispose();
         }
 
-        // Token: 0x06000886 RID: 2182 RVA: 0x00061B18 File Offset: 0x0005FD18
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
             int i = 0;
             foreach (StallSlot slot in inventory.StallSlots)
             {
+                i++;
                 ItemSlot stock = slot.FindFirstNonEmptyStockSlot();
                 ItemSlot currency = slot.currency;
                 if (stock != null && stock.Itemstack != null && currency.Itemstack != null)
@@ -757,7 +741,6 @@ namespace Viconomy.BlockEntities
             base.GetBlockInfo(forPlayer, dsc);
         }
 
-        // Token: 0x06000887 RID: 2183 RVA: 0x00061B22 File Offset: 0x0005FD22
         public override void DropContents(Vec3d atPos)
         {
             this.Inventory.DropAll(atPos, 0);

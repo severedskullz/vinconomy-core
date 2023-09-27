@@ -1,29 +1,27 @@
 {
-  "ingredientPattern": "_SC,CCW",
+  "ingredientPattern": "_OC,CCW",
   "ingredients": {
+    "W": {
+      "type": "item",
+      "code": "game:plank-*",
+      "name": "wood",
+      "allowedVariants": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+    },
     "C": {
       "type": "item",
       "code": "game:cloth-*",
-      "name": "cloth",
-      "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "purple", "red", "white", "yellow" ]
+      "name": "color",
+      "allowedVariants": [ "blue", "red", "yellow", "purple", "brown", "green", "orange", "black", "gray", "pink", "white" ]
     },
-    "S": {
+    "O": {
       "type": "block",
-      "code": "game:chest-*",
-      "name": "chest"
-    },
-    "W": {
-      "type": "block",
-      "code": "game:planks-*-ns",
-      "name": "wood",
-      "allowedVariants": [ "birch", "oak", "maple", "pine", "acacia", "kapok", "baldcypress", "larch", "redwood", "ebony", "walnut", "purpleheart" ]
+      "code": "game:chest-east"
     }
   },
   "width": 3,
   "height": 2,
   "output": {
     "type": "block",
-    "code": "tradematdouble-{cloth}-{wood}-north",
-    "quantity": 1
+    "code": "tradematdouble-{color}-{wood}-east"
   }
 }

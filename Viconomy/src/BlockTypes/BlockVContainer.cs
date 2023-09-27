@@ -145,25 +145,6 @@ namespace Viconomy.BlockTypes
             return interactions.ToArray();
         }
 
-        /*
-        public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-
-            string text = Code.Domain + ":" + ItemClass.ToString().ToLowerInvariant() + "desc-" + Code.Path;
-            string matching = Lang.GetMatching(text);
-            matching = ((matching != text) ? matching : "");
-            stringBuilder.Append(matching);
-
-            if (EntityClass != null)
-            {
-                world.BlockAccessor.GetBlockEntity(pos)?.GetBlockInfo(forPlayer, stringBuilder);
-            }
-
-            return base.GetPlacedBlockInfo(world, pos, forPlayer);
-        }
-        */
-
         public override void OnBlockBroken(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
         {
             BEViconStall vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEViconStall;

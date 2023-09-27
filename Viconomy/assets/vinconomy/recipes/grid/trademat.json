@@ -13,11 +13,12 @@
       "name": "chest"
     }
   },
+  "recipeGroup": 1,
   "width": 3,
   "height": 2,
   "output": {
     "type": "block",
-    "code": "trademat-{cloth}-north",
+    "code": "trademat-{cloth}-east",
     "quantity": 1
   }
 }

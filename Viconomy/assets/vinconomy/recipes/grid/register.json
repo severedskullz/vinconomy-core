@@ -1,29 +1,27 @@
 {
-  "ingredientPattern": "WWW,PCP,WWW",
+  "ingredientPattern": "WWW,COC,WWW",
   "ingredients": {
     "W": {
       "type": "item",
       "code": "game:plank-*",
       "name": "wood",
-      "allowedVariants": [ "birch", "oak", "maple", "pine", "acacia", "kapok", "baldcypress", "larch", "redwood", "ebony", "walnut", "purpleheart" ]
-    },
-    "P": {
-      "type": "block",
-      "code": "game:plate-*",
-      "name": "chest",
-      "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ] 
+      "allowedVariants": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
     },
     "C": {
+      "type": "item",
+      "code": "game:metalplate-*",
+      "name": "color",
+      "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+    },
+    "O": {
       "type": "block",
-      "code": "game:chest-east",
-      "name": "chest"
+      "code": "game:chest-east"
     }
   },
-  "width": 1,
-  "height": 2,
+  "width": 3,
+  "height": 3,
   "output": {
     "type": "block",
-    "code": "trademat-{wood}-north",
-    "quantity": 1
+    "code": "register-{wood}-{color}-east"
   }
 }
