@@ -15,7 +15,6 @@ namespace Viconomy.BlockTypes
     {
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
-            Console.WriteLine(api.Side + ": On interaction start was called!");
             BEVRegister be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVRegister;
             if (be != null)
             {
@@ -27,11 +26,6 @@ namespace Viconomy.BlockTypes
         public override void OnLoaded(ICoreAPI api)
         {
             base.OnLoaded(api);
-        }
-        public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)
-        {
-            Console.WriteLine(api.Side + ": On Block Placed called!");
-            base.OnBlockPlaced(world, blockPos, byItemStack);
         }
 
         public override bool DoPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ItemStack byItemStack)
@@ -58,17 +52,42 @@ namespace Viconomy.BlockTypes
             return result;
         }
 
-
-
         public override void OnBlockBroken(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
         {
             BEVRegister vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEVRegister;
             if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID)
-                    base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
-            else if (api.Side == EnumAppSide.Server)
-                ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("You do not own this register", new object[0]), EnumChatType.CommandError, null);
+            {
+                ViconomyModSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyModSystem>();
+                if (modSystem != null && !modSystem.BlockBroken(this.Code, world, pos, byPlayer, dropQuantityMultiplier))
+                {
+                    return;
+                }
+                base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
+            } else if (api.Side == EnumAppSide.Server)
+                ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("vinconomy:doesnt-own", new object[0]), EnumChatType.CommandError, null);
         }
 
-        
+        public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)
+        {
+            ViconomyModSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyModSystem>();
+            if (modSystem != null)
+            {
+                modSystem.BlockPlaced(this.Code, world, blockPos, byItemStack);
+            }
+            base.OnBlockPlaced(world, blockPos, byItemStack);
+        }
+
+        public override bool TryPlaceBlock(IWorldAccessor world, IPlayer byPlayer, ItemStack itemstack, BlockSelection blockSel, ref string failureCode)
+        {
+            ViconomyModSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyModSystem>();
+            if (modSystem != null && !modSystem.TryPlaceBlock(world, byPlayer, itemstack, blockSel))
+            {
+                failureCode = "__ignore__";
+                return false;
+            }
+            return base.TryPlaceBlock(world, byPlayer, itemstack, blockSel, ref failureCode);
+        }
+
+
     }
 }

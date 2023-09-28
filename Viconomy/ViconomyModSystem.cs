@@ -12,6 +12,8 @@ using Vintagestory.API.Server;
 using Viconomy.Delegates;
 using Microsoft.Win32;
 using Viconomy.Inventory;
+using Vintagestory.GameContent;
+using System.Numerics;
 
 namespace Viconomy
 {
@@ -34,9 +36,7 @@ namespace Viconomy
  
             api.RegisterBlockClass("ViconContainer", typeof(BlockVContainer));
             api.RegisterBlockClass("ViconRegister", typeof(BlockVRegister));
-            api.RegisterBlockClass("ViconShelf", typeof(BlockVShelf));
-
-
+            
             api.RegisterBlockEntityClass("BEViconStall", typeof(BEViconStall));
             api.RegisterBlockEntityClass("BEViconHelmetStand", typeof(BEViconHelmetStand));
             api.RegisterBlockEntityClass("BEVRegister", typeof(BEVRegister));
@@ -83,6 +83,28 @@ namespace Viconomy
 
             this.OnPurchasedItem += TEST_OnPurchasedItem;
             this.OnCanPurchaseItem += TEST_OnCanPurchaseItem;
+            this.OnBlockBroken += TEST_OnBlockBroken;
+            this.OnBlockPlaced += TEST_OnBlockPlaced;
+            this.OnTryPlaceBlock += TEST_OnTryBlockPlaced;
+        }
+
+        private bool TEST_OnTryBlockPlaced(IWorldAccessor world, IPlayer byPlayer, ItemStack itemstack, BlockSelection blockSel)
+        {
+                PrintClientMessage(byPlayer, "TRY BLOCK PLACED DELEGATE RAN");
+                return true;
+        }
+
+        private void TEST_OnBlockPlaced(AssetLocation code, IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack)
+        {
+            
+                this._coreServerAPI.BroadcastMessageToAllGroups(code.GetName() + ": ON BLOCK PLACED DELEGATE RAN", EnumChatType.OwnMessage);
+            
+        }
+
+        private bool TEST_OnBlockBroken(AssetLocation code, IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier)
+        {
+            PrintClientMessage(byPlayer, code.GetName() + ": ON BLOCK BROKEN DELEGATE RAN");
+            return true;
         }
 
         private bool TEST_OnCanPurchaseItem(IPlayer player, BEViconStall stall, BEVRegister register, ItemSlot product, ItemSlot payment)
@@ -280,6 +302,35 @@ namespace Viconomy
             return result;
         }
         public event CanPurchaseItemDelegate OnCanPurchaseItem;
+
+        public bool TryPlaceBlock(IWorldAccessor world, IPlayer byPlayer, ItemStack itemstack, BlockSelection blockSel)
+        {
+            bool result = true;
+            if (OnTryPlaceBlock != null)
+            {
+                result = OnTryPlaceBlock.Invoke(world, byPlayer,itemstack, blockSel);
+            }
+            return result;
+        }
+        public event TryPlaceBlockDelegate OnTryPlaceBlock;
+
+        public bool BlockBroken(AssetLocation code, IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier)
+        {
+            bool result = true;
+            if (OnTryPlaceBlock != null)
+            {
+                result = OnBlockBroken.Invoke(code, world, pos, byPlayer, dropQuantityMultiplier);
+            }
+            return result;
+        }
+        public event OnBlockBrokenDelegate OnBlockBroken;
+
+        public void BlockPlaced(AssetLocation code, IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack)
+        {
+            OnBlockPlaced?.Invoke(code, world, blockPos, byItemStack);
+        }
+        public event OnBlockPlacedDelegate OnBlockPlaced;
+
         #endregion
 
     }

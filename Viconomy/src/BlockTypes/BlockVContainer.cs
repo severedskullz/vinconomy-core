@@ -6,6 +6,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.GameContent;
 
 namespace Viconomy.BlockTypes
 {
@@ -34,33 +35,8 @@ namespace Viconomy.BlockTypes
             return result;
         }
 
+
         public override bool DoParticalSelection(IWorldAccessor world, BlockPos pos) => true;
-
-        /*
-        public override Cuboidf[] GetSelectionBoxes(IBlockAccessor blockAccessor, BlockPos pos)
-        {
-           
-                List<Cuboidf> cubs = new List<Cuboidf>();
-                
-                cubs.Add(new Cuboidf(0f, 0f, 0f, 1f, 1f, 0.1f));
-                cubs.Add(new Cuboidf(0f, 0f, 0f, 1f, 0.0625f, 0.5f));
-                cubs.Add(new Cuboidf(0f, 0.9375f, 0f, 1f, 1f, 0.5f));
-                cubs.Add(new Cuboidf(0f, 0f, 0f, 0.0625f, 1f, 0.5f));
-                cubs.Add(new Cuboidf(0.9375f, 0f, 0f, 1f, 1f, 0.5f));
-
-            return cubs.ToArray();
-        }
-
-        public override Cuboidf[] GetCollisionBoxes(IBlockAccessor blockAccessor, BlockPos pos)
-        {
-          
-            return new Cuboidf[]
-            {
-                new Cuboidf(0f, 0f, 0f, 1f, 1f, 1f).RotatedCopy(0f,0f ,0f, new Vec3d(0.5, 0.5, 0.5))
-            };
-        }
-        */
-
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
@@ -149,9 +125,38 @@ namespace Viconomy.BlockTypes
         {
             BEViconStall vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEViconStall;
             if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID)
+            {
+                ViconomyModSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyModSystem>();
+                if (modSystem != null && !modSystem.BlockBroken(this.Code, world, pos, byPlayer, dropQuantityMultiplier))
+                {
+                    return ;
+                }
                 base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
+            }
+                
             else if (api.Side == EnumAppSide.Server)
                 ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("vinconomy:doesnt-own", new object[0]), EnumChatType.CommandError, null);
+        }
+
+        public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)
+        {
+            ViconomyModSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyModSystem>();
+            if (modSystem != null)
+            {
+                modSystem.BlockPlaced(this.Code, world, blockPos, byItemStack);
+            }
+            base.OnBlockPlaced(world, blockPos, byItemStack);
+        }
+
+        public override bool TryPlaceBlock(IWorldAccessor world, IPlayer byPlayer, ItemStack itemstack, BlockSelection blockSel, ref string failureCode)
+        {
+            ViconomyModSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyModSystem>();
+            if (modSystem != null && !modSystem.TryPlaceBlock(world, byPlayer, itemstack, blockSel))
+            {
+                failureCode = "__ignore__";
+                return false;
+            }
+            return base.TryPlaceBlock(world, byPlayer, itemstack, blockSel, ref failureCode);
         }
 
 

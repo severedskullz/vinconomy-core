@@ -465,7 +465,7 @@ namespace Viconomy.BlockEntities
 
         public override void OnReceivedServerPacket(int packetid, byte[] data)
         {
-            Console.WriteLine(Api.Side + ": OnRecievedServerPacket " + packetid);
+            //Console.WriteLine(Api.Side + ": OnRecievedServerPacket " + packetid);
             IClientWorldAccessor clientWorld = (IClientWorldAccessor)this.Api.World;
             if (packetid == VinConstants.TOGGLE_GUI)
             {

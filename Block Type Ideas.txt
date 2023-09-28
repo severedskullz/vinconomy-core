@@ -1,21 +1,9 @@
-Open Crate:
-	Produce, Small items, Shelvables
-	
+
 Armor Stand:
 	Armor / Wearables
 	
 Pallet
 	Pile / Stackables
-	
-
-Cash Register
-	Place Register to create a "shop".
-	Each Stall must link to a shop in order to retrieve goods
-		if no Shop is set up, a "global" shop is used?
-			Use commands to claim money from global shop?
-			Maybe make them have to go to a Bank?
-				Does a Bank need to be registered first?
-		if no shop is set up, Make the player go to each shop and empty out the payments?
 		
 Warehouse Block
 	
