@@ -111,14 +111,17 @@ namespace Viconomy.BlockEntities
             return false;
         }
 
-        public bool AddItem(ItemSlot sourceSlot, int quantity)
+        public bool AddItem(ItemStack sourceStack, int quantity)
         {
+            ItemSlot dslot = new ItemSlot(null);
+            dslot.Itemstack = sourceStack;
+
             int amountLeft = quantity;
             foreach (ItemSlot slot in inventory)
             {
-                if (slot.CanHold(sourceSlot))
+                if (slot.CanHold(dslot))
                 {
-                    amountLeft -= sourceSlot.TryPutInto(this.Api.World, slot, amountLeft);
+                    amountLeft -= dslot.TryPutInto(this.Api.World, slot, amountLeft);
                 }
               
                 if (amountLeft <= 0)
@@ -163,12 +166,12 @@ namespace Viconomy.BlockEntities
                 {
                     BinaryWriter writer = new BinaryWriter(ms);
                     writer.Write("VinconomyInventory");
-                    if (register.Name != null)
+                    if (register != null && register.Name != null)
                     {
                         writer.Write(register.Name);
                     } else
                     {
-                        writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Stall");
+                        writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Shop");
                     }
                     
                     TreeAttribute tree = new TreeAttribute();

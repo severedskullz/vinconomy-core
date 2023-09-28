@@ -3,7 +3,7 @@
   "class": "ViconContainer",
   "entityClass": "BEViconShelf",
   "priorityInteract": true,
-  "creativeinventory": { "viconomy": [ "*-east" ] },
+  "creativeinventory": { "vinconomy": [ "*-east" ] },
   "attributes": { "handbook": { "groupBy": [ "shelf-*-east" ] } },
   "behaviors": [
     {
@@ -132,10 +132,10 @@
     "all": false
   },
   "sounds": {
-    "place": "block/planks",
-    "hit": "block/planks",
-    "break": "block/planks",
-    "walk": "walk/wood"
+    "hit": "game:block/planks",
+    "break": "game:block/planks",
+    "place": "game:block/planks",
+    "walk": "game:walk/wood"
   },
   "combustibleProps": {
     "burnTemperature": 600,

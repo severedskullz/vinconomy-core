@@ -4,7 +4,7 @@
   "entityClass": "BEViconHelmetStand",
 
   "priorityInteract": true,
-  "creativeinventory": { "viconomy": [ "*-oak-*-east" ] },
+  "creativeinventory": { "vinconomy": [ "*-oak-*-east" ] },
   "attributes": { "handbook": { "groupBy": [ "helmetstand-*-*-east" ] } },
   "behaviors": [ { "name": "HorizontalOrientable" } ],
   "heldTpIdleAnimation": "holdbothhandslarge",

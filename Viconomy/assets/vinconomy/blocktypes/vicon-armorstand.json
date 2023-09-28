@@ -2,9 +2,7 @@
   "code": "armorstand",
   "class": "ViconContainer",
   "entityClass": "BEViconHelmetStand",
-
   "priorityInteract": true,
-  "creativeinventory": { "viconomy": [ "*-oak-*-east" ] },
   "behaviors": [ { "name": "HorizontalOrientable" } ],
   "heldTpIdleAnimation": "holdbothhandslarge",
   "heldTpUseAnimation": "twohandplaceblock",

@@ -197,5 +197,9 @@ namespace Viconomy.Inventory
             }
         }
 
+        public int GetItemsPerPurchase(int stallSlot)
+        {
+            return this.StallSlots[stallSlot].itemsPerPurchase;
+        }
     }
 }

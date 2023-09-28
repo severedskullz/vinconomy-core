@@ -3,7 +3,7 @@
   "class": "ViconRegister",
   "entityClass": "BEVRegister",
   "priorityInteract": true,
-  "creativeinventory": { "viconomy": [ "*-east" ] },
+  "creativeinventory": { "vinconomy": [ "*-east" ] },
   "attributes": { "handbook": { "groupBy": [ "register-*-*-east" ] } },
   "behaviors": [ { "name": "HorizontalOrientable" } ],
   "heldTpIdleAnimation": "holdbothhandslarge",

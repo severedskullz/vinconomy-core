@@ -95,7 +95,7 @@ namespace Viconomy.BlockTypes
                     {
                         interactions.Add(new WorldInteraction
                         {
-                            ActionLangCode = "viconomy:stall-purchase",
+                            ActionLangCode = "vinconomy:stall-purchase",
                             MouseButton = EnumMouseButton.Right,
                             HotKeyCode = "shift",
                             Itemstacks = new ItemStack[] { slot.currency.Itemstack }
@@ -106,7 +106,7 @@ namespace Viconomy.BlockTypes
                         fiveStack.StackSize = 5 * fiveStack.StackSize;
                         interactions.Add(new WorldInteraction
                         {
-                            ActionLangCode = "viconomy:stall-purchase-five",
+                            ActionLangCode = "vinconomy:stall-purchase-five",
                             MouseButton = EnumMouseButton.Right,
                             HotKeyCodes = new string[] { "shift", "ctrl" },
                             Itemstacks = new ItemStack[] { fiveStack }
@@ -118,7 +118,7 @@ namespace Viconomy.BlockTypes
                     {
                         interactions.Add(new WorldInteraction
                         {
-                            ActionLangCode = "viconomy:stall-add",
+                            ActionLangCode = "vinconomy:stall-add",
                             MouseButton = EnumMouseButton.Right,
                             HotKeyCode = "shift",
                             Itemstacks = new ItemStack[] { firstSlot.Itemstack }
@@ -126,7 +126,7 @@ namespace Viconomy.BlockTypes
                     } else {
                         interactions.Add(new WorldInteraction
                         {
-                            ActionLangCode = "viconomy:stall-add",
+                            ActionLangCode = "vinconomy:stall-add",
                             MouseButton = EnumMouseButton.Right,
                             HotKeyCode = "shift"
                         });
@@ -135,7 +135,7 @@ namespace Viconomy.BlockTypes
 
                 interactions.Add(new WorldInteraction
                 {
-                    ActionLangCode = "viconomy:stall-open-menu",
+                    ActionLangCode = "vinconomy:stall-open-menu",
                     MouseButton = EnumMouseButton.Right,
                     HotKeyCode = null
                 });
@@ -151,7 +151,7 @@ namespace Viconomy.BlockTypes
             if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID)
                 base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
             else if (api.Side == EnumAppSide.Server)
-                ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("viconomy:doesnt-own", new object[0]), EnumChatType.CommandError, null);
+                ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("vinconomy:doesnt-own", new object[0]), EnumChatType.CommandError, null);
         }
 
 
