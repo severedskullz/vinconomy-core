@@ -11,13 +11,11 @@ namespace Viconomy.BlockEntities
 {
     public class BEViconShelf : BEViconStall
     {
-
-
         protected override float[][] genTransformationMatrices()
         {
 
-            float[][] tfMatrices = new float[slotCount][];
-            for (int index = 0; index < slotCount; index++)
+            float[][] tfMatrices = new float[StallSlotCount][];
+            for (int index = 0; index < StallSlotCount; index++)
             {
                 float scale = 0.35f;
                 ItemSlot slot = this.inventory.FindFirstNonEmptyStockSlot(index);

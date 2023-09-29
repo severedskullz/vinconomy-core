@@ -123,6 +123,9 @@ namespace Viconomy.BlockTypes
 
         public override void OnBlockBroken(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
         {
+            if (byPlayer == null)
+                return;
+
             BEViconStall vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEViconStall;
             if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID)
             {

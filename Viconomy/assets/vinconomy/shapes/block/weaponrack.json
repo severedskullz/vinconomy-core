@@ -1,0 +1,43 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"oak1": "block/wood/planks/oak1"
+	},
+	"elements": [
+		{
+			"name": "Cube2",
+			"from": [ 8.2, 0.2, 0.0 ],
+			"to": [ 19.2, 11.2, 1.2 ],
+			"rotationOrigin": [ 8.0, 0.0, 0.0 ],
+			"rotationZ": 45.0,
+			"faces": {
+				"north": { "texture": "#oak1", "uv": [ 0.0, 0.0, 11.0, 11.0 ] },
+				"east": { "texture": "#oak1", "uv": [ 0.0, 0.0, 1.0, 11.0 ] },
+				"south": { "texture": "#oak1", "uv": [ 0.0, 0.0, 11.0, 11.0 ] },
+				"west": { "texture": "#oak1", "uv": [ 0.0, 0.0, 1.0, 11.0 ] },
+				"up": { "texture": "#oak1", "uv": [ 0.0, 0.0, 11.0, 1.0 ] },
+				"down": { "texture": "#oak1", "uv": [ 0.0, 0.0, 11.0, 1.0 ] }
+			}
+		},
+		{
+			"name": "Cube3",
+			"from": [ 3.0, 3.0, 0.2 ],
+			"to": [ 13.0, 13.0, 1.0 ],
+			"rotationOrigin": [ 3.0, 3.0, 0.0 ],
+			"faces": {
+				"north": { "texture": "#oak1", "uv": [ 0.0, 0.0, 10.0, 10.0 ] },
+				"east": { "texture": "#oak1", "uv": [ 0.0, 0.0, 0.5, 10.0 ] },
+				"south": { "texture": "#oak1", "uv": [ 0.0, 0.0, 10.0, 10.0 ] },
+				"west": { "texture": "#oak1", "uv": [ 0.0, 0.0, 0.5, 10.0 ] },
+				"up": { "texture": "#oak1", "uv": [ 0.0, 0.0, 10.0, 0.5 ] },
+				"down": { "texture": "#oak1", "uv": [ 0.0, 0.0, 10.0, 0.5 ] }
+			}
+		}
+	]}

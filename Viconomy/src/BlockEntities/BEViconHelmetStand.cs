@@ -11,14 +11,13 @@ namespace Viconomy.BlockEntities
 {
     public class BEViconHelmetStand : BEViconStall
     {
+        public override int StallSlotCount => 1;
 
         public BEViconHelmetStand()
         {
-            this.slotCount = 1;
-            this.inventory = new ViconomyInventory(null, null, slotCount, stacksPerSlot);
+            this.inventory = new ViconomyInventory(null, null, StallSlotCount, StacksPerSlot);
             this.inventory.SlotModified += base.Inventory_SlotModified;
             this.inventory.SetSlotFilter(0, ViconomyFilters.IsHelmetSlot);
-
         }
 
         protected override float[][] genTransformationMatrices()

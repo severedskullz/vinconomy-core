@@ -41,6 +41,8 @@ namespace Viconomy
             api.RegisterBlockEntityClass("BEViconHelmetStand", typeof(BEViconHelmetStand));
             api.RegisterBlockEntityClass("BEVRegister", typeof(BEVRegister));
             api.RegisterBlockEntityClass("BEViconShelf", typeof(BEViconShelf));
+            api.RegisterBlockEntityClass("BEViconWeaponrack", typeof(BEViconWeaponRack));
+            api.RegisterBlockEntityClass("BEViconToolrack", typeof(BEViconToolRack));
 
             api.Network.RegisterChannel("Viconomy")
                 .RegisterMessageType(typeof(RegistryUpdatePacket));
@@ -248,6 +250,9 @@ namespace Viconomy
 
         public static void PrintClientMessage(IPlayer player, string message, object[] args = null)
         {
+            if (player == null)
+                return;
+
             if (args == null)
             {
                 args = Array.Empty<object>();

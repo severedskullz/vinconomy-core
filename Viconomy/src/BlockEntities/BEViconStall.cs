@@ -21,13 +21,11 @@ namespace Viconomy.BlockEntities
     {
         ViconomyModSystem modSystem;
 
-        protected int slotCount = 4;
-        protected int stacksPerSlot = 9;
         protected ViconomyInventory inventory;
         protected GuiDialogBlockEntity invDialog;
         protected BlockVContainer block;
 
-        public override int DisplayedItems => slotCount;
+        public override int DisplayedItems => StallSlotCount;
 
         protected AssetLocation OpenSound;
         protected AssetLocation CloseSound;
@@ -43,12 +41,12 @@ namespace Viconomy.BlockEntities
         public override InventoryBase Inventory { get { return this.inventory; } }
         public override string InventoryClassName { get { return "VinconomyInventory"; } }
 
-        public int StallSlotCount => slotCount;
-        public int StacksPerSlot => stacksPerSlot;
+        public virtual int StallSlotCount { get; protected set; } = 4;
+        public virtual int StacksPerSlot { get; protected set; } = 9;
 
         public BEViconStall()
         {
-            this.inventory = new ViconomyInventory(null, Api, slotCount, stacksPerSlot);
+            this.inventory = new ViconomyInventory(null, Api, StallSlotCount, StacksPerSlot);
             this.inventory.SlotModified += Inventory_SlotModified;
         }
 
@@ -264,8 +262,8 @@ namespace Viconomy.BlockEntities
                     BinaryWriter writer = new BinaryWriter(ms);
                     writer.Write("VinconomyInventory");
                     writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Stall");
-                    writer.Write((byte)this.slotCount);
-                    writer.Write((byte)this.stacksPerSlot);
+                    writer.Write((byte)StallSlotCount);
+                    writer.Write((byte)StacksPerSlot);
                     writer.Write((byte)selectedStall);
                     writer.Write(byPlayer.PlayerUID == Owner);
                     TreeAttribute tree = new TreeAttribute();
@@ -532,7 +530,7 @@ namespace Viconomy.BlockEntities
         }
         public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
         {
-            for (int i = 0; i < slotCount; i++)
+            for (int i = 0; i < StallSlotCount; i++)
             {
                 ItemSlot slot = this.inventory.FindFirstNonEmptyStockSlot(i);
                 if (slot != null && !slot.Empty && tfMatrices != null)
@@ -547,8 +545,8 @@ namespace Viconomy.BlockEntities
         protected override float[][] genTransformationMatrices()
         {
 
-            float[][] tfMatrices = new float[slotCount][];
-            for (int index = 0; index < slotCount; index++)
+            float[][] tfMatrices = new float[StallSlotCount][];
+            for (int index = 0; index < StallSlotCount; index++)
             {
                 float scale = 0.35f;
                 ItemSlot slot = this.inventory.FindFirstNonEmptyStockSlot(index);
@@ -588,7 +586,7 @@ namespace Viconomy.BlockEntities
             bool movedItems = false;
            
 
-            for (int i = 0; i < stacksPerSlot; i++)
+            for (int i = 0; i < StacksPerSlot; i++)
             {
                 if (slot.Itemstack != null)
                 {

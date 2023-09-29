@@ -22,3 +22,5 @@ Ledger
 
 Chiseled blocks as stall?
 	@The_RocketWolf said in his stream he thinks he can chisel out some really cool chests. Wonder if I can get it so they can design their own stalls?
+	
+Saw / Hammer / Cleaver needs JSON Patch to fix the stupid fucking offsets when they made the item.

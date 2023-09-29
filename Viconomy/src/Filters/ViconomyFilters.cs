@@ -50,6 +50,13 @@ namespace Viconomy.Filters
                 }
                 string stackDressType = itemstack.Collectible.Attributes["clothescategory"].AsString(null);
                 return stackDressType != null && dressType.ToString().Equals(stackDressType, StringComparison.InvariantCultureIgnoreCase);
-         }
+        }
+
+        public static bool IsToolOrWeapon(ItemSlot slot)
+        {
+
+            return slot.Itemstack.Item?.Attributes.KeyExists("tool") == true || true;
+
+        }
     }
 }
