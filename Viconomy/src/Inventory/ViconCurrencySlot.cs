@@ -13,7 +13,8 @@ namespace Viconomy.Inventory
         public ViconCurrencySlot(InventoryBase inventory, int stallSlot) : base(inventory)
         {
             this.stallSlot = stallSlot;
-            this.HexBackgroundColor = "#B62521";
+            //this.HexBackgroundColor = "#B62521";
+            this.BackgroundIcon = "vicon-payment";
         }
 
         public override bool CanHold(ItemSlot sourceSlot)

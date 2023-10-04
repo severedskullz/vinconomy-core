@@ -8,6 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="cairo-sharp">
+      <HintPath>..\..\..\..\..\Programs\Vintagestory\Lib\cairo-sharp.dll</HintPath>
+    </Reference>
     <Reference Include="protobuf-net">
       <HintPath>..\..\..\..\..\Programs\Vintagestory\Lib\protobuf-net.dll</HintPath>
     </Reference>
@@ -49,7 +52,8 @@
   <Content Remove="assets\vinconomy\NewFolder\**" />
   <EmbeddedResource Remove="assets\vinconomy\NewFolder\**" />
   <None Remove="assets\vinconomy\NewFolder\**" />
-  <None Remove="assets\vinconomy\blocktypes\vicon-armorstand.json" />
+  <None Remove="assets\vinconomy\blocktypes\vicon-clothingdisplaystand-top.json" />
+  <None Remove="assets\vinconomy\blocktypes\vicon-clothingdisplaystand.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-helmetstand.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-register.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-shelf.json" />
@@ -60,6 +64,8 @@
   <None Remove="assets\vinconomy\lang\en.json" />
   <None Remove="assets\vinconomy\recipes\grid\producecrate.json" />
   <None Remove="assets\vinconomy\recipes\grid\shelf.json" />
+  <None Remove="assets\vinconomy\recipes\grid\toolrack.json" />
+  <None Remove="assets\vinconomy\recipes\grid\weaponrack.json" />
   <None Remove="assets\vinconomy\recipes\register - Copy (2).json" />
   <None Remove="assets\vinconomy\recipes\trademat-double.json" />
   <Content Include="modinfo.json">

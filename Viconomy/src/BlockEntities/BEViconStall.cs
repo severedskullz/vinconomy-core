@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
-using Viconomy.BlockTypes;
+using Viconomy.Filters;
 using Viconomy.GUI;
 using Viconomy.Inventory;
-using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -23,7 +21,7 @@ namespace Viconomy.BlockEntities
 
         protected ViconomyInventory inventory;
         protected GuiDialogBlockEntity invDialog;
-        protected BlockVContainer block;
+        protected Block block;
 
         public override int DisplayedItems => StallSlotCount;
 
@@ -44,9 +42,11 @@ namespace Viconomy.BlockEntities
         public virtual int StallSlotCount { get; protected set; } = 4;
         public virtual int StacksPerSlot { get; protected set; } = 9;
 
+
+
         public BEViconStall()
         {
-            this.inventory = new ViconomyInventory(null, Api, StallSlotCount, StacksPerSlot);
+            ConfigureInventory();
             this.inventory.SlotModified += Inventory_SlotModified;
         }
 
@@ -56,10 +56,21 @@ namespace Viconomy.BlockEntities
             this.MarkDirty(true, null);
         }
 
+        public virtual void ConfigureInventory()
+        {
+            this.inventory = new ViconomyInventory(null, Api, StallSlotCount, StacksPerSlot);
+            for (int i = 0; i < StallSlotCount; i++)
+            {
+                inventory.SetSlotFilter(i, ViconomyFilters.IsGenericItem);
+                inventory.SetSlotBackground(i, "vicon-general");
+            }
+        }
+
         public override void Initialize(ICoreAPI api)
         {
             modSystem = api.ModLoader.GetModSystem<ViconomyModSystem>();
-            this.block = (BlockVContainer)api.World.BlockAccessor.GetBlock(this.Pos);
+
+            this.block = api.World.BlockAccessor.GetBlock(this.Pos); 
 
             base.Initialize(api);
 
@@ -90,7 +101,7 @@ namespace Viconomy.BlockEntities
             ItemSlot hotbarslot = byPlayer.InventoryManager.ActiveHotbarSlot;
 
 
-            if (byPlayer.PlayerUID != Owner)
+            if (byPlayer.PlayerUID == Owner)
             {
                if(shiftMod)
                {
@@ -115,10 +126,7 @@ namespace Viconomy.BlockEntities
                     // Open the shop inventory for that block selection
                     OpenShopForPlayer(byPlayer, blockSel.SelectionBoxIndex);
                 }
-                
-      
             }
-          
             return true;
         }
 
@@ -229,13 +237,7 @@ namespace Viconomy.BlockEntities
                 //PrintClientMessage(player, Api.Side + ": We tried to purchase item!");
                 if (shopRegister == null || shopRegister.CanHold(currencyStack))
                 {
-
-                    if (PurchaseItem(player, shopRegister, purchaseSlot, handItem, productAmount,  price))
-                    {
-                       
-                        //Console.WriteLine("Purchase called from " + this.Api.Side);
-                    }
-
+                    PurchaseItem(player, shopRegister, purchaseSlot, handItem, productAmount, price);
                 }
                 else
                 {
@@ -272,7 +274,9 @@ namespace Viconomy.BlockEntities
                     data = ms.ToArray();
                 }
                 ((ICoreServerAPI)this.Api).Network.SendBlockEntityPacket((IServerPlayer)byPlayer, this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.OPEN_GUI, data);
-                byPlayer.InventoryManager.OpenInventory(this.inventory);
+                
+                if (byPlayer.PlayerUID == Owner)
+                    byPlayer.InventoryManager.OpenInventory(this.inventory);
                 }
         }
 
@@ -322,7 +326,6 @@ namespace Viconomy.BlockEntities
                 {
                     this.invDialog.TryClose();
                 }
-
             }
 
             if (this.invDialog != null)
@@ -380,7 +383,18 @@ namespace Viconomy.BlockEntities
                 default:
                     if (packetid < 1000)
                     {
-                        //Console.Write("Handling Inv Packet");
+                        if (player.PlayerUID != Owner)
+                        {
+                            if ( !((ICoreServerAPI)Api).Server.IsDedicated )
+                            {
+                                ViconomyModSystem.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
+                            } else
+                            {
+                                ((IServerPlayer)player).Disconnect("Nice try, but that wasn't yours. (Tried to access Stall they didn't own)");
+                            }
+                            return;
+                        }
+
                         this.Inventory.InvNetworkUtil.HandleClientPacket(player, packetid, data);
                         this.Api.World.BlockAccessor.GetChunkAtBlockPos(this.Pos.X, this.Pos.Y, this.Pos.Z).MarkModified();
                         return;
@@ -761,8 +775,8 @@ namespace Viconomy.BlockEntities
                 }
                 
             }
-            dsc.AppendLine();
-            base.GetBlockInfo(forPlayer, dsc);
+            //dsc.AppendLine();
+            //base.GetBlockInfo(forPlayer, dsc);
         }
 
         public override void DropContents(Vec3d atPos)

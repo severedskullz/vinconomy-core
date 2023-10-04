@@ -1,104 +1,108 @@
 {
-  "code": "producecrate",
-  "class": "ViconContainer",
-  "entityClass": "BEViconStall",
+  "code": "clothingdisplaystandtop",
+  "class": "ViconClothingDisplayTop",
   "priorityInteract": true,
-  "creativeinventory": { "vinconomy": [ "*-east" ] },
-  "attributes": { "handbook": { "groupBy": [ "producecrate-*-east" ] } },
+  "creativeinventory": { "vinconomy": [ "*" ] },
   "behaviors": [ { "name": "HorizontalOrientable" } ],
   "heldTpIdleAnimation": "holdbothhandslarge",
   "heldTpUseAnimation": "twohandplaceblock",
   "blockmaterial": "Wood",
   "variantgroups": [
-    {
-      "code": "wood",
-      "loadFromProperties": "block/wood"
-    },
+
     {
       "code": "side",
       "loadFromProperties": "abstract/horizontalorientation"
     }
   ],
-  "textures": {
-    "all": { "base": "game:block/wood/planks/{wood}1" }
-  },
-  "shapebytype": {
-    "*-north": {
-      "base": "block/producecrate",
-      "rotateY": 0
-    },
-    "*-east": {
-      "base": "block/producecrate",
-      "rotateY": 270
-    },
-    "*-south": {
-      "base": "block/producecrate",
-      "rotateY": 180
-    },
-    "*-west": {
-      "base": "block/producecrate",
-      "rotateY": 90
-    }
-  },
+
+  "shape": { "base": "game:block/basic/nothing" },
+  "drawtype": "json",
 
   "collisionSelectionBoxes": [
     {
-      "x1": 0,
+      "x1": 0.3125,
       "y1": 0,
-      "z1": 0,
-      "x2": 0.5,
+      "z1": 0.3125,
+      "x2": 0.6875,
+      "y2": 0.125,
+      "z2": 0.6875,
+      "rotateYByType": {
+        "*-north": 0,
+        "*-east": 270,
+        "*-west": 90,
+        "*-south": 180
+      }
+    }, //Belt
+    {
+      "x1": 0.3125,
+      "y1": 0.125,
+      "z1": 0.3125,
+      "x2": 0.6875,
       "y2": 0.5,
-      "z2": 0.5,
+      "z2": 0.6875,
       "rotateYByType": {
         "*-north": 0,
         "*-east": 270,
         "*-west": 90,
         "*-south": 180
       }
-    },
+    }, // Torso
     {
-      "x1": 0.5,
+      "x1": 0.1875,
       "y1": 0,
-      "z1": 0,
-      "x2": 1,
+      "z1": 0.375,
+      "x2": 0.8125,
       "y2": 0.5,
-      "z2": 0.5,
+      "z2": 0.625,
       "rotateYByType": {
         "*-north": 0,
         "*-east": 270,
         "*-west": 90,
         "*-south": 180
       }
-    },
+    }, // Arms
     {
-      "x1": 0,
-      "y1": 0,
-      "z1": 0.5,
-      "x2": 0.5,
-      "y2": 0.4,
-      "z2": 1,
+      "x1": 0.45,
+      "y1": 0.3125,
+      "z1": 0.6875,
+      "x2": 0.55,
+      "y2": 0.5,
+      "z2": 0.7,
       "rotateYByType": {
         "*-north": 0,
         "*-east": 270,
         "*-west": 90,
         "*-south": 180
       }
-    },
+    }, //Neck
     {
-      "x1": 0.5,
-      "y1": 0,
-      "z1": 0.5,
-      "x2": 1,
-      "y2": 0.4,
-      "z2": 1,
+      "x1": 0.3125,
+      "y1": 0.5,
+      "z1": 0.3125,
+      "x2": 0.6875,
+      "y2": 0.75,
+      "z2": 0.6875,
       "rotateYByType": {
         "*-north": 0,
         "*-east": 270,
         "*-west": 90,
         "*-south": 180
       }
-    }
-
+    }, // Face
+    {
+      "x1": 0.3125,
+      "y1": 0.75,
+      "z1": 0.3125,
+      "x2": 0.6875,
+      "y2": 0.9,
+      "z2": 0.6875,
+      "rotateYByType": {
+        "*-north": 0,
+        "*-east": 270,
+        "*-west": 90,
+        "*-south": 180
+      }
+    } // Helmet
   ],
   "lightAbsorption": 0,
   "sidesolid": {
@@ -113,5 +117,6 @@
     "break": "game:block/planks",
     "place": "game:block/planks",
     "walk": "game:walk/wood"
-  }
+  },
+  "drops": []
 }

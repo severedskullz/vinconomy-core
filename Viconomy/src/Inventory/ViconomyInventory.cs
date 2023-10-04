@@ -201,5 +201,15 @@ namespace Viconomy.Inventory
         {
             return this.StallSlots[stallSlot].itemsPerPurchase;
         }
+
+        public void SetSlotBackground(int stallSlot, string background = null, string hexColor = null)
+        {
+            ItemSlot[] curSlots = this.GetSlotsForSelection(stallSlot);
+            foreach (var slot in curSlots)
+            {
+                slot.BackgroundIcon = background;
+                slot.HexBackgroundColor = hexColor;
+            }
+        }
     }
 }

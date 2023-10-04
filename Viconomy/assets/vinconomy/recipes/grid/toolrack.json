@@ -1,5 +1,5 @@
 {
-  "ingredientPattern": "WWW,__C_,WWW",
+  "ingredientPattern": "WWW,_C_,WWW",
   "ingredients": {
     "W": {
       "type": "item",
@@ -18,7 +18,7 @@
   "height": 3,
   "output": {
     "type": "block",
-    "code": "shelf-{wood}-east",
+    "code": "toolrack-{wood}-east",
     "quantity": 1
   }
 }

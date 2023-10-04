@@ -1,0 +1,10 @@
+[
+  {
+    "op": "add",
+    "path": "/attributes/stallTransform",
+    "value": { 			
+				"translation": { "x": 0, "y": -0.25, "z": 0 },
+			 },
+    "file": "game:itemtypes/tool/saw.json",
+  },
+]

@@ -1,8 +1,10 @@
 {
-  "code": "armorstand",
-  "class": "ViconContainer",
-  "entityClass": "BEViconHelmetStand",
+  "code": "clothingdisplaystand",
+  "class": "ViconClothingDisplay",
+  "entityClass": "BEViconArmorStand",
   "priorityInteract": true,
+  "creativeinventory": { "vinconomy": [ "*-oak-*-east" ] },
+  "attributes": { "handbook": { "groupBy": [ "helmetstand-*-*-east" ] } },
   "behaviors": [ { "name": "HorizontalOrientable" } ],
   "heldTpIdleAnimation": "holdbothhandslarge",
   "heldTpUseAnimation": "twohandplaceblock",
@@ -14,7 +16,7 @@
     },
     {
       "code": "base",
-      "loadFromProperties": "block/metal"
+      "states": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
     },
     {
       "code": "side",
@@ -28,93 +30,65 @@
   "shapebytype": {
     "*-north": {
       "base": "block/helmetstand",
-      "rotateY": 0
+      "rotateY": 180
     },
     "*-east": {
       "base": "block/helmetstand",
-      "rotateY": 270
+      "rotateY": 90
     },
     "*-south": {
       "base": "block/helmetstand",
-      "rotateY": 180
+      "rotateY": 0
     },
     "*-west": {
       "base": "block/helmetstand",
-      "rotateY": 90
+      "rotateY": 270
     }
   },
 
   "collisionSelectionBoxes": [
     {
-      "x1": 0.25,
+      "x1": 0.3125,
       "y1": 0,
-      "z1": 0.25,
-      "x2": 0.75,
+      "z1": 0.3125,
+      "x2": 0.6875,
+      "y2": 0.5,
+      "z2": 0.6875,
+      "rotateYByType": {
+        "*-north": 0,
+        "*-east": 270,
+        "*-west": 90,
+        "*-south": 180
+      }
+    }, //Boots
+    {
+      "x1": 0.3125,
+      "y1": 0.5,
+      "z1": 0.3125,
+      "x2": 0.6875,
       "y2": 1,
-      "z2": 0.75,
+      "z2": 0.6875,
       "rotateYByType": {
         "*-north": 0,
         "*-east": 270,
         "*-west": 90,
         "*-south": 180
       }
-    },
+    }, // Pants
     {
-      "x1": 0.25,
-      "y1": 1,
-      "z1": 0.25,
-      "x2": 0.75,
-      "y2": 1.25,
-      "z2": 0.75,
+      "x1": 0.1875,
+      "y1": 0.65,
+      "z1": 0.375,
+      "x2": 0.8035,
+      "y2": 1,
+      "z2": 0.616,
       "rotateYByType": {
         "*-north": 0,
         "*-east": 270,
         "*-west": 90,
         "*-south": 180
       }
-    },
-    {
-      "x1": 0.25,
-      "y1": 1.25,
-      "z1": 0.25,
-      "x2": 0.75,
-      "y2": 1.65,
-      "z2": 0.75,
-      "rotateYByType": {
-        "*-north": 0,
-        "*-east": 270,
-        "*-west": 90,
-        "*-south": 180
-      }
-    },
-    {
-      "x1": 0.25,
-      "y1": 1.65,
-      "z1": 0.25,
-      "x2": 0.75,
-      "y2": 1.85,
-      "z2": 0.75,
-      "rotateYByType": {
-        "*-north": 0,
-        "*-east": 270,
-        "*-west": 90,
-        "*-south": 180
-      }
-    },
-    {
-      "x1": 0.125,
-      "y1": 0,
-      "z1": 0.125,
-      "x2": 0.875,
-      "y2": 0.65,
-      "z2": 0.875,
-      "rotateYByType": {
-        "*-north": 0,
-        "*-east": 270,
-        "*-west": 90,
-        "*-south": 180
-      }
-    }
+    } // Gloves
   ],
   "lightAbsorption": 0,
   "sidesolid": {

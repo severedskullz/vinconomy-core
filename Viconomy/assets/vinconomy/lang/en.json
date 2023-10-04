@@ -12,7 +12,7 @@
   "for-sale": "Slot {0}: {1}x {2} for {3}x {4}",
   "not-for-sale": "Slot {0}: Not for Sale",
   "stall-add": "Add item to stall",
-  "stall-open-menu": "Open Stall Menu",
+  "stall-open-menu": "Open Stall",
   "stall-purchase": "Purchase 1 item",
   "stall-purchase-five": "Purchase 5 items",
 
@@ -23,6 +23,8 @@
   "block-shelf-*-*": "Shop Shelf",
   "block-trademat-*": "Shop Mat (Single)",
   "block-tradematdouble-*": "Shop Mat (Double)",
+  "block-weaponrack-*": "Shop Weapon Rack",
+  "block-toolrack-*": "Shop Tool Rack",
 
   "game:tabname-vinconomy": "Vinconomy"
 

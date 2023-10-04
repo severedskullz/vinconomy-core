@@ -39,7 +39,7 @@ namespace Viconomy.Registry
         }
         public ViconRegister[] GetRegistersForOwner(string owner)
         {
-            if (registers.ContainsKey(owner))
+            if (registers.ContainsKey(owner) && registers[owner] != null)
             {
                 return registers[owner].Values.ToArray<ViconRegister>();
             }
@@ -75,7 +75,7 @@ namespace Viconomy.Registry
 
         public void AddRegister(ViconRegister register)
         {
-            if (!registers.ContainsKey(register.Owner))
+            if (!registers.ContainsKey(register.Owner) || registers[register.Owner] == null)
             {
                 registers[register.Owner] = new Dictionary<string, ViconRegister>();
             }
@@ -95,6 +95,9 @@ namespace Viconomy.Registry
             int i = 0;
             foreach (Dictionary<string, ViconRegister> item in registers.Values)
             {
+                if (item == null) 
+                    continue;
+
                 i += item.Count; 
             }
 

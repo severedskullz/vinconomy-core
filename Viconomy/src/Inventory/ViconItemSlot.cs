@@ -17,7 +17,7 @@ namespace Viconomy.Inventory
         {
             this.stallSlot = stallSlot;
             this.itemSlot = itemSlot;
-            this.HexBackgroundColor = "#65d934";
+            //this.HexBackgroundColor = "#65d934";
         }
 
         public override bool CanHold(ItemSlot sourceSlot)

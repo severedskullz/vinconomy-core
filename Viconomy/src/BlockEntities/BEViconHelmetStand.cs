@@ -15,9 +15,10 @@ namespace Viconomy.BlockEntities
 
         public BEViconHelmetStand()
         {
-            this.inventory = new ViconomyInventory(null, null, StallSlotCount, StacksPerSlot);
-            this.inventory.SlotModified += base.Inventory_SlotModified;
-            this.inventory.SetSlotFilter(0, ViconomyFilters.IsHelmetSlot);
+            inventory = new ViconomyInventory(null, null, StallSlotCount, StacksPerSlot);
+            inventory.SlotModified += base.Inventory_SlotModified;
+            inventory.SetSlotFilter(0, ViconomyFilters.IsHelmetSlot);
+            inventory.SetSlotBackground(0, "vicon-helmet");
         }
 
         protected override float[][] genTransformationMatrices()

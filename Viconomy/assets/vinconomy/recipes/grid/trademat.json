@@ -10,7 +10,7 @@
     "S": {
       "type": "block",
       "code": "game:chest-east",
-      "name": "chest"
+      "attributes": { "type": "normal-generic" }
     }
   },
   "recipeGroup": 1,

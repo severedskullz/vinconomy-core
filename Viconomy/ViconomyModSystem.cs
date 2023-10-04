@@ -10,13 +10,12 @@ using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Viconomy.Delegates;
-using Microsoft.Win32;
-using Viconomy.Inventory;
-using Vintagestory.GameContent;
-using System.Numerics;
+using Cairo;
 
 namespace Viconomy
 {
+    using RayTraceResults = Tuple<BlockSelection, EntitySelection>;
+
     public class ViconomyModSystem : ModSystem
     {
         private ICoreServerAPI _coreServerAPI;
@@ -36,15 +35,19 @@ namespace Viconomy
  
             api.RegisterBlockClass("ViconContainer", typeof(BlockVContainer));
             api.RegisterBlockClass("ViconRegister", typeof(BlockVRegister));
-            
+            api.RegisterBlockClass("ViconClothingDisplay", typeof(BlockVClothingDisplay));
+            api.RegisterBlockClass("ViconClothingDisplayTop", typeof(BlockVClothingDisplayTop));
+
             api.RegisterBlockEntityClass("BEViconStall", typeof(BEViconStall));
             api.RegisterBlockEntityClass("BEViconHelmetStand", typeof(BEViconHelmetStand));
+            api.RegisterBlockEntityClass("BEViconArmorStand", typeof(BEViconArmorStand));
             api.RegisterBlockEntityClass("BEVRegister", typeof(BEVRegister));
             api.RegisterBlockEntityClass("BEViconShelf", typeof(BEViconShelf));
             api.RegisterBlockEntityClass("BEViconWeaponrack", typeof(BEViconWeaponRack));
             api.RegisterBlockEntityClass("BEViconToolrack", typeof(BEViconToolRack));
+            api.RegisterBlockEntityClass("BEViconArmorStand", typeof(BEViconArmorStand));
 
-            api.Network.RegisterChannel("Viconomy")
+            api.Network.RegisterChannel("Vinconomy")
                 .RegisterMessageType(typeof(RegistryUpdatePacket));
 
         }
@@ -74,64 +77,140 @@ namespace Viconomy
             base.StartPre(api);
         }
 
+
+
         public override void StartServerSide(ICoreServerAPI api)
         {
             _coreServerAPI = api;
-            _serverChannel = api.Network.GetChannel("Viconomy");
+            _serverChannel = api.Network.GetChannel("Vinconomy");
                        
             api.Event.SaveGameLoaded += OnSaveGameLoading;
             api.Event.GameWorldSave += OnSaveGameSaving;
             api.Event.PlayerJoin += SendRegisterUpdate;
 
-            this.OnPurchasedItem += TEST_OnPurchasedItem;
-            this.OnCanPurchaseItem += TEST_OnCanPurchaseItem;
-            this.OnBlockBroken += TEST_OnBlockBroken;
-            this.OnBlockPlaced += TEST_OnBlockPlaced;
-            this.OnTryPlaceBlock += TEST_OnTryBlockPlaced;
+            var parsers = api.ChatCommands.Parsers;
+            api.ChatCommands.Create("viconomy")
+                .WithAlias("vicon")
+                .RequiresPrivilege(Privilege.gamemode)
+                .BeginSubCommand("setowner")
+                    .WithDescription("Sets the Owner of the Stall or Register at the given position to the provided player.")
+                    .WithArgs(parsers.Word("Player Name"), parsers.Int("Block X"), parsers.Int("Block Y"), parsers.Int("Block Z"))
+                    .HandleWith(SetOwner)
+                .EndSubCommand();
         }
 
-        private bool TEST_OnTryBlockPlaced(IWorldAccessor world, IPlayer byPlayer, ItemStack itemstack, BlockSelection blockSel)
-        {
-                PrintClientMessage(byPlayer, "TRY BLOCK PLACED DELEGATE RAN");
-                return true;
-        }
-
-        private void TEST_OnBlockPlaced(AssetLocation code, IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack)
-        {
-            
-                this._coreServerAPI.BroadcastMessageToAllGroups(code.GetName() + ": ON BLOCK PLACED DELEGATE RAN", EnumChatType.OwnMessage);
-            
-        }
-
-        private bool TEST_OnBlockBroken(AssetLocation code, IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier)
-        {
-            PrintClientMessage(byPlayer, code.GetName() + ": ON BLOCK BROKEN DELEGATE RAN");
-            return true;
-        }
-
-        private bool TEST_OnCanPurchaseItem(IPlayer player, BEViconStall stall, BEVRegister register, ItemSlot product, ItemSlot payment)
-        {
-            {
-                PrintClientMessage(player, "CAN PURCHASE DELEGATE RAN");
-                return true;
-            }
-        }
-
-        private bool TEST_OnPurchasedItem(IPlayer player, BEViconStall stall, BEVRegister register, ItemStack product, ItemStack payment)
-        {
-            {
-                PrintClientMessage(player, "PURCHASE DELEGATE RAN");
-                return true;
-            }
-        }
 
         public override void StartClientSide(ICoreClientAPI api)
         {
             _coreClientAPI = api;
-            _clientChannel = api.Network.GetChannel("Viconomy");
+            _clientChannel = api.Network.GetChannel("Vinconomy");
             _clientChannel.SetMessageHandler(new NetworkServerMessageHandler<RegistryUpdatePacket>(this.OnRecieveRegistryUpdate));
             this.registers = new ShopRegistry();
+
+            _coreClientAPI.Input.RegisterHotKey("trade-with-player", "Trade with Player", GlKeys.P, HotkeyType.CharacterControls);
+            _coreClientAPI.Input.SetHotKeyHandler("trade-with-player", tradeWithPlayerHandler);
+
+            _coreClientAPI.Gui.Icons.CustomIcons["vinconFood"] = delegate (Context ctx, int x, int y, float w, float h, double[] rgba)
+            {
+                AssetLocation loc = new AssetLocation("game", "textures/icons/worldmap/01-turnip.svg");
+                IAsset asset = _coreClientAPI.Assets.TryGet(loc);
+                if (asset != null)
+                {
+                    int color2 = ColorUtil.ColorFromRgba(175, 175, 175, 0);
+                    _coreClientAPI.Gui.DrawSvg(asset, ctx.GetTarget() as ImageSurface, x, y, (int)w, (int)h, color2);
+                }
+            };
+
+            RegisterCustomIcon("arms");
+            RegisterCustomIcon("belt");
+            RegisterCustomIcon("body");
+            RegisterCustomIcon("boots");
+            RegisterCustomIcon("face");
+            RegisterCustomIcon("general");
+            RegisterCustomIcon("general2");
+            RegisterCustomIcon("hands");
+            RegisterCustomIcon("hands2");
+            RegisterCustomIcon("hat");
+            RegisterCustomIcon("helmet");
+            RegisterCustomIcon("legs");
+            RegisterCustomIcon("neck");
+            RegisterCustomIcon("payment");
+            RegisterCustomIcon("produce");
+            RegisterCustomIcon("shield");
+            RegisterCustomIcon("toolrack");
+            RegisterCustomIcon("weapon");
         }
+        private TextCommandResult SetOwner(TextCommandCallingArgs args)
+        {
+
+            IServerPlayerData playerData = _coreServerAPI.PlayerData.GetPlayerDataByLastKnownName((string)args[0]);
+
+            if (playerData == null)
+            {
+                return TextCommandResult.Error("No player with that name.");
+            }
+            BlockPos pos = new BlockPos((int)args[1] + (_coreServerAPI.WorldManager.MapSizeX / 2), (int)args[2], (int)args[3] + (_coreServerAPI.WorldManager.MapSizeZ / 2));
+
+            BlockEntity entity = _coreServerAPI.World.BlockAccessor.GetBlockEntity(pos);
+            if (entity == null)
+            {
+                return TextCommandResult.Error("Please target a Viconomy Stall or Register. (Entity)");
+            }
+
+            string playerUUID = playerData.PlayerUID;
+            if (entity is BEViconStall) {
+                ((BEViconStall)entity).Owner = playerUUID;
+            }
+            else if (entity is BEVRegister) 
+            {
+                ((BEViconStall)entity).Owner = playerUUID;
+            } else
+            {
+                return TextCommandResult.Error("Please target a Viconomy Stall or Register. (Wrong Class)");
+            }
+
+            return TextCommandResult.Success("Set owner to " + playerData.LastKnownPlayername + " for " +pos.ToString());
+        }
+
+        private void RegisterCustomIcon(String key)
+        {
+            _coreClientAPI.Gui.Icons.CustomIcons["vicon-"+key] = delegate (Context ctx, int x, int y, float w, float h, double[] rgba)
+           {
+               AssetLocation loc = new AssetLocation("vinconomy:textures/icons/slot-" + key + ".svg");
+               IAsset asset = _coreClientAPI.Assets.TryGet(loc, true);
+               int color = ColorUtil.ColorFromRgba(175, 200, 175, 125);
+               _coreClientAPI.Gui.DrawSvg(asset, ctx.GetTarget() as ImageSurface, x, y, (int)w, (int)h, color);
+           };
+        }
+
+        private bool tradeWithPlayerHandler(KeyCombination t1)
+        {
+            IClientPlayer player = _coreClientAPI.World.Player;
+
+
+            RayTraceResults result = DoPlayerRaytrace(player);
+            player.ShowChatNotification("Hit Block: " + result.Item1?.Position.ToString());
+            player.ShowChatNotification("Hit Entity: " + result.Item2?.ToString());
+            //player.Entity.CameraPos, player.CameraPitch, player.CameraYaw, 300, blockSelection, entitySelection);
+            //_coreClientAPI.World.BlockAccessor.BreakBlock(blockSelection.Position, player, 1);
+
+            return true;
+
+        }
+
+        public RayTraceResults DoPlayerRaytrace(IClientPlayer player)
+        {
+            BlockSelection blockSelection = null;
+            EntitySelection entitySelection = null;
+
+            Vec3d camPos = new Vec3d(player.Entity.SidedPos.X, player.Entity.SidedPos.Y + player.Entity.LocalEyePos.Y, player.Entity.SidedPos.Z);
+
+            _coreClientAPI.World.RayTraceForSelection(camPos, player.CameraPitch, player.CameraYaw, 300f, ref blockSelection, ref entitySelection, null, null);
+
+            return new RayTraceResults(blockSelection, entitySelection);
+
+        }
+
 
         private void OnRecieveRegistryUpdate(RegistryUpdatePacket packet)
         {
@@ -175,24 +254,37 @@ namespace Viconomy
         {
             this._coreServerAPI.Logger.Debug("=============== Loading Viconomy ===============");
             registers = _coreServerAPI.WorldManager.SaveGame.GetData("vinconomy:registers", new ShopRegistry());
-            this._coreServerAPI.Logger.Debug("= Loaded " + registers.GetCount() + " registers");
-
-            foreach (string ownerId in registers.registers.Keys)
+            if (registers != null)
             {
-                var shops = registers.registers[ownerId];
-                this._coreServerAPI.Logger.Debug("== Loading " + shops.Values.Count + " registers for Owner: " + ownerId);
-                foreach (string shopId in shops.Keys)
-                {
-                    var shop = registers.registers[ownerId][shopId];
-                    this._coreServerAPI.Logger.Debug("=== Loading shop " + shop.Name);
+                this._coreServerAPI.Logger.Debug("= Loaded " + registers.GetCount() + " registers");
 
-                    if (shop.Position == null)
+                foreach (string ownerId in registers.registers.Keys)
+                {
+                    var shops = registers.registers[ownerId];
+
+                    //Shops can be null if they didnt have any registers place and we deserialized the Dictionary with nothing in it.
+                    if (shops == null) continue;
+
+                    this._coreServerAPI.Logger.Debug("== Loading " + shops.Values.Count + " registers for Owner: " + ownerId);
+                    foreach (string shopId in shops.Keys)
                     {
-                        registers.registers[ownerId].Remove(shopId);
-                        this._coreServerAPI.Logger.Debug("==== Shop " + shop.Name + " (" + shop.ID +") does not exist anymore. Removing...");
+                        var shop = registers.registers[ownerId][shopId];
+                        this._coreServerAPI.Logger.Debug("=== Loading shop " + shop.Name);
+
+                        if (shop.Position == null)
+                        {
+                            registers.registers[ownerId].Remove(shopId);
+                            this._coreServerAPI.Logger.Debug("==== Shop " + shop.Name + " (" + shop.ID + ") does not exist anymore. Removing...");
+                        }
                     }
                 }
+            } else
+            {
+                this._coreServerAPI.Logger.Debug("= Could not load Viconomy savegame data. Recreating Shop Registry. Shops will need to be remade and reinitialized");
+                registers = new ShopRegistry();
             }
+           
+           
             this._coreServerAPI.Logger.Debug("=============== Loaded Viconomy ================");
         }
 
@@ -268,8 +360,6 @@ namespace Viconomy
         }
 
         #region Event Delegates
-
-       
 
         /// <summary>
         /// Called when an item is purchased. <br/><br/>

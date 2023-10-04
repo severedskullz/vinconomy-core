@@ -2,7 +2,6 @@
   "code": "helmetstand",
   "class": "ViconContainer",
   "entityClass": "BEViconHelmetStand",
-
   "priorityInteract": true,
   "creativeinventory": { "vinconomy": [ "*-oak-*-east" ] },
   "attributes": { "handbook": { "groupBy": [ "helmetstand-*-*-east" ] } },
