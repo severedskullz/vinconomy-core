@@ -90,8 +90,9 @@ namespace Viconomy.BlockEntities
                 { 
                     if (ViconomyFilters.IsWaistSlot(slot))
                     {
-                        matrix.RotateYDeg(this.block.Shape.rotateY - 90);
                         matrix.Scale(1.01f, 1.01f, 1.01f);
+                        matrix.RotateYDeg(this.block.Shape.rotateY - 90);
+                        
                     }
                     else if (ViconomyFilters.IsBootsSlot(slot))
                     {
@@ -99,11 +100,9 @@ namespace Viconomy.BlockEntities
                         matrix.Translate(0.02f, 0.10f, -0.025f);
                     } else
                     {
-                        matrix.RotateYDeg(this.block.Shape.rotateY - 90);
+                        matrix.RotateYDeg(this.block.Shape.rotateY + 90);
                     }
-                        
                 }
-
                 matrix.Translate(-0.5f, 0f, -0.5f);
                 tfMatrices[i] = matrix.Values;
             }

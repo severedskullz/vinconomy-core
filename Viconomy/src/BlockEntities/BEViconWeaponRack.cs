@@ -80,7 +80,7 @@ namespace Viconomy.BlockEntities
                     .RotateYDeg(this.block.Shape.rotateY)
                     .RotateXDeg(-270)
                     .RotateYDeg(135)
-                    .Translate(0, -0.45f- stupidOffset, 0)
+                    .Translate(0, -0.425f- stupidOffset, 0)
                     .Scale(0.8f, 0.8f, 0.8f)
                     .Translate(-0.5f, 0, -0.5f);
 

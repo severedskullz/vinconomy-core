@@ -29,20 +29,20 @@
   },
   "shapebytype": {
     "*-north": {
-      "base": "block/helmetstand",
-      "rotateY": 180
-    },
-    "*-east": {
-      "base": "block/helmetstand",
-      "rotateY": 90
-    },
-    "*-south": {
-      "base": "block/helmetstand",
+      "base": "block/seraph",
       "rotateY": 0
     },
-    "*-west": {
-      "base": "block/helmetstand",
+    "*-east": {
+      "base": "block/seraph",
       "rotateY": 270
+    },
+    "*-south": {
+      "base": "block/seraph",
+      "rotateY": 180
+    },
+    "*-west": {
+      "base": "block/seraph",
+      "rotateY": 90
     }
   },
 

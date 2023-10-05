@@ -586,7 +586,7 @@ namespace Viconomy.BlockEntities
 
 
 
-    private bool TryPut(ItemSlot slot, BlockSelection blockSel, bool bulk)
+        private bool TryPut(ItemSlot slot, BlockSelection blockSel, bool bulk)
         {
 
             if (slot?.Itemstack == null)
@@ -599,12 +599,10 @@ namespace Viconomy.BlockEntities
             int amountItem = bulk ? slot.Itemstack.StackSize : 1;
             bool movedItems = false;
            
-
             for (int i = 0; i < StacksPerSlot; i++)
             {
                 if (slot.Itemstack != null)
                 {
-
                     int moved = slot.TryPutInto(this.Api.World, slots[i], bulk ? slot.Itemstack.StackSize : 1);
                     amountItem -= moved;
                     if (moved > 0)
