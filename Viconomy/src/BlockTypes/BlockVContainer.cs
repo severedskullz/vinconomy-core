@@ -129,7 +129,7 @@ namespace Viconomy.BlockTypes
             BEViconStall vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEViconStall;
             if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID)
             {
-                ViconomyModSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyModSystem>();
+                ViconomyCore modSystem = world.Api.ModLoader.GetModSystem<ViconomyCore>();
                 if (modSystem != null && !modSystem.BlockBroken(this.Code, world, pos, byPlayer, dropQuantityMultiplier))
                 {
                     return ;
@@ -143,7 +143,7 @@ namespace Viconomy.BlockTypes
 
         public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)
         {
-            ViconomyModSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyModSystem>();
+            ViconomyCore modSystem = world.Api.ModLoader.GetModSystem<ViconomyCore>();
             if (modSystem != null)
             {
                 modSystem.BlockPlaced(this.Code, world, blockPos, byItemStack);
@@ -153,7 +153,7 @@ namespace Viconomy.BlockTypes
 
         public override bool TryPlaceBlock(IWorldAccessor world, IPlayer byPlayer, ItemStack itemstack, BlockSelection blockSel, ref string failureCode)
         {
-            ViconomyModSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyModSystem>();
+            ViconomyCore modSystem = world.Api.ModLoader.GetModSystem<ViconomyCore>();
             if (modSystem != null && !modSystem.TryPlaceBlock(world, byPlayer, itemstack, blockSel))
             {
                 failureCode = "__ignore__";

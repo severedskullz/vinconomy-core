@@ -17,7 +17,7 @@ namespace Viconomy.BlockEntities
 {
     public class BEViconStall : BlockEntityDisplay
     {
-        ViconomyModSystem modSystem;
+        ViconomyCore modSystem;
 
         protected ViconomyInventory inventory;
         protected GuiDialogBlockEntity invDialog;
@@ -68,7 +68,7 @@ namespace Viconomy.BlockEntities
 
         public override void Initialize(ICoreAPI api)
         {
-            modSystem = api.ModLoader.GetModSystem<ViconomyModSystem>();
+            modSystem = api.ModLoader.GetModSystem<ViconomyCore>();
 
             this.block = api.World.BlockAccessor.GetBlock(this.Pos); 
 
@@ -152,14 +152,14 @@ namespace Viconomy.BlockEntities
 
             if (currency.Itemstack == null) {
                 //PrintClientMessage(player, "vinconomy:item-cost", new Object[] { currency.Itemstack.StackSize, currency.Itemstack.GetName() });
-                ViconomyModSystem.PrintClientMessage(player, "vinconomy:no-price", null);
+                ViconomyCore.PrintClientMessage(player, "vinconomy:no-price", null);
                 return;
             } 
             
             // Does the shop have a register ID set?
             if (this.RegisterID == null && !this.isAdminShip)
             {
-                ViconomyModSystem.PrintClientMessage(player, "vinconomy:not-registered-with-shop");
+                ViconomyCore.PrintClientMessage(player, "vinconomy:not-registered-with-shop");
                 return;
             }
 
@@ -168,7 +168,7 @@ namespace Viconomy.BlockEntities
             BEVRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
             if (register == null && !this.isAdminShip)
             {
-                ViconomyModSystem.PrintClientMessage(player, "vinconomy:not-registered-with-shop");
+                ViconomyCore.PrintClientMessage(player, "vinconomy:not-registered-with-shop");
                 return;
             }
   
@@ -189,7 +189,7 @@ namespace Viconomy.BlockEntities
             if (purchaseSlot == null)
             {
                 //Console.WriteLine(Api.Side + ": Not enough stock to purchase item");
-                ViconomyModSystem.PrintClientMessage(player, "vinconomy:no-product");
+                ViconomyCore.PrintClientMessage(player, "vinconomy:no-product");
                 return;
             }
             if (modSystem.CanPurchaseItem(player, this, register, stallSlot, purchaseSlot, currency, desiredAmount))
@@ -220,7 +220,7 @@ namespace Viconomy.BlockEntities
             if (!currency.Itemstack.Equals(Api.World, handItem.Itemstack, null) || handItem.StackSize < currency.StackSize)
             {
                 //Console.WriteLine(Api.Side + ": Not enough money!");
-                ViconomyModSystem.PrintClientMessage(player, "vinconomy:not-enough-money");
+                ViconomyCore.PrintClientMessage(player, "vinconomy:not-enough-money");
                 return;
             }
 
@@ -241,13 +241,13 @@ namespace Viconomy.BlockEntities
                 }
                 else
                 {
-                    ViconomyModSystem.PrintClientMessage(player, "vinconomy:not-enough-stock");
+                    ViconomyCore.PrintClientMessage(player, "vinconomy:not-enough-stock");
                     //Console.WriteLine(Api.Side + ": Something went horribly wrong - Not enough stock to purchase item");
                 }
             }
             else
             {
-                ViconomyModSystem.PrintClientMessage(player, "vinconomy:purchased-zero-quantity");
+                ViconomyCore.PrintClientMessage(player, "vinconomy:purchased-zero-quantity");
                 //Console.WriteLine(Api.Side + ": Something went horribly wrong - Tried to take 0 stock!");
             }
         }
@@ -387,7 +387,7 @@ namespace Viconomy.BlockEntities
                         {
                             if ( !((ICoreServerAPI)Api).Server.IsDedicated )
                             {
-                                ViconomyModSystem.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
+                                ViconomyCore.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
                             } else
                             {
                                 ((IServerPlayer)player).Disconnect("Nice try, but that wasn't yours. (Tried to access Stall they didn't own)");
@@ -407,7 +407,7 @@ namespace Viconomy.BlockEntities
         {
             if (byPlayer.PlayerUID != this.Owner)
             {
-                ViconomyModSystem.PrintClientMessage(byPlayer, "vinconomy:doesnt-own", new object[] { });
+                ViconomyCore.PrintClientMessage(byPlayer, "vinconomy:doesnt-own", new object[] { });
                 return;
             }
 
@@ -429,7 +429,7 @@ namespace Viconomy.BlockEntities
         {
             if (byPlayer.PlayerUID != this.Owner)
             {
-                ViconomyModSystem.PrintClientMessage(byPlayer, "vinconomy:doesnt-own", new object[] { });
+                ViconomyCore.PrintClientMessage(byPlayer, "vinconomy:doesnt-own", new object[] { });
                 return;
             }
 
@@ -455,13 +455,13 @@ namespace Viconomy.BlockEntities
         {
             if (byPlayer.PlayerUID != this.Owner)
             {
-                ViconomyModSystem.PrintClientMessage(byPlayer, "vinconomy:doesnt-own", new object[] { });
+                ViconomyCore.PrintClientMessage(byPlayer, "vinconomy:doesnt-own", new object[] { });
                 return;
             }
 
             if (!byPlayer.HasPrivilege("gamemode"))
             {
-                ViconomyModSystem.PrintClientMessage(byPlayer, "vinconomy:no-privelege", new object[] { });
+                ViconomyCore.PrintClientMessage(byPlayer, "vinconomy:no-privelege", new object[] { });
                 return;
             }
 
@@ -684,7 +684,7 @@ namespace Viconomy.BlockEntities
                 ICoreServerAPI coreSererAPI = this.Api as ICoreServerAPI;
                 if (coreSererAPI != null)
                 {
-                    ViconomyModSystem.PrintClientMessage(byPlayer, "vinconomy:purchased-item", new object[] { amount, productStack.GetName(), price, paymentStack.GetName() });
+                    ViconomyCore.PrintClientMessage(byPlayer, "vinconomy:purchased-item", new object[] { amount, productStack.GetName(), price, paymentStack.GetName() });
                 }
 
                 this.MarkDirty(true, null);

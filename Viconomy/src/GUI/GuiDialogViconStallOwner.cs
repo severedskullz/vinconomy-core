@@ -31,7 +31,7 @@ namespace Viconomy.GUI
             api = capi;
             stall = capi.World.BlockAccessor.GetBlockEntity<BEViconStall>(BlockEntityPosition);
             curTab = stallSelection;
-            ViconomyModSystem modSystem = capi.ModLoader.GetModSystem<ViconomyModSystem>();
+            ViconomyCore modSystem = capi.ModLoader.GetModSystem<ViconomyCore>();
             registers = modSystem.GetRegistry().GetRegistersForOwner(stall.Owner);
             vinInv = Inventory as ViconomyInventory;
             this.stallSlotCount = stall.StallSlotCount;

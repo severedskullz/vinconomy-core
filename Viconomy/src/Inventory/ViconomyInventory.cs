@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Viconomy.Config;
 using Vintagestory.API.Common;
-using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
@@ -26,7 +22,7 @@ namespace Viconomy.Inventory
 
         public override int Count { get { return this.stallSlots.Length * (itemsPerBin + 1); } }
 
-        ViconomyModSystem modSystem;
+        ViconomyCore modSystem;
 
         public ViconomyInventory(string inventoryID, ICoreAPI api, int binSize, int itemsPerBin) : base(inventoryID, api)
         {
@@ -54,7 +50,7 @@ namespace Viconomy.Inventory
         public override void LateInitialize(string inventoryID, ICoreAPI api)
         {
             base.LateInitialize(inventoryID, api);
-            modSystem = Api.ModLoader.GetModSystem<ViconomyModSystem>();
+            modSystem = Api.ModLoader.GetModSystem<ViconomyCore>();
             
         }
 

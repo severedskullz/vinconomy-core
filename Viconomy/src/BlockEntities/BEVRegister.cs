@@ -45,7 +45,7 @@ namespace Viconomy.BlockEntities
 
         public void UpdateRegister(string Owner, string OwnerName, string ID, string Name)
         {
-            ViconomyModSystem modSystem = this.Api.ModLoader.GetModSystem<ViconomyModSystem>();
+            ViconomyCore modSystem = this.Api.ModLoader.GetModSystem<ViconomyCore>();
 
             if (ID == null)
             {
@@ -69,7 +69,7 @@ namespace Viconomy.BlockEntities
         public override void OnBlockBroken(IPlayer byPlayer = null)
         {
             base.OnBlockBroken(byPlayer);
-            ViconomyModSystem modSystem = this.Api.ModLoader.GetModSystem<ViconomyModSystem>();
+            ViconomyCore modSystem = this.Api.ModLoader.GetModSystem<ViconomyCore>();
             modSystem.registers.ClearRegisterPos(Owner, ID);
         }
 
@@ -158,7 +158,7 @@ namespace Viconomy.BlockEntities
         {
             if (this.Api.World is IServerWorldAccessor)
             {
-                ViconomyModSystem modSystem = Api.ModLoader.GetModSystem<ViconomyModSystem>();
+                ViconomyCore modSystem = Api.ModLoader.GetModSystem<ViconomyCore>();
                 ViconRegister register = modSystem.GetRegistry().GetRegister(Owner, ID);
 
                 byte[] data;

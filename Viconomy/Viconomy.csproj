@@ -5,15 +5,10 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>bin\$(Configuration)\Mods\mod</OutputPath>
 	<Optimize>false</Optimize>
+	<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="cairo-sharp">
-      <HintPath>..\..\..\..\..\Programs\Vintagestory\Lib\cairo-sharp.dll</HintPath>
-    </Reference>
-    <Reference Include="protobuf-net">
-      <HintPath>..\..\..\..\..\Programs\Vintagestory\Lib\protobuf-net.dll</HintPath>
-    </Reference>
     <Reference Include="VintagestoryAPI">
       <HintPath>$(VINTAGE_STORY)/VintagestoryAPI.dll</HintPath>
       <Private>false</Private>
@@ -24,6 +19,10 @@
     </Reference>
     <Reference Include="VSEssentials">
       <HintPath>$(VINTAGE_STORY)/Mods/VSEssentials.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="VSCreativeMod">
+      <HintPath>$(VINTAGE_STORY)/Mods/VSCreativeMod.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
@@ -38,6 +37,14 @@
       <HintPath>$(VINTAGE_STORY)/VintagestoryLib.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>$(VINTAGE_STORY)/Lib/protobuf-net.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="cairo-sharp">
+      <HintPath>$(VINTAGE_STORY)/Lib/cairo-sharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System.Data.SQLite">
       <HintPath>$(VINTAGE_STORY)/Lib/System.Data.SQLite.dll</HintPath>
       <Private>False</Private>
@@ -48,26 +55,6 @@
   <Content Include="assets\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>
-  <Compile Remove="assets\vinconomy\NewFolder\**" />
-  <Content Remove="assets\vinconomy\NewFolder\**" />
-  <EmbeddedResource Remove="assets\vinconomy\NewFolder\**" />
-  <None Remove="assets\vinconomy\NewFolder\**" />
-  <None Remove="assets\vinconomy\blocktypes\vicon-clothingdisplaystand-top.json" />
-  <None Remove="assets\vinconomy\blocktypes\vicon-clothingdisplaystand.json" />
-  <None Remove="assets\vinconomy\blocktypes\vicon-helmetstand.json" />
-  <None Remove="assets\vinconomy\blocktypes\vicon-register.json" />
-  <None Remove="assets\vinconomy\blocktypes\vicon-shelf.json" />
-  <None Remove="assets\vinconomy\blocktypes\vicon-toolrack.json" />
-  <None Remove="assets\vinconomy\blocktypes\vicon-trademat.json" />
-  <None Remove="assets\vinconomy\blocktypes\vicon-tradematdouble.json" />
-  <None Remove="assets\vinconomy\blocktypes\vicon-weaponrack.json" />
-  <None Remove="assets\vinconomy\lang\en.json" />
-  <None Remove="assets\vinconomy\recipes\grid\producecrate.json" />
-  <None Remove="assets\vinconomy\recipes\grid\shelf.json" />
-  <None Remove="assets\vinconomy\recipes\grid\toolrack.json" />
-  <None Remove="assets\vinconomy\recipes\grid\weaponrack.json" />
-  <None Remove="assets\vinconomy\recipes\register - Copy (2).json" />
-  <None Remove="assets\vinconomy\recipes\trademat-double.json" />
   <Content Include="modinfo.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>
@@ -77,10 +64,6 @@
   <Content Update="assets\vinconomy\lang\en.json">
     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>
-</ItemGroup>
-
-<ItemGroup>
-  <Folder Include="src\Old Shit\" />
 </ItemGroup>
 
 </Project>

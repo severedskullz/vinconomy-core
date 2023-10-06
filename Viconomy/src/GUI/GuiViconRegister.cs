@@ -20,7 +20,7 @@ namespace Viconomy.GUI
         {
             name = DialogTitle;
 
-            ViconomyModSystem modSystem = capi.ModLoader.GetModSystem<ViconomyModSystem>();
+            ViconomyCore modSystem = capi.ModLoader.GetModSystem<ViconomyCore>();
             stall = capi.World.BlockAccessor.GetBlockEntity<BEVRegister>(BlockEntityPosition); 
             if (base.IsDuplicate)
             {

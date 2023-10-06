@@ -16,7 +16,7 @@ namespace Viconomy
 {
     using RayTraceResults = Tuple<BlockSelection, EntitySelection>;
 
-    public class ViconomyModSystem : ModSystem
+    public class ViconomyCore : ModSystem
     {
         private ICoreServerAPI _coreServerAPI;
         private ICoreClientAPI _coreClientAPI;
@@ -107,20 +107,6 @@ namespace Viconomy
             _clientChannel.SetMessageHandler(new NetworkServerMessageHandler<RegistryUpdatePacket>(this.OnRecieveRegistryUpdate));
             this.registers = new ShopRegistry();
 
-            _coreClientAPI.Input.RegisterHotKey("trade-with-player", "Trade with Player", GlKeys.P, HotkeyType.CharacterControls);
-            _coreClientAPI.Input.SetHotKeyHandler("trade-with-player", tradeWithPlayerHandler);
-
-            _coreClientAPI.Gui.Icons.CustomIcons["vinconFood"] = delegate (Context ctx, int x, int y, float w, float h, double[] rgba)
-            {
-                AssetLocation loc = new AssetLocation("game", "textures/icons/worldmap/01-turnip.svg");
-                IAsset asset = _coreClientAPI.Assets.TryGet(loc);
-                if (asset != null)
-                {
-                    int color2 = ColorUtil.ColorFromRgba(175, 175, 175, 0);
-                    _coreClientAPI.Gui.DrawSvg(asset, ctx.GetTarget() as ImageSurface, x, y, (int)w, (int)h, color2);
-                }
-            };
-
             RegisterCustomIcon("arms");
             RegisterCustomIcon("belt");
             RegisterCustomIcon("body");
@@ -183,21 +169,6 @@ namespace Viconomy
            };
         }
 
-        private bool tradeWithPlayerHandler(KeyCombination t1)
-        {
-            IClientPlayer player = _coreClientAPI.World.Player;
-
-
-            RayTraceResults result = DoPlayerRaytrace(player);
-            player.ShowChatNotification("Hit Block: " + result.Item1?.Position.ToString());
-            player.ShowChatNotification("Hit Entity: " + result.Item2?.ToString());
-            //player.Entity.CameraPos, player.CameraPitch, player.CameraYaw, 300, blockSelection, entitySelection);
-            //_coreClientAPI.World.BlockAccessor.BreakBlock(blockSelection.Position, player, 1);
-
-            return true;
-
-        }
-
         public RayTraceResults DoPlayerRaytrace(IClientPlayer player)
         {
             BlockSelection blockSelection = null;
@@ -210,7 +181,6 @@ namespace Viconomy
             return new RayTraceResults(blockSelection, entitySelection);
 
         }
-
 
         private void OnRecieveRegistryUpdate(RegistryUpdatePacket packet)
         {
