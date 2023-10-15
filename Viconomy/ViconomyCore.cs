@@ -11,6 +11,9 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Viconomy.Delegates;
 using Cairo;
+using System.Collections.Generic;
+using Viconomy.Renderer;
+using Viconomy.src.Renderer;
 
 namespace Viconomy
 {
@@ -24,7 +27,11 @@ namespace Viconomy
         private IClientNetworkChannel _clientChannel;
         private IServerNetworkChannel _serverChannel;
 
-        public ShopRegistry registers = new ShopRegistry(); 
+        public ShopRegistry registers = new ShopRegistry();
+        private Dictionary<EnumItemClass, List<IItemRenderer>> renderers;
+        private bool isAddingRegisters;
+
+        public override double ExecuteOrder() => 1;
 
         public ViconConfig Config { get; internal set; }
 
@@ -97,6 +104,9 @@ namespace Viconomy
                     .WithArgs(parsers.Word("Player Name"), parsers.Int("Block X"), parsers.Int("Block Y"), parsers.Int("Block Z"))
                     .HandleWith(SetOwner)
                 .EndSubCommand();
+
+            _coreServerAPI.Event.OnTestBlockAccess += TestAccess;
+
         }
 
 
@@ -106,6 +116,19 @@ namespace Viconomy
             _clientChannel = api.Network.GetChannel("Vinconomy");
             _clientChannel.SetMessageHandler(new NetworkServerMessageHandler<RegistryUpdatePacket>(this.OnRecieveRegistryUpdate));
             this.registers = new ShopRegistry();
+
+            renderers = new Dictionary<EnumItemClass, List<IItemRenderer>>();
+            foreach (EnumItemClass i in Enum.GetValues(typeof(EnumItemClass)))
+            {
+                renderers[i] = new List<IItemRenderer>();
+            }
+
+            BeginRendererRegistration();
+                RegisterRenderer(new BlockRenderer());
+                RegisterRenderer(new ItemRenderer());
+                RegisterRenderer(new ClutterBlockRenderer());
+                RegisterRenderer(new MicroBlockRenderer());
+            EndRendererRegistration();
 
             RegisterCustomIcon("arms");
             RegisterCustomIcon("belt");
@@ -126,6 +149,33 @@ namespace Viconomy
             RegisterCustomIcon("toolrack");
             RegisterCustomIcon("weapon");
         }
+
+
+
+        private void BeginRendererRegistration()
+        {
+            isAddingRegisters = true;
+        }
+
+        private void RegisterRenderer(IItemRenderer blockRenderer)
+        {
+            renderers[blockRenderer.getRendererClass()].Add(blockRenderer);
+            if (!isAddingRegisters)
+            {
+                renderers[blockRenderer.getRendererClass()].Sort((i1, i2) => { return i2.getPriority().CompareTo(i1.getPriority()); });
+            }
+        }
+        private void EndRendererRegistration()
+        {
+            isAddingRegisters = false;
+            foreach (EnumItemClass i in Enum.GetValues(typeof(EnumItemClass)))
+            {
+                renderers[i].Sort((i1, i2) => { return i2.getPriority().CompareTo(i1.getPriority()); });
+            }
+
+        }
+
+
         private TextCommandResult SetOwner(TextCommandCallingArgs args)
         {
 
@@ -395,6 +445,32 @@ namespace Viconomy
             OnBlockPlaced?.Invoke(code, world, blockPos, byItemStack);
         }
         public event OnBlockPlacedDelegate OnBlockPlaced;
+
+        public EnumWorldAccessResponse TestAccess(IPlayer player, BlockSelection blockSelection, EnumBlockAccessFlags accessType, string claimant, EnumWorldAccessResponse response)
+        {
+            if (OnTestAccess != null)
+                return OnTestAccess.Invoke(player, blockSelection, accessType, claimant, response);
+            else return response;
+        }
+
+        public IItemRenderer GetRenderer(ItemStack stack)
+        {
+            List<IItemRenderer> typeRenderers = renderers[stack.Class];
+            foreach (IItemRenderer renderer in typeRenderers)
+            {
+                if (renderer.canHandle(stack))
+                    return renderer;
+            }
+
+            //This should have returned already, but in case someone fucked up
+            this._coreServerAPI.Logger.Error("Did not get a renderer for item " + stack.Collectible.Code.Path);
+            if (stack.Class == EnumItemClass.Block)
+                return new BlockRenderer();
+            else
+                return new ItemRenderer();
+        }
+
+        public event OnTestAccessDelegate OnTestAccess;
 
         #endregion
 
