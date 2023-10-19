@@ -1,7 +1,3 @@
-
-Armor Stand:
-	Armor / Wearables
-	
 Pallet
 	Pile / Stackables
 		
@@ -24,3 +20,6 @@ Chiseled blocks as stall?
 	@The_RocketWolf said in his stream he thinks he can chisel out some really cool chests. Wonder if I can get it so they can design their own stalls?
 	
 Saw / Hammer / Cleaver needs JSON Patch to fix the stupid fucking offsets when they made the item.
+
+Bank Teller:
+	Zolgrim was forgetting to "inject" currency into the economy for players. Perhaps a config that allows players to get "starting money" by interacting with the banker.

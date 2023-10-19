@@ -17,7 +17,7 @@ namespace Viconomy.BlockEntities
 
         public override void ConfigureInventory()
         {
-            this.inventory = new ViconomyInventory(null, null, StallSlotCount, StacksPerSlot);
+            this.inventory = new ViconomyInventory(this, null, null, StallSlotCount, StacksPerSlot);
             this.inventory.SetSlotFilter(0, ViconomyFilters.IsToolOrWeapon);
             this.inventory.SetSlotBackground(0, "vicon-toolrack");
             this.inventory.SetSlotFilter(1, ViconomyFilters.IsShield);

@@ -14,10 +14,11 @@ namespace Viconomy.BlockEntities
     public class BEViconArmorStand : BEViconStall
     {
         public override int StallSlotCount => 9;
+        public override int BulkPurchaseAmount => 1;
 
         public override void ConfigureInventory()
         {
-            inventory = new ViconomyInventory(null, null, StallSlotCount, StacksPerSlot);
+            inventory = new ViconomyInventory(this, null, null, StallSlotCount, StacksPerSlot);
             inventory.SetSlotFilter(0, ViconomyFilters.IsBootsSlot);
             inventory.SetSlotBackground(0, "vicon-boots");
             inventory.SetSlotFilter(1, ViconomyFilters.IsPantsSlot);
@@ -90,17 +91,16 @@ namespace Viconomy.BlockEntities
                 { 
                     if (ViconomyFilters.IsWaistSlot(slot))
                     {
-                        matrix.Scale(1.01f, 1.01f, 1.01f);
-                        matrix.RotateYDeg(this.block.Shape.rotateY - 90);
                         
-                    }
-                    else if (ViconomyFilters.IsBootsSlot(slot))
+                        matrix.RotateYDeg(this.block.Shape.rotateY - 90);
+                        matrix.Translate(-0.05f, 0.10f, -0.0125f);
+
+                    } 
+                    else
                     {
-                        matrix.Scale(1.1f, 1.1f, 1.2f);
-                        matrix.Translate(0.02f, 0.10f, -0.025f);
-                    } else
-                    {
+                       
                         matrix.RotateYDeg(this.block.Shape.rotateY + 90);
+                        matrix.Translate(0f, 0.050f, -0.01250f);
                     }
                 }
                 matrix.Translate(-0.5f, 0f, -0.5f);

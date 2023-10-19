@@ -56,6 +56,7 @@ namespace Viconomy.BlockTypes
             List<WorldInteraction> interactions = new List<WorldInteraction>();
             if (be != null)
             {
+                int selectionIndex = selection.SelectionBoxIndex;
                 StallSlot[] slots = ((ViconomyInventory)be.Inventory).StallSlots;
                 //In case we have some oddity with selections, just exit gracefully.
                 if (selection.SelectionBoxIndex >= slots.Length)
@@ -63,7 +64,7 @@ namespace Viconomy.BlockTypes
                     return interactions.ToArray();
                 }
 
-                StallSlot slot = slots[selection.SelectionBoxIndex];
+                StallSlot slot = slots[selectionIndex];
 
                 if (be.Owner != forPlayer.PlayerUID)
                 {
@@ -71,38 +72,32 @@ namespace Viconomy.BlockTypes
                     {
                         interactions.Add(new WorldInteraction
                         {
-                            ActionLangCode = "vinconomy:stall-purchase",
+                            ActionLangCode = "vinconomy:stall-purchase-armor" + selectionIndex,
                             MouseButton = EnumMouseButton.Right,
                             HotKeyCode = "shift",
                             Itemstacks = new ItemStack[] { slot.currency.Itemstack }
 
                         });
-
-                        ItemStack fiveStack = slot.currency.Itemstack.Clone();
-                        fiveStack.StackSize = 5 * fiveStack.StackSize;
-                        interactions.Add(new WorldInteraction
-                        {
-                            ActionLangCode = "vinconomy:stall-purchase-five",
-                            MouseButton = EnumMouseButton.Right,
-                            HotKeyCodes = new string[] { "shift", "ctrl" },
-                            Itemstacks = new ItemStack[] { fiveStack }
-                        });
                     }
-                } else {
+                }
+                else
+                {
                     ItemSlot firstSlot = slot.FindFirstNonEmptyStockSlot();
                     if (firstSlot != null)
                     {
                         interactions.Add(new WorldInteraction
                         {
-                            ActionLangCode = "vinconomy:stall-add",
+                            ActionLangCode = "vinconomy:stall-add-armor" + selectionIndex,
                             MouseButton = EnumMouseButton.Right,
                             HotKeyCode = "shift",
                             Itemstacks = new ItemStack[] { firstSlot.Itemstack }
                         });
-                    } else {
+                    }
+                    else
+                    {
                         interactions.Add(new WorldInteraction
                         {
-                            ActionLangCode = "vinconomy:stall-add",
+                            ActionLangCode = "vinconomy:stall-add-armor" + selectionIndex,
                             MouseButton = EnumMouseButton.Right,
                             HotKeyCode = "shift"
                         });
@@ -155,7 +150,7 @@ namespace Viconomy.BlockTypes
                 modSystem.BlockPlaced(this.Code, world, blockPos, byItemStack);
             }
             base.OnBlockPlaced(world, blockPos, byItemStack);
-            AssetLocation location = new AssetLocation("vinconomy:clothingdisplaystandtop-" + this.Variant["side"]);
+            AssetLocation location = new AssetLocation("vinconomy:clothingstandtop-" + this.Variant["side"]);
             Block toPlaceBlock = world.GetBlock(location);
             world.BlockAccessor.SetBlock(toPlaceBlock.BlockId, blockPos.UpCopy(1));
         }

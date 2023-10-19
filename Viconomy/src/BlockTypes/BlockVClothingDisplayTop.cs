@@ -12,7 +12,7 @@ namespace Viconomy.BlockTypes
 {
     public class BlockVClothingDisplayTop : Block
     {
-        
+
 
         public BlockVClothingDisplayTop()
         {
@@ -29,7 +29,7 @@ namespace Viconomy.BlockTypes
             {
                 BlockSelection newSel = blockSel.Clone();
                 newSel.SelectionBoxIndex += 3; // Add 3 for Boots, Legs, and Gloves
-                return be.OnPlayerRightClick(byPlayer, newSel); 
+                return be.OnPlayerRightClick(byPlayer, newSel);
             }
             return false;
         }
@@ -48,7 +48,7 @@ namespace Viconomy.BlockTypes
                     return interactions.ToArray();
                 }
                 int selectionIndex = selection.SelectionBoxIndex + 3; // Add 3 for Boots, Legs, and Gloves
-                StallSlot slot = slots[selectionIndex]; 
+                StallSlot slot = slots[selectionIndex];
 
                 if (be.Owner != forPlayer.PlayerUID)
                 {
@@ -62,18 +62,10 @@ namespace Viconomy.BlockTypes
                             Itemstacks = new ItemStack[] { slot.currency.Itemstack }
 
                         });
-
-                        ItemStack fiveStack = slot.currency.Itemstack.Clone();
-                        fiveStack.StackSize = 5 * fiveStack.StackSize;
-                        interactions.Add(new WorldInteraction
-                        {
-                            ActionLangCode = "vinconomy:stall-purchase-five-armor" + selectionIndex,
-                            MouseButton = EnumMouseButton.Right,
-                            HotKeyCodes = new string[] { "shift", "ctrl" },
-                            Itemstacks = new ItemStack[] { fiveStack }
-                        });
                     }
-                } else {
+                }
+                else
+                {
                     ItemSlot firstSlot = slot.FindFirstNonEmptyStockSlot();
                     if (firstSlot != null)
                     {
@@ -84,7 +76,9 @@ namespace Viconomy.BlockTypes
                             HotKeyCode = "shift",
                             Itemstacks = new ItemStack[] { firstSlot.Itemstack }
                         });
-                    } else {
+                    }
+                    else
+                    {
                         interactions.Add(new WorldInteraction
                         {
                             ActionLangCode = "vinconomy:stall-add-armor" + selectionIndex,
@@ -100,7 +94,7 @@ namespace Viconomy.BlockTypes
                     MouseButton = EnumMouseButton.Right,
                     HotKeyCode = null
                 });
-                
+
             }
 
             return interactions.ToArray();
@@ -113,13 +107,26 @@ namespace Viconomy.BlockTypes
             if (block != null)
             {
                 block.OnBlockBroken(world, pos.DownCopy(1), byPlayer, dropQuantityMultiplier);
-            } else
+            }
+            else
             {
-                base.OnBlockBroken(world,pos, byPlayer, dropQuantityMultiplier);
+                base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
             }
 
         }
 
+        public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)
+        {
+            BlockVClothingDisplay block = world.BlockAccessor.GetBlock(pos.DownCopy(1)) as BlockVClothingDisplay;
+            if (block != null)
+            {
+                return block.GetPlacedBlockInfo(world, pos.DownCopy(1), forPlayer);
+            }
+            else
+            {
+                return base.GetPlacedBlockInfo(world, pos, forPlayer);
+            }
+        }
     }
 
 }

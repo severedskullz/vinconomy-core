@@ -14,6 +14,7 @@ using Cairo;
 using System.Collections.Generic;
 using Viconomy.Renderer;
 using Viconomy.src.Renderer;
+using Viconomy.ItemTypes;
 
 namespace Viconomy
 {
@@ -53,6 +54,8 @@ namespace Viconomy
             api.RegisterBlockEntityClass("BEViconWeaponrack", typeof(BEViconWeaponRack));
             api.RegisterBlockEntityClass("BEViconToolrack", typeof(BEViconToolRack));
             api.RegisterBlockEntityClass("BEViconArmorStand", typeof(BEViconArmorStand));
+
+            api.RegisterItemClass("ViconLedger", typeof(ItemLedger));
 
             api.Network.RegisterChannel("Vinconomy")
                 .RegisterMessageType(typeof(RegistryUpdatePacket));
@@ -199,7 +202,10 @@ namespace Viconomy
             }
             else if (entity is BEVRegister) 
             {
-                ((BEViconStall)entity).Owner = playerUUID;
+                BEVRegister register = ((BEVRegister)entity);
+                registers.ClearRegister(register.Owner, register.ID);
+                register.Owner = playerUUID;
+                UpdateRegister(playerUUID, register.ID, playerData.LastKnownPlayername + "'s Shop", register.Pos);
             } else
             {
                 return TextCommandResult.Error("Please target a Viconomy Stall or Register. (Wrong Class)");
@@ -352,7 +358,7 @@ namespace Viconomy
             if (_coreServerAPI != null)
             {
                 IServerPlayer player = (IServerPlayer)_coreServerAPI.World.PlayerByUid(owner);
-                if (player.ConnectionState == EnumClientState.Playing)
+                if (player != null && player.ConnectionState == EnumClientState.Playing)
                 {
                     SendRegisterUpdate(player);
                 }
@@ -386,7 +392,7 @@ namespace Viconomy
         /// player: The player making the purchase<br/>
         /// register: The register that payment is meant to go to<br/>
         /// stallSlot: the stall slot the player is purchasing from<br/>
-        /// product: The stack of items to be transfered to the player<br/>
+        /// product: The (clone) stack of items to be transfered to the player - Do not modify this<br/>
         /// payment: the stack of items representing payment to be stored in the Register<br/>
         /// numSales: How many sales are in this transaction
         /// </summary>

@@ -3,7 +3,9 @@ using System;
 using System.IO;
 using System.Numerics;
 using Viconomy.BlockTypes;
+using Viconomy.Delegates;
 using Viconomy.GUI;
+using Viconomy.ItemTypes;
 using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
@@ -138,9 +140,8 @@ namespace Viconomy.BlockEntities
             if (byPlayer.PlayerUID == Owner)
             {
                
-                    // Open shop admin gui
-                    OpenAdminForPlayer(byPlayer);
-                
+                // Open shop admin gui
+                OpenAdminForPlayer(byPlayer);
             }
             else
             {
@@ -192,6 +193,8 @@ namespace Viconomy.BlockEntities
             switch (packetid)
             {
                 case VinConstants.OPEN_GUI:
+
+                    //Todo: Check if owner before we open the inventory?
                     if (inventoryManager == null)
                     {
                         return;
@@ -200,6 +203,7 @@ namespace Viconomy.BlockEntities
                     break;
 
                 case VinConstants.CLOSE_GUI:
+                    //Todo: Check if owner before we open the inventory?
                     if (inventoryManager != null)
                     {
                         inventoryManager.CloseInventory(this.Inventory);
@@ -216,7 +220,7 @@ namespace Viconomy.BlockEntities
                         }
                         else
                         {
-                            //Console.WriteLine("You do not own this");
+                            ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
                         }
                     }
 
@@ -225,6 +229,19 @@ namespace Viconomy.BlockEntities
                 default:
                     if (packetid < 1000)
                     {
+                        if (player.PlayerUID != Owner)
+                        {
+                            if (!((ICoreServerAPI)Api).Server.IsDedicated)
+                            {
+                                ViconomyCore.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
+                            }
+                            else
+                            {
+                                ((IServerPlayer)player).Disconnect("Nice try, but that wasn't yours. (Tried to access Register they didn't own)");
+                            }
+                            return;
+                        }
+
                         //Console.Write("Handling Inv Packet");
                         this.Inventory.InvNetworkUtil.HandleClientPacket(player, packetid, data);
                         this.Api.World.BlockAccessor.GetChunkAtBlockPos(this.Pos.X, this.Pos.Y, this.Pos.Z).MarkModified();
@@ -309,6 +326,57 @@ namespace Viconomy.BlockEntities
 
             this.invDialog = null;
             //Console.WriteLine(Api.Side + ": Attempted to close GUI");
+        }
+
+        public void PurchasedItem(IPlayer player, BEViconStall stall, ItemStack product, ItemStack payment)
+        {
+            OnRecordPurchase?.Invoke(player, stall, product, payment);
+            RecordPurchase(player,product,payment);
+        }
+        public event OnRecordPurchaseDelegate OnRecordPurchase;
+
+
+        private void RecordPurchase(IPlayer player, ItemStack product, ItemStack payment)
+        {
+            EnumMonth month = this.Api.World.Calendar.MonthName;
+            int year = this.Api.World.Calendar.Year;
+
+            foreach (ItemSlot slot in this.inventory) { 
+                if (slot.Itemstack?.Collectible is ItemLedger)
+                {
+                    ITreeAttribute attr = slot.Itemstack.Attributes;
+                    //TODO: Convert to SQL. This is going to be a lot of data, fast.
+
+                    //I dont know if Attributes is ever null... Oh well
+                    if (attr == null)
+                    {
+                        attr = new TreeAttribute();
+                        slot.Itemstack.Attributes = attr;
+                    }
+
+                    ITreeAttribute itYear = attr.GetOrAddTreeAttribute("Year-" + year);
+                    ITreeAttribute itMonth = itYear.GetOrAddTreeAttribute("Month-" + month);
+                    ITreeAttribute itProduct = itMonth.GetOrAddTreeAttribute(product.Collectible.Code.Path);
+
+
+
+                    ITreeAttribute itProfits = itMonth.GetOrAddTreeAttribute("Profits");
+                    ITreeAttribute itCustomers = itProduct.GetOrAddTreeAttribute("Customers");
+
+                    int numSales = itProduct.GetInt("Sales", 0) +1;
+                    itProduct.SetInt("Sales", numSales);
+
+                    ITreeAttribute sale = itProduct.GetOrAddTreeAttribute("Sale-" + numSales);
+
+                    sale.SetString("Customer", player.PlayerUID);
+                    sale.SetString("Product" , product.GetName());
+                    sale.SetInt("ProductAmt", product.StackSize);
+                    sale.SetString("Payment", payment.GetName());
+                    sale.SetInt("PaymentAmt", payment.StackSize);
+
+                    return;
+                }
+            }
         }
     }
 

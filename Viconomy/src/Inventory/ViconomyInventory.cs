@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Viconomy.BlockEntities;
 using Viconomy.Config;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -9,6 +10,8 @@ namespace Viconomy.Inventory
 {
     public class ViconomyInventory : InventoryBase
     {
+        BEViconStall stall;
+
         // the amount of items per item group
         private int itemsPerBin = 9;
 
@@ -24,8 +27,9 @@ namespace Viconomy.Inventory
 
         ViconomyCore modSystem;
 
-        public ViconomyInventory(string inventoryID, ICoreAPI api, int binSize, int itemsPerBin) : base(inventoryID, api)
+        public ViconomyInventory(BEViconStall stall, string inventoryID, ICoreAPI api, int binSize, int itemsPerBin) : base(inventoryID, api)
         {
+            this.stall = stall;
             
             this.binSize = binSize;
             this.itemsPerBin = itemsPerBin;
@@ -154,9 +158,9 @@ namespace Viconomy.Inventory
         public override float GetTransitionSpeedMul(EnumTransitionType transType, ItemStack stack)
         {
             ViconConfig config = modSystem.Config;
-            if ( config != null && config.FoodDecaysInShops)
+            if ( (config != null && config.FoodDecaysInShops) && (stall != null && !stall.isAdminShip))
             {
-                return base.GetDefaultTransitionSpeedMul(transType) * modSystem.Config.StallPerishRate;
+                return base.GetDefaultTransitionSpeedMul(transType) * modSystem.Config.StallPerishRate; 
             } else
             {
                 return 0;

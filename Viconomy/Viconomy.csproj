@@ -55,6 +55,9 @@
   <Content Include="assets\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>
+  <None Remove="assets\vinconomy\itemtypes\vicon-ledger.json" />
+  <None Remove="assets\vinconomy\itemtypes\vicon-playerfilter.json" />
+  <None Remove="assets\vinconomy\recipes\grid\armorstand.json" />
   <Content Include="modinfo.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>
@@ -62,6 +65,12 @@
 
 <ItemGroup>
   <Content Update="assets\vinconomy\lang\en.json">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </Content>
+</ItemGroup>
+
+<ItemGroup>
+  <Content Update="assets\vinconomy\itemtypes\vicon-playerfilter.json">
     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>
 </ItemGroup>

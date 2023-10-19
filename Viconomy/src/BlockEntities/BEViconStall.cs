@@ -44,6 +44,7 @@ namespace Viconomy.BlockEntities
 
         public virtual int StallSlotCount { get; protected set; } = 4;
         public virtual int StacksPerSlot { get; protected set; } = 9;
+        public virtual int BulkPurchaseAmount { get; protected set; } = 5;
 
 
 
@@ -61,13 +62,14 @@ namespace Viconomy.BlockEntities
 
         public virtual void ConfigureInventory()
         {
-            this.inventory = new ViconomyInventory(null, Api, StallSlotCount, StacksPerSlot);
+            this.inventory = new ViconomyInventory(this, null, Api, StallSlotCount, StacksPerSlot);
             for (int i = 0; i < StallSlotCount; i++)
             {
                 inventory.SetSlotFilter(i, ViconomyFilters.IsGenericItem);
                 inventory.SetSlotBackground(i, "vicon-general");
             }
         }
+
 
         public override void Initialize(ICoreAPI api)
         {
@@ -121,7 +123,7 @@ namespace Viconomy.BlockEntities
                 if ( shiftMod )
                 {
                     //Purchase the items.
-                    int desiredAmount = ctrlMod ? 5 : 1;
+                    int desiredAmount = ctrlMod ? BulkPurchaseAmount : 1;
                     RequestPurchaseItem(blockSel.SelectionBoxIndex, desiredAmount);
                     //TryPurchaseItem(byPlayer, hotbarslot, blockSel, ctrlMod);
                 } else
@@ -670,25 +672,23 @@ namespace Viconomy.BlockEntities
             if (!purchaseSlot.Empty && purchaseSlot.StackSize >= amount)
             {
                 ItemStack productStack = GetProductStack(purchaseSlot, amount);
+                ItemStack productStackClone = productStack.Clone();
                 ItemStack paymentStack = GetPaymentStack(currencySlot, price);
 
-                modSystem.PurchasedItem(byPlayer, this, shopRegister, productStack, paymentStack);
+                modSystem.PurchasedItem(byPlayer, this, shopRegister, productStackClone, paymentStack);
 
                 GivePlayerProduct(byPlayer, productStack);
-                purchaseSlot.MarkDirty();
-
+                
                 if (shopRegister != null)
                 {
+                    shopRegister.PurchasedItem(byPlayer, this, productStackClone, paymentStack);
                     shopRegister.AddItem(paymentStack, price);
                 }
+
+                ViconomyCore.PrintClientMessage(byPlayer, "vinconomy:purchased-item", new object[] { amount, productStack.GetName(), price, paymentStack.GetName() });
+
+                purchaseSlot.MarkDirty();
                 currencySlot.MarkDirty();
-
-                ICoreServerAPI coreSererAPI = this.Api as ICoreServerAPI;
-                if (coreSererAPI != null)
-                {
-                    ViconomyCore.PrintClientMessage(byPlayer, "vinconomy:purchased-item", new object[] { amount, productStack.GetName(), price, paymentStack.GetName() });
-                }
-
                 this.MarkDirty(true, null);
                 this.updateMeshes();
                 return true;
@@ -809,7 +809,7 @@ namespace Viconomy.BlockEntities
             return inventory.GetTransitionSpeedMul(EnumTransitionType.Perish, null);
         }
 
-        protected MeshData getOrCreateMeshNew(ItemStack stack, int index)
+        protected override MeshData getOrCreateMesh(ItemStack stack, int index)
         {
             MeshData modeldata = getMesh(stack);
             if (modeldata != null)
@@ -862,7 +862,7 @@ namespace Viconomy.BlockEntities
             return modeldata;
         }
 
-        protected override MeshData getOrCreateMesh(ItemStack stack, int index)
+        protected MeshData getOrCreateMeshOld(ItemStack stack, int index)
         {
             
             MeshData modeldata = getMesh(stack);

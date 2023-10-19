@@ -4,7 +4,7 @@
   "entityClass": "BEVRegister",
   "priorityInteract": true,
   "creativeinventory": { "vinconomy": [ "*-east" ] },
-  "attributes": { "handbook": { "groupBy": [ "register-*-*-east" ] } },
+  "attributes": { "handbook": { "groupBy": [ "register-*-*-east" ], "groupedName" : "register-oak-copper-east" } },
   "behaviors": [ { "name": "HorizontalOrientable" } ],
   "heldTpIdleAnimation": "holdbothhandslarge",
   "heldTpUseAnimation": "twohandplaceblock",

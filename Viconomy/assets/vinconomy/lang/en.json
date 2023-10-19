@@ -14,7 +14,7 @@
   "stall-add": "Add item to stall",
   "stall-open-menu": "Open Stall",
   "stall-purchase": "Purchase 1 item",
-  "stall-purchase-five": "Purchase 5 items",
+  "stall-purchase-bulk": "Purchase many items",
 
   "block-armorstand-*": "Shop Armor Stand",
   "block-helmetstand-*": "Shop Helmet Stand",
@@ -25,7 +25,27 @@
   "block-tradematdouble-*": "Shop Mat (Double)",
   "block-weaponrack-*": "Shop Weapon Rack",
   "block-toolrack-*": "Shop Tool Rack",
+  "block-clothingstand*": "Shop Clothing Stand",
 
-  "game:tabname-vinconomy": "Vinconomy"
+  "game:tabname-vinconomy": "Vinconomy",
 
+  "stall-purchase-armor0": "Purchase Boots",
+  "stall-purchase-armor1": "Purchase Pants",
+  "stall-purchase-armor2": "Purchase Gloves",
+  "stall-purchase-armor3": "Purchase Belt",
+  "stall-purchase-armor4": "Purchase Chestwear",
+  "stall-purchase-armor5": "Purchase Shoulders",
+  "stall-purchase-armor6": "Purchase Necklace",
+  "stall-purchase-armor7": "Purchase Mask",
+  "stall-purchase-armor8": "Purchase Helmet",
+
+  "stall-add-armor0": "Add Boots",
+  "stall-add-armor1": "Add Pants",
+  "stall-add-armor2": "Add Gloves",
+  "stall-add-armor3": "Add Belt",
+  "stall-add-armor4": "Add Chestwear",
+  "stall-add-armor5": "Add Shoulders",
+  "stall-add-armor6": "Add Necklace",
+  "stall-add-armor7": "Add Mask",
+  "stall-add-armor8": "Add Helmet"
 }

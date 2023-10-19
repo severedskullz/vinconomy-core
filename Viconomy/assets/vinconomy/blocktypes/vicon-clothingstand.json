@@ -1,47 +1,39 @@
 {
-  "code": "clothingdisplaystand",
+  "code": "clothingstand",
   "class": "ViconClothingDisplay",
   "entityClass": "BEViconArmorStand",
   "priorityInteract": true,
-  "creativeinventory": { "vinconomy": [ "*-oak-*-east" ] },
-  "attributes": { "handbook": { "groupBy": [ "helmetstand-*-*-east" ] } },
+  "creativeinventory": { "vinconomy": [ "*-east" ] },
+  "attributes": { "handbook": { "groupBy": [ "clothingstand-east" ] } },
   "behaviors": [ { "name": "HorizontalOrientable" } ],
   "heldTpIdleAnimation": "holdbothhandslarge",
   "heldTpUseAnimation": "twohandplaceblock",
   "blockmaterial": "Wood",
   "variantgroups": [
     {
-      "code": "stand",
-      "loadFromProperties": "block/wood"
-    },
-    {
-      "code": "base",
-      "states": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
-    },
-    {
       "code": "side",
       "loadFromProperties": "abstract/horizontalorientation"
     }
   ],
   "textures": {
-    "stand": { "base": "game:block/wood/planks/{stand}1" },
-    "base": { "base": "game:block/metal/plate/{base}" }
+    "stand": { "base": "game:block/wood/planks/oak1" },
+    "base": { "base": "game:block/metal/plate/steel" }
   },
   "shapebytype": {
     "*-north": {
-      "base": "block/seraph",
+      "base": "block/armorstand2",
       "rotateY": 0
     },
     "*-east": {
-      "base": "block/seraph",
+      "base": "block/armorstand2",
       "rotateY": 270
     },
     "*-south": {
-      "base": "block/seraph",
+      "base": "block/armorstand2",
       "rotateY": 180
     },
     "*-west": {
-      "base": "block/seraph",
+      "base": "block/armorstand2",
       "rotateY": 90
     }
   },

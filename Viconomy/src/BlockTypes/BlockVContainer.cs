@@ -82,7 +82,7 @@ namespace Viconomy.BlockTypes
                         fiveStack.StackSize = 5 * fiveStack.StackSize;
                         interactions.Add(new WorldInteraction
                         {
-                            ActionLangCode = "vinconomy:stall-purchase-five",
+                            ActionLangCode = "vinconomy:stall-purchase-bulk",
                             MouseButton = EnumMouseButton.Right,
                             HotKeyCodes = new string[] { "shift", "ctrl" },
                             Itemstacks = new ItemStack[] { fiveStack }

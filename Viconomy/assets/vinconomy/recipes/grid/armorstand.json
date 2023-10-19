@@ -1,0 +1,26 @@
+{
+  "ingredientPattern": "_H_,SHS,SCS",
+  "ingredients": {
+    "H": {
+      "type": "block",
+      "code": "game:hay-normal-ud"
+    },
+    "S": {
+      "type": "item",
+      "code": "game:stick"
+    },
+    "C": {
+      "type": "block",
+      "code": "game:chest-east",
+      "attributes": { "type": "normal-generic" }
+    }
+  },
+  "recipeGroup": 1,
+  "width": 3,
+  "height": 3,
+  "output": {
+    "type": "block",
+    "code": "clothingstand-east",
+    "quantity": 1
+  }
+}
