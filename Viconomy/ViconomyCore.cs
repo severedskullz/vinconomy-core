@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using Viconomy.Renderer;
 using Viconomy.src.Renderer;
 using Viconomy.ItemTypes;
+using Vintagestory;
 
 namespace Viconomy
 {
@@ -45,6 +46,7 @@ namespace Viconomy
             api.RegisterBlockClass("ViconRegister", typeof(BlockVRegister));
             api.RegisterBlockClass("ViconClothingDisplay", typeof(BlockVClothingDisplay));
             api.RegisterBlockClass("ViconClothingDisplayTop", typeof(BlockVClothingDisplayTop));
+            api.RegisterBlockClass("ViconJobboard", typeof(BlockVJobboard));
 
             api.RegisterBlockEntityClass("BEViconStall", typeof(BEViconStall));
             api.RegisterBlockEntityClass("BEViconHelmetStand", typeof(BEViconHelmetStand));
@@ -54,6 +56,7 @@ namespace Viconomy
             api.RegisterBlockEntityClass("BEViconWeaponrack", typeof(BEViconWeaponRack));
             api.RegisterBlockEntityClass("BEViconToolrack", typeof(BEViconToolRack));
             api.RegisterBlockEntityClass("BEViconArmorStand", typeof(BEViconArmorStand));
+            api.RegisterBlockEntityClass("BEViconJobboard", typeof(BEViconJobboard));
 
             api.RegisterItemClass("ViconLedger", typeof(ItemLedger));
 
@@ -109,6 +112,7 @@ namespace Viconomy
                 .EndSubCommand();
 
             _coreServerAPI.Event.OnTestBlockAccess += TestAccess;
+            OnTestAccess += AllowStallUse;
 
         }
 
@@ -151,6 +155,9 @@ namespace Viconomy
             RegisterCustomIcon("shield");
             RegisterCustomIcon("toolrack");
             RegisterCustomIcon("weapon");
+
+            _coreClientAPI.Event.OnTestBlockAccess += TestAccess;
+            OnTestAccess += AllowStallUse;
         }
 
 
@@ -455,8 +462,41 @@ namespace Viconomy
         public EnumWorldAccessResponse TestAccess(IPlayer player, BlockSelection blockSelection, EnumBlockAccessFlags accessType, string claimant, EnumWorldAccessResponse response)
         {
             if (OnTestAccess != null)
-                return OnTestAccess.Invoke(player, blockSelection, accessType, claimant, response);
+            {
+                EnumWorldAccessResponse multicastResult = response;
+                Delegate[] delegates = OnTestAccess.GetInvocationList();
+                foreach (Delegate delegator in delegates)
+                {
+                    multicastResult = ((OnTestAccessDelegate)delegator).Invoke(player, blockSelection, accessType, claimant, multicastResult);
+                }
+                return multicastResult;
+            }
             else return response;
+        }
+
+        public EnumWorldAccessResponse AllowStallUse(IPlayer player, BlockSelection blockSelection, EnumBlockAccessFlags accessType, string claimant, EnumWorldAccessResponse response)
+        {
+            ICoreAPI api = this._coreServerAPI;
+            if (api == null)
+            {
+                // We are the Client!
+                api = this._coreClientAPI;
+            }
+            
+            //this._coreClientAPI.Logger.Debug("AllowStallUse - Claimant is:" + claimant + " Response: " + response + " accessType: " + accessType);
+
+            if (accessType == EnumBlockAccessFlags.Use && response == EnumWorldAccessResponse.LandClaimed)
+            {
+                Block block = blockSelection.Block;
+                if (block == null)
+                {
+                    // I dont know why Block isnt set.
+                    block = api.World.BlockAccessor.GetBlock(blockSelection.Position.X, blockSelection.Position.Y, blockSelection.Position.Z);
+                }
+                if (block is BlockVContainer || block is BlockVClothingDisplay || block is BlockVClothingDisplayTop)   
+                    return EnumWorldAccessResponse.Granted;
+            }
+            return response;
         }
 
         public IItemRenderer GetRenderer(ItemStack stack)

@@ -99,6 +99,28 @@ namespace Viconomy.BlockTypes
                             HotKeyCode = "shift",
                             Itemstacks = new ItemStack[] { firstSlot.Itemstack }
                         });
+
+                        if (slot.currency.Itemstack != null)
+                        {
+                            interactions.Add(new WorldInteraction
+                            {
+                                ActionLangCode = "vinconomy:stall-purchase",
+                                MouseButton = EnumMouseButton.Right,
+                                HotKeyCode = "shift",
+                                Itemstacks = new ItemStack[] { slot.currency.Itemstack }
+
+                            });
+
+                            ItemStack fiveStack = slot.currency.Itemstack.Clone();
+                            fiveStack.StackSize = 5 * fiveStack.StackSize;
+                            interactions.Add(new WorldInteraction
+                            {
+                                ActionLangCode = "vinconomy:stall-purchase-bulk",
+                                MouseButton = EnumMouseButton.Right,
+                                HotKeyCodes = new string[] { "shift", "ctrl" },
+                                Itemstacks = new ItemStack[] { fiveStack }
+                            });
+                        }
                     } else {
                         interactions.Add(new WorldInteraction
                         {
@@ -127,7 +149,7 @@ namespace Viconomy.BlockTypes
                 return;
 
             BEViconStall vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEViconStall;
-            if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID)
+            if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID || byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative)
             {
                 ViconomyCore modSystem = world.Api.ModLoader.GetModSystem<ViconomyCore>();
                 if (modSystem != null && !modSystem.BlockBroken(this.Code, world, pos, byPlayer, dropQuantityMultiplier))
@@ -140,6 +162,8 @@ namespace Viconomy.BlockTypes
             else if (api.Side == EnumAppSide.Server)
                 ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("vinconomy:doesnt-own", new object[0]), EnumChatType.CommandError, null);
         }
+
+
 
         public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)
         {

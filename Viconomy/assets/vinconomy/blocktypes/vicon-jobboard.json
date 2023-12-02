@@ -1,0 +1,72 @@
+﻿{
+  "code": "jobboard",
+  "class": "ViconJobboard",
+  "entityClass": "BEViconJobboard",
+  "priorityInteract": true,
+  "creativeinventory": { "vinconomy": [ "*-east" ] },
+  "attributes": {
+    "handbook": {
+      "groupBy": [ "jobboard-east" ],
+      "groupedName": "jobboard-east"
+    }
+  },
+  "variantgroups": [
+    {
+      "code": "side",
+      "loadFromProperties": "abstract/horizontalorientation"
+    }
+  ],
+  "behaviors": [ { "name": "HorizontalOrientable" } ],
+  "heldTpIdleAnimation": "holdbothhandslarge",
+  "heldTpUseAnimation": "twohandplaceblock",
+  "blockmaterial": "Wood",
+  "shapebytype": {
+    "*-north": {
+      "base": "block/jobboard",
+      "rotateY": 0
+    },
+    "*-east": {
+      "base": "block/jobboard",
+      "rotateY": 270
+    },
+    "*-south": {
+      "base": "block/jobboard",
+      "rotateY": 180
+    },
+    "*-west": {
+      "base": "block/jobboard",
+      "rotateY": 90
+    }
+  },
+
+  "collisionSelectionBoxes": [
+    {
+        "x1": -1,
+        "y1": 0,
+        "z1": 0.25,
+        "x2": 2,
+        "y2": 2.75,
+        "z2": 0.625,
+        "rotateYByType": {
+          "*-north": 0,
+          "*-east": 270,
+          "*-west": 90,
+          "*-south": 180
+        }
+    }
+  ],
+  "lightAbsorption": 0,
+  "sidesolid": {
+    "all": "false"
+  },
+  "sideopaque": {
+    "all": "false"
+  },
+  "resistance": 3.5,
+  "sounds": {
+    "hit": "game:block/planks",
+    "break": "game:block/planks",
+    "place": "game:block/planks",
+    "walk": "game:walk/wood"
+  }
+}

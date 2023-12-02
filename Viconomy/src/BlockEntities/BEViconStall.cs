@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 using System.Text;
 using Viconomy.Filters;
 using Viconomy.GUI;
@@ -98,6 +99,7 @@ namespace Viconomy.BlockEntities
 
         public bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
         {
+            int slotIndex = blockSel.SelectionBoxIndex;
             //Console.WriteLine("Calling OnPlayerRightClick from " + Api.Side);
             bool shiftMod = byPlayer.Entity.Controls.Sneak;
             bool ctrlMod = byPlayer.Entity.Controls.Sprint;
@@ -108,23 +110,37 @@ namespace Viconomy.BlockEntities
 
             if (byPlayer.PlayerUID == Owner)
             {
-               if(shiftMod)
-               {
-                    //Add items to slot
-                    TryPut(hotbarslot, blockSel, ctrlMod);
-               } else
-               {
+                ItemSlot item = this.inventory.FindFirstNonEmptyStockSlot(slotIndex);
+               
+
+                if (shiftMod)
+                {
+                    if (item != null)
+                    {
+                        ItemSlot handSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
+                        ItemSlot currency = this.inventory.GetCurrencyForSelection(slotIndex);
+                        if (currency != null && isMatchingCurrency(currency, handSlot))
+                        {
+                            RequestPurchaseItem(slotIndex, ctrlMod ? BulkPurchaseAmount : 1);
+                        }
+                    } else
+                    {
+                        //Add items to slot
+                        TryPut(hotbarslot, blockSel, ctrlMod);
+                    }
+                }
+                else
+                {
                     // Open shop admin gui
                     OpenShopForPlayer(byPlayer, blockSel.SelectionBoxIndex);
-               }
+                }
             } 
             else
             {
                 if ( shiftMod )
                 {
                     //Purchase the items.
-                    int desiredAmount = ctrlMod ? BulkPurchaseAmount : 1;
-                    RequestPurchaseItem(blockSel.SelectionBoxIndex, desiredAmount);
+                    RequestPurchaseItem(blockSel.SelectionBoxIndex, ctrlMod ? BulkPurchaseAmount : 1);
                     //TryPurchaseItem(byPlayer, hotbarslot, blockSel, ctrlMod);
                 } else
                 {
@@ -216,13 +232,18 @@ namespace Viconomy.BlockEntities
             //TODO
         }
 
+        private bool isMatchingCurrency(ItemSlot source, ItemSlot payment)
+        {
+            return source != null && source.Itemstack != null && source.Itemstack.Equals(Api.World, payment.Itemstack, null) && payment.StackSize >= source.StackSize;
+        }
+
         public void PurchaseWithHandSlot(IPlayer player, ItemSlot purchaseSlot, int stallSlot, int desiredAmount, BEVRegister shopRegister)
         {
             int itemsPerPurchase = this.inventory.StallSlots[stallSlot].itemsPerPurchase;
             ItemSlot currency = this.inventory.GetCurrencyForSelection(stallSlot);
 
             ItemSlot handItem = player.InventoryManager.ActiveHotbarSlot;
-            if (!currency.Itemstack.Equals(Api.World, handItem.Itemstack, null) || handItem.StackSize < currency.StackSize)
+            if (!isMatchingCurrency(currency, handItem))
             {
                 //Console.WriteLine(Api.Side + ": Not enough money!");
                 ViconomyCore.PrintClientMessage(player, "vinconomy:not-enough-money");
@@ -536,7 +557,6 @@ namespace Viconomy.BlockEntities
         }
 
         #endregion
-
 
         protected override void updateMesh(int index)
         {
@@ -862,113 +882,6 @@ namespace Viconomy.BlockEntities
             return modeldata;
         }
 
-        protected MeshData getOrCreateMeshOld(ItemStack stack, int index)
-        {
-            
-            MeshData modeldata = getMesh(stack);
-            if (modeldata != null)
-            {
-                return modeldata;
-            }
-
-            bool skipCache = false;
-            IContainedMeshSource containedMeshSource = stack.Collectible as IContainedMeshSource;
-            if (containedMeshSource != null)
-            {
-                modeldata = containedMeshSource.GenMesh(stack, capi.BlockTextureAtlas, Pos);
-            }
-
-            if (modeldata == null)
-            {
-                ICoreClientAPI coreClientAPI = Api as ICoreClientAPI;
-                if (stack.Block is BlockMicroBlock)
-                {
-                    skipCache = true;
-                    ITreeAttribute treeAttribute = stack.Attributes;
-                    if (treeAttribute == null)
-                    {
-                        treeAttribute = new TreeAttribute();
-                    }
-                    int[] materials = BlockEntityMicroBlock.MaterialIdsFromAttributes(treeAttribute, (this.Api as ICoreClientAPI).World);
-                    IntArrayAttribute intArrayAttribute = treeAttribute["cuboids"] as IntArrayAttribute;
-                    uint[] array = (intArrayAttribute != null) ? intArrayAttribute.AsUint : null;
-                    if (array == null)
-                    {
-                        LongArrayAttribute longArrayAttribute = treeAttribute["cuboids"] as LongArrayAttribute;
-                        array = ((longArrayAttribute != null) ? longArrayAttribute.AsUint : null);
-                    }
-                    List<uint> voxelCuboids = (array == null) ? new List<uint>() : new List<uint>(array);
-                    modeldata = BlockEntityMicroBlock.CreateMesh(this.Api as ICoreClientAPI, voxelCuboids, materials);
-                }
-                else if(stack.Class == EnumItemClass.Block)
-                {
-
-                    if (stack.Block is BlockClutter)
-                    {
-                        Dictionary<string, MeshRef> clutterMeshRefs = ObjectCacheUtil.GetOrCreate<Dictionary<string, MeshRef>>(capi, (stack.Block as BlockShapeFromAttributes).ClassType + "MeshesInventory", () => new Dictionary<string, MeshRef>());
-                        string type = stack.Attributes.GetString("type", "");
-                        IShapeTypeProps cprops = (stack.Block as BlockShapeFromAttributes).GetTypeProps(type, stack, null);
-                        if (cprops == null)
-                        {
-                            return null;
-                        }
-                        float rotX = stack.Attributes.GetFloat("rotX", 0f);
-                        float rotY = stack.Attributes.GetFloat("rotY", 0f);
-                        float rotZ = stack.Attributes.GetFloat("rotZ", 0f);
-                        string otcode = stack.Attributes.GetString("overrideTextureCode", null);
-                        string hashkey = string.Concat(new string[] { cprops.HashKey,"-",rotX.ToString(),"-",rotY.ToString(),"-",rotZ.ToString(),"-",otcode});
-                        MeshRef meshref;
-                        if (clutterMeshRefs.TryGetValue(hashkey, out meshref))
-                        {
-                            modeldata = (stack.Block as BlockShapeFromAttributes).GetOrCreateMesh(cprops, null, otcode);
-                            modeldata = modeldata.Clone().Rotate(new Vec3f(0.5f, 0.5f, 0.5f), rotX, rotY, rotZ);
-                        }
-                    } else
-                    {
-                        modeldata = coreClientAPI.TesselatorManager.GetDefaultBlockMesh(stack.Block).Clone();
-                    }
-                }
-                else
-                {
-                    nowTesselatingObj = stack.Collectible;
-                    nowTesselatingShape = null;
-                    if (stack.Item.Shape?.Base != null)
-                    {
-                        nowTesselatingShape = coreClientAPI.TesselatorManager.GetCachedShape(stack.Item.Shape.Base);
-                    }
-
-                    coreClientAPI.Tesselator.TesselateItem(stack.Item, out modeldata, this);
-                    modeldata.RenderPassesAndExtraBits.Fill((short)2);
-                }
-            }
-
-            if (stack.Collectible.Attributes?[AttributeTransformCode].Exists ?? false)
-            {
-                ModelTransform modelTransform = stack.Collectible.Attributes?[AttributeTransformCode].AsObject<ModelTransform>();
-                modelTransform.EnsureDefaultValues();
-                modeldata.ModelTransform(modelTransform);
-            }
-            else if (AttributeTransformCode == "onshelfTransform" && (stack.Collectible.Attributes?["onDisplayTransform"].Exists ?? false))
-            {
-                ModelTransform modelTransform2 = stack.Collectible.Attributes?["onDisplayTransform"].AsObject<ModelTransform>();
-                modelTransform2.EnsureDefaultValues();
-                modeldata.ModelTransform(modelTransform2);
-            }
-
-            if (stack.Class == EnumItemClass.Item && (stack.Item.Shape == null || stack.Item.Shape.VoxelizeTexture))
-            {
-                modeldata.Rotate(new Vec3f(0.5f, 0.5f, 0.5f), MathF.PI / 2f, 0f, 0f);
-                modeldata.Scale(new Vec3f(0.5f, 0.5f, 0.5f), 0.33f, 0.33f, 0.33f);
-                modeldata.Translate(0f, -15f / 32f, 0f);
-            }
-            if (skipCache == false)
-            {
-                string meshCacheKey = getMeshCacheKey(stack);
-                MeshCache[meshCacheKey] = modeldata;
-            }
-
-            return modeldata;
-        }
 
         public void SetNowTesselatingObj(CollectibleObject collectible)
         {

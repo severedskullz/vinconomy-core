@@ -52,10 +52,32 @@ namespace Viconomy.BlockTypes
             return result;
         }
 
+        public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
+        {
+            if (byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative)
+            {
+                return null;
+            }
+            ;
+            ItemStack stack = new ItemStack(world.GetBlock(new AssetLocation(Code.Domain, this.CodeWithoutParts(1) +"-east")));
+            BEVRegister vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEVRegister;
+            if (vEntity != null)
+            {
+                stack.Attributes.SetString("Owner", vEntity.Owner);
+                stack.Attributes.SetString("ID", vEntity.ID);
+                stack.Attributes.SetString("OwnerName", vEntity.OwnerName);
+            }
+                
+            return new ItemStack[] { stack };
+        }
+
         public override void OnBlockBroken(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
         {
+            if (byPlayer == null)
+                return;
+
             BEVRegister vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEVRegister;
-            if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID)
+            if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID || byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative)
             {
                 ViconomyCore modSystem = world.Api.ModLoader.GetModSystem<ViconomyCore>();
                 if (modSystem != null && !modSystem.BlockBroken(this.Code, world, pos, byPlayer, dropQuantityMultiplier))
@@ -63,7 +85,9 @@ namespace Viconomy.BlockTypes
                     return;
                 }
                 base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
-            } else if (api.Side == EnumAppSide.Server)
+            }
+
+            else if (api.Side == EnumAppSide.Server)
                 ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("vinconomy:doesnt-own", new object[0]), EnumChatType.CommandError, null);
         }
 
@@ -87,7 +111,6 @@ namespace Viconomy.BlockTypes
             }
             return base.TryPlaceBlock(world, byPlayer, itemstack, blockSel, ref failureCode);
         }
-
 
     }
 }

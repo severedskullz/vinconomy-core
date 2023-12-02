@@ -1,0 +1,73 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"aged": "game:block/wood/bark/aged",
+		"bottom": "game:block/wood/workbench/bottom"
+	},
+	"elements": [
+		{
+			"name": "Postboard",
+			"from": [ -16.0, 7.0, 7.0 ],
+			"to": [ 32.0, 39.0, 9.0 ],
+			"rotationOrigin": [ 8.0, 0.0, 8.0 ],
+			"faces": {
+				"north": { "texture": "#bottom", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false },
+				"east": { "texture": "#bottom", "uv": [ 0.0, 10.0, 16.0, 12.0 ], "rotation": 90, "autoUv": false },
+				"south": { "texture": "#bottom", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "autoUv": false },
+				"west": { "texture": "#bottom", "uv": [ 0.0, 10.0, 16.0, 12.0 ], "rotation": 90, "autoUv": false },
+				"up": { "texture": "#bottom", "uv": [ 0.0, 10.0, 16.0, 12.0 ], "autoUv": false },
+				"down": { "texture": "#bottom", "uv": [ 0.0, 10.0, 16.0, 12.0 ], "autoUv": false }
+			},
+			"children": [
+				{
+					"name": "Pole1",
+					"from": [ 2.0, -7.0, -1.0 ],
+					"to": [ 6.0, 33.0, 3.0 ],
+					"rotationOrigin": [ 2.0, -7.0, -1.0 ],
+					"faces": {
+						"north": { "texture": "#aged", "uv": [ 8.0, 0.0, 12.0, 16.0 ], "autoUv": false },
+						"east": { "texture": "#aged", "uv": [ 8.0, 0.0, 12.0, 16.0 ], "autoUv": false },
+						"south": { "texture": "#aged", "uv": [ 8.0, 0.0, 12.0, 16.0 ], "autoUv": false },
+						"west": { "texture": "#aged", "uv": [ 8.0, 0.0, 12.0, 16.0 ], "autoUv": false },
+						"up": { "texture": "#aged", "uv": [ 4.0, 6.0, 8.0, 10.0 ] },
+						"down": { "texture": "#aged", "uv": [ 6.5, 6.5, 10.5, 10.5 ] }
+					}
+				},
+				{
+					"name": "Pole2",
+					"from": [ 42.0, -7.0, -1.0 ],
+					"to": [ 46.0, 33.0, 3.0 ],
+					"rotationOrigin": [ 42.0, -7.0, -1.0 ],
+					"faces": {
+						"north": { "texture": "#aged", "uv": [ 8.0, 0.0, 12.0, 16.0 ], "autoUv": false },
+						"east": { "texture": "#aged", "uv": [ 8.0, 0.0, 12.0, 16.0 ], "autoUv": false },
+						"south": { "texture": "#aged", "uv": [ 8.0, 0.0, 12.0, 16.0 ], "autoUv": false },
+						"west": { "texture": "#aged", "uv": [ 8.0, 0.0, 12.0, 16.0 ], "autoUv": false },
+						"up": { "texture": "#aged", "uv": [ 4.0, 6.0, 8.0, 10.0 ] },
+						"down": { "texture": "#aged", "uv": [ 6.5, 6.5, 10.5, 10.5 ] }
+					}
+				},
+				{
+					"name": "Top Beam",
+					"from": [ 0.0, 33.0, -2.0 ],
+					"to": [ 48.0, 37.0, 4.0 ],
+					"rotationOrigin": [ 0.0, 33.0, -2.0 ],
+					"faces": {
+						"north": { "texture": "#aged", "uv": [ 8.5, 0.0, 12.5, 16.0 ], "rotation": 90, "autoUv": false },
+						"east": { "texture": "#aged", "uv": [ 4.0, 0.5, 8.0, 6.5 ], "rotation": 90 },
+						"south": { "texture": "#aged", "uv": [ 6.5, 0.0, 10.5, 16.0 ], "rotation": 90, "autoUv": false },
+						"west": { "texture": "#aged", "uv": [ 4.0, 7.5, 8.0, 13.5 ], "rotation": 90 },
+						"up": { "texture": "#aged", "uv": [ 3.0, 0.0, 9.0, 16.0 ], "rotation": 90, "autoUv": false },
+						"down": { "texture": "#aged", "uv": [ 8.0, 0.0, 14.0, 16.0 ], "rotation": 90, "autoUv": false }
+					}
+				}
+			]
+		}
+	]}

@@ -147,7 +147,7 @@ namespace Viconomy.BlockEntities
             {
                 if (Api.Side == EnumAppSide.Server)
                 {
-                    ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("viconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
+                    ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("vinconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
                 }
                
             }
