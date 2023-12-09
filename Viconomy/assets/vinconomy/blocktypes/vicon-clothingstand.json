@@ -21,19 +21,19 @@
   },
   "shapebytype": {
     "*-north": {
-      "base": "block/armorstand2",
+      "base": "block/armorstand",
       "rotateY": 0
     },
     "*-east": {
-      "base": "block/armorstand2",
+      "base": "block/armorstand",
       "rotateY": 270
     },
     "*-south": {
-      "base": "block/armorstand2",
+      "base": "block/armorstand",
       "rotateY": 180
     },
     "*-west": {
-      "base": "block/armorstand2",
+      "base": "block/armorstand",
       "rotateY": 90
     }
   },

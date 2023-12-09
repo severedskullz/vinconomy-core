@@ -14,10 +14,10 @@
 	"elements": [
 		{
 			"name": "Torso",
-			"from": [ 7.5, 16.0, 7.5 ],
-			"to": [ 8.5, 26.0, 8.5 ],
+			"from": [ 7.5, 17.0, 7.5 ],
+			"to": [ 8.5, 27.0, 8.5 ],
 			"uv": [ 0.0, 0.0 ],
-			"rotationOrigin": [ 8.0, 16.0, 8.0 ],
+			"rotationOrigin": [ 8.0, 17.0, 8.0 ],
 			"faces": {
 				"north": { "texture": "#stand", "uv": [ 0.0, 1.0, 1.0, 11.0 ] },
 				"east": { "texture": "#stand", "uv": [ 1.0, 1.0, 2.0, 11.0 ] },
@@ -218,6 +218,21 @@
 						"west": { "texture": "#stand", "uv": [ 14.5, 5.5, 20.0, 10.0 ] },
 						"up": { "texture": "#stand", "uv": [ 0.0, 0.0, 4.5, 5.5 ] },
 						"down": { "texture": "#stand", "uv": [ 4.5, 0.0, 9.0, 5.5 ] }
+					}
+				},
+				{
+					"name": "Cube3",
+					"from": [ -3.5, -17.0, -3.5 ],
+					"to": [ 4.5, -16.0, 4.5 ],
+					"uv": [ 0.0, 0.0 ],
+					"rotationOrigin": [ -3.0, -17.0, -3.0 ],
+					"faces": {
+						"north": { "texture": "#base", "uv": [ 0.0, 8.0, 8.0, 9.0 ] },
+						"east": { "texture": "#base", "uv": [ 8.0, 8.0, 16.0, 9.0 ] },
+						"south": { "texture": "#base", "uv": [ 16.0, 8.0, 24.0, 9.0 ] },
+						"west": { "texture": "#base", "uv": [ 24.0, 8.0, 32.0, 9.0 ] },
+						"up": { "texture": "#base", "uv": [ 0.0, 0.0, 8.0, 8.0 ] },
+						"down": { "texture": "#base", "uv": [ 8.0, 0.0, 16.0, 8.0 ] }
 					}
 				}
 			]

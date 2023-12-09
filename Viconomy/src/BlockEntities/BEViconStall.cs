@@ -107,7 +107,6 @@ namespace Viconomy.BlockEntities
 
             ItemSlot hotbarslot = byPlayer.InventoryManager.ActiveHotbarSlot;
 
-
             if (byPlayer.PlayerUID == Owner)
             {
                 ItemSlot item = this.inventory.FindFirstNonEmptyStockSlot(slotIndex);

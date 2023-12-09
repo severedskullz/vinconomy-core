@@ -58,6 +58,7 @@
   <None Remove="assets\vinconomy\blocktypes\vicon-jobboard.json" />
   <None Remove="assets\vinconomy\itemtypes\vicon-ledger.json" />
   <None Remove="assets\vinconomy\itemtypes\vicon-playerfilter.json" />
+  <None Remove="assets\vinconomy\lang\ru.json" />
   <None Remove="assets\vinconomy\recipes\grid\armorstand.json" />
   <Content Include="modinfo.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
