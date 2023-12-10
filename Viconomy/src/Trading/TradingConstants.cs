@@ -15,5 +15,8 @@ namespace Viconomy.Trading
         public static string NO_PRODUCT = "vinconomy:no-product";
         public static string NOT_REGISTERED = "vinconomy:not-registered-with-shop";
         public static string NO_REGISTER_SPACE = "vinconomy:no-register-space";
+        public static string DOESNT_OWN = "vinconomy:doesnt-own";
+        internal static string NO_PRIVLEGE = "vinconomy:no-privelege";
+        internal static string PURCHASED_ITEMS = "vinconomy:purchased-item";
     }
 }

@@ -7,6 +7,7 @@ using Viconomy.Filters;
 using Viconomy.GUI;
 using Viconomy.Inventory;
 using Viconomy.Renderer;
+using Viconomy.Trading;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -118,10 +119,10 @@ namespace Viconomy.BlockEntities
                     {
                         ItemSlot handSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
                         ItemSlot currency = this.inventory.GetCurrencyForSelection(slotIndex);
-                        if (currency != null && isMatchingCurrency(currency, handSlot))
-                        {
+                        //if (currency != null && isMatchingCurrency(currency, handSlot))
+                        //{
                             RequestPurchaseItem(slotIndex, ctrlMod ? BulkPurchaseAmount : 1);
-                        }
+                        //}
                     } else
                     {
                         //Add items to slot
@@ -172,14 +173,14 @@ namespace Viconomy.BlockEntities
 
             if (currency.Itemstack == null) {
                 //PrintClientMessage(player, "vinconomy:item-cost", new Object[] { currency.Itemstack.StackSize, currency.Itemstack.GetName() });
-                ViconomyCore.PrintClientMessage(player, "vinconomy:no-price", null);
+                ViconomyCore.PrintClientMessage(player, TradingConstants.NO_PRICE, null);
                 return;
             } 
             
             // Does the shop have a register ID set?
             if (this.RegisterID == null && !this.isAdminShip)
             {
-                ViconomyCore.PrintClientMessage(player, "vinconomy:not-registered-with-shop");
+                ViconomyCore.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
             }
 
@@ -188,7 +189,7 @@ namespace Viconomy.BlockEntities
             BEVRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
             if (register == null && !this.isAdminShip)
             {
-                ViconomyCore.PrintClientMessage(player, "vinconomy:not-registered-with-shop");
+                ViconomyCore.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
             }
   
@@ -209,71 +210,36 @@ namespace Viconomy.BlockEntities
             if (purchaseSlot == null)
             {
                 //Console.WriteLine(Api.Side + ": Not enough stock to purchase item");
-                ViconomyCore.PrintClientMessage(player, "vinconomy:no-product");
+                ViconomyCore.PrintClientMessage(player, TradingConstants.NO_PRODUCT);
                 return;
             }
             if (modSystem.CanPurchaseItem(player, this, register, stallSlot, purchaseSlot, currency, desiredAmount))
             {
-                if (useHandSlot)
-                {
-                    PurchaseWithHandSlot(player, purchaseSlot, stallSlot, desiredAmount, register);
-                }
-                else
-                {
-                    PurchaseWithInventory(player, purchaseSlot, stallSlot, desiredAmount, register);
-                }
+                PurchaseItem(player, purchaseSlot, stallSlot, desiredAmount, register);
             }
 
         }
 
-        public void PurchaseWithInventory(IPlayer player, ItemSlot purchaseSlot, int stallSlot, int desiredAmount, BEVRegister shopRegister)
+
+
+        public void PurchaseItem(IPlayer player, ItemSlot purchaseSlot, int stallSlot, int desiredAmount, BEVRegister shopRegister)
         {
-            //TODO
-        }
 
-        private bool isMatchingCurrency(ItemSlot source, ItemSlot payment)
-        {
-            return source != null && source.Itemstack != null && source.Itemstack.Equals(Api.World, payment.Itemstack, null) && payment.StackSize >= source.StackSize;
-        }
+            PurchaseRequest request = new PurchaseRequest();
+            request.customer = player;
+            request.shopRegister = shopRegister;
+            request.stall = this;
+            request.stallSlot = this.inventory.StallSlots[stallSlot];
+            request.numTryPurchase = desiredAmount;
+            request.coreApi = this.Api;
 
-        public void PurchaseWithHandSlot(IPlayer player, ItemSlot purchaseSlot, int stallSlot, int desiredAmount, BEVRegister shopRegister)
-        {
-            int itemsPerPurchase = this.inventory.StallSlots[stallSlot].itemsPerPurchase;
-            ItemSlot currency = this.inventory.GetCurrencyForSelection(stallSlot);
-
-            ItemSlot handItem = player.InventoryManager.ActiveHotbarSlot;
-            if (!isMatchingCurrency(currency, handItem))
+            PurchaseResult result = TradingUtil.TryPurchaseItem(request);
+            if (result.error != null)
             {
-                //Console.WriteLine(Api.Side + ": Not enough money!");
-                ViconomyCore.PrintClientMessage(player, "vinconomy:not-enough-money");
-                return;
-            }
-
-            desiredAmount = Math.Min(desiredAmount, handItem.Itemstack.StackSize / currency.Itemstack.StackSize);
-            desiredAmount = Math.Min(purchaseSlot.StackSize / itemsPerPurchase, desiredAmount);
-            if (desiredAmount > 0)
+                ViconomyCore.PrintClientMessage(player, result.error);
+            } else
             {
-                int price = currency.Itemstack.StackSize * desiredAmount;
-                int productAmount = desiredAmount * itemsPerPurchase;
-                ItemStack currencyStack = handItem.Itemstack.Clone();
-                currencyStack.StackSize = price;
 
-                //Console.WriteLine(Api.Side + ": Checking if we can hold!");
-                //PrintClientMessage(player, Api.Side + ": We tried to purchase item!");
-                if (shopRegister == null || shopRegister.CanHold(currencyStack))
-                {
-                    PurchaseItem(player, shopRegister, purchaseSlot, handItem, productAmount, price);
-                }
-                else
-                {
-                    ViconomyCore.PrintClientMessage(player, "vinconomy:not-enough-stock");
-                    //Console.WriteLine(Api.Side + ": Something went horribly wrong - Not enough stock to purchase item");
-                }
-            }
-            else
-            {
-                ViconomyCore.PrintClientMessage(player, "vinconomy:purchased-zero-quantity");
-                //Console.WriteLine(Api.Side + ": Something went horribly wrong - Tried to take 0 stock!");
             }
         }
 
@@ -432,7 +398,7 @@ namespace Viconomy.BlockEntities
         {
             if (byPlayer.PlayerUID != this.Owner)
             {
-                ViconomyCore.PrintClientMessage(byPlayer, "vinconomy:doesnt-own", new object[] { });
+                ViconomyCore.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
                 return;
             }
 
@@ -454,7 +420,7 @@ namespace Viconomy.BlockEntities
         {
             if (byPlayer.PlayerUID != this.Owner)
             {
-                ViconomyCore.PrintClientMessage(byPlayer, "vinconomy:doesnt-own", new object[] { });
+                ViconomyCore.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
                 return;
             }
 
@@ -480,13 +446,13 @@ namespace Viconomy.BlockEntities
         {
             if (byPlayer.PlayerUID != this.Owner)
             {
-                ViconomyCore.PrintClientMessage(byPlayer, "vinconomy:doesnt-own", new object[] { });
+                ViconomyCore.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
                 return;
             }
 
             if (!byPlayer.HasPrivilege("gamemode"))
             {
-                ViconomyCore.PrintClientMessage(byPlayer, "vinconomy:no-privelege", new object[] { });
+                ViconomyCore.PrintClientMessage(byPlayer, TradingConstants.NO_PRIVLEGE, new object[] { });
                 return;
             }
 
@@ -690,6 +656,7 @@ namespace Viconomy.BlockEntities
             //TODO: This is all serverside, having clientside code in here is pointless..
             if (!purchaseSlot.Empty && purchaseSlot.StackSize >= amount)
             {
+                
                 ItemStack productStack = GetProductStack(purchaseSlot, amount);
                 ItemStack productStackClone = productStack.Clone();
                 ItemStack paymentStack = GetPaymentStack(currencySlot, price);
@@ -703,6 +670,8 @@ namespace Viconomy.BlockEntities
                     shopRegister.PurchasedItem(byPlayer, this, productStackClone, paymentStack);
                     shopRegister.AddItem(paymentStack, price);
                 }
+                
+
 
                 ViconomyCore.PrintClientMessage(byPlayer, "vinconomy:purchased-item", new object[] { amount, productStack.GetName(), price, paymentStack.GetName() });
 

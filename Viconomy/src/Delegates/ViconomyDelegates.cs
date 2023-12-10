@@ -16,9 +16,9 @@ namespace Viconomy.Delegates
     public delegate bool CanPurchaseItemDelegate(IPlayer player, BEViconStall stall, BEVRegister register, ItemSlot product, ItemSlot payment);
 
     /*
-     * Called when a product is purchased and payment is sent to a register.
+     * Called when a product is purchased and payment is sent to a register. Changes to Payment stack will be persisted. Can be used for things like subtracting Taxes or the like.
      */
-    public delegate void OnRecordPurchaseDelegate(IPlayer player, BEViconStall stall, ItemStack product, ItemStack payment);
+    public delegate void OnRecordPurchaseDelegate(IPlayer player, BEViconStall stall, ItemStack productClone, ItemStack payment);
 
     public delegate bool TryPlaceBlockDelegate(IWorldAccessor world, IPlayer byPlayer, ItemStack itemstack, BlockSelection blockSel);
     public delegate bool OnBlockBrokenDelegate(AssetLocation code, IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier);

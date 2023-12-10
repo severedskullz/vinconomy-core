@@ -328,10 +328,13 @@ namespace Viconomy.BlockEntities
             //Console.WriteLine(Api.Side + ": Attempted to close GUI");
         }
 
-        public void PurchasedItem(IPlayer player, BEViconStall stall, ItemStack product, ItemStack payment)
+        /***
+         *  Records the purchase of an item. 
+         */
+        public void PurchasedItem(IPlayer player, BEViconStall stall, ItemStack productClone, ItemStack payment)
         {
-            OnRecordPurchase?.Invoke(player, stall, product, payment);
-            RecordPurchase(player,product,payment);
+            OnRecordPurchase?.Invoke(player, stall, productClone, payment);
+            RecordPurchase(player, productClone, payment);
         }
         public event OnRecordPurchaseDelegate OnRecordPurchase;
 
