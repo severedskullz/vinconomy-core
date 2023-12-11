@@ -42,7 +42,7 @@ namespace Viconomy.GUI
             purchaseSlot.OnActivateLeftClick += DoPurchase;
             this.inv[0] = purchaseSlot;
 
-            currancySlot = new ViconCurrencySlot(inv, 0);
+            currancySlot = new ViconCurrencySlot(inv);
             this.inv[1] = currancySlot;
 
             this.Compose();

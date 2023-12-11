@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Viconomy.BlockEntities;
 using Viconomy.Inventory;
+using Viconomy.src.BlockEntities;
 using Vintagestory.API.Common;
 
 namespace Viconomy.Trading
@@ -48,5 +50,55 @@ namespace Viconomy.Trading
         public bool requiresContainer;
         public bool requiresTool;
         public ItemStack tool;
+    }
+
+    public class TradeRequest
+    {
+        public ICoreAPI coreApi;
+        public IPlayer customer;
+        public BEVRegister shopRegister;
+
+        public ItemStack currencyNeeded;
+        //public ItemSlot[] currencySourceSlots;
+
+        public ItemStack productNeeded;
+        public ItemSlot[] productSourceSlots;
+
+        public int numPurchases;
+
+        public int discountedPrice;
+        public bool isAdminShop;
+        public bool requiresContainer;
+        public bool requiresTool;
+        public ItemStack tool;
+        internal BEViconBase sellingEntity;
+    }
+
+    public class TradeResult : TradeRequest
+    {
+        public string error;
+        public List<ItemSlot> currencySourceSlots;
+        public ItemStack purchasedItems;
+        public ItemStack purchasedCurrencyUsed;
+
+        public TradeResult(TradeRequest request)
+        {
+
+            currencySourceSlots = new List<ItemSlot>();
+
+            coreApi = request.coreApi;
+            customer = request.customer;
+            currencyNeeded = request.currencyNeeded;
+            productNeeded = request.productNeeded;
+            productSourceSlots = request.productSourceSlots;
+            shopRegister = request.shopRegister;
+            isAdminShop = request.isAdminShop;
+            requiresContainer = request.requiresContainer;
+            requiresTool = request.requiresTool;
+            tool = request.tool;
+            discountedPrice = request.discountedPrice;
+
+
+        }
     }
 }

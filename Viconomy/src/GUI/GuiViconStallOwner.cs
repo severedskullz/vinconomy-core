@@ -10,7 +10,7 @@ using Vintagestory.API.MathTools;
 
 namespace Viconomy.GUI
 {
-    public class GuiDialogViconStallOwner : GuiDialogBlockEntity
+    public class GuiViconStallOwner : GuiDialogBlockEntity
     {
         BEViconStall stall;
         ViconomyInventory vinInv;
@@ -25,7 +25,7 @@ namespace Viconomy.GUI
         ViconPurchaseSlot purchaseSlot;
         StallSlot stallSlot;
 
-        public GuiDialogViconStallOwner(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
+        public GuiViconStallOwner(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
             api = capi;
@@ -207,7 +207,7 @@ namespace Viconomy.GUI
                 SingleComposer.GetButton("nextPage").Enabled = false;
 
             if (capi.World.Player.HasPrivilege("gamemode")) 
-                SingleComposer.GetSwitch("admin").SetValue(stall.isAdminShip);
+                SingleComposer.GetSwitch("admin").SetValue(stall.isAdminShop);
 
             SingleComposer.GetTextInput("quantity").SetValue(stallSlot.itemsPerPurchase);
 

@@ -7,6 +7,7 @@ using Viconomy.Filters;
 using Viconomy.GUI;
 using Viconomy.Inventory;
 using Viconomy.Renderer;
+using Viconomy.src.BlockEntities;
 using Viconomy.Trading;
 using Viconomy.Util;
 using Vintagestory.API.Client;
@@ -20,35 +21,13 @@ using Vintagestory.GameContent;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEViconStall : BlockEntityDisplay
+    public class BEViconStall : BEViconBase
     {
-        ViconomyCore modSystem;
-
-        protected ViconomyInventory inventory;
+        
         protected GuiDialogBlockEntity invDialog;
-        protected Block block;
+       
 
         public override int DisplayedItems => StallSlotCount;
-
-        protected AssetLocation OpenSound;
-        protected AssetLocation CloseSound;
-
-        public string Owner;
-        public string OwnerName;
-        public string RegisterID;
-        public bool isAdminShip;
-
-      
-        //public virtual AssetLocation OpenSound { get; set; } = new AssetLocation("sounds/block/chestopen");
-        //public virtual AssetLocation CloseSound { get; set; } = new AssetLocation("sounds/block/chestclose");
-        public override InventoryBase Inventory { get { return this.inventory; } }
-        public override string InventoryClassName { get { return "VinconomyInventory"; } }
-
-        public virtual int StallSlotCount { get; protected set; } = 4;
-        public virtual int StacksPerSlot { get; protected set; } = 9;
-        public virtual int BulkPurchaseAmount { get; protected set; } = 5;
-
-
 
         public BEViconStall()
         {
@@ -72,33 +51,7 @@ namespace Viconomy.BlockEntities
             }
         }
 
-
-        public override void Initialize(ICoreAPI api)
-        {
-            modSystem = api.ModLoader.GetModSystem<ViconomyCore>();
-
-            this.block = api.World.BlockAccessor.GetBlock(this.Pos); 
-
-            base.Initialize(api);
-
-            JsonObject attributes = block.Attributes;
-            string openSound = null;
-            if (attributes != null && attributes["openSound"] != null)
-            {
-                openSound = attributes["openSound"].AsString(null);
-            }
-
-            string closeSound = null;
-            if (attributes != null && attributes["openSound"] != null)
-            {
-                closeSound = attributes["openSound"].AsString(null); ;
-            }
-
-            this.OpenSound = (openSound == null) ? null : AssetLocation.Create(openSound, block.Code.Domain);
-            this.CloseSound = (closeSound == null) ? null : AssetLocation.Create(closeSound, block.Code.Domain);            
-        }
-
-        public bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
+        public override bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
         {
             int slotIndex = blockSel.SelectionBoxIndex;
             //Console.WriteLine("Calling OnPlayerRightClick from " + Api.Side);
@@ -119,10 +72,13 @@ namespace Viconomy.BlockEntities
                     {
                         ItemSlot handSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
                         ItemSlot currency = this.inventory.GetCurrencyForSelection(slotIndex);
-                        //if (currency != null && isMatchingCurrency(currency, handSlot))
-                        //{
+                        if (currency != null && TradingUtil.isMatchingCurrency(currency.Itemstack, handSlot.Itemstack))
+                        {
                             RequestPurchaseItem(slotIndex, ctrlMod ? BulkPurchaseAmount : 1);
-                        //}
+                        } else
+                        {
+                            TryPut(hotbarslot, blockSel, ctrlMod);
+                        }                      
                     } else
                     {
                         //Add items to slot
@@ -141,7 +97,6 @@ namespace Viconomy.BlockEntities
                 {
                     //Purchase the items.
                     RequestPurchaseItem(blockSel.SelectionBoxIndex, ctrlMod ? BulkPurchaseAmount : 1);
-                    //TryPurchaseItem(byPlayer, hotbarslot, blockSel, ctrlMod);
                 } else
                 {
                     // Open the shop inventory for that block selection
@@ -178,7 +133,7 @@ namespace Viconomy.BlockEntities
             } 
             
             // Does the shop have a register ID set?
-            if (this.RegisterID == null && !this.isAdminShip)
+            if (this.RegisterID == null && !this.isAdminShop)
             {
                 ViconomyCore.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
@@ -187,7 +142,7 @@ namespace Viconomy.BlockEntities
             
             // Is there a shop with the given Register ID?
             BEVRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
-            if (register == null && !this.isAdminShip)
+            if (register == null && !this.isAdminShop)
             {
                 ViconomyCore.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
@@ -224,22 +179,29 @@ namespace Viconomy.BlockEntities
 
         public void PurchaseItem(IPlayer player, ItemSlot purchaseSlot, int stallSlot, int desiredAmount, BEVRegister shopRegister)
         {
+            StallSlot slot = this.inventory.StallSlots[stallSlot];
 
-            PurchaseRequest request = new PurchaseRequest();
+            ItemStack product = slot.FindFirstNonEmptyStockSlot().Itemstack.Clone();
+            product.StackSize = slot.itemsPerPurchase;
+            TradeRequest request = new TradeRequest();
             request.customer = player;
             request.shopRegister = shopRegister;
-            request.stall = this;
-            request.stallSlot = this.inventory.StallSlots[stallSlot];
-            request.numTryPurchase = desiredAmount;
+            request.sellingEntity = this;
+            request.productNeeded = product;
+            request.productSourceSlots = slot.slots;
+            request.numPurchases = desiredAmount;
             request.coreApi = this.Api;
+            request.currencyNeeded = slot.currency.Itemstack.Clone();
+            request.isAdminShop = this.isAdminShop;
 
-            PurchaseResult result = TradingUtil.TryPurchaseItem(request);
+            TradeResult result = TradingUtil.TryPurchaseItem(request);
             if (result.error != null)
             {
                 ViconomyCore.PrintClientMessage(player, result.error);
             } else
             {
-
+                this.MarkDirty(true, null);
+                this.updateMeshes();
             }
         }
 
@@ -293,7 +255,7 @@ namespace Viconomy.BlockEntities
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
             if (isOwner)
-                this.invDialog = new GuiDialogViconStallOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+                this.invDialog = new GuiViconStallOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
             else
                 this.invDialog = new GuiDialogViconStallCustomer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
             this.invDialog.OpenSound = this.OpenSound;
@@ -459,7 +421,7 @@ namespace Viconomy.BlockEntities
             using (MemoryStream ms = new MemoryStream(data))
             {
                 BinaryReader reader = new BinaryReader(ms);
-                this.isAdminShip = reader.ReadBoolean();
+                this.isAdminShop = reader.ReadBoolean();
             }
 
             //PrintClientMessage(byPlayer, "set Admin Shop to " + this.isAdminShip);
@@ -622,89 +584,6 @@ namespace Viconomy.BlockEntities
             return false;
         }
 
-        private ItemStack GetProductStack(ItemSlot purchaseSlot, int amount)
-        {
-            ItemStack productStack = null;
-            if (!purchaseSlot.Empty && purchaseSlot.StackSize >= amount)
-            {
-                
-                if (isAdminShip)
-                {
-                    productStack = purchaseSlot.Itemstack.Clone();
-                    productStack.StackSize = amount;
-                }
-                else
-                {
-                    productStack = purchaseSlot.TakeOut(amount);
-                }
-            }
-            return productStack;
-        }
-
-        private ItemStack GetPaymentStack(ItemSlot paymentStack, int amount)
-        {
-            return paymentStack.TakeOut(amount);
-        }
-
-
-        private bool PurchaseItem(IPlayer byPlayer, BEVRegister shopRegister, ItemSlot purchaseSlot, ItemSlot currencySlot, int amount, int price)
-        {
-            if (this.Api.Side == EnumAppSide.Client)
-            {
-                return false;
-            }
-            //TODO: This is all serverside, having clientside code in here is pointless..
-            if (!purchaseSlot.Empty && purchaseSlot.StackSize >= amount)
-            {
-                
-                ItemStack productStack = GetProductStack(purchaseSlot, amount);
-                ItemStack productStackClone = productStack.Clone();
-                ItemStack paymentStack = GetPaymentStack(currencySlot, price);
-
-                modSystem.PurchasedItem(byPlayer, this, shopRegister, productStackClone, paymentStack);
-
-                GivePlayerProduct(byPlayer, productStack);
-                
-                if (shopRegister != null)
-                {
-                    shopRegister.PurchasedItem(byPlayer, this, productStackClone, paymentStack);
-                    shopRegister.AddItem(paymentStack, price);
-                }
-                
-
-
-                ViconomyCore.PrintClientMessage(byPlayer, "vinconomy:purchased-item", new object[] { amount, productStack.GetName(), price, paymentStack.GetName() });
-
-                purchaseSlot.MarkDirty();
-                currencySlot.MarkDirty();
-                this.MarkDirty(true, null);
-                this.updateMeshes();
-                return true;
-            }
-            return false;
-        }
-
-        private void GivePlayerProduct(IPlayer byPlayer, ItemStack productStack)
-        {
-            byPlayer.InventoryManager.TryGiveItemstack(productStack, false);
-            if (productStack.StackSize > 0)
-            {
-                this.Api.World.SpawnItemEntity(productStack, this.Pos.ToVec3d().Add(0.5, 0.5, 0.5), null);
-            }
-            Block block = productStack.Block;
-            AssetLocation assetLocation;
-            if (block == null)
-            {
-                assetLocation = null;
-            }
-            else
-            {
-                BlockSounds sounds = block.Sounds;
-                assetLocation = ((sounds != null) ? sounds.Place : null);
-            }
-            AssetLocation sound = assetLocation;
-            this.Api.World.PlaySoundAt((sound != null) ? sound : new AssetLocation("sounds/player/build"), byPlayer.Entity, byPlayer, true, 16f, 1f);
-        }
 
         public override void OnBlockUnloaded()
         {
@@ -778,7 +657,7 @@ namespace Viconomy.BlockEntities
             tree.SetString("Owner",this.Owner);
             tree.SetString("OwnerName", this.OwnerName);
             tree.SetString("RegisterID", this.RegisterID);
-            tree.SetBool("isAdminShop", this.isAdminShip);
+            tree.SetBool("isAdminShop", this.isAdminShop);
 
         }
 
@@ -788,7 +667,7 @@ namespace Viconomy.BlockEntities
             this.Owner = tree.GetString("Owner");
             this.OwnerName = tree.GetString("OwnerName");
             this.RegisterID = tree.GetString("RegisterID");
-            this.isAdminShip = tree.GetBool("isAdminShop");
+            this.isAdminShop = tree.GetBool("isAdminShop");
 
         }
 

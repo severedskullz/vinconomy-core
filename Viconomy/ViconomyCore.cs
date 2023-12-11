@@ -44,6 +44,7 @@ namespace Viconomy
  
             api.RegisterBlockClass("ViconContainer", typeof(BlockVContainer));
             api.RegisterBlockClass("ViconRegister", typeof(BlockVRegister));
+            api.RegisterBlockClass("ViconTeller", typeof(BlockVTeller));
             api.RegisterBlockClass("ViconClothingDisplay", typeof(BlockVClothingDisplay));
             api.RegisterBlockClass("ViconClothingDisplayTop", typeof(BlockVClothingDisplayTop));
             api.RegisterBlockClass("ViconJobboard", typeof(BlockVJobboard));
@@ -52,6 +53,7 @@ namespace Viconomy
             api.RegisterBlockEntityClass("BEViconHelmetStand", typeof(BEViconHelmetStand));
             api.RegisterBlockEntityClass("BEViconArmorStand", typeof(BEViconArmorStand));
             api.RegisterBlockEntityClass("BEVRegister", typeof(BEVRegister));
+            api.RegisterBlockEntityClass("BEViconTeller", typeof(BEViconTeller));
             api.RegisterBlockEntityClass("BEViconShelf", typeof(BEViconShelf));
             api.RegisterBlockEntityClass("BEViconWeaponrack", typeof(BEViconWeaponRack));
             api.RegisterBlockEntityClass("BEViconToolrack", typeof(BEViconToolRack));

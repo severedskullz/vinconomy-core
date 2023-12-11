@@ -1,0 +1,84 @@
+﻿{
+  "code": "tellermachine",
+  "class": "ViconTeller",
+  "entityClass": "BEViconTeller",
+  "priorityInteract": true,
+  "creativeinventory": { "vinconomy": [ "*-east" ] },
+  "attributes": {
+    "handbook": {
+      "groupBy": [ "tellermachine-*-*-east" ],
+      "groupedName": "tellermachine-oak-copper-east"
+    }
+  },
+  "behaviors": [ { "name": "HorizontalOrientable" } ],
+  "heldTpIdleAnimation": "holdbothhandslarge",
+  "heldTpUseAnimation": "twohandplaceblock",
+  "blockmaterial": "Wood",
+  "variantgroups": [
+    {
+      "code": "wood",
+      "states": [ "birch", "oak", "maple", "pine", "acacia", "kapok", "baldcypress", "larch", "redwood", "ebony", "walnut", "purpleheart" ]
+    },
+    {
+      "code": "metal",
+      "states": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+    },
+    {
+      "code": "side",
+      "loadFromProperties": "abstract/horizontalorientation"
+    }
+  ],
+  "textures": {
+    "wood": { "base": "game:block/wood/planks/{wood}1" },
+    "metal": { "base": "game:block/metal/plate/{metal}" }
+  },
+  "shapebytype": {
+    "*-north": {
+      "base": "block/register",
+      "rotateY": 0
+    },
+    "*-east": {
+      "base": "block/register",
+      "rotateY": 270
+    },
+    "*-south": {
+      "base": "block/register",
+      "rotateY": 180
+    },
+    "*-west": {
+      "base": "block/register",
+      "rotateY": 90
+    }
+  },
+
+  "collisionSelectionBoxes": [
+    {
+      "x1": 0.125,
+      "y1": 0,
+      "z1": 0.125,
+      "x2": 0.875,
+      "y2": 0.65,
+      "z2": 0.875,
+      "rotateYByType": {
+        "*-north": 0,
+        "*-east": 270,
+        "*-west": 90,
+        "*-south": 180
+      }
+    }
+  ],
+  "lightAbsorption": 0,
+  "sidesolid": {
+    "all": "false"
+  },
+  "sideopaque": {
+    "all": "false"
+  },
+  "resistance": 3.5,
+  "sounds": {
+    "hit": "game:block/planks",
+    "break": "game:block/planks",
+    "place": "game:block/planks",
+    "walk": "game:walk/wood"
+  }
+}

@@ -31,7 +31,7 @@ namespace Viconomy.Registry
 
         public ViconRegister GetRegister(string owner, string registerID)
         {
-            if (registers.ContainsKey(owner) && registers[owner].ContainsKey(registerID))
+            if ( registerID != null && owner != null && registers.ContainsKey(owner) && registers[owner].ContainsKey(registerID))
             {
                 return registers[owner][registerID];
             }

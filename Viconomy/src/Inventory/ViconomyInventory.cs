@@ -8,7 +8,7 @@ using Vintagestory.API.MathTools;
 
 namespace Viconomy.Inventory
 {
-    public class ViconomyInventory : InventoryBase
+    public class ViconomyInventory : InventoryBase, ISlotProvider
     {
         BEViconStall stall;
 
@@ -24,6 +24,8 @@ namespace Viconomy.Inventory
         public StallSlot[] StallSlots { get { return this.stallSlots; } }
 
         public override int Count { get { return this.stallSlots.Length * (itemsPerBin + 1); } }
+
+        public ItemSlot[] Slots => slots;
 
         ViconomyCore modSystem;
 
@@ -61,7 +63,7 @@ namespace Viconomy.Inventory
         protected override ItemSlot NewSlot(int id)
         {
             if ((id + 1) % (itemsPerBin + 1) == 0)
-                return new ViconCurrencySlot(this, id / (itemsPerBin + 1));
+                return new ViconCurrencySlot(this);
 
             else
                 return new ViconItemSlot(this, id / (itemsPerBin + 1), id);
@@ -158,7 +160,7 @@ namespace Viconomy.Inventory
         public override float GetTransitionSpeedMul(EnumTransitionType transType, ItemStack stack)
         {
             ViconConfig config = modSystem.Config;
-            if ( (config != null && config.FoodDecaysInShops) && (stall != null && !stall.isAdminShip))
+            if ( (config != null && config.FoodDecaysInShops) && (stall != null && !stall.isAdminShop))
             {
                 return base.GetDefaultTransitionSpeedMul(transType) * modSystem.Config.StallPerishRate; 
             } else

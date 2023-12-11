@@ -5,9 +5,10 @@ using System.Numerics;
 using Viconomy.BlockTypes;
 using Viconomy.Delegates;
 using Viconomy.GUI;
+using Viconomy.Inventory;
 using Viconomy.ItemTypes;
 using Viconomy.Registry;
-using Viconomy.src.BlockEntities;
+using Viconomy.Trading;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -19,11 +20,13 @@ using Vintagestory.GameContent;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEVRegister : BlockEntityContainer
+    public class BEViconTeller : BlockEntityContainer
     {
-        private BlockVRegister block;
-        private InventoryGeneric inventory;
-        private GuiViconRegister invDialog;
+        private BlockVTeller block;
+        private ViconomyTellerInventory inventory;
+        private GuiViconTeller invDialog;
+        internal string RegisterID;
+        internal bool isAdminShop;
 
         public string ID { get; internal set; }
         public string Owner { get; internal set; }
@@ -33,23 +36,24 @@ namespace Viconomy.BlockEntities
 
         public override string InventoryClassName => "ViconomyRegisteryInventory";
 
-        public BEVRegister()
+        public BEViconTeller()
         {
-            this.inventory = new InventoryGeneric(25, null, null);
+            this.inventory = new ViconomyTellerInventory(this, null, null);
         }
 
         public override void Initialize(ICoreAPI api)
         {
-            this.block = (BlockVRegister)api.World.BlockAccessor.GetBlock(this.Pos);
+            this.block = (BlockVTeller) api.World.BlockAccessor.GetBlock(this.Pos);
 
             base.Initialize(api);          
                        
         }
 
-        public void UpdateRegister(string Owner, string OwnerName, string ID, string Name)
+        public void UpdateTeller(string Owner, string OwnerName, string ID, string Name)
         {
             ViconomyCore modSystem = this.Api.ModLoader.GetModSystem<ViconomyCore>();
-
+            
+            /*
             if (ID == null)
             {
                 //Console.WriteLine("Register block was placed and did not have ID Set...");
@@ -62,6 +66,7 @@ namespace Viconomy.BlockEntities
                 //Console.WriteLine("Register block was placed and had ID Set... Updating");
                 ViconRegister register = modSystem.UpdateRegister(Owner, ID, Name, this.Pos);
             }
+            */
 
             this.ID = ID;
             this.Owner = Owner;
@@ -73,7 +78,7 @@ namespace Viconomy.BlockEntities
         {
             base.OnBlockBroken(byPlayer);
             ViconomyCore modSystem = this.Api.ModLoader.GetModSystem<ViconomyCore>();
-            modSystem.registers.ClearRegisterPos(Owner, ID);
+            //modSystem.registers.ClearRegisterPos(Owner, ID);
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
@@ -93,70 +98,14 @@ namespace Viconomy.BlockEntities
             tree.SetString("OwnerName", OwnerName);
         }
 
-        public bool CanHold(ItemStack sourceStack)
-        {
-            int amountLeft = sourceStack.StackSize;
-            foreach (ItemSlot slot in inventory)
-            {
-                if (slot.Itemstack == null)
-                {
-                    return true;
-                } else if (slot.Itemstack.Equals(sourceStack)) {
-                    // 64 - 10 = 54
-                    amountLeft -= slot.Itemstack.Item.MaxStackSize - slot.Itemstack.StackSize;
-                    if (amountLeft <= 0)
-                    {
-                        return true;
-                    }
-
-                }
-            }
-            return false;
-        }
-
-        public bool AddItem(ItemStack sourceStack, int quantity)
-        {
-            ItemSlot dslot = new ItemSlot(null);
-            dslot.Itemstack = sourceStack;
-
-            int amountLeft = quantity;
-            foreach (ItemSlot slot in inventory)
-            {
-                if (slot.CanHold(dslot))
-                {
-                    amountLeft -= dslot.TryPutInto(this.Api.World, slot, amountLeft);
-                }
-              
-                if (amountLeft <= 0)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
 
         public bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
         {
-
-            if (byPlayer.PlayerUID == Owner)
-            {
-               
-                // Open shop admin gui
-                OpenAdminForPlayer(byPlayer);
-            }
-            else
-            {
-                if (Api.Side == EnumAppSide.Server)
-                {
-                    ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("vinconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
-                }
-               
-            }
-
+            OpenGUIForPlayer(byPlayer);
             return true;
         }
 
-        private void OpenAdminForPlayer(IPlayer byPlayer)
+        private void OpenGUIForPlayer(IPlayer byPlayer)
         {
             if (this.Api.World is IServerWorldAccessor)
             {
@@ -173,8 +122,9 @@ namespace Viconomy.BlockEntities
                         writer.Write(register.Name);
                     } else
                     {
-                        writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Shop");
+                        writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Teller Machine");
                     }
+                    writer.Write(byPlayer.PlayerUID == Owner);
                     
                     TreeAttribute tree = new TreeAttribute();
                     this.inventory.ToTreeAttributes(tree);
@@ -182,10 +132,8 @@ namespace Viconomy.BlockEntities
                     data = ms.ToArray();
                 }
               ((ICoreServerAPI)this.Api).Network.SendBlockEntityPacket((IServerPlayer)byPlayer, this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.TOGGLE_GUI, data);
-                byPlayer.InventoryManager.OpenInventory(this.inventory);
             }
         }
-
 
         public override void OnReceivedClientPacket(IPlayer player, int packetid, byte[] data)
         {
@@ -217,15 +165,22 @@ namespace Viconomy.BlockEntities
                         string Name = reader.ReadString();
                         if (player.PlayerUID == Owner)
                         {
-                            UpdateRegister(Owner, OwnerName, ID, Name);
+                            UpdateTeller(Owner, OwnerName, ID, Name);
                         }
                         else
                         {
                             ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
                         }
                     }
-
-                    
+                    break;
+                case VinConstants.CURRENCY_CONVERSION:
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
+                        BinaryReader reader = new BinaryReader(ms);
+                        int slot = reader.ReadInt32();
+                        DoCurrencyConversionForSlot(player, slot);
+                    }
+                    ((IServerPlayer)player).SendMessage(0, "it worked?", EnumChatType.OwnMessage);
                     break;
                 default:
                     if (packetid < 1000)
@@ -250,6 +205,23 @@ namespace Viconomy.BlockEntities
                     }
                     break;
             }
+        }
+
+        private void DoCurrencyConversionForSlot(IPlayer player, int slot)
+        {
+            bool isLeft = slot % 2 == 0;
+            ItemSlot toCurrency = Inventory[slot];
+            ItemSlot fromCurrency = Inventory[slot + (isLeft ? 1 : -1)];
+
+            TradeRequest request = new TradeRequest();
+            request.customer = player;
+            request.numPurchases = 1;
+            request.productNeeded = toCurrency.Itemstack;
+            request.productSourceSlots = this.inventory.Slots;
+            request.currencyNeeded = fromCurrency.Itemstack;
+            //request.currencySourceSlots = TradingUtil.GetAllValidCurrencyFor(player, fromCurrency.Itemstack).ToArray();
+
+
         }
 
         public override void OnReceivedServerPacket(int packetid, byte[] data)
@@ -285,16 +257,18 @@ namespace Viconomy.BlockEntities
         {
             TreeAttribute tree = new TreeAttribute();
             string dialogTitle;
+            bool isOwner;
             using (MemoryStream ms = new MemoryStream(data))
             {
                 BinaryReader reader = new BinaryReader(ms);
                 reader.ReadString();
                 dialogTitle = reader.ReadString();
+                isOwner = reader.ReadBoolean();
                 tree.FromBytes(reader);
             }
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
-            this.invDialog = new GuiViconRegister(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
+            this.invDialog = new GuiViconTeller(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, isOwner);
             //this.invDialog.OpenSound = this.OpenSound;
             //this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();
@@ -332,7 +306,7 @@ namespace Viconomy.BlockEntities
         /***
          *  Records the purchase of an item. 
          */
-        public void PurchasedItem(IPlayer player, BEViconBase stall, ItemStack productClone, ItemStack payment)
+        public void PurchasedItem(IPlayer player, BEViconStall stall, ItemStack productClone, ItemStack payment)
         {
             OnRecordPurchase?.Invoke(player, stall, productClone, payment);
             RecordPurchase(player, productClone, payment);

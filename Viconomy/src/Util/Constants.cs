@@ -20,9 +20,9 @@ namespace Viconomy.Util
 
         // Customer Packets
         public const int PURCHASE_ITEMS = 3002;
+        public const int CURRENCY_CONVERSION = 3003;
 
         public const int TOGGLE_GUI = 5000;
-
         
     }
 }
