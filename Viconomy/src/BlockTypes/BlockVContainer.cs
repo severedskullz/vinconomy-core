@@ -6,7 +6,6 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
-using Vintagestory.GameContent;
 
 namespace Viconomy.BlockTypes
 {
@@ -24,11 +23,10 @@ namespace Viconomy.BlockTypes
             bool result = base.DoPlaceBlock(world, byPlayer, blockSel, byItemStack);
             if (result)
             {
-                BEViconStall viconBlock = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEViconStall;
+                BEViconBase viconBlock = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEViconBase;
                 if (viconBlock != null)
                 {
-                    viconBlock.Owner = byPlayer.PlayerUID;
-                    viconBlock.OwnerName = byPlayer.PlayerName;
+                    viconBlock.SetOwner(byPlayer);
                 }
             }
 

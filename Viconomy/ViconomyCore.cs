@@ -206,8 +206,8 @@ namespace Viconomy
             }
 
             string playerUUID = playerData.PlayerUID;
-            if (entity is BEViconStall) {
-                ((BEViconStall)entity).Owner = playerUUID;
+            if (entity is BEViconBase) {
+                ((BEViconBase)entity).SetOwner(playerUUID, playerData.LastKnownPlayername);
             }
             else if (entity is BEVRegister) 
             {
@@ -343,7 +343,7 @@ namespace Viconomy
             }
             
 
-            _serverChannel.SendPacket<RegistryUpdatePacket>(new RegistryUpdatePacket(updates), new IServerPlayer[]{ player });
+            _serverChannel.SendPacket(new RegistryUpdatePacket(updates), new IServerPlayer[]{ player });
         }
 
         public ViconRegister AddRegister(string owner, string ownerName, string name, BlockPos pos)
@@ -405,7 +405,7 @@ namespace Viconomy
         /// payment: the stack of items representing payment to be stored in the Register<br/>
         /// numSales: How many sales are in this transaction
         /// </summary>
-        public void PurchasedItem(IPlayer player, BEViconStall stall, BEVRegister register, ItemStack product, ItemStack payment)
+        public void PurchasedItem(IPlayer player, BEViconBase stall, BEVRegister register, ItemStack product, ItemStack payment)
         {
             OnPurchasedItem?.Invoke(player, stall, register, product, payment);
         }
@@ -422,12 +422,12 @@ namespace Viconomy
         /// payment: the stack of items representing payment the player will owe<br/>
         /// desiredAmount: How many sales are in this transaction
         /// </summary>
-        public bool CanPurchaseItem(IPlayer player, BEViconStall stall, BEVRegister register, int stallSlot, ItemSlot purchaseSlot, ItemSlot currencySlot, int desiredAmount)
+        public bool CanPurchaseItem(IPlayer player, BEViconBase stall, BEVRegister register, int stallSlot, int desiredAmount)
         {
             bool result = true;
             if (OnCanPurchaseItem != null)
             {
-                result = OnCanPurchaseItem.Invoke(player, stall, register, purchaseSlot, currencySlot);
+                result = OnCanPurchaseItem.Invoke(player, stall, register, stallSlot, desiredAmount);
             }
             return result;
         }

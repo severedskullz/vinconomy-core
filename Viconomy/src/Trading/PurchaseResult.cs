@@ -1,8 +1,7 @@
-﻿using System.Collections;
+﻿
 using System.Collections.Generic;
 using Viconomy.BlockEntities;
 using Viconomy.Inventory;
-using Viconomy.src.BlockEntities;
 using Vintagestory.API.Common;
 
 namespace Viconomy.Trading

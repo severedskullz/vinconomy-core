@@ -1,8 +1,6 @@
 ﻿using Viconomy.BlockEntities;
-using Viconomy.src.BlockEntities;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
-using Vintagestory.GameContent.Mechanics;
 
 namespace Viconomy.Delegates
 {
@@ -14,7 +12,7 @@ namespace Viconomy.Delegates
     /*
      *  Called whenever a player attempts to purchase from a stall, regardless if it is assoicated with a Register (Nullable). Return true to allow the purchase;
      */
-    public delegate bool CanPurchaseItemDelegate(IPlayer player, BEViconBase stall, BEVRegister register, ItemSlot product, ItemSlot payment);
+    public delegate bool CanPurchaseItemDelegate(IPlayer player, BEViconBase stall, BEVRegister register, int productSlot, int numPurchases);
 
     /*
      * Called when a product is purchased and payment is sent to a register. Changes to Payment stack will be persisted. Can be used for things like subtracting Taxes or the like.

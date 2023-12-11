@@ -14,7 +14,7 @@ namespace Viconomy.Util
 
         //Admin Packets
         public const int SET_ITEMS_PER_PURCHASE = 2001;
-        public const int SET_SHOP_ID = 2002;
+        public const int SET_REGISTER_ID = 2002;
         public const int SET_SHOP_NAME = 2003;
         public const int SET_ADMIN_SHOP = 2004;
 

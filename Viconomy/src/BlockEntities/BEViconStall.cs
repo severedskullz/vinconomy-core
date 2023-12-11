@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Numerics;
 using System.Text;
 using Viconomy.Filters;
 using Viconomy.GUI;
 using Viconomy.Inventory;
 using Viconomy.Renderer;
-using Viconomy.src.BlockEntities;
 using Viconomy.Trading;
 using Viconomy.Util;
 using Vintagestory.API.Client;
@@ -25,7 +22,8 @@ namespace Viconomy.BlockEntities
     {
         
         protected GuiDialogBlockEntity invDialog;
-       
+        protected ViconomyInventory inventory;
+        public override InventoryBase Inventory { get { return this.inventory; } }
 
         public override int DisplayedItems => StallSlotCount;
 
@@ -110,13 +108,11 @@ namespace Viconomy.BlockEntities
 
             int stallSlot;
             int desiredAmount;
-            bool useHandSlot;
             using (MemoryStream memoryStream = new MemoryStream(data))
             {
                 BinaryReader binaryReader = new BinaryReader(memoryStream);
                 stallSlot = binaryReader.ReadInt32();
                 desiredAmount = binaryReader.ReadInt32();
-                useHandSlot = binaryReader.ReadBoolean();
             }
 
 
@@ -149,61 +145,34 @@ namespace Viconomy.BlockEntities
             }
   
             ItemSlot[] stockSlots = this.inventory.GetSlotsForSelection(stallSlot);
-            int itemsPerPurchase = this.inventory.GetItemsPerPurchase(stallSlot);
             ItemSlot purchaseSlot = null;
             
             //Find the first slot available that we can purchase from
             foreach (var stockSlot in stockSlots)
             {
-                if (stockSlot.StackSize >= itemsPerPurchase)
+                if (stockSlot.StackSize >= 0)
                 {
                     purchaseSlot = stockSlot;
                     break;
                 }
             }
-
             if (purchaseSlot == null)
             {
                 //Console.WriteLine(Api.Side + ": Not enough stock to purchase item");
                 ViconomyCore.PrintClientMessage(player, TradingConstants.NO_PRODUCT);
                 return;
             }
-            if (modSystem.CanPurchaseItem(player, this, register, stallSlot, purchaseSlot, currency, desiredAmount))
+
+            if (modSystem.CanPurchaseItem(player, this, register, stallSlot, desiredAmount))
             {
-                PurchaseItem(player, purchaseSlot, stallSlot, desiredAmount, register);
+                PurchaseItem(player, stallSlot, desiredAmount, register);
             }
 
         }
 
 
 
-        public void PurchaseItem(IPlayer player, ItemSlot purchaseSlot, int stallSlot, int desiredAmount, BEVRegister shopRegister)
-        {
-            StallSlot slot = this.inventory.StallSlots[stallSlot];
-
-            ItemStack product = slot.FindFirstNonEmptyStockSlot().Itemstack.Clone();
-            product.StackSize = slot.itemsPerPurchase;
-            TradeRequest request = new TradeRequest();
-            request.customer = player;
-            request.shopRegister = shopRegister;
-            request.sellingEntity = this;
-            request.productNeeded = product;
-            request.productSourceSlots = slot.slots;
-            request.numPurchases = desiredAmount;
-            request.coreApi = this.Api;
-            request.currencyNeeded = slot.currency.Itemstack.Clone();
-            request.isAdminShop = this.isAdminShop;
-
-            TradeResult result = TradingUtil.TryPurchaseItem(request);
-            if (result.error != null)
-            {
-                ViconomyCore.PrintClientMessage(player, result.error);
-            } else
-            {
-                this.MarkDirty(true, null);
-                this.updateMeshes();
-            }
-        }
+      
 
         #region GUI
 
@@ -325,12 +294,18 @@ namespace Viconomy.BlockEntities
                     SetStallItemsPerPurchase(player, data);
                     break;
 
-                case VinConstants.SET_SHOP_ID:
-                    SetStallID(player, data);
+                case VinConstants.SET_REGISTER_ID:
+                    SetStallRegisterID(player, data);
                     break;
 
                 case VinConstants.SET_ADMIN_SHOP:
-                    SetAdminShop(player, data);
+                    bool isAdmin = false;
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
+                        BinaryReader reader = new BinaryReader(ms);
+                        isAdmin = reader.ReadBoolean();
+                    }
+                    SetAdminShop(player, isAdmin);
                     break;
 
                 default:
@@ -378,55 +353,9 @@ namespace Viconomy.BlockEntities
             this.MarkDirty();
         }
 
-        private void SetStallID(IPlayer byPlayer, byte[] data)
-        {
-            if (byPlayer.PlayerUID != this.Owner)
-            {
-                ViconomyCore.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
-                return;
-            }
 
-            using (MemoryStream ms = new MemoryStream(data))
-            {
-                BinaryReader reader = new BinaryReader(ms);
-                string ID = reader.ReadString();
-                if (ID != "None")
-                {
-                    this.RegisterID = ID;
-                }
-                else
-                {
-                    this.RegisterID = null;
-                }
-            }
 
-            //PrintClientMessage(byPlayer, "set ID to " + this.RegisterID);
-            this.MarkDirty();
-        }
 
-        private void SetAdminShop(IPlayer byPlayer, byte[] data)
-        {
-            if (byPlayer.PlayerUID != this.Owner)
-            {
-                ViconomyCore.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
-                return;
-            }
-
-            if (!byPlayer.HasPrivilege("gamemode"))
-            {
-                ViconomyCore.PrintClientMessage(byPlayer, TradingConstants.NO_PRIVLEGE, new object[] { });
-                return;
-            }
-
-            using (MemoryStream ms = new MemoryStream(data))
-            {
-                BinaryReader reader = new BinaryReader(ms);
-                this.isAdminShop = reader.ReadBoolean();
-            }
-
-            //PrintClientMessage(byPlayer, "set Admin Shop to " + this.isAdminShip);
-            this.MarkDirty();
-        }
 
         public override void OnReceivedServerPacket(int packetid, byte[] data)
         {
@@ -470,7 +399,6 @@ namespace Viconomy.BlockEntities
                         BinaryWriter writer = new BinaryWriter(ms);
                         writer.Write(slot);
                         writer.Write(amount);
-                        writer.Write(true);
                         data = ms.ToArray();
                     }
                     ICoreClientAPI coreClientAPI = this.Api as ICoreClientAPI;
@@ -651,25 +579,7 @@ namespace Viconomy.BlockEntities
             this.Inventory.DropAll(atPos, 0);
         }
 
-        public override void ToTreeAttributes(ITreeAttribute tree)
-        {
-            base.ToTreeAttributes(tree);
-            tree.SetString("Owner",this.Owner);
-            tree.SetString("OwnerName", this.OwnerName);
-            tree.SetString("RegisterID", this.RegisterID);
-            tree.SetBool("isAdminShop", this.isAdminShop);
 
-        }
-
-        public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor world)
-        {
-            base.FromTreeAttributes(tree, world);
-            this.Owner = tree.GetString("Owner");
-            this.OwnerName = tree.GetString("OwnerName");
-            this.RegisterID = tree.GetString("RegisterID");
-            this.isAdminShop = tree.GetBool("isAdminShop");
-
-        }
 
         public override float GetPerishRate()
         {
@@ -738,6 +648,21 @@ namespace Viconomy.BlockEntities
         public void SetNowTesselatingShape(Shape shape)
         {
             this.nowTesselatingShape = shape;
+        }
+
+        public override ItemSlot[] GetSlotsForStall(int stallSlot)
+        {
+            return inventory.StallSlots[stallSlot].slots;
+        }
+
+        public override ItemSlot GetCurrencyForStall(int stallSlot)
+        {
+            return inventory.StallSlots[stallSlot].currency;
+        }
+
+        public override int GetNumItemsPerPurchaseForStall(int stallSlot)
+        {
+            return inventory.StallSlots[stallSlot].itemsPerPurchase;
         }
     }
 

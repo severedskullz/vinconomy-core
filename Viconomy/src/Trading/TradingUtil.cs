@@ -27,7 +27,7 @@ namespace Viconomy.Trading
         public static void CommitPurchase(TradeResult purchaseResult)
         {
             // Take the product from the stall
-            int productLeft = purchaseResult.numPurchases * purchaseResult.currencyNeeded.StackSize;
+            int productLeft = purchaseResult.numPurchases * purchaseResult.productNeeded.StackSize;
             ItemStack productStackClone = purchaseResult.productNeeded.Clone();
             productStackClone.StackSize = productLeft;
             List<ItemStack> soldItems = new List<ItemStack>();
@@ -78,6 +78,9 @@ namespace Viconomy.Trading
 
             purchaseResult.purchasedItems = productStackClone;
             purchaseResult.purchasedCurrencyUsed = paymentStackClone;
+
+            ViconomyCore core = purchaseResult.coreApi.ModLoader.GetModSystem<ViconomyCore>();
+            core.PurchasedItem(purchaseResult.customer, purchaseResult.sellingEntity, purchaseResult.shopRegister, productStackClone, paymentStack);
 
             // Give the product to the player
             GivePlayerProduct(purchaseResult, soldItems);
@@ -130,19 +133,22 @@ namespace Viconomy.Trading
                 return purchaseResult;
             }
 
-            bool hasAtleastOne = false;
-            foreach (ItemSlot productSlot in request.productSourceSlots)
+            if (!request.isAdminShop)
             {
-                if (productSlot.Itemstack != null)
+                bool hasAtleastOne = false;
+                foreach (ItemSlot productSlot in request.productSourceSlots)
                 {
-                    hasAtleastOne = true;
-                    break;
+                    if (productSlot.Itemstack != null)
+                    {
+                        hasAtleastOne = true;
+                        break;
+                    }
                 }
-            }
-            if (!hasAtleastOne)
-            {
-                purchaseResult.error = TradingConstants.NO_PRODUCT;
-                return purchaseResult;
+                if (!hasAtleastOne)
+                {
+                    purchaseResult.error = TradingConstants.NO_PRODUCT;
+                    return purchaseResult;
+                }
             }
 
 
@@ -160,21 +166,23 @@ namespace Viconomy.Trading
 
         public static bool CanSell(TradeRequest request, TradeResult purchaseResult)
         {
-            int quantityNeeded = request.productNeeded.StackSize * request.numPurchases;
-            int totalItemsForSale = 0;
-            foreach (ItemSlot slot in request.productSourceSlots)
-            {
-                totalItemsForSale += slot.StackSize;
-            }
-            // Has enough stock
-            if (totalItemsForSale < request.productNeeded.StackSize)
-            {
-                purchaseResult.error = TradingConstants.NOT_ENOUGH_STOCK;
-                return false;
-            } else if (totalItemsForSale < quantityNeeded)
-            {
-                request.numPurchases = Math.Min(request.numPurchases, totalItemsForSale / request.productNeeded.StackSize);
+            if (!request.isAdminShop) { 
+                int quantityNeeded = request.productNeeded.StackSize * request.numPurchases;
+                int totalItemsForSale = 0;
+                foreach (ItemSlot slot in request.productSourceSlots)
+                {
+                    totalItemsForSale += slot.StackSize;
+                }
+                // Has enough stock
+                if (totalItemsForSale < request.productNeeded.StackSize)
+                {
+                    purchaseResult.error = TradingConstants.NOT_ENOUGH_STOCK;
+                    return false;
+                } else if (totalItemsForSale < quantityNeeded)
+                {
+                    request.numPurchases = Math.Min(request.numPurchases, totalItemsForSale / request.productNeeded.StackSize);
 
+                }
             }
 
             // Has enough space in register
@@ -310,6 +318,19 @@ namespace Viconomy.Trading
             return source != null
                 && payment != null
                 && isMatchingCurrency(source.Itemstack, payment.Itemstack);
+        }
+
+        public static ItemStack GetItemStackClone(ItemSlot slot, int stackSize = 0)
+        {
+            ItemStack stack = null;
+            if (slot == null) return null;
+
+            stack = slot.Itemstack.Clone();
+            if (stackSize > 0)
+            {
+                stack.StackSize = stackSize;
+            }
+            return stack;
         }
     }
 }
