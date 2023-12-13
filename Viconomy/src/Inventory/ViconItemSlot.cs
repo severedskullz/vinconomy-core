@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Vintagestory.API.Common;
-using Vintagestory.API.MathTools;
+﻿using Vintagestory.API.Common;
 
 namespace Viconomy.Inventory
 {
@@ -12,7 +6,7 @@ namespace Viconomy.Inventory
     {
         int stallSlot = 0;
         int itemSlot = 0;
-        Vintagestory.API.Common.Func<ItemSlot, bool> slotFilter = null;
+        Func<ItemSlot, bool> slotFilter = null;
         public ViconItemSlot(InventoryBase inventory, int stallSlot, int itemSlot) : base(inventory)
         {
             this.stallSlot = stallSlot;

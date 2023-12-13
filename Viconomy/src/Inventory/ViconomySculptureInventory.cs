@@ -8,7 +8,7 @@ using Vintagestory.API.MathTools;
 
 namespace Viconomy.Inventory
 {
-    public class ViconomyInventory : InventoryBase, ISlotProvider
+    public class ViconomySculptureInventory : InventoryBase, ISlotProvider
     {
         BEViconBase stall;
 
@@ -29,7 +29,7 @@ namespace Viconomy.Inventory
 
         ViconomyCore modSystem;
 
-        public ViconomyInventory(BEViconBase stall, string inventoryID, ICoreAPI api, int binSize, int itemsPerBin) : base(inventoryID, api)
+        public ViconomySculptureInventory(BEViconBase stall, string inventoryID, ICoreAPI api, int binSize, int itemsPerBin) : base(inventoryID, api)
         {
             this.stall = stall;
             
@@ -45,11 +45,7 @@ namespace Viconomy.Inventory
                 this.slots[i] = NewSlot(i);
             }
 
-            this.stallSlots = new StallSlot[binSize];
-            for (int i = 0; i < binSize; i++)
-            {
-                this.stallSlots[i] = new StallSlot(this, i, itemsPerBin, slots);
-            }
+          
 
         }
 
@@ -62,7 +58,7 @@ namespace Viconomy.Inventory
 
         protected override ItemSlot NewSlot(int id)
         {
-            if ((id + 1) % (itemsPerBin + 1) == 0)
+            if (id == 0)
                 return new ViconCurrencySlot(this);
 
             else

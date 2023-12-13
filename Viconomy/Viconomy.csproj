@@ -56,11 +56,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>
   <None Remove="assets\vinconomy\blocktypes\vicon-jobboard.json" />
+  <None Remove="assets\vinconomy\blocktypes\vicon-sculpturepad.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-tellermachine.json" />
   <None Remove="assets\vinconomy\itemtypes\vicon-ledger.json" />
   <None Remove="assets\vinconomy\itemtypes\vicon-playerfilter.json" />
+  <None Remove="assets\vinconomy\itemtypes\vicon-sculpturebundle.json" />
   <None Remove="assets\vinconomy\lang\ru.json" />
   <None Remove="assets\vinconomy\recipes\grid\armorstand.json" />
+  <None Remove="assets\vinconomy\recipes\grid\tellermachine.json" />
   <Content Include="modinfo.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>

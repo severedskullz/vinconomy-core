@@ -40,11 +40,11 @@ namespace Viconomy.BlockTypes
                 {
                     if (Owner != null)
                     {
-                        vEntity.UpdateTeller(Owner, byItemStack.Attributes.GetString("OwnerName"), null);                        
+                        vEntity.UpdateTeller(Owner, byItemStack.Attributes.GetString("OwnerName"));                        
                     }
                     else
                     {
-                        vEntity.UpdateTeller(byPlayer.PlayerUID, byPlayer.PlayerName, null);
+                        vEntity.UpdateTeller(byPlayer.PlayerUID, byPlayer.PlayerName);
                     }
                        
                 }

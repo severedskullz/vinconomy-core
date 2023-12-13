@@ -55,12 +55,14 @@ namespace Viconomy
             api.RegisterBlockEntityClass("BEVRegister", typeof(BEVRegister));
             api.RegisterBlockEntityClass("BEViconTeller", typeof(BEViconTeller));
             api.RegisterBlockEntityClass("BEViconShelf", typeof(BEViconShelf));
+            api.RegisterBlockEntityClass("BEViconSculpturePad", typeof(BEViconSculpturePad));
             api.RegisterBlockEntityClass("BEViconWeaponrack", typeof(BEViconWeaponRack));
             api.RegisterBlockEntityClass("BEViconToolrack", typeof(BEViconToolRack));
             api.RegisterBlockEntityClass("BEViconArmorStand", typeof(BEViconArmorStand));
             api.RegisterBlockEntityClass("BEViconJobboard", typeof(BEViconJobboard));
 
             api.RegisterItemClass("ViconLedger", typeof(ItemLedger));
+            api.RegisterItemClass("ViconSculptureBundle", typeof(ItemSculptureBundle));
 
             api.Network.RegisterChannel("Vinconomy")
                 .RegisterMessageType(typeof(RegistryUpdatePacket));

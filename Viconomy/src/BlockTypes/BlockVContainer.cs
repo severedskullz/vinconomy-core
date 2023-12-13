@@ -39,7 +39,7 @@ namespace Viconomy.BlockTypes
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
             //Console.WriteLine(api.Side + ": On interaction start was called!");
-            BEViconStall be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEViconStall;
+            BEViconBase be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEViconBase;
             if (be != null)
             {
                 return be.OnPlayerRightClick(byPlayer, blockSel);
@@ -50,33 +50,30 @@ namespace Viconomy.BlockTypes
 
         public override WorldInteraction[] GetPlacedBlockInteractionHelp(IWorldAccessor world, BlockSelection selection, IPlayer forPlayer)
         {
-            BEViconStall be = world.BlockAccessor.GetBlockEntity(selection.Position) as BEViconStall;
+            BEViconBase be = world.BlockAccessor.GetBlockEntity(selection.Position) as BEViconBase;
             List<WorldInteraction> interactions = new List<WorldInteraction>();
             if (be != null)
             {
-                StallSlot[] slots = ((ViconomyInventory)be.Inventory).StallSlots;
-                //In case we have some oddity with selections, just exit gracefully.
-                if (selection.SelectionBoxIndex >= slots.Length)
-                {
-                    return interactions.ToArray();
-                }
+                int index = selection.SelectionBoxIndex;
+                ItemSlot product = be.FindFirstNonEmptyStockSlotForStall(index);
+                ItemSlot currency = be.GetCurrencyForStall(index);
 
-                StallSlot slot = slots[selection.SelectionBoxIndex];
+                //StallSlot slot = slots[selection.SelectionBoxIndex];
 
                 if (be.Owner != forPlayer.PlayerUID)
                 {
-                    if (slot.currency.Itemstack != null && slot.FindFirstNonEmptyStockSlot() != null)
+                    if (currency.Itemstack != null && product != null)
                     {
                         interactions.Add(new WorldInteraction
                         {
                             ActionLangCode = "vinconomy:stall-purchase",
                             MouseButton = EnumMouseButton.Right,
                             HotKeyCode = "sneak",
-                            Itemstacks = new ItemStack[] { slot.currency.Itemstack }
+                            Itemstacks = new ItemStack[] { currency.Itemstack }
 
                         });
 
-                        ItemStack fiveStack = slot.currency.Itemstack.Clone();
+                        ItemStack fiveStack = currency.Itemstack.Clone();
                         fiveStack.StackSize = 5 * fiveStack.StackSize;
                         interactions.Add(new WorldInteraction
                         {
@@ -87,7 +84,7 @@ namespace Viconomy.BlockTypes
                         });
                     }
                 } else {
-                    ItemSlot firstSlot = slot.FindFirstNonEmptyStockSlot();
+                    ItemSlot firstSlot = product;
                     if (firstSlot != null)
                     {
                         ItemStack helpSlot = firstSlot.Itemstack.Clone();
@@ -110,18 +107,18 @@ namespace Viconomy.BlockTypes
                             Itemstacks = new ItemStack[] { helpSlotStack }
                         });
 
-                        if (slot.currency.Itemstack != null)
+                        if (currency.Itemstack != null)
                         {
                             interactions.Add(new WorldInteraction
                             {
                                 ActionLangCode = "vinconomy:stall-purchase",
                                 MouseButton = EnumMouseButton.Right,
                                 HotKeyCode = "sneak",
-                                Itemstacks = new ItemStack[] { slot.currency.Itemstack }
+                                Itemstacks = new ItemStack[] { currency.Itemstack }
 
                             });
 
-                            ItemStack fiveStack = slot.currency.Itemstack.Clone();
+                            ItemStack fiveStack = currency.Itemstack.Clone();
                             fiveStack.StackSize = 5 * fiveStack.StackSize;
                             interactions.Add(new WorldInteraction
                             {
@@ -158,7 +155,7 @@ namespace Viconomy.BlockTypes
             if (byPlayer == null)
                 return;
 
-            BEViconStall vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEViconStall;
+            BEViconBase vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEViconBase;
             if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID || byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative)
             {
                 ViconomyCore modSystem = world.Api.ModLoader.GetModSystem<ViconomyCore>();

@@ -96,6 +96,7 @@ namespace Viconomy.Trading
             requiresTool = request.requiresTool;
             tool = request.tool;
             discountedPrice = request.discountedPrice;
+            sellingEntity = request.sellingEntity;
 
 
         }

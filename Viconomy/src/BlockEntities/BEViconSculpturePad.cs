@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using Viconomy.Filters;
 using Viconomy.GUI;
@@ -9,26 +10,32 @@ using Viconomy.Trading;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
-using Vintagestory.API.Util;
+using Vintagestory.Common;
 using Vintagestory.GameContent;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEViconStall : BEViconBase
+    public class BEViconSculpturePad : BEViconBase
     {
         
         protected GuiDialogBlockEntity invDialog;
-        protected ViconomyInventory inventory;
+        protected InventoryGeneric inventory;
+        int sizeXZ;
+        int sizeY;
         public override InventoryBase Inventory { get { return this.inventory; } }
 
-        public override int DisplayedItems => StallSlotCount;
+        public override int DisplayedItems => sizeXZ * sizeXZ * sizeY;
 
-        public BEViconStall()
+        public BEViconSculpturePad()
         {
+            sizeXZ = 3;
+            sizeY = 3;
             ConfigureInventory();
             this.inventory.SlotModified += Inventory_SlotModified;
         }
@@ -41,11 +48,23 @@ namespace Viconomy.BlockEntities
 
         public virtual void ConfigureInventory()
         {
-            this.inventory = new ViconomyInventory(this, null, Api, StallSlotCount, StacksPerSlot);
-            for (int i = 0; i < StallSlotCount; i++)
+            this.inventory = new InventoryGeneric((sizeXZ * sizeXZ * sizeY) + 1, null, null, OnNewSlot);
+            
+            /*for (int i = 0; i < StallSlotCount; i++)
             {
                 inventory.SetSlotFilter(i, ViconomyFilters.IsGenericItem);
                 inventory.SetSlotBackground(i, "vicon-general");
+            }*/
+        }
+
+        private ItemSlot OnNewSlot(int slotId, InventoryGeneric self)
+        {
+            if (slotId == 0)
+            {
+                return new ViconCurrencySlot(self);
+            } else
+            {
+                return new ViconSculptureBlockSlot(self,slotId);
             }
         }
 
@@ -56,32 +75,19 @@ namespace Viconomy.BlockEntities
             bool shiftMod = byPlayer.Entity.Controls.Sneak;
             bool ctrlMod = byPlayer.Entity.Controls.Sprint;
 
-
-            ItemSlot hotbarslot = byPlayer.InventoryManager.ActiveHotbarSlot;
-
             if (byPlayer.PlayerUID == Owner)
             {
-                ItemSlot item = this.inventory.FindFirstNonEmptyStockSlot(slotIndex);
                
-
                 if (shiftMod)
                 {
-                    if (item != null)
+                  
+                    ItemSlot handSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
+                    ItemSlot currency = this.inventory[0];
+                    if (currency != null && TradingUtil.isMatchingCurrency(currency.Itemstack, handSlot.Itemstack))
                     {
-                        ItemSlot handSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
-                        ItemSlot currency = this.inventory.GetCurrencyForSelection(slotIndex);
-                        if (currency != null && TradingUtil.isMatchingCurrency(currency.Itemstack, handSlot.Itemstack))
-                        {
-                            RequestPurchaseItem(slotIndex, ctrlMod ? BulkPurchaseAmount : 1);
-                        } else
-                        {
-                            TryPut(hotbarslot, blockSel, ctrlMod);
-                        }                      
-                    } else
-                    {
-                        //Add items to slot
-                        TryPut(hotbarslot, blockSel, ctrlMod);
-                    }
+                        RequestPurchaseItem(slotIndex, ctrlMod ? BulkPurchaseAmount : 1);
+                    }                   
+                     
                 }
                 else
                 {
@@ -119,7 +125,7 @@ namespace Viconomy.BlockEntities
             //Console.WriteLine(Api.Side + ": We tried to purchase item!");
             //PrintClientMessage(player, Api.Side + ": We tried to purchase item!");
             
-            ItemSlot currency = this.inventory.GetCurrencyForSelection(stallSlot);
+            ItemSlot currency = this.inventory[0];
             
 
             if (currency.Itemstack == null) {
@@ -144,24 +150,15 @@ namespace Viconomy.BlockEntities
                 return;
             }
   
-            ItemSlot[] stockSlots = this.inventory.GetSlotsForSelection(stallSlot);
-            ItemSlot purchaseSlot = null;
-            
-            //Find the first slot available that we can purchase from
-            foreach (var stockSlot in stockSlots)
+            for (int i = 1; i < inventory.Count; i++)
             {
-                if (stockSlot.StackSize >= 0)
+                if (inventory[i].Itemstack == null)
                 {
-                    purchaseSlot = stockSlot;
-                    break;
+                    ViconomyCore.PrintClientMessage(player, TradingConstants.NO_PRODUCT);
+                    return;
                 }
             }
-            if (purchaseSlot == null)
-            {
-                //Console.WriteLine(Api.Side + ": Not enough stock to purchase item");
-                ViconomyCore.PrintClientMessage(player, TradingConstants.NO_PRODUCT);
-                return;
-            }
+           
 
             if (modSystem.CanPurchaseItem(player, this, register, stallSlot, desiredAmount))
             {
@@ -170,9 +167,98 @@ namespace Viconomy.BlockEntities
 
         }
 
+        private ItemStack GenNewSculptureBundle()
+        {
+            ItemStack stack = new ItemStack(Api.World.GetItem(new AssetLocation("vinconomy:sculpturebundle")), 1);
+            TreeAttribute treeAttr = new TreeAttribute();
+            treeAttr.SetString("SculptureName", "My Sculpture");
+            treeAttr.SetInt("SizeX", sizeXZ);
+            treeAttr.SetInt("SizeY", sizeY);
+            treeAttr.SetInt("SizeZ", sizeXZ);
+            
+            TreeAttribute contents = new TreeAttribute();
+
+            int i = 0;
+            int numBlocks = 0;
+            for (int y = 0; y < sizeY; y++)
+            {
+                for (int z = 0; z < sizeXZ; z++)
+                {
+                    for (int x = 0; x < sizeXZ; x++)
+                    {
+                        ItemSlot slot = Inventory[i + 1];
+                        if (!slot.Empty)
+                        {
+                            numBlocks++;
+                            contents.SetItemstack(String.Format("{0}-{1}-{2}", x, y, z), TradingUtil.GetItemStackClone(Inventory[i + 1], 1));
+                            i++;
+                        }
+                        
+                    }
+                }
+            }
+
+            treeAttr.SetInt("NumBlocks", numBlocks);
+            treeAttr.SetAttribute("Contents", contents);
+
+            stack.Attributes = treeAttr;
+            return stack;
+        }
+
+        public override void PurchaseItem(IPlayer player, int stallSlot, int desiredAmount, BEVRegister shopRegister)
+        {
+            InventoryGeneric genInv = new InventoryGeneric(1, "purchase-inv" + Inventory.InventoryID, Api);
+            genInv[0].Itemstack = GenNewSculptureBundle();
+
+            ItemSlot[] slots = new ItemSlot[] { genInv[0] };
+
+            TradeRequest request = new TradeRequest();
+            request.customer = player;
+            request.shopRegister = shopRegister;
+            request.sellingEntity = this;
+            request.productNeeded = slots[0].Itemstack;
+            request.productSourceSlots = slots;
+            request.numPurchases = desiredAmount;
+            request.coreApi = this.Api;
+            request.currencyNeeded = TradingUtil.GetItemStackClone(GetCurrencyForStall(stallSlot));
+            request.isAdminShop = this.isAdminShop;
+
+            TradeResult result = TradingUtil.TryPurchaseItem(request);
+            if (result.error != null)
+            {
+                ViconomyCore.PrintClientMessage(player, result.error);
+            }
+            else
+            {
+                // TradingUtil did not remove the items since we manually set the productSourceSlots to a new inventory.
+                // Go back and remove an item
+                if (!isAdminShop)
+                {
+                    int i = 0;
+                    for (int y = 0; y < sizeY; y++)
+                    {
+                        for (int z = 0; z < sizeXZ; z++)
+                        {
+                            for (int x = 0; x < sizeXZ; x++)
+                            {
+                                ItemSlot slot = Inventory[i];
+                                if (!slot.Empty)
+                                {
+                                    slot.TakeOut(1);
+                                }
+                                i++;
+                            }
+                        }
+                    }
+                }
+               
 
 
-      
+                this.MarkDirty(true, null);
+                this.updateMeshes();
+            }
+        }
+
 
         #region GUI
 
@@ -224,9 +310,9 @@ namespace Viconomy.BlockEntities
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
             if (isOwner)
-                this.invDialog = new GuiViconStallOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+                this.invDialog = new GuiViconSculpturePadOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
             else
-                this.invDialog = new GuiDialogViconStallCustomer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+                this.invDialog = new GuiViconSculpturePadOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
             this.invDialog.OpenSound = this.OpenSound;
             this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();
@@ -290,10 +376,6 @@ namespace Viconomy.BlockEntities
                     TryPurchaseItem(player, data);
                     break;
 
-                case VinConstants.SET_ITEMS_PER_PURCHASE:
-                    SetStallItemsPerPurchase(player, data);
-                    break;
-
                 case VinConstants.SET_REGISTER_ID:
                     SetStallRegisterID(player, data);
                     break;
@@ -330,32 +412,6 @@ namespace Viconomy.BlockEntities
                     break;
             }
         }
-
-        private void SetStallItemsPerPurchase(IPlayer byPlayer, byte[] data)
-        {
-            if (byPlayer.PlayerUID != this.Owner)
-            {
-                ViconomyCore.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
-                return;
-            }
-
-            int stallSlot;
-            int amountItems;
-            using (MemoryStream ms = new MemoryStream(data))
-            {
-                BinaryReader reader = new BinaryReader(ms);
-                stallSlot = (int)reader.ReadInt32();
-                amountItems = (int)reader.ReadInt32();
-            }
-
-            this.inventory.StallSlots[stallSlot].itemsPerPurchase = amountItems;
-            //PrintClientMessage(byPlayer, "set quantity to " + amountItems, new object[] { amountItems });
-            this.MarkDirty();
-        }
-
-
-
-
 
         public override void OnReceivedServerPacket(int packetid, byte[] data)
         {
@@ -415,7 +471,7 @@ namespace Viconomy.BlockEntities
 
         protected override void updateMesh(int index)
         {
-            ItemSlot slot = this.inventory.FindFirstNonEmptyStockSlot(index);
+            ItemSlot slot = this.inventory[index];
             if (Api != null && Api.Side != EnumAppSide.Server && slot != null && !slot.Empty)
             {
                 getOrCreateMesh(slot.Itemstack, index);
@@ -423,96 +479,38 @@ namespace Viconomy.BlockEntities
         }
         public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
         {
-            for (int i = 0; i < StallSlotCount; i++)
+            for (int index = 0; index < DisplayedItems; index++)
             {
-                ItemSlot slot = this.inventory.FindFirstNonEmptyStockSlot(i);
+                ItemSlot slot = this.inventory[index+1];
                 if (slot != null && !slot.Empty && tfMatrices != null)
-                {
-                    mesher.AddMeshData(getOrCreateMesh(slot.Itemstack, i), tfMatrices[i]);
-                }
+                    mesher.AddMeshData(getOrCreateMesh(slot.Itemstack, index), tfMatrices[index]);
             }
-
             return false;
         }
 
         protected override float[][] genTransformationMatrices()
         {
 
-            float[][] tfMatrices = new float[StallSlotCount][];
-            for (int index = 0; index < StallSlotCount; index++)
+            float[][] tfMatrices = new float[DisplayedItems][];
+            int i = 0;
+            for (int y = 0; y < sizeY; y++)
             {
-                float scale = 0.35f;
-                ItemSlot slot = this.inventory.FindFirstNonEmptyStockSlot(index);
-                if (slot != null)
-                    if (slot.Itemstack.Class != EnumItemClass.Block)
+                for (int z = 0; z < sizeXZ; z++)
+                {
+                    for (int x = 0; x < sizeXZ; x++)
                     {
-                        scale = .85f;
+                        float scale = 1.0f / sizeY;
+                        Matrixf matrix = new Matrixf().RotateYDeg(this.block.Shape.rotateY).Scale(scale, scale,scale).Translate(x, y+0.2f, z);
+                        int index = i;
+                        tfMatrices[index] = matrix.Values;
+                        i++;
                     }
-
-                Cuboidf sb = block.SelectionBoxes[index];
-                float left = .25f - (scale / 2);
-                float right = left + .5f;
-
-                float x = (index % 2 == 0) ? left : right;
-                float y = sb.YSize <= .45f ? sb.MaxY - 0.37f + (.45f - sb.YSize) : sb.MaxY - 0.37f;
-                float z = (index / 2 == 0) ? left : right;
-                Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(this.block.Shape.rotateY).Translate(x, y, z).Translate(-0.5f, 0f, -0.5f).Scale(scale, scale, scale);
-                tfMatrices[index] = matrix.Values;
+                }
             }
+
             return tfMatrices;
         }
     
-
-
-
-        private bool TryPut(ItemSlot slot, BlockSelection blockSel, bool bulk)
-        {
-
-            if (slot?.Itemstack == null)
-            {
-                return false;
-            }
-
-            int stallSlot = blockSel.SelectionBoxIndex;
-            ItemSlot[] slots = this.inventory.GetSlotsForSelection(stallSlot);
-            int amountItem = bulk ? slot.Itemstack.StackSize : 1;
-            bool movedItems = false;
-           
-            for (int i = 0; i < StacksPerSlot; i++)
-            {
-                if (slot.Itemstack != null)
-                {
-                    int moved = slot.TryPutInto(this.Api.World, slots[i], bulk ? slot.Itemstack.StackSize : 1);
-                    amountItem -= moved;
-                    if (moved > 0)
-                    {
-                        movedItems = true;
-                    }
-
-                    if (amountItem <= 0)
-                    {
-                        break;
-                    }
-                }
-            }
-            
-
-          
-            if (movedItems) {
-                //this.updateMeshes();
-                this.MarkDirty(true, null);
-                ICoreClientAPI coreClientAPI = this.Api as ICoreClientAPI;
-                if (coreClientAPI != null)
-                {
-                    coreClientAPI.World.Player.TriggerFpAnimation(EnumHandInteract.HeldItemInteract);
-                    updateMeshes();
-                }
-            }
-          
-            return false;
-        }
-
-
         public override void OnBlockUnloaded()
         {
             base.OnBlockUnloaded();
@@ -555,21 +553,7 @@ namespace Viconomy.BlockEntities
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
-            int i = 0;
-            foreach (StallSlot slot in inventory.StallSlots)
-            {
-                i++;
-                ItemSlot stock = slot.FindFirstNonEmptyStockSlot();
-                ItemSlot currency = slot.currency;
-                if (stock != null && stock.Itemstack != null && currency.Itemstack != null)
-                {
-                    dsc.AppendLine(Lang.Get("vinconomy:for-sale", new Object[] {i, slot.itemsPerPurchase, stock.Itemstack.GetName(), currency.Itemstack.StackSize,  currency.Itemstack.GetName()}));
-                } else
-                {
-                    dsc.AppendLine(Lang.Get("vinconomy:not-for-sale", new Object[] { i }));
-                }
-                
-            }
+           
             //dsc.AppendLine();
             //base.GetBlockInfo(forPlayer, dsc);
         }
@@ -641,17 +625,27 @@ namespace Viconomy.BlockEntities
 
         public override ItemSlot[] GetSlotsForStall(int stallSlot)
         {
-            return inventory.StallSlots[stallSlot].slots;
+            return inventory.Copy(1, DisplayedItems);
         }
 
         public override ItemSlot GetCurrencyForStall(int stallSlot)
         {
-            return inventory.StallSlots[stallSlot].currency;
+            return inventory[0];
         }
 
         public override int GetNumItemsPerPurchaseForStall(int stallSlot)
         {
-            return inventory.StallSlots[stallSlot].itemsPerPurchase;
+            return 1;
+        }
+
+        public int GetSizeXZ()
+        {
+            return sizeXZ;
+        }
+
+        public int GetSizeY()
+        {
+            return sizeY;
         }
     }
 

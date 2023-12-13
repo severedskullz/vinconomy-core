@@ -21,7 +21,7 @@ namespace Viconomy.src.Renderer
             return stack.Class == EnumItemClass.Block;
         }
 
-        public MeshData createMesh(BEViconStall stall, ItemStack stack, int index)
+        public MeshData createMesh(BEViconBase stall, ItemStack stack, int index)
         {
             ICoreClientAPI coreClientAPI = (ICoreClientAPI)stall.Api;
             return coreClientAPI.TesselatorManager.GetDefaultBlockMesh(stack.Block).Clone();

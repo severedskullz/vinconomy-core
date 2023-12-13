@@ -169,6 +169,15 @@ namespace Viconomy.BlockEntities
             this.MarkDirty();
         }
 
+        public void SetNowTesselatingObj(CollectibleObject collectible)
+        {
+            this.nowTesselatingObj = collectible;
+        }
+
+        public void SetNowTesselatingShape(Shape shape)
+        {
+            this.nowTesselatingShape = shape;
+        }
 
     }
 }

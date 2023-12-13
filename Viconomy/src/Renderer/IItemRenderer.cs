@@ -6,7 +6,7 @@ namespace Viconomy.Renderer
 {
     public interface IItemRenderer
     {
-        public MeshData createMesh(BEViconStall stall, ItemStack stack, int index);
+        public MeshData createMesh(BEViconBase stall, ItemStack stack, int index);
 
         public bool canHandle(ItemStack stack);
         public int getPriority();
