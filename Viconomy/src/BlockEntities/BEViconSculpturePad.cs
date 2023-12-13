@@ -647,6 +647,16 @@ namespace Viconomy.BlockEntities
         {
             return sizeY;
         }
+
+        public int GetMaxSizeXZ()
+        {
+            return 3;
+        }
+
+        public int GetMaxSizeY()
+        {
+            return 3;
+        }
     }
 
 }

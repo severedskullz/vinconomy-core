@@ -67,12 +67,13 @@ namespace Viconomy.GUI
                 int offset = (curTab * itemsPerLayer) + 1;
                 if (vinInv != null)
                 {
-                    for (int i = 0; i < itemsPerLayer; i++)
+                    for (int ilayer = 0; ilayer < itemsPerLayer; ilayer++)
                     {
-                        uiSlots[i] = offset + i;
+                        uiSlots[ilayer] = offset + ilayer;
                     }
                 }
 
+                // Shop Dropdown Values
                 int selectedIndex = 0;
                 int shopLength = registers.Length + 1;
                 string[] shopsNames = new string[shopLength];
@@ -80,16 +81,51 @@ namespace Viconomy.GUI
 
                 shopsNames[0] = "None";
                 shopsKeys[0] = "None";
-                for (int i = 0; i < registers.Length; i++)
+                for (int iregister = 0; iregister < registers.Length; iregister++)
                 {
-                    shopsNames[i+1] = registers[i].Name;
-                    shopsKeys[i+1] = registers[i].ID; 
+                    shopsNames[iregister + 1] = registers[iregister].Name;
+                    shopsKeys[iregister + 1] = registers[iregister].ID; 
 
-                    if (stall.RegisterID == registers[i].ID)
+                    if (stall.RegisterID == registers[iregister].ID)
                     {
-                        selectedIndex = i + 1;
+                        selectedIndex = iregister + 1;
                     }
                 }
+
+                // Sculpture Size Values
+                int sculptureSelectionIndex = 0;
+               
+                string[] sculptureSizeKeys = new string[stall.GetMaxSizeXZ()];
+                string[] sculptureSizeNames = new string[stall.GetMaxSizeXZ()];
+                for (int iSculptureSize = 0; iSculptureSize < stall.GetMaxSizeXZ(); iSculptureSize++)
+                {
+                    int value = iSculptureSize + 1;
+                    sculptureSizeKeys[iSculptureSize] = value.ToString();
+                    sculptureSizeNames[iSculptureSize] = value + " x " + value;
+
+                    if (stall.GetSizeXZ() == value)
+                    {
+                        sculptureSelectionIndex = iSculptureSize;
+                    }
+                }
+
+                // Sculpture Height Values
+                int sculptureHSelectionIndex = 0;
+
+                string[] sculptureSizeHKeys = new string[stall.GetMaxSizeY()];
+                string[] sculptureSizeHNames = new string[stall.GetMaxSizeY()];
+                for (int iSculptureHSize = 0; iSculptureHSize < stall.GetMaxSizeY(); iSculptureHSize++)
+                {
+                    int value = iSculptureHSize + 1;
+                    sculptureSizeHKeys[iSculptureHSize] = value.ToString();
+                    sculptureSizeHNames[iSculptureHSize] = value.ToString();
+
+                    if (stall.GetSizeXZ() == value)
+                    {
+                        sculptureHSelectionIndex = iSculptureHSize;
+                    }
+                }
+
 
                 ElementBounds settingBounds = ElementBounds.FixedSize(250, 200).WithFixedOffset(0,GuiStyle.TitleBarHeight);
             
@@ -97,15 +133,21 @@ namespace Viconomy.GUI
 
                 // Auto-sized dialog at the center of the screen
                 //ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
-                ElementBounds shopSelectionLabel = ElementBounds.Fixed(0, 0, 75, 30);
-                ElementBounds shopSelectBounds = shopSelectionLabel.BelowCopy().WithFixedWidth(250);      
-           
-                ElementBounds currencyLabel = ElementBounds.FixedSize(100, 25).FixedUnder(shopSelectBounds).WithFixedOffset(0, 15);
+                ElementBounds shopSelectionLabel = ElementBounds.Fixed(0, 0, 250, 20);
+                ElementBounds shopSelectBounds = ElementBounds.FixedSize(250, 30).FixedUnder(shopSelectionLabel);
+
+                ElementBounds sizeSelectionLabel = ElementBounds.FixedSize(250, 20).FixedUnder(shopSelectBounds, 10);
+                ElementBounds sizeSelectBounds = ElementBounds.FixedSize(250, 30).FixedUnder(sizeSelectionLabel);
+
+                ElementBounds sizeSelectionHLabel = ElementBounds.FixedSize(250, 20).FixedUnder(sizeSelectBounds, 10);
+                ElementBounds sizeSelectHBounds = ElementBounds.FixedSize(250, 30).FixedUnder(sizeSelectionHLabel);
+
+                ElementBounds currencyLabel = ElementBounds.FixedSize(100, 25).FixedUnder(sizeSelectHBounds, 15);
                 ElementBounds currencySlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).FixedUnder(currencyLabel);
 
           
                 ElementBounds adminShopLabel = ElementBounds.FixedSize(100, 25).FixedUnder(currencySlotBounds).WithFixedOffset(0, 15);
-                ElementBounds adminShopBounds = ElementBounds.FixedSize(40, 40).FixedUnder(currencySlotBounds).FixedRightOf(adminShopLabel).WithFixedOffset(120, 10);
+                ElementBounds adminShopBounds = ElementBounds.FixedSize(40, 40).FixedUnder(currencySlotBounds).FixedRightOf(adminShopLabel).WithFixedOffset(0, 10);
 
                 settingBounds.WithChildren(shopSelectBounds, shopSelectionLabel, currencyLabel, currencySlotBounds, adminShopBounds, adminShopLabel);
                 settingBounds.verticalSizing = ElementSizing.FitToChildren;
@@ -113,42 +155,59 @@ namespace Viconomy.GUI
                 // Background boundaries. Again, just make it fit it's child elements, then add the text as a child element
                 //ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.ElementToDialogPadding);
 
-                ElementBounds itemPage = ElementBounds.FixedSize(200, 200).FixedRightOf(settingBounds).WithFixedOffset(10, GuiStyle.TitleBarHeight);
-                itemPage.BothSizing = ElementSizing.FitToChildren;
+                int sizeX = 3;
+                int itemPageTotalWidth = 10 + (sizeX * 60);
+                int itemPageTotalHeight = 50+(sizeX * 60);
+                ElementBounds itemPage = ElementBounds.FixedSize(itemPageTotalWidth, itemPageTotalHeight).FixedRightOf(settingBounds).WithFixedOffset(10, GuiStyle.TitleBarHeight);
+                //itemPage.BothSizing = ElementSizing.FitToChildren;
 
 
                 ElementBounds pagePrev = ElementBounds.FixedSize(30, 30).WithFixedPosition(0, 0);
                 //ElementBounds pageLabel = ElementBounds.FixedSize(50, 20).WithAlignment(EnumDialogArea.CenterTop).WithFixedAlignmentOffset(0,15).WithFixedPadding(75,0);
-                ElementBounds pageLabel = ElementBounds.FixedSize(50, 25).WithFixedAlignmentOffset(0, 10).FixedRightOf(pagePrev, 10);
+                ElementBounds pageLabel = ElementBounds.FixedSize(itemPageTotalWidth-60, 26).WithFixedAlignmentOffset(0, 10).FixedRightOf(pagePrev);
                 //ElementBounds pageNext = ElementBounds.FixedSize(50, 50).WithAlignment(EnumDialogArea.RightTop);
                 CairoFont labelTextFont = CairoFont.WhiteSmallText().WithOrientation(EnumTextOrientation.Center);
                 string labelText = "Layer " + (curTab + 1) + " of " + stallSlotCount;
                 labelTextFont.AutoBoxSize(labelText, pageLabel, true);
 
-                ElementBounds pageNext = ElementBounds.FixedSize(30, 30).FixedRightOf(pageLabel, 10);
-                ElementBounds slotGrid = ElementStdBounds.SlotGrid(EnumDialogArea.CenterBottom, 0, 20, stall.GetSizeXZ(), (int)Math.Ceiling(Math.Sqrt(uiSlots.Length)));//.WithParent(itemPage);
+                ElementBounds pageNext = ElementBounds.FixedSize(30, 30).WithFixedOffset(itemPageTotalWidth - 30, 0);//.FixedRightOf(pageLabel, 10);
 
 
-                itemPage.WithChildren(pagePrev, pageLabel, pageNext, slotGrid);
+                
 
-                ElementBounds disabledSlotsPage = ElementBounds.FixedSize(200, 10).FixedUnder(itemPage).FixedRightOf(settingBounds).WithFixedOffset(10,0);
-
-                ElementBounds disabledSlotsLabel = ElementBounds.FixedSize(125, 25).WithParent(disabledSlotsPage);
-
-                ElementBounds[][] bounds = new ElementBounds[stall.GetSizeXZ()][];
-                for (int y = 0; y < stall.GetSizeXZ(); y++)
+                ElementBounds[][] slotBounds = new ElementBounds[sizeX][];
+                for (int y = 0; y < sizeX; y++)
                 {
-                    bounds[y] = new ElementBounds[stall.GetSizeXZ()];
+                    slotBounds[y] = new ElementBounds[sizeX];
 
-                    for (int x = 0; x < stall.GetSizeXZ(); x++)
+                    for (int x = 0; x < sizeX; x++)
                     {
-                        ElementBounds disabledBounds = ElementBounds.FixedSize(40, 40).WithFixedOffset(10 + x * 50, 35 +(y * 50)).WithParent(disabledSlotsPage);
-                        bounds[y][x] = disabledBounds;
+                        ElementBounds slot = ElementStdBounds.SlotGrid(EnumDialogArea.None, 10 + x * 60, 50+ y * 60, 1, 1).WithParent(itemPage);
+                        slotBounds[y][x] = slot;
+                        //itemPage.WithChild(slot);
+                    }
+                }
+                
+
+                itemPage.WithChildren(pagePrev, pageLabel, pageNext);
+
+                ElementBounds disabledSlotsPage = ElementBounds.FixedSize(itemPageTotalWidth, itemPageTotalHeight-15).FixedRightOf(settingBounds).WithFixedOffset(10,10 +itemPageTotalHeight + GuiStyle.TitleBarHeight);
+
+                ElementBounds disabledSlotsLabel = ElementBounds.FixedSize(itemPageTotalWidth, 25).WithParent(disabledSlotsPage);
+
+                ElementBounds[][] disabledBounds = new ElementBounds[sizeX][];
+                for (int y = 0; y < sizeX; y++)
+                {
+                    disabledBounds[y] = new ElementBounds[sizeX];
+
+                    for (int x = 0; x < sizeX; x++)
+                    {
+                        disabledBounds[y][x] = ElementBounds.FixedSize(60, 60).FixedUnder(disabledSlotsLabel).WithFixedOffset(10 + (x * 60), 10 + (y * 60)).WithParent(disabledSlotsPage); ;
 
                     }
                 }
                 
-                disabledSlotsPage.BothSizing = ElementSizing.FitToChildren;
+                //disabledSlotsPage.BothSizing = ElementSizing.FitToChildren;
 
 
 
@@ -164,6 +223,10 @@ namespace Viconomy.GUI
                     SingleComposer.BeginChildElements(settingBounds)
                         .AddStaticText("Shop:", CairoFont.WhiteSmallText(), shopSelectionLabel)
                         .AddDropDown(shopsKeys, shopsNames, selectedIndex, new SelectionChangedDelegate(this.onSelectionChanged), shopSelectBounds)
+                        .AddStaticText("Sculpture Width / Length:", CairoFont.WhiteSmallText(), sizeSelectionLabel)
+                        .AddDropDown(sculptureSizeKeys, sculptureSizeNames, sculptureSelectionIndex, new SelectionChangedDelegate(this.onSelectionChanged), sizeSelectBounds)
+                        .AddStaticText("Sculpture Height:", CairoFont.WhiteSmallText(), sizeSelectionHLabel)
+                        .AddDropDown(sculptureSizeHKeys, sculptureSizeHNames, sculptureHSelectionIndex, new SelectionChangedDelegate(this.onSelectionChanged), sizeSelectHBounds)
                         .AddIf(api.World.Player.HasPrivilege("gamemode"))
                             .AddStaticText("Admin Shop:", CairoFont.WhiteSmallText(), adminShopLabel)
                             .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
@@ -176,28 +239,42 @@ namespace Viconomy.GUI
                         //.AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlotBounds, "purchase")
                     //.AddPassiveItemSlot(outputSlotBounds, Inventory, )
                     .EndChildElements();
-
-                    SingleComposer.BeginChildElements(itemPage)
-                        .AddButton("<", new ActionConsumable(this.PreviousLayer), pagePrev, EnumButtonStyle.Small, "prevPage")
-                        .AddDynamicText(labelText, labelTextFont, pageLabel, "pageLabel")
-                        .AddButton(">", new ActionConsumable(this.NextLayer), pageNext, EnumButtonStyle.Small, "nextPage")
-                        .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), stall.GetSizeXZ(), uiSlots, slotGrid, "inventory")
-                    .EndChildElements();
-
-                SingleComposer.BeginChildElements(disabledSlotsPage)
-                .AddStaticText("Disabled Slots:", CairoFont.WhiteSmallText(), disabledSlotsLabel);
-
-
-                for (int y = 0; y < stall.GetSizeXZ(); y++)
-                {
-                    for (int x = 0; x < stall.GetSizeXZ(); x++)
-                    {
-                        SingleComposer.AddSwitch(new Action<bool>(this.OnToggleAdminShop), bounds[y][x], "disabled-" + x + "-" + y);
-
-                    }
-                }
+                
+                SingleComposer.BeginChildElements(itemPage)
+                    .AddButton("<", new ActionConsumable(this.PreviousLayer), pagePrev, EnumButtonStyle.Small, "prevPage")
+                    .AddDynamicText(labelText, labelTextFont, pageLabel, "pageLabel")
+                    .AddButton(">", new ActionConsumable(this.NextLayer), pageNext, EnumButtonStyle.Small, "nextPage");
+                        int islot = 1;
+                        for (int y = 0; y < slotBounds.Length; y++)
+                        {
+                            for (int x = 0; x < slotBounds[y].Length; x++)
+                            {
+                                ViconSculptureBlockSlot iSlot = (ViconSculptureBlockSlot) stall.Inventory[islot + 1];
+                                if (iSlot.isDisabled)
+                                {
+                                    SingleComposer.AddPassiveItemSlot(slotBounds[y][x], vinInv, iSlot);
+                                } else
+                                {
+                                    SingleComposer.AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { islot }, slotBounds[y][x]);
+                                }
+                                islot++;
+                            }
+                        }
                 SingleComposer.EndChildElements();
 
+                
+                SingleComposer.BeginChildElements(disabledSlotsPage)
+                    .AddStaticText("Enabled Slots:", CairoFont.WhiteSmallishText(), disabledSlotsLabel);
+                    for (int y = 0; y < sizeX; y++)
+                    {
+                        for (int x = 0; x < sizeX; x++)
+                        {
+                            SingleComposer.AddSwitch(new Action<bool>(this.OnToggleAdminShop), disabledBounds[y][x], "disabled-" + x + "-" + y, 50);
+
+                        }
+                    }
+                SingleComposer.EndChildElements();
+                
 
                 if (curTab == 0)
                     SingleComposer.GetButton("prevPage").Enabled = false;

@@ -6,7 +6,7 @@ namespace Viconomy.Inventory
 {
     public class ViconSculptureBlockSlot : ItemSlot
     {
-        bool isDisabled = false;
+        public bool isDisabled { get; set; } = false;
         public ViconSculptureBlockSlot(InventoryBase inventory,int itemSlot) : base(inventory)
         {
             //this.HexBackgroundColor = "#65d934";
