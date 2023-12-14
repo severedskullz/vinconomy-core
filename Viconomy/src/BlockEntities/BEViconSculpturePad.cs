@@ -10,14 +10,11 @@ using Viconomy.Trading;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Common.Entities;
-using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.Common;
 using Vintagestory.GameContent;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Viconomy.BlockEntities
 {
@@ -26,16 +23,16 @@ namespace Viconomy.BlockEntities
         
         protected GuiDialogBlockEntity invDialog;
         protected InventoryGeneric inventory;
-        int sizeXZ;
-        int sizeY;
+        int sizeXZ = 3;
+        int sizeY = 3;
+        int maxSizeXZ =3;
+        int maxSizeY = 3;
         public override InventoryBase Inventory { get { return this.inventory; } }
 
-        public override int DisplayedItems => sizeXZ * sizeXZ * sizeY;
+        public override int DisplayedItems => maxSizeXZ * maxSizeXZ * maxSizeY;
 
         public BEViconSculpturePad()
         {
-            sizeXZ = 3;
-            sizeY = 3;
             ConfigureInventory();
             this.inventory.SlotModified += Inventory_SlotModified;
         }
@@ -48,7 +45,7 @@ namespace Viconomy.BlockEntities
 
         public virtual void ConfigureInventory()
         {
-            this.inventory = new InventoryGeneric((sizeXZ * sizeXZ * sizeY) + 1, null, null, OnNewSlot);
+            this.inventory = new InventoryGeneric((maxSizeXZ * maxSizeXZ * maxSizeY) + 1, null, null, OnNewSlot);
             
             /*for (int i = 0; i < StallSlotCount; i++)
             {
@@ -178,7 +175,7 @@ namespace Viconomy.BlockEntities
             
             TreeAttribute contents = new TreeAttribute();
 
-            int i = 0;
+            //int i = 0;
             int numBlocks = 0;
             for (int y = 0; y < sizeY; y++)
             {
@@ -186,12 +183,12 @@ namespace Viconomy.BlockEntities
                 {
                     for (int x = 0; x < sizeXZ; x++)
                     {
-                        ItemSlot slot = Inventory[i + 1];
-                        if (!slot.Empty)
+                        ViconSculptureBlockSlot slot = GetSlotForGrid(x, y, z);
+                        if (!slot.Empty && !slot.isDisabled)
                         {
                             numBlocks++;
-                            contents.SetItemstack(String.Format("{0}-{1}-{2}", x, y, z), TradingUtil.GetItemStackClone(Inventory[i + 1], 1));
-                            i++;
+                            contents.SetItemstack(String.Format("{0}-{1}-{2}", x, y, z), TradingUtil.GetItemStackClone(slot, 1));
+                            //i++;
                         }
                         
                     }
@@ -234,19 +231,19 @@ namespace Viconomy.BlockEntities
                 // Go back and remove an item
                 if (!isAdminShop)
                 {
-                    int i = 0;
+                    //int i = 0;
                     for (int y = 0; y < sizeY; y++)
                     {
                         for (int z = 0; z < sizeXZ; z++)
                         {
                             for (int x = 0; x < sizeXZ; x++)
                             {
-                                ItemSlot slot = Inventory[i];
+                                ItemSlot slot = GetSlotForGrid(x, y, z);
                                 if (!slot.Empty)
                                 {
                                     slot.TakeOut(1);
                                 }
-                                i++;
+                                //i++;
                             }
                         }
                     }
@@ -272,9 +269,6 @@ namespace Viconomy.BlockEntities
                     BinaryWriter writer = new BinaryWriter(ms);
                     writer.Write("VinconomyInventory");
                     writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Stall");
-                    writer.Write((byte)StallSlotCount);
-                    writer.Write((byte)StacksPerSlot);
-                    writer.Write((byte)selectedStall);
                     writer.Write(byPlayer.PlayerUID == Owner);
                     TreeAttribute tree = new TreeAttribute();
                     this.inventory.ToTreeAttributes(tree);
@@ -292,27 +286,21 @@ namespace Viconomy.BlockEntities
         {
             TreeAttribute tree = new TreeAttribute();
             string dialogTitle;
-            int stallSlots;
-            int itemsPerStallSlot;
-            int stallSelection;
             bool isOwner;
             using (MemoryStream ms = new MemoryStream(data))
             {
                 BinaryReader reader = new BinaryReader(ms);
                 reader.ReadString();
                 dialogTitle = reader.ReadString();
-                stallSlots = (int)reader.ReadByte();
-                itemsPerStallSlot = (int)reader.ReadByte();
-                stallSelection = (int)reader.ReadByte();
                 isOwner = reader.ReadBoolean();
                 tree.FromBytes(reader);
             }
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
             if (isOwner)
-                this.invDialog = new GuiViconSculpturePadOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+                this.invDialog = new GuiViconSculpturePadOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
             else
-                this.invDialog = new GuiViconSculpturePadOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+                this.invDialog = new GuiViconSculpturePadOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
             this.invDialog.OpenSound = this.OpenSound;
             this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();
@@ -390,6 +378,40 @@ namespace Viconomy.BlockEntities
                     SetAdminShop(player, isAdmin);
                     break;
 
+                case VinConstants.SET_SCULPTURE_SLOT:
+                    
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
+                        BinaryReader reader = new BinaryReader(ms);
+                        int x = reader.ReadInt32();
+                        int y = reader.ReadInt32();
+                        int z = reader.ReadInt32();
+                        bool disabled = reader.ReadBoolean();
+                        SetSlotEnabled(player, x, y, z, disabled);
+                        //((ICoreServerAPI) this.Api).Network.BroadcastBlockEntityPacket
+                    }
+                    break;
+
+                case VinConstants.SET_SCULPTURE_XZ:
+
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
+                        BinaryReader reader = new BinaryReader(ms);
+                        int size = reader.ReadInt32();
+                        SetSizeXZ(size);
+                    }
+                    break;
+
+                case VinConstants.SET_SCULPTURE_Y:
+
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
+                        BinaryReader reader = new BinaryReader(ms);
+                        int size = reader.ReadInt32();
+                        SetSizeY(size);
+                    }
+                    break;
+
                 default:
                     if (packetid < 1000)
                     {
@@ -410,6 +432,53 @@ namespace Viconomy.BlockEntities
                         return;
                     }
                     break;
+            }
+        }
+
+        public override void ToTreeAttributes(ITreeAttribute tree)
+        {
+            base.ToTreeAttributes(tree);
+            tree.SetInt("SizeXZ", GetSizeXZ());
+            tree.SetInt("SizeY", GetSizeY());
+            tree.SetInt("MaxSizeXZ", GetMaxSizeXZ());
+            tree.SetInt("MaxSizeY", GetMaxSizeY());
+            ITreeAttribute slotTree = tree.GetOrAddTreeAttribute("DisabledSlots");
+            for (int y = 0; y < maxSizeY; y++)
+            {
+                for (int z = 0; z < maxSizeXZ; z++)
+                {
+                    for (int x = 0; x < maxSizeXZ; x++)
+                    {
+                        slotTree.SetBool(x + "-" + y + "-" + z, GetSlotForGrid(x, y, z).isDisabled);
+                    }
+                }
+            }
+
+        }
+
+        public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor world)
+        {
+            base.FromTreeAttributes(tree, world);
+            sizeXZ = tree.GetInt("SizeXZ", 3);
+            sizeY = tree.GetInt("SizeY", 3);
+            maxSizeXZ = tree.GetInt("MaxSizeXZ", 5);
+            maxSizeY = tree.GetInt("MaxSizeY", 5);
+            ITreeAttribute slotTree = tree.GetOrAddTreeAttribute("DisabledSlots");
+            for (int y = 0; y < maxSizeY; y++)
+            {
+                for (int z = 0; z < maxSizeXZ; z++)
+                {
+                    for (int x = 0; x < maxSizeXZ; x++)
+                    {
+                        GetSlotForGrid(x, y, z).isDisabled = slotTree.GetBool(x + "-" + y + "-" + z);
+                    }
+                }
+            }
+
+            ICoreClientAPI coreClientAPI = this.Api as ICoreClientAPI;
+            if (coreClientAPI != null)
+            {
+                updateMeshes();
             }
         }
 
@@ -469,6 +538,7 @@ namespace Viconomy.BlockEntities
 
         #endregion
 
+        #region Model
         protected override void updateMesh(int index)
         {
             ItemSlot slot = this.inventory[index];
@@ -479,12 +549,28 @@ namespace Viconomy.BlockEntities
         }
         public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
         {
+            int index = 0;
+            for (int y = 0; y < sizeY; y++)
+            {
+                for (int z = 0; z < sizeXZ; z++)
+                {
+                    for (int x = 0; x < sizeXZ; x++)
+                    {
+                        ViconSculptureBlockSlot slot = GetSlotForGrid(x, y, z);
+                        if (slot != null && !slot.Empty && tfMatrices != null)
+                            mesher.AddMeshData(getOrCreateMesh(slot.Itemstack, index), tfMatrices[index]);
+                        index++;
+                    }
+                }
+            }
+
+            /*
             for (int index = 0; index < DisplayedItems; index++)
             {
-                ItemSlot slot = this.inventory[index+1];
+                ViconSculptureBlockSlot slot = (ViconSculptureBlockSlot) this.inventory[index+1];
                 if (slot != null && !slot.Empty && tfMatrices != null)
                     mesher.AddMeshData(getOrCreateMesh(slot.Itemstack, index), tfMatrices[index]);
-            }
+            }*/
             return false;
         }
 
@@ -499,8 +585,30 @@ namespace Viconomy.BlockEntities
                 {
                     for (int x = 0; x < sizeXZ; x++)
                     {
-                        float scale = 1.0f / sizeY;
-                        Matrixf matrix = new Matrixf().RotateYDeg(this.block.Shape.rotateY).Scale(scale, scale,scale).Translate(x, y+0.2f, z);
+                        // Possible Values
+                        // XZ:1 Y:1 = 0 | XZ:1 Y:2 = 0.25 | XZ:1 Y:3 = 1
+                        // XZ:2 Y:1 = 0 | XZ:2 Y:2 = 0.00 | XZ:2 Y:3 = 0.5
+                        // XZ:3 Y:1 = 0 | XZ:3 Y:2 = 0.00 | XZ:3 Y:3 = 0
+
+                        // XZ:1 Y:3 = 1
+                        // XZ:2 Y:3 = 0.5
+                        // XZ 1 Y:2 = 0.25
+
+
+                        float scale = 1.0f / Math.Max(sizeXZ,sizeY);
+                        float offsetXZ = 0f;
+
+                        //TODO: There is probably some algorithm to solve for this.
+                        if (sizeXZ == 1 && sizeY == 3)
+                            offsetXZ = 1;
+                        else if (sizeXZ == 1 && sizeY == 2)
+                            offsetXZ = 0.5f;
+                        else if (sizeXZ == 2 && sizeY == 3)
+                            offsetXZ = 0.5f;
+                        
+
+
+                        Matrixf matrix = new Matrixf().RotateYDeg(this.block.Shape.rotateY).Scale(scale, scale,scale).Translate(x+ offsetXZ, y+(0.05f/ scale), z + offsetXZ);
                         int index = i;
                         tfMatrices[index] = matrix.Values;
                         i++;
@@ -510,7 +618,99 @@ namespace Viconomy.BlockEntities
 
             return tfMatrices;
         }
-    
+
+        protected override MeshData getOrCreateMesh(ItemStack stack, int index)
+        {
+            MeshData modeldata = getMesh(stack);
+            if (modeldata != null)
+            {
+                return modeldata;
+            }
+
+
+            IContainedMeshSource containedMeshSource = stack.Collectible as IContainedMeshSource;
+            if (containedMeshSource != null)
+            {
+                return containedMeshSource.GenMesh(stack, capi.BlockTextureAtlas, Pos);
+            }
+
+            IItemRenderer renderer = modSystem.GetRenderer(stack);
+            if (renderer != null)
+            {
+                modeldata = renderer.createMesh(this, stack, index);
+
+                if (stack.Collectible.Attributes?[AttributeTransformCode].Exists ?? false)
+                {
+                    ModelTransform modelTransform = stack.Collectible.Attributes?[AttributeTransformCode].AsObject<ModelTransform>();
+                    modelTransform.EnsureDefaultValues();
+                    modeldata.ModelTransform(modelTransform);
+                }
+                else if (AttributeTransformCode == "onshelfTransform" && (stack.Collectible.Attributes?["onDisplayTransform"].Exists ?? false))
+                {
+                    ModelTransform modelTransform2 = stack.Collectible.Attributes?["onDisplayTransform"].AsObject<ModelTransform>();
+                    modelTransform2.EnsureDefaultValues();
+                    modeldata.ModelTransform(modelTransform2);
+                }
+
+                if (stack.Class == EnumItemClass.Item && (stack.Item.Shape == null || stack.Item.Shape.VoxelizeTexture))
+                {
+                    modeldata.Rotate(new Vec3f(0.5f, 0.5f, 0.5f), MathF.PI / 2f, 0f, 0f);
+                    modeldata.Scale(new Vec3f(0.5f, 0.5f, 0.5f), 0.33f, 0.33f, 0.33f);
+                    modeldata.Translate(0f, -15f / 32f, 0f);
+                }
+
+
+                if (renderer.shouldCache(stack))
+                {
+                    string meshCacheKey = getMeshCacheKey(stack);
+                    MeshCache[meshCacheKey] = modeldata;
+                }
+            }
+
+
+
+            return modeldata;
+        }
+
+        #endregion
+
+        private void SetSizeY(int size)
+        {
+            sizeY = size;
+            this.MarkDirty(true);
+            //genTransformationMatrices();
+            ICoreClientAPI coreClientAPI = this.Api as ICoreClientAPI;
+            if (coreClientAPI != null)
+            {
+                updateMeshes();
+            }
+
+        }
+
+        private void SetSizeXZ(int size)
+        {
+            sizeXZ = size;
+            this.MarkDirty(true);
+            //genTransformationMatrices();
+            ICoreClientAPI coreClientAPI = this.Api as ICoreClientAPI;
+            if (coreClientAPI != null)
+            {
+                updateMeshes();
+            }
+
+        }
+
+        private void SetSlotEnabled(IPlayer player, int x, int y, int z, bool disabled)
+        {
+            if (player.PlayerUID != this.Owner)
+            {
+                ViconomyCore.PrintClientMessage(player, TradingConstants.DOESNT_OWN, new object[] { });
+                return;
+            }
+            GetSlotForGrid(x, y, z).isDisabled = disabled;
+            this.MarkDirty();
+        }
+
         public override void OnBlockUnloaded()
         {
             base.OnBlockUnloaded();
@@ -570,58 +770,7 @@ namespace Viconomy.BlockEntities
             return inventory.GetTransitionSpeedMul(EnumTransitionType.Perish, null);
         }
 
-        protected override MeshData getOrCreateMesh(ItemStack stack, int index)
-        {
-            MeshData modeldata = getMesh(stack);
-            if (modeldata != null)
-            {
-                return modeldata;
-            }
-
-
-            IContainedMeshSource containedMeshSource = stack.Collectible as IContainedMeshSource;
-            if (containedMeshSource != null)
-            {
-                return containedMeshSource.GenMesh(stack, capi.BlockTextureAtlas, Pos);
-            }
-
-            IItemRenderer renderer = modSystem.GetRenderer(stack);
-            if (renderer != null)
-            {
-                modeldata = renderer.createMesh(this, stack, index);
-
-                if (stack.Collectible.Attributes?[AttributeTransformCode].Exists ?? false)
-                {
-                    ModelTransform modelTransform = stack.Collectible.Attributes?[AttributeTransformCode].AsObject<ModelTransform>();
-                    modelTransform.EnsureDefaultValues();
-                    modeldata.ModelTransform(modelTransform);
-                }
-                else if (AttributeTransformCode == "onshelfTransform" && (stack.Collectible.Attributes?["onDisplayTransform"].Exists ?? false))
-                {
-                    ModelTransform modelTransform2 = stack.Collectible.Attributes?["onDisplayTransform"].AsObject<ModelTransform>();
-                    modelTransform2.EnsureDefaultValues();
-                    modeldata.ModelTransform(modelTransform2);
-                }
-
-                if (stack.Class == EnumItemClass.Item && (stack.Item.Shape == null || stack.Item.Shape.VoxelizeTexture))
-                {
-                    modeldata.Rotate(new Vec3f(0.5f, 0.5f, 0.5f), MathF.PI / 2f, 0f, 0f);
-                    modeldata.Scale(new Vec3f(0.5f, 0.5f, 0.5f), 0.33f, 0.33f, 0.33f);
-                    modeldata.Translate(0f, -15f / 32f, 0f);
-                }
-
-
-                if (renderer.shouldCache(stack))
-                {
-                    string meshCacheKey = getMeshCacheKey(stack);
-                    MeshCache[meshCacheKey] = modeldata;
-                }
-            }
-
-            
-
-            return modeldata;
-        }
+       
 
         public override ItemSlot[] GetSlotsForStall(int stallSlot)
         {
@@ -650,13 +799,26 @@ namespace Viconomy.BlockEntities
 
         public int GetMaxSizeXZ()
         {
-            return 3;
+            return maxSizeXZ;
         }
 
         public int GetMaxSizeY()
         {
-            return 3;
+            return maxSizeY;
         }
+
+        public ViconSculptureBlockSlot GetSlotForGrid(int x, int y, int z)
+        {
+            // 
+            // x = 2, y = 2, z = 2
+
+            int layerOffset = y * GetMaxSizeXZ() * GetMaxSizeXZ();
+            int zOffset = z * GetMaxSizeXZ();
+            return (ViconSculptureBlockSlot)this.Inventory[layerOffset + zOffset + x + 1];
+        }
+
+
+
     }
 
 }

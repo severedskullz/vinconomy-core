@@ -17,23 +17,19 @@ namespace Viconomy.GUI
         ViconRegister[] registers;
         ICoreClientAPI api;
 
+        int sizeX;
+        int sizeY;
+        int curTab = 0;
 
-        int stallSlotCount;
-        int curTab;
-        DummyInventory inv;
-
-        public GuiViconSculpturePadOwner(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
+        public GuiViconSculpturePadOwner(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
             api = capi;
             stall = capi.World.BlockAccessor.GetBlockEntity<BEViconSculpturePad>(BlockEntityPosition);
-            curTab = stallSelection;
             ViconomyCore modSystem = capi.ModLoader.GetModSystem<ViconomyCore>();
             registers = modSystem.GetRegistry().GetRegistersForOwner(stall.Owner);
             vinInv = Inventory as InventoryGeneric;
-            this.stallSlotCount = stall.GetSizeY();
-            
-            
+
             if (base.IsDuplicate)
             {
                 return;
@@ -41,15 +37,11 @@ namespace Viconomy.GUI
             capi.World.Player.InventoryManager.OpenInventory(Inventory);
             this.DialogTitle = DialogTitle;
 
-            vinInv.SlotModified += VinInv_SlotModified;
-
+            sizeX = stall.GetSizeXZ();
+            sizeY = stall.GetSizeY();
             this.Compose();
         }
 
-        private void VinInv_SlotModified(int slot)
-        {
-            //throw new NotImplementedException();
-        }
 
         private void Compose()
         {
@@ -62,14 +54,14 @@ namespace Viconomy.GUI
                 bgBounds.BothSizing = ElementSizing.FitToChildren;
 
                 InventoryGeneric vinInv = Inventory as InventoryGeneric;
-                int itemsPerLayer = stall.GetSizeXZ() * stall.GetSizeXZ();
+                int itemsPerLayer = stall.GetMaxSizeXZ() * stall.GetMaxSizeXZ();
                 int[] uiSlots = new int[itemsPerLayer];
-                int offset = (curTab * itemsPerLayer) + 1;
+                int layerOffset = (curTab * itemsPerLayer) + 1;
                 if (vinInv != null)
                 {
                     for (int ilayer = 0; ilayer < itemsPerLayer; ilayer++)
                     {
-                        uiSlots[ilayer] = offset + ilayer;
+                        uiSlots[ilayer] = layerOffset + ilayer;
                     }
                 }
 
@@ -103,7 +95,7 @@ namespace Viconomy.GUI
                     sculptureSizeKeys[iSculptureSize] = value.ToString();
                     sculptureSizeNames[iSculptureSize] = value + " x " + value;
 
-                    if (stall.GetSizeXZ() == value)
+                    if (sizeX == value)
                     {
                         sculptureSelectionIndex = iSculptureSize;
                     }
@@ -120,7 +112,7 @@ namespace Viconomy.GUI
                     sculptureSizeHKeys[iSculptureHSize] = value.ToString();
                     sculptureSizeHNames[iSculptureHSize] = value.ToString();
 
-                    if (stall.GetSizeXZ() == value)
+                    if (sizeY == value)
                     {
                         sculptureHSelectionIndex = iSculptureHSize;
                     }
@@ -142,7 +134,7 @@ namespace Viconomy.GUI
                 ElementBounds sizeSelectionHLabel = ElementBounds.FixedSize(250, 20).FixedUnder(sizeSelectBounds, 10);
                 ElementBounds sizeSelectHBounds = ElementBounds.FixedSize(250, 30).FixedUnder(sizeSelectionHLabel);
 
-                ElementBounds currencyLabel = ElementBounds.FixedSize(100, 25).FixedUnder(sizeSelectHBounds, 15);
+                ElementBounds currencyLabel = ElementBounds.FixedSize(100, 20).FixedUnder(sizeSelectHBounds, 15);
                 ElementBounds currencySlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).FixedUnder(currencyLabel);
 
           
@@ -155,8 +147,16 @@ namespace Viconomy.GUI
                 // Background boundaries. Again, just make it fit it's child elements, then add the text as a child element
                 //ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.ElementToDialogPadding);
 
-                int sizeX = 3;
-                int itemPageTotalWidth = 10 + (sizeX * 60);
+                
+                int minSizeX = 190;
+                int offsetX = 0;
+                int itemPageWidth = 10 + (sizeX * 60);
+                int itemPageTotalWidth = Math.Max(minSizeX, itemPageWidth);
+
+                if (minSizeX > itemPageWidth)
+                {
+                    offsetX = (minSizeX - itemPageWidth) / 2;
+                }
                 int itemPageTotalHeight = 50+(sizeX * 60);
                 ElementBounds itemPage = ElementBounds.FixedSize(itemPageTotalWidth, itemPageTotalHeight).FixedRightOf(settingBounds).WithFixedOffset(10, GuiStyle.TitleBarHeight);
                 //itemPage.BothSizing = ElementSizing.FitToChildren;
@@ -167,7 +167,7 @@ namespace Viconomy.GUI
                 ElementBounds pageLabel = ElementBounds.FixedSize(itemPageTotalWidth-60, 26).WithFixedAlignmentOffset(0, 10).FixedRightOf(pagePrev);
                 //ElementBounds pageNext = ElementBounds.FixedSize(50, 50).WithAlignment(EnumDialogArea.RightTop);
                 CairoFont labelTextFont = CairoFont.WhiteSmallText().WithOrientation(EnumTextOrientation.Center);
-                string labelText = "Layer " + (curTab + 1) + " of " + stallSlotCount;
+                string labelText = "Layer " + (curTab + 1) + " of " + sizeY;
                 labelTextFont.AutoBoxSize(labelText, pageLabel, true);
 
                 ElementBounds pageNext = ElementBounds.FixedSize(30, 30).WithFixedOffset(itemPageTotalWidth - 30, 0);//.FixedRightOf(pageLabel, 10);
@@ -182,7 +182,7 @@ namespace Viconomy.GUI
 
                     for (int x = 0; x < sizeX; x++)
                     {
-                        ElementBounds slot = ElementStdBounds.SlotGrid(EnumDialogArea.None, 10 + x * 60, 50+ y * 60, 1, 1).WithParent(itemPage);
+                        ElementBounds slot = ElementStdBounds.SlotGrid(EnumDialogArea.None, offsetX + 10 + x * 60, 50+ y * 60, 1, 1).WithParent(itemPage);
                         slotBounds[y][x] = slot;
                         //itemPage.WithChild(slot);
                     }
@@ -202,7 +202,7 @@ namespace Viconomy.GUI
 
                     for (int x = 0; x < sizeX; x++)
                     {
-                        disabledBounds[y][x] = ElementBounds.FixedSize(60, 60).FixedUnder(disabledSlotsLabel).WithFixedOffset(10 + (x * 60), 10 + (y * 60)).WithParent(disabledSlotsPage); ;
+                        disabledBounds[y][x] = ElementBounds.FixedSize(60, 60).FixedUnder(disabledSlotsLabel).WithFixedOffset(offsetX +10 + (x * 60), 10 + (y * 60)).WithParent(disabledSlotsPage); ;
 
                     }
                 }
@@ -224,9 +224,9 @@ namespace Viconomy.GUI
                         .AddStaticText("Shop:", CairoFont.WhiteSmallText(), shopSelectionLabel)
                         .AddDropDown(shopsKeys, shopsNames, selectedIndex, new SelectionChangedDelegate(this.onSelectionChanged), shopSelectBounds)
                         .AddStaticText("Sculpture Width / Length:", CairoFont.WhiteSmallText(), sizeSelectionLabel)
-                        .AddDropDown(sculptureSizeKeys, sculptureSizeNames, sculptureSelectionIndex, new SelectionChangedDelegate(this.onSelectionChanged), sizeSelectBounds)
+                        .AddDropDown(sculptureSizeKeys, sculptureSizeNames, sculptureSelectionIndex, new SelectionChangedDelegate(this.onXZSelectionChanged), sizeSelectBounds)
                         .AddStaticText("Sculpture Height:", CairoFont.WhiteSmallText(), sizeSelectionHLabel)
-                        .AddDropDown(sculptureSizeHKeys, sculptureSizeHNames, sculptureHSelectionIndex, new SelectionChangedDelegate(this.onSelectionChanged), sizeSelectHBounds)
+                        .AddDropDown(sculptureSizeHKeys, sculptureSizeHNames, sculptureHSelectionIndex, new SelectionChangedDelegate(this.onYSelectionChanged), sizeSelectHBounds)
                         .AddIf(api.World.Player.HasPrivilege("gamemode"))
                             .AddStaticText("Admin Shop:", CairoFont.WhiteSmallText(), adminShopLabel)
                             .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
@@ -244,12 +244,12 @@ namespace Viconomy.GUI
                     .AddButton("<", new ActionConsumable(this.PreviousLayer), pagePrev, EnumButtonStyle.Small, "prevPage")
                     .AddDynamicText(labelText, labelTextFont, pageLabel, "pageLabel")
                     .AddButton(">", new ActionConsumable(this.NextLayer), pageNext, EnumButtonStyle.Small, "nextPage");
-                        int islot = 1;
+                        int islot = layerOffset;
                         for (int y = 0; y < slotBounds.Length; y++)
                         {
                             for (int x = 0; x < slotBounds[y].Length; x++)
                             {
-                                ViconSculptureBlockSlot iSlot = (ViconSculptureBlockSlot) stall.Inventory[islot + 1];
+                                ViconSculptureBlockSlot iSlot = (ViconSculptureBlockSlot) stall.Inventory[islot];
                                 if (iSlot.isDisabled)
                                 {
                                     SingleComposer.AddPassiveItemSlot(slotBounds[y][x], vinInv, iSlot);
@@ -265,12 +265,13 @@ namespace Viconomy.GUI
                 
                 SingleComposer.BeginChildElements(disabledSlotsPage)
                     .AddStaticText("Enabled Slots:", CairoFont.WhiteSmallishText(), disabledSlotsLabel);
-                    for (int y = 0; y < sizeX; y++)
+                    for (int z = 0; z < sizeX; z++)
                     {
                         for (int x = 0; x < sizeX; x++)
                         {
-                            SingleComposer.AddSwitch(new Action<bool>(this.OnToggleAdminShop), disabledBounds[y][x], "disabled-" + x + "-" + y, 50);
-
+                            string key = "disabled-" + x + "-" + z;
+                            SingleComposer.AddSwitch(CreateOnToggleSlot(x, curTab, z), disabledBounds[z][x], key, 50);
+                            SingleComposer.GetSwitch(key).SetValue(stall.GetSlotForGrid(x, curTab, z).isDisabled);
                         }
                     }
                 SingleComposer.EndChildElements();
@@ -279,7 +280,7 @@ namespace Viconomy.GUI
                 if (curTab == 0)
                     SingleComposer.GetButton("prevPage").Enabled = false;
 
-                if (curTab == stallSlotCount-1)
+                if (curTab == sizeY-1)
                     SingleComposer.GetButton("nextPage").Enabled = false;
 
                 if (capi.World.Player.HasPrivilege("gamemode")) 
@@ -295,6 +296,26 @@ namespace Viconomy.GUI
                 this.capi.Logger.Debug(e.ToString());
             }
 
+        }
+
+        private Action<bool> CreateOnToggleSlot(int x, int y, int z)
+        {
+            return new Action<bool>((target) => {
+                    byte[] data;
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        BinaryWriter writer = new BinaryWriter(ms);
+                        writer.Write(x);
+                        writer.Write(y);
+                        writer.Write(z);
+                        writer.Write(target);
+                        data = ms.ToArray();
+                    }
+                    this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_SCULPTURE_SLOT, data);
+                    stall.GetSlotForGrid(x,y,z).isDisabled = target;
+                    Compose();
+             });
+            
         }
 
         private void OnToggleAdminShop(bool isToggled)
@@ -336,6 +357,38 @@ namespace Viconomy.GUI
                 data = ms.ToArray();
             }
             this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_REGISTER_ID, data);
+
+
+        }
+        private void onYSelectionChanged(string code, bool selected)
+        {
+            sizeY = Int32.Parse(code);
+            byte[] data;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BinaryWriter writer = new BinaryWriter(ms);
+                writer.Write(sizeY);
+                data = ms.ToArray();
+            }
+            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_SCULPTURE_Y, data);
+            curTab = Math.Min(curTab, sizeY-1);
+            this.Compose();
+
+        }
+
+        private void onXZSelectionChanged(string code, bool selected)
+        {
+            sizeX = Int32.Parse(code);
+            byte[] data;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BinaryWriter writer = new BinaryWriter(ms);
+                writer.Write(sizeX);
+                data = ms.ToArray();
+            }
+            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_SCULPTURE_XZ, data);
+            
+            this.Compose();
 
         }
 

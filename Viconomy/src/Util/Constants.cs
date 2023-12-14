@@ -17,12 +17,15 @@ namespace Viconomy.Util
         public const int SET_REGISTER_ID = 2002;
         public const int SET_SHOP_NAME = 2003;
         public const int SET_ADMIN_SHOP = 2004;
+        public const int SET_SCULPTURE_SLOT = 2005;
+        public const int SET_SCULPTURE_XZ = 2006;
+        public const int SET_SCULPTURE_Y = 2007;
 
         // Customer Packets
         public const int PURCHASE_ITEMS = 3002;
         public const int CURRENCY_CONVERSION = 3003;
 
         public const int TOGGLE_GUI = 5000;
-        
+
     }
 }
