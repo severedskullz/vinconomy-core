@@ -146,16 +146,24 @@ namespace Viconomy.BlockEntities
                 ViconomyCore.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
             }
-  
-            for (int i = 1; i < inventory.Count; i++)
+
+            // Check if every slot that is enabled has atleast 1 item.
+            for (int y = 0; y < sizeY; y++)
             {
-                if (inventory[i].Itemstack == null)
+                for (int z = 0; z < sizeXZ; z++)
                 {
-                    ViconomyCore.PrintClientMessage(player, TradingConstants.NO_PRODUCT);
-                    return;
+                    for (int x = 0; x < sizeXZ; x++)
+                    {
+                        ViconSculptureBlockSlot slot = GetSlotForGrid(x, y, z);
+                        if (slot.Empty && !slot.isDisabled)
+                        {
+                            ViconomyCore.PrintClientMessage(player, TradingConstants.NOT_ENOUGH_STOCK);
+                            return;
+                        }
+                    }
                 }
             }
-           
+
 
             if (modSystem.CanPurchaseItem(player, this, register, stallSlot, desiredAmount))
             {
@@ -220,6 +228,7 @@ namespace Viconomy.BlockEntities
             request.currencyNeeded = TradingUtil.GetItemStackClone(GetCurrencyForStall(stallSlot));
             request.isAdminShop = this.isAdminShop;
 
+
             TradeResult result = TradingUtil.TryPurchaseItem(request);
             if (result.error != null)
             {
@@ -238,8 +247,8 @@ namespace Viconomy.BlockEntities
                         {
                             for (int x = 0; x < sizeXZ; x++)
                             {
-                                ItemSlot slot = GetSlotForGrid(x, y, z);
-                                if (!slot.Empty)
+                                ViconSculptureBlockSlot slot = GetSlotForGrid(x, y, z);
+                                if (!slot.Empty && !slot.isDisabled)
                                 {
                                     slot.TakeOut(1);
                                 }
@@ -248,8 +257,6 @@ namespace Viconomy.BlockEntities
                         }
                     }
                 }
-               
-
 
                 this.MarkDirty(true, null);
                 this.updateMeshes();
@@ -557,7 +564,7 @@ namespace Viconomy.BlockEntities
                     for (int x = 0; x < sizeXZ; x++)
                     {
                         ViconSculptureBlockSlot slot = GetSlotForGrid(x, y, z);
-                        if (slot != null && !slot.Empty && tfMatrices != null)
+                        if (slot != null && !slot.Empty && !slot.isDisabled && tfMatrices != null)
                             mesher.AddMeshData(getOrCreateMesh(slot.Itemstack, index), tfMatrices[index]);
                         index++;
                     }
@@ -708,7 +715,7 @@ namespace Viconomy.BlockEntities
                 return;
             }
             GetSlotForGrid(x, y, z).isDisabled = disabled;
-            this.MarkDirty();
+            this.MarkDirty(true);
         }
 
         public override void OnBlockUnloaded()
