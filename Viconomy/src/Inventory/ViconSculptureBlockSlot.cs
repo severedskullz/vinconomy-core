@@ -51,9 +51,10 @@ namespace Viconomy.Inventory
         public void setSlotDisabled(bool isDisabled)
         {
             this.isDisabled = isDisabled;
+            this.HexBackgroundColor = isDisabled ? disabledColor : enabledColor;
         }
         */
 
     }
-    
+
 }

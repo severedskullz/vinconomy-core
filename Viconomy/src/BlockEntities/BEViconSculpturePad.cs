@@ -27,6 +27,7 @@ namespace Viconomy.BlockEntities
         int sizeY = 3;
         int maxSizeXZ =3;
         int maxSizeY = 3;
+        string sculptureName;
         public override InventoryBase Inventory { get { return this.inventory; } }
 
         public override int DisplayedItems => maxSizeXZ * maxSizeXZ * maxSizeY;
@@ -77,14 +78,7 @@ namespace Viconomy.BlockEntities
                
                 if (shiftMod)
                 {
-                  
-                    ItemSlot handSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
-                    ItemSlot currency = this.inventory[0];
-                    if (currency != null && TradingUtil.isMatchingCurrency(currency.Itemstack, handSlot.Itemstack))
-                    {
-                        RequestPurchaseItem(slotIndex, ctrlMod ? BulkPurchaseAmount : 1);
-                    }                   
-                     
+                    RequestPurchaseItem(slotIndex, ctrlMod ? BulkPurchaseAmount : 1);
                 }
                 else
                 {
@@ -127,7 +121,7 @@ namespace Viconomy.BlockEntities
 
             if (currency.Itemstack == null) {
                 //PrintClientMessage(player, "vinconomy:item-cost", new Object[] { currency.Itemstack.StackSize, currency.Itemstack.GetName() });
-                ViconomyCore.PrintClientMessage(player, TradingConstants.NO_PRICE, null);
+                ViconomyCore.PrintClientMessage(player, TradingConstants.NO_PRICE);
                 return;
             } 
             
@@ -148,6 +142,7 @@ namespace Viconomy.BlockEntities
             }
 
             // Check if every slot that is enabled has atleast 1 item.
+            bool hasAtleastOneForSale = false;
             for (int y = 0; y < sizeY; y++)
             {
                 for (int z = 0; z < sizeXZ; z++)
@@ -155,13 +150,26 @@ namespace Viconomy.BlockEntities
                     for (int x = 0; x < sizeXZ; x++)
                     {
                         ViconSculptureBlockSlot slot = GetSlotForGrid(x, y, z);
-                        if (slot.Empty && !slot.isDisabled)
+                        if (!slot.isDisabled)
                         {
-                            ViconomyCore.PrintClientMessage(player, TradingConstants.NOT_ENOUGH_STOCK);
-                            return;
+                            if (slot.Empty)
+                            {
+                                ViconomyCore.PrintClientMessage(player, TradingConstants.NOT_ENOUGH_STOCK);
+                                return;
+                            }
+                            else
+                            {
+                                hasAtleastOneForSale = true;
+                            }
                         }
                     }
                 }
+            }
+
+            if (!hasAtleastOneForSale)
+            {
+                ViconomyCore.PrintClientMessage(player, TradingConstants.NO_PRODUCT);
+                return;
             }
 
 
@@ -176,7 +184,7 @@ namespace Viconomy.BlockEntities
         {
             ItemStack stack = new ItemStack(Api.World.GetItem(new AssetLocation("vinconomy:sculpturebundle")), 1);
             TreeAttribute treeAttr = new TreeAttribute();
-            treeAttr.SetString("SculptureName", "My Sculpture");
+            treeAttr.SetString("SculptureName", getSculptureName());
             treeAttr.SetInt("SizeX", sizeXZ);
             treeAttr.SetInt("SizeY", sizeY);
             treeAttr.SetInt("SizeZ", sizeXZ);
@@ -419,6 +427,15 @@ namespace Viconomy.BlockEntities
                     }
                     break;
 
+                case VinConstants.SET_SCULPTURE_NAME:
+
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
+                        BinaryReader reader = new BinaryReader(ms);
+                        SetSculptureName(player, reader.ReadString());
+                    }
+                    break;
+
                 default:
                     if (packetid < 1000)
                     {
@@ -449,6 +466,7 @@ namespace Viconomy.BlockEntities
             tree.SetInt("SizeY", GetSizeY());
             tree.SetInt("MaxSizeXZ", GetMaxSizeXZ());
             tree.SetInt("MaxSizeY", GetMaxSizeY());
+            tree.SetString("ScultpureName", sculptureName);
             ITreeAttribute slotTree = tree.GetOrAddTreeAttribute("DisabledSlots");
             for (int y = 0; y < maxSizeY; y++)
             {
@@ -470,6 +488,7 @@ namespace Viconomy.BlockEntities
             sizeY = tree.GetInt("SizeY", 3);
             maxSizeXZ = tree.GetInt("MaxSizeXZ", 5);
             maxSizeY = tree.GetInt("MaxSizeY", 5);
+            sculptureName = tree.GetString("SculptureName", "Sculpture");
             ITreeAttribute slotTree = tree.GetOrAddTreeAttribute("DisabledSlots");
             for (int y = 0; y < maxSizeY; y++)
             {
@@ -615,7 +634,13 @@ namespace Viconomy.BlockEntities
                         
 
 
-                        Matrixf matrix = new Matrixf().RotateYDeg(this.block.Shape.rotateY).Scale(scale, scale,scale).Translate(x+ offsetXZ, y+(0.05f/ scale), z + offsetXZ);
+                        Matrixf matrix = new Matrixf()
+                            .Scale(scale, scale, scale)
+                            .Translate(0.5/scale,0,0.5/scale)
+                            .RotateYDeg(this.block.Shape.rotateY)
+                            
+                            .Translate(x+ offsetXZ, y+(0.0625f/ scale), z + offsetXZ)
+                            .Translate(-0.5 / scale, 0, -0.5 / scale);
                         int index = i;
                         tfMatrices[index] = matrix.Values;
                         i++;
@@ -715,6 +740,17 @@ namespace Viconomy.BlockEntities
                 return;
             }
             GetSlotForGrid(x, y, z).isDisabled = disabled;
+            this.MarkDirty(true);
+        }
+
+        private void SetSculptureName(IPlayer player, string name)
+        {
+            if (player.PlayerUID != this.Owner)
+            {
+                ViconomyCore.PrintClientMessage(player, TradingConstants.DOESNT_OWN, new object[] { });
+                return;
+            }
+            sculptureName = name;
             this.MarkDirty(true);
         }
 
@@ -824,8 +860,10 @@ namespace Viconomy.BlockEntities
             return (ViconSculptureBlockSlot)this.Inventory[layerOffset + zOffset + x + 1];
         }
 
-
-
+        public string getSculptureName()
+        {
+            return sculptureName;
+        }
     }
 
 }

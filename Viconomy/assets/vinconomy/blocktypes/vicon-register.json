@@ -8,7 +8,7 @@
   "behaviors": [ { "name": "HorizontalOrientable" } ],
   "heldTpIdleAnimation": "holdbothhandslarge",
   "heldTpUseAnimation": "twohandplaceblock",
-  "blockmaterial": "Wood",
+  "blockmaterial": "Metal",
   "variantgroups": [
     {
       "code": "wood",

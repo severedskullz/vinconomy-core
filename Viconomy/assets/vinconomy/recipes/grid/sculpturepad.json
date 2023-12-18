@@ -1,0 +1,24 @@
+{
+  "ingredientPattern": "_C_,WWW",
+  "ingredients": {
+    "W": {
+      "type": "item",
+      "code": "game:plank-*",
+      "name": "wood",
+      "allowedVariants": [ "birch", "oak", "maple", "pine", "acacia", "kapok", "baldcypress", "larch", "redwood", "ebony", "walnut", "purpleheart" ]
+    },
+    "C": {
+      "type": "block",
+      "code": "game:chest-east",
+      "attributes": { "type": "normal-generic" }
+    }
+  },
+  "recipeGroup": 1,
+  "width": 3,
+  "height": 2,
+  "output": {
+    "type": "block",
+    "code": "sculpturepad-{wood}-east",
+    "quantity": 1
+  }
+}

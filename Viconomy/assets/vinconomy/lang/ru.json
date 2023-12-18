@@ -27,6 +27,8 @@
   "block-weaponrack-*": "Витрина для оружия",
   "block-toolrack-*": "Витрина для инструментов",
   "block-clothingstand*": "Витрина под одежду",
+  "block-tellermachine*": "Банкомат магазина",
+  "block-sculpturepad*": "Витрина Скульптурный",
 
   "game:tabname-vinconomy": "Vinconomy",
 

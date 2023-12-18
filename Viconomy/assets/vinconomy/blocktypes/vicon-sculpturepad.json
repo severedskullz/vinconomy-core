@@ -4,15 +4,15 @@
   "entityClass": "BEViconSculpturePad",
   "priorityInteract": true,
   "creativeinventory": { "vinconomy": [ "*-east" ] },
-  "attributes": { "handbook": { "groupBy": [ "trademat-*-east" ] } },
+  "attributes": { "handbook": { "groupBy": [ "sculpturepad-*-east" ] } },
   "behaviors": [ { "name": "HorizontalOrientable" } ],
   "heldTpIdleAnimation": "holdbothhandslarge",
   "heldTpUseAnimation": "twohandplaceblock",
   "blockmaterial": "Wood",
   "variantgroups": [
     {
-      "code": "cloth",
-      "states": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "purple", "red", "white", "yellow" ]
+      "code": "wood",
+      "states": [ "birch", "oak", "maple", "pine", "acacia", "kapok", "baldcypress", "larch", "redwood", "ebony", "walnut", "purpleheart" ]
     },
     {
       "code": "side",
@@ -20,23 +20,23 @@
     }
   ],
   "textures": {
-    "all": { "base": "game:block/cloth/linen/{cloth}" }
+    "all": { "base": "game:block/wood/planks/{wood}1" }
   },
   "shapebytype": {
     "*-north": {
-      "base": "block/trademat",
+      "base": "block/sculptureslab",
       "rotateY": 0
     },
     "*-east": {
-      "base": "block/trademat",
+      "base": "block/sculptureslab",
       "rotateY": 270
     },
     "*-south": {
-      "base": "block/trademat",
+      "base": "block/sculptureslab",
       "rotateY": 180
     },
     "*-west": {
-      "base": "block/trademat",
+      "base": "block/sculptureslab",
       "rotateY": 90
     }
   },

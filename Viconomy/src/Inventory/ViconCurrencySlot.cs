@@ -12,7 +12,6 @@ namespace Viconomy.Inventory
 
         public override bool CanHold(ItemSlot sourceSlot)
         {
-            //Console.WriteLine("Skipping Currency Slot.");
             return false;
         }
 

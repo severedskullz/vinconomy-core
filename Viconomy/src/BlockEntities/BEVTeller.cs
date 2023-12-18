@@ -130,7 +130,6 @@ namespace Viconomy.BlockEntities
 
                         TryPurchaseItem(player, slot, 1);
                     }
-                    ((IServerPlayer)player).SendMessage(0, "it worked?", EnumChatType.OwnMessage);
                     break;
                 default:
                     if (packetid < 1000)

@@ -20,6 +20,7 @@ namespace Viconomy.Util
         public const int SET_SCULPTURE_SLOT = 2005;
         public const int SET_SCULPTURE_XZ = 2006;
         public const int SET_SCULPTURE_Y = 2007;
+        public const int SET_SCULPTURE_NAME = 2008;
 
         // Customer Packets
         public const int PURCHASE_ITEMS = 3002;
