@@ -3,10 +3,7 @@ using Viconomy.BlockEntities;
 using Viconomy.Inventory;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
-using Vintagestory.API.Server;
-using Vintagestory.GameContent;
 
 namespace Viconomy.BlockTypes
 {
@@ -110,9 +107,14 @@ namespace Viconomy.BlockTypes
             }
             else
             {
-                base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
+                base.OnBlockBroken(world, pos, byPlayer, 0);
             }
 
+        }
+
+        public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
+        {
+            return new ItemStack[0];
         }
 
         public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)

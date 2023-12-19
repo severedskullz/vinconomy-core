@@ -11,7 +11,6 @@ namespace Viconomy.BlockTypes
 {
     public class BlockVClothingDisplay : Block
     {
-        
 
         public BlockVClothingDisplay()
         {

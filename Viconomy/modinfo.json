@@ -7,7 +7,7 @@
     ],
     "description": "An Economy / Trading Mod",
     "version": "0.1.6",
-    "dependencies": {
-        "game": ""
-    }
+  "dependencies": {
+    "game": "1.18.8"
+  }
 }
