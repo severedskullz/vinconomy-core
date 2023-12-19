@@ -30,6 +30,8 @@
   "block-tellermachine*": "Shop Teller Machine",
   "block-sculpturepad*": "Sculpture Stall",
 
+  "item-sculpturebundle": "Sculpture Bundle",
+
   "game:tabname-vinconomy": "Vinconomy",
 
   "stall-purchase-armor0": "Purchase Boots",
