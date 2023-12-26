@@ -14,7 +14,7 @@ namespace Viconomy.BlockTypes
     {
         public BlockVJobboard()
         {
-            this.PriorityInteract = true;
+            this.PlacedPriorityInteract = true;
         }
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)

@@ -10,12 +10,11 @@ using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Viconomy.Delegates;
-using Cairo;
 using System.Collections.Generic;
 using Viconomy.Renderer;
 using Viconomy.src.Renderer;
 using Viconomy.ItemTypes;
-using Vintagestory;
+using Cairo;
 
 namespace Viconomy
 {

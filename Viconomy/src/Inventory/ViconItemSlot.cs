@@ -64,7 +64,7 @@ namespace Viconomy.Inventory
             base.ActivateSlot(sourceSlot, ref op);
         }
 
-        public void setFilter(Vintagestory.API.Common.Func<ItemSlot, bool> filter)
+        public void setFilter(Func<ItemSlot, bool> filter)
         {
             this.slotFilter = filter;
         }

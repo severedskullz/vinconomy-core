@@ -91,14 +91,11 @@ namespace Viconomy.BlockEntities
                 { 
                     if (ViconomyFilters.IsWaistSlot(slot))
                     {
-                        
                         matrix.RotateYDeg(this.block.Shape.rotateY - 90);
                         matrix.Translate(-0.05f, 0.10f, -0.0125f);
-
                     } 
                     else
                     {
-                       
                         matrix.RotateYDeg(this.block.Shape.rotateY + 90);
                         matrix.Translate(0f, 0.050f, -0.01250f);
                     }

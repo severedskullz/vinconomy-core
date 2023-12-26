@@ -14,7 +14,7 @@ namespace Viconomy.BlockTypes
 
         public BlockVClothingDisplay()
         {
-            this.PriorityInteract = true;
+            this.PlacedPriorityInteract = true;
         }
 
         public override bool DoPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ItemStack byItemStack)

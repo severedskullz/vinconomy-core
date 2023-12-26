@@ -13,7 +13,7 @@ namespace Viconomy.BlockTypes
 
         public BlockVClothingDisplayTop()
         {
-            this.PriorityInteract = true;
+            this.PlacedPriorityInteract = true;
         }
 
         public override bool DoParticalSelection(IWorldAccessor world, BlockPos pos) => true;

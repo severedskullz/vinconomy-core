@@ -33,15 +33,18 @@ namespace Viconomy.src.Renderer
                 treeAttribute = new TreeAttribute();
             }
             int[] materials = BlockEntityMicroBlock.MaterialIdsFromAttributes(treeAttribute, coreClientAPI.World);
-            IntArrayAttribute intArrayAttribute = treeAttribute["cuboids"] as IntArrayAttribute;
-            uint[] array = (intArrayAttribute != null) ? intArrayAttribute.AsUint : null;
+            IntArrayAttribute cuboidAttribute = treeAttribute["cuboids"] as IntArrayAttribute;
+            uint[] array = (cuboidAttribute != null) ? cuboidAttribute.AsUint : null;
             if (array == null)
             {
                 LongArrayAttribute longArrayAttribute = treeAttribute["cuboids"] as LongArrayAttribute;
                 array = ((longArrayAttribute != null) ? longArrayAttribute.AsUint : null);
             }
             List<uint> voxelCuboids = (array == null) ? new List<uint>() : new List<uint>(array);
-            return BlockEntityMicroBlock.CreateMesh(coreClientAPI, voxelCuboids, materials);
+
+            IntArrayAttribute decorAttribute = treeAttribute["decorIds"] as IntArrayAttribute;
+            int[] decorIds = (int[])((decorAttribute != null) ? decorAttribute.value.Clone() : null);
+            return BlockEntityMicroBlock.CreateMesh(coreClientAPI, voxelCuboids, materials, decorIds);
             
         }
 
