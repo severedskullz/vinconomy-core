@@ -15,11 +15,16 @@ Request Board
 
 Ledger
 	records trades for roleplayers (For things like taxes and such on profits)
-
-Chiseled blocks as stall?
-	@The_RocketWolf said in his stream he thinks he can chisel out some really cool chests. Wonder if I can get it so they can design their own stalls?
 	
 Saw / Hammer / Cleaver needs JSON Patch to fix the stupid fucking offsets when they made the item.
 
 Bank Teller:
 	Zolgrim was forgetting to "inject" currency into the economy for players. Perhaps a config that allows players to get "starting money" by interacting with the banker.
+
+
+Catalogue Book:
+	Reveals where the shop is for a given catalogue
+		Hidden behind config where you have to have picked up the catalogue first? If Disabled, always viewable
+		Shops can have a button to show/hide on world map?
+		Displays location on World Map?
+	Shows what is for sale at the given shop, how much, etc.

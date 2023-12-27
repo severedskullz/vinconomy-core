@@ -30,20 +30,23 @@ namespace Viconomy.BlockTypes
 
         public override bool DoPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ItemStack byItemStack)
         {
+
+
             bool result = base.DoPlaceBlock(world, byPlayer, blockSel, byItemStack);
             if (result)
             {
+
                 string Owner = byItemStack.Attributes.GetString("Owner");
                 BEVRegister vEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVRegister;
                 if (vEntity != null)
                 {
                     if (Owner != null)
                     {
-                        vEntity.UpdateRegister(Owner, byItemStack.Attributes.GetString("OwnerName"), byItemStack.Attributes.GetString("ID"), null);                        
+                        vEntity.UpdateShop(Owner, byItemStack.Attributes.GetString("OwnerName"), byItemStack.Attributes.GetInt("ID"), null);                        
                     }
                     else
                     {
-                        vEntity.UpdateRegister(byPlayer.PlayerUID, byPlayer.PlayerName, null, null);
+                        vEntity.UpdateShop(byPlayer.PlayerUID, byPlayer.PlayerName, -1, null);
                     }
                        
                 }
@@ -64,7 +67,7 @@ namespace Viconomy.BlockTypes
             if (vEntity != null)
             {
                 stack.Attributes.SetString("Owner", vEntity.Owner);
-                stack.Attributes.SetString("ID", vEntity.ID);
+                stack.Attributes.SetInt("ID", vEntity.ID);
                 stack.Attributes.SetString("OwnerName", vEntity.OwnerName);
             }
                 

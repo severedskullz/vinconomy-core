@@ -14,7 +14,7 @@ namespace Viconomy.Inventory
         public ViconPurchaseSlot(InventoryBase inventory, int stallSlot) : base(inventory)
         {
             this.stallSlot = stallSlot;
-            this.HexBackgroundColor = "#12526B";
+            //this.HexBackgroundColor = "#12526B";
         }
 
         public override bool CanHold(ItemSlot sourceSlot)
@@ -31,26 +31,6 @@ namespace Viconomy.Inventory
         public override bool CanTakeFrom(ItemSlot sourceSlot, EnumMergePriority priority = EnumMergePriority.AutoMerge)
         {
             return false;
-        }
-
-        protected override void ActivateSlotLeftClick(ItemSlot sourceSlot, ref ItemStackMoveOperation op)
-        {
-            if (OnActivateLeftClick != null)
-            {
-                this.OnActivateLeftClick();
-            }
-        }
-
-        protected override void ActivateSlotRightClick(ItemSlot sourceSlot, ref ItemStackMoveOperation op)
-        {
-            
-        }
-
-        public event Action OnActivateLeftClick;
-
-        public void SetProduct(ItemStack stack)
-        {
-            this.itemstack = stack;
         }
 
     }

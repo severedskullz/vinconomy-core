@@ -21,7 +21,7 @@ namespace Viconomy.BlockEntities
         private InventoryGeneric inventory;
         private GuiViconRegister invDialog;
 
-        public string ID { get; internal set; }
+        public int ID { get; internal set; } = -1;
         public string Owner { get; internal set; }
         public string OwnerName { get; internal set; }
 
@@ -42,21 +42,24 @@ namespace Viconomy.BlockEntities
                        
         }
 
-        public void UpdateRegister(string Owner, string OwnerName, string ID, string Name)
+        public void UpdateShop(string Owner, string OwnerName, int ID, string Name)
         {
             ViconomyCore modSystem = this.Api.ModLoader.GetModSystem<ViconomyCore>();
 
-            if (ID == null)
+            if (this.Api.Side == EnumAppSide.Server)
             {
-                //Console.WriteLine("Register block was placed and did not have ID Set...");
-                ViconRegister register = modSystem.AddRegister(Owner, OwnerName, OwnerName + "'s Shop", this.Pos);
+                if (ID == -1)
+                {
+                    //Console.WriteLine("Register block was placed and did not have ID Set...");
+                    ShopRegistration register = modSystem.AddShop(Owner, OwnerName, OwnerName + "'s Shop", this.Pos);
 
-                ID = register.ID;
-            }
-            else
-            {
-                //Console.WriteLine("Register block was placed and had ID Set... Updating");
-                ViconRegister register = modSystem.UpdateRegister(Owner, ID, Name, this.Pos);
+                    ID = register.ID;
+                }
+                else
+                {
+                    //Console.WriteLine("Register block was placed and had ID Set... Updating");
+                    ShopRegistration register = modSystem.UpdateShop(Owner, ID, Name, this.Pos);
+                }
             }
 
             this.ID = ID;
@@ -69,13 +72,13 @@ namespace Viconomy.BlockEntities
         {
             base.OnBlockBroken(byPlayer);
             ViconomyCore modSystem = this.Api.ModLoader.GetModSystem<ViconomyCore>();
-            modSystem.registers.ClearRegisterPos(Owner, ID);
+            modSystem.ShopRegistry.ClearShopPos(Owner, ID);
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
             base.FromTreeAttributes(tree, worldForResolving);
-            ID = tree.GetString("ID");
+            ID = tree.GetInt("ID");
             Owner = tree.GetString("Owner");
             OwnerName = tree.GetString("OwnerName");
 
@@ -84,7 +87,7 @@ namespace Viconomy.BlockEntities
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.ToTreeAttributes(tree);
-            tree.SetString("ID", ID);
+            tree.SetInt("ID", ID);
             tree.SetString("Owner", Owner);
             tree.SetString("OwnerName", OwnerName);
         }
@@ -157,7 +160,7 @@ namespace Viconomy.BlockEntities
             if (this.Api.World is IServerWorldAccessor)
             {
                 ViconomyCore modSystem = Api.ModLoader.GetModSystem<ViconomyCore>();
-                ViconRegister register = modSystem.GetRegistry().GetRegister(Owner, ID);
+                ShopRegistration register = modSystem.GetRegistry().GetShop(Owner, ID);
 
                 byte[] data;
                 using (MemoryStream ms = new MemoryStream())
@@ -213,7 +216,7 @@ namespace Viconomy.BlockEntities
                         string Name = reader.ReadString();
                         if (player.PlayerUID == Owner)
                         {
-                            UpdateRegister(Owner, OwnerName, ID, Name);
+                            UpdateShop(Owner, OwnerName, ID, Name);
                         }
                         else
                         {
@@ -241,7 +244,7 @@ namespace Viconomy.BlockEntities
 
                         //Console.Write("Handling Inv Packet");
                         this.Inventory.InvNetworkUtil.HandleClientPacket(player, packetid, data);
-                        this.Api.World.BlockAccessor.GetChunkAtBlockPos(this.Pos.X, this.Pos.Y, this.Pos.Z).MarkModified();
+                        this.Api.World.BlockAccessor.GetChunkAtBlockPos(this.Pos).MarkModified();
                         return;
                     }
                     break;

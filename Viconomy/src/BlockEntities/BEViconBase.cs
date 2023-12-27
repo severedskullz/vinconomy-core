@@ -12,7 +12,7 @@ namespace Viconomy.BlockEntities
         protected Block block;
         public string Owner { get; protected set; }
         public string OwnerName { get; protected set; }
-        public string RegisterID { get; protected set; }
+        public int RegisterID { get; protected set; }
         public bool isAdminShop { get; protected set; }
 
         public override string InventoryClassName { get { return "VinconomyInventory"; } }
@@ -129,7 +129,7 @@ namespace Viconomy.BlockEntities
             base.ToTreeAttributes(tree);
             tree.SetString("Owner", this.Owner);
             tree.SetString("OwnerName", this.OwnerName);
-            tree.SetString("RegisterID", this.RegisterID);
+            tree.SetInt("RegisterID", this.RegisterID);
             tree.SetBool("isAdminShop", this.isAdminShop);
 
         }
@@ -139,7 +139,7 @@ namespace Viconomy.BlockEntities
             base.FromTreeAttributes(tree, world);
             this.Owner = tree.GetString("Owner");
             this.OwnerName = tree.GetString("OwnerName");
-            this.RegisterID = tree.GetString("RegisterID");
+            this.RegisterID = tree.GetInt("RegisterID");
             this.isAdminShop = tree.GetBool("isAdminShop");
         }
 
@@ -154,15 +154,8 @@ namespace Viconomy.BlockEntities
             using (MemoryStream ms = new MemoryStream(data))
             {
                 BinaryReader reader = new BinaryReader(ms);
-                string ID = reader.ReadString();
-                if (ID != "None")
-                {
-                    this.RegisterID = ID;
-                }
-                else
-                {
-                    this.RegisterID = null;
-                }
+                int ID = reader.ReadInt32();
+                RegisterID = ID;
             }
 
             //PrintClientMessage(byPlayer, "set ID to " + this.RegisterID);

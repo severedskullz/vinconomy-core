@@ -39,7 +39,6 @@ namespace Viconomy.GUI
             this.inv = new DummyInventory(capi, 2);
 
             purchaseSlot = new ViconPurchaseSlot(inv, 0);
-            purchaseSlot.OnActivateLeftClick += DoPurchase;
             this.inv[0] = purchaseSlot;
 
             currancySlot = new ViconCurrencySlot(inv);
@@ -96,10 +95,10 @@ namespace Viconomy.GUI
             ElementBounds pageNext = ElementBounds.FixedSize(30, 30).WithAlignment(EnumDialogArea.RightTop);
 
             ElementBounds currencyLabel = ElementBounds.FixedSize(60, 25).FixedUnder(pagePrev).WithFixedOffset(35, 15);
-            ElementBounds currencySlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).WithParent(currencyLabel).WithFixedOffset(0, 25);
+            ElementBounds currencySlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).FixedUnder(currencyLabel).WithFixedOffset(35, 0);
 
             ElementBounds purchaseLabel = currencyLabel.RightCopy().WithFixedSize(60, 25).WithFixedOffset(60, 0);
-            ElementBounds purchaseSlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).WithParent(purchaseLabel).WithFixedOffset(0,25);
+            ElementBounds purchaseSlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).FixedUnder(purchaseLabel).WithFixedOffset(155, 0);
 
             ElementBounds quantitySelectionLabel = ElementBounds.FixedSize(75, 30).FixedUnder(currencyLabel).WithFixedOffset(0, 75);
             ElementBounds quantitySelectionBounds = quantitySelectionLabel.RightCopy().WithFixedSize(75, 30).WithFixedOffset(0,-5);
@@ -114,7 +113,7 @@ namespace Viconomy.GUI
             //IconUtil.DrawArrowRight
 
             // Lastly, create the dialog
-            SingleComposer = capi.Gui.CreateCompo("myAwesomeDialog", dialogBounds)
+            SingleComposer = capi.Gui.CreateCompo("StallCustomer", dialogBounds)
                 .AddShadedDialogBG(bgBounds)
                 .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);
 
@@ -131,7 +130,8 @@ namespace Viconomy.GUI
                     .AddPassiveItemSlot(currencySlotBounds, inv, currancySlot, true)
                     
                     .AddStaticText("Product:", CairoFont.WhiteSmallText(), purchaseLabel)
-                    .AddPassiveItemSlot(purchaseSlotBounds, inv, purchaseSlot, true)
+                    .AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlotBounds)
+
                 .EndChildElements();
             
             if (curTab == 0)

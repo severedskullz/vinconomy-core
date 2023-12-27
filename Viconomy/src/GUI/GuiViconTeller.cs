@@ -14,7 +14,7 @@ namespace Viconomy.GUI
     {
 
         InventoryBase vinInv;
-        ViconRegister[] registers;
+        ShopRegistration[] registers;
         ICoreClientAPI api;
         BEViconTeller teller;
         bool isOwner;
@@ -29,7 +29,7 @@ namespace Viconomy.GUI
             teller = capi.World.BlockAccessor.GetBlockEntity<BEViconTeller>(BlockEntityPosition);
             this.isOwner = isOwner;
             ViconomyCore modSystem = capi.ModLoader.GetModSystem<ViconomyCore>();
-            registers = modSystem.GetRegistry().GetRegistersForOwner(teller.Owner);
+            registers = modSystem.GetRegistry().GetShopsForOwner(teller.Owner);
             vinInv = Inventory;      
             reverseTrade = new bool[length];
             
@@ -61,7 +61,7 @@ namespace Viconomy.GUI
             for (int i = 0; i < registers.Length; i++)
             {
                 shopsNames[i+1] = registers[i].Name;
-                shopsKeys[i+1] = registers[i].ID; 
+                shopsKeys[i+1] = registers[i].ID.ToString(); 
 
                 if (teller.RegisterID == registers[i].ID)
                 {

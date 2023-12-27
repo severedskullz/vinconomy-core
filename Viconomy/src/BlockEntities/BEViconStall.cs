@@ -129,7 +129,7 @@ namespace Viconomy.BlockEntities
             } 
             
             // Does the shop have a register ID set?
-            if (this.RegisterID == null && !this.isAdminShop)
+            if (this.RegisterID != -1 && !this.isAdminShop)
             {
                 ViconomyCore.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
@@ -324,7 +324,7 @@ namespace Viconomy.BlockEntities
                         }
 
                         this.Inventory.InvNetworkUtil.HandleClientPacket(player, packetid, data);
-                        this.Api.World.BlockAccessor.GetChunkAtBlockPos(this.Pos.X, this.Pos.Y, this.Pos.Z).MarkModified();
+                        this.Api.World.BlockAccessor.GetChunkAtBlockPos(this.Pos).MarkModified();
                         return;
                     }
                     break;

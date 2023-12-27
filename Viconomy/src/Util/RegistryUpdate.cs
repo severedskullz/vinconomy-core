@@ -6,7 +6,7 @@ namespace Viconomy.Network
     internal class RegistryUpdate
     {
         [ProtoMember(1)]
-        public string ID;
+        public int ID;
 
         [ProtoMember(2)]
         public string Name;
@@ -15,7 +15,7 @@ namespace Viconomy.Network
         public string Owner;
 
         public RegistryUpdate() { }
-        public RegistryUpdate(string Owner, string ID, string Name)
+        public RegistryUpdate(string Owner, int ID, string Name)
         {
             this.Owner = Owner; 
             this.ID = ID;

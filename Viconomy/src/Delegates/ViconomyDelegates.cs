@@ -1,4 +1,5 @@
 ﻿using Viconomy.BlockEntities;
+using Viconomy.Trading;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
@@ -7,7 +8,7 @@ namespace Viconomy.Delegates
     /*
      *  Called whenever an item is purchased from a stall, regardless if it is assoicated with a Register (Nullable)
      */
-    public delegate void OnPurchasedItemDelegate(IPlayer player, BEViconBase stall, BEVRegister register, ItemStack product, ItemStack payment);
+    public delegate void OnPurchasedItemDelegate(TradeResult result, ItemStack product, ItemStack payment);
 
     /*
      *  Called whenever a player attempts to purchase from a stall, regardless if it is assoicated with a Register (Nullable). Return true to allow the purchase;

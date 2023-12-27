@@ -7,6 +7,7 @@ using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
+using Vintagestory.API.Util;
 
 namespace Viconomy.GUI
 {
@@ -14,7 +15,7 @@ namespace Viconomy.GUI
     {
         BEViconStall stall;
         ViconomyInventory vinInv;
-        ViconRegister[] registers;
+        ShopRegistration[] registers;
         ICoreClientAPI api;
 
 
@@ -32,7 +33,7 @@ namespace Viconomy.GUI
             stall = capi.World.BlockAccessor.GetBlockEntity<BEViconStall>(BlockEntityPosition);
             curTab = stallSelection;
             ViconomyCore modSystem = capi.ModLoader.GetModSystem<ViconomyCore>();
-            registers = modSystem.GetRegistry().GetRegistersForOwner(stall.Owner);
+            registers = modSystem.GetRegistry().GetShopsForOwner(stall.Owner);
             vinInv = Inventory as ViconomyInventory;
             this.stallSlotCount = stall.StallSlotCount;
             this.stacksPerSlot = stall.StacksPerSlot;
@@ -47,7 +48,6 @@ namespace Viconomy.GUI
 
             this.inv = new DummyInventory(capi);
             purchaseSlot = new ViconPurchaseSlot(inv, 0);
-            purchaseSlot.OnActivateLeftClick += DoPurchase;
             this.inv[0] = purchaseSlot;
 
             this.Compose();
@@ -94,7 +94,7 @@ namespace Viconomy.GUI
             for (int i = 0; i < registers.Length; i++)
             {
                 shopsNames[i+1] = registers[i].Name;
-                shopsKeys[i+1] = registers[i].ID; 
+                shopsKeys[i+1] = registers[i].ID.ToString(); 
 
                 if (stall.RegisterID == registers[i].ID)
                 {
@@ -170,7 +170,7 @@ namespace Viconomy.GUI
             //IconUtil.DrawArrowRight
 
             // Lastly, create the dialog
-            SingleComposer = capi.Gui.CreateCompo("myAwesomeDialog", dialogBounds)
+            SingleComposer = capi.Gui.CreateCompo("StallOwner", dialogBounds)
                 .AddShadedDialogBG(bgBounds)
                 .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);
 
@@ -280,7 +280,8 @@ namespace Viconomy.GUI
             using (MemoryStream ms = new MemoryStream())
             {
                 BinaryWriter writer = new BinaryWriter(ms);
-                writer.Write(code);
+                int id = code.ToInt(-1);
+                writer.Write(id);
                 data = ms.ToArray();
             }
             this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_REGISTER_ID, data);

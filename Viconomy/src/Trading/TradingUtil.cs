@@ -13,7 +13,7 @@ namespace Viconomy.Trading
 {
     public class TradingUtil
     {
-        public static ItemStack GetChangeFor(ItemStack inputCurrency, ViconRegister register)
+        public static ItemStack GetChangeFor(ItemStack inputCurrency, ShopRegistration register)
         {
             string owner = register.Owner;
             return null;
@@ -80,7 +80,7 @@ namespace Viconomy.Trading
             purchaseResult.purchasedCurrencyUsed = paymentStackClone;
 
             ViconomyCore core = purchaseResult.coreApi.ModLoader.GetModSystem<ViconomyCore>();
-            core.PurchasedItem(purchaseResult.customer, purchaseResult.sellingEntity, purchaseResult.shopRegister, productStackClone, paymentStack);
+            core.PurchasedItem(purchaseResult, productStackClone, paymentStack);
 
             // Give the product to the player
             GivePlayerProduct(purchaseResult, soldItems);

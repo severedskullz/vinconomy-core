@@ -99,7 +99,7 @@ namespace Viconomy.ItemTypes
                         ItemStack blockStack = matrix[y][z][x];
                         if (blockStack != null)
                         {
-                            BlockPos newPos = new BlockPos(x + (int)pos.X, y + (int)pos.Y, z + (int)pos.Z);
+                            BlockPos newPos = new BlockPos(x + (int)pos.X, y + (int)pos.Y, z + (int)pos.Z, 0);
                             //Block worldBlock = ent.World.BlockAccessor.GetBlock(pos.X, pos.X, pos.X);
                             BlockSelection targetPos = new BlockSelection(newPos, blockSel.Face, blockSel.Block);
                             bool result = blockStack.Block.CanPlaceBlock(player.Entity.World, player, targetPos, ref failureCode);
@@ -123,7 +123,7 @@ namespace Viconomy.ItemTypes
                         ItemStack blockStack = matrix[y][z][x];
                         if (blockStack != null)
                         {
-                            BlockPos newPos = new BlockPos(x + (int)pos.X, y + (int)pos.Y, z + (int)pos.Z);
+                            BlockPos newPos = new BlockPos(x + (int)pos.X, y + (int)pos.Y, z + (int)pos.Z, 0);
                             //Block worldBlock = ent.World.BlockAccessor.GetBlock(pos.X, pos.X, pos.X);
                             BlockSelection targetPos = new BlockSelection(newPos, blockSel.Face, blockSel.Block);
                             bool result = blockStack.Block.TryPlaceBlock(player.Entity.World, player, blockStack, targetPos, ref failureCode);

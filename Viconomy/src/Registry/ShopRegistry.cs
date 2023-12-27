@@ -3,52 +3,60 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Viconomy.BlockEntities;
+using Viconomy.src.Database;
 using Vintagestory.API.MathTools;
 
 namespace Viconomy.Registry
 {
-    [ProtoContract(ImplicitFields=ImplicitFields.AllFields)]
     public class ShopRegistry
     {
-        private uint _id;
-        internal Dictionary<string, Dictionary<string, ViconRegister>> registers = new Dictionary<string, Dictionary<string, ViconRegister>>();
+        //TODO: Better checks / seperation for DB commits
+        private ViconDatabase db;
+        internal Dictionary<string, Dictionary<int, ShopRegistration>> registers = new Dictionary<string, Dictionary<int, ShopRegistration>>();
 
-        public void ClearRegister(string owner, string registerID)
+        public ShopRegistry(ViconDatabase db) { 
+            this.db = db;
+        }
+
+
+        public void ClearShop(string owner, int registerID)
         {
             if (registers.ContainsKey(owner))
             {
                 registers[owner].Remove(registerID);
+                if (db != null) db.DeleteShop(registerID);
             }
         }
-        public void ClearRegisterPos(string owner, string id)
+        public void ClearShopPos(string owner, int id)
         {
             if (registers.ContainsKey(owner) && registers[owner].ContainsKey(id))
             {
                 registers[owner][id].Position = null;
+                if (db != null) db.UpdateShop(registers[owner][id]);
             }
         }
 
 
-        public ViconRegister GetRegister(string owner, string registerID)
+        public ShopRegistration GetShop(string owner, int registerID)
         {
-            if ( registerID != null && owner != null && registers.ContainsKey(owner) && registers[owner].ContainsKey(registerID))
+            if ( registerID != -1 && owner != null && registers.ContainsKey(owner) && registers[owner].ContainsKey(registerID))
             {
                 return registers[owner][registerID];
             }
             return null; 
         }
-        public ViconRegister[] GetRegistersForOwner(string owner)
+        public ShopRegistration[] GetShopsForOwner(string owner)
         {
             if (registers.ContainsKey(owner) && registers[owner] != null)
             {
-                return registers[owner].Values.ToArray<ViconRegister>();
+                return registers[owner].Values.ToArray<ShopRegistration>();
             }
-            return new ViconRegister[0];
+            return new ShopRegistration[0];
         }
 
-        public ViconRegister UpdateRegister(string owner, string id, string name, BlockPos pos)
+        public ShopRegistration UpdateShop(string owner, int id, string name, BlockPos pos)
         {
-            ViconRegister register = null;
+            ShopRegistration register = null;
             if (registers.ContainsKey(owner) && registers[owner].ContainsKey(id))
             {
                 Console.WriteLine("Updating existing Register with ID " + id);
@@ -56,44 +64,51 @@ namespace Viconomy.Registry
                 if (name != null)
                     register.Name = name;
                 register.Position = pos;
-            } 
+
+                if (db != null) db.UpdateShop(register);
+            } else
+            {
+                throw new ArgumentException("Tried to update a non-existant shop");
+            }
             return register;
             
         }
 
-        public ViconRegister AddRegister(string owner, string ownerName, string name, BlockPos pos)
+        public ShopRegistration AddShop(string owner, string ownerName, string name, BlockPos pos)
         {
-            string id = owner + "-" + GetNextID();
-            Console.WriteLine("Adding new Register with ID " + id );
-            ViconRegister register = new ViconRegister() { ID = id, Owner = owner, OwnerName = ownerName, Name = name, Position = pos };
-            this.AddRegister(register);
+            Console.WriteLine("Adding new Shop for " + owner );
+            ShopRegistration register = new ShopRegistration() {Owner = owner, OwnerName = ownerName, Name = name, Position = pos };
+
+            db.AddShop(register);
+            if (register.ID > -1)
+            {
+                this.AddShop(register);
+            }
+            else
+            {
+                throw new ApplicationException("Failed to persist shop to DB");
+            }
             
 
             return register;
 
         }
 
-        public void AddRegister(ViconRegister register)
+        public void AddShop(ShopRegistration register)
         {
             if (!registers.ContainsKey(register.Owner) || registers[register.Owner] == null)
             {
-                registers[register.Owner] = new Dictionary<string, ViconRegister>();
+                registers[register.Owner] = new Dictionary<int, ShopRegistration>();
             }
+
             registers[register.Owner][register.ID] = register;
             Console.WriteLine("Added Register with ID " + register.ID + " and owner " + register.Owner);
-
-            
-        }
-
-        public string GetNextID()
-        {
-            return _id++.ToString();
         }
 
         public int GetCount()
         {
             int i = 0;
-            foreach (Dictionary<string, ViconRegister> item in registers.Values)
+            foreach (Dictionary<int, ShopRegistration> item in registers.Values)
             {
                 if (item == null) 
                     continue;

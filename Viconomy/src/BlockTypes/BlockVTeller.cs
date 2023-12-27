@@ -65,7 +65,7 @@ namespace Viconomy.BlockTypes
             if (vEntity != null)
             {
                 stack.Attributes.SetString("Owner", vEntity.Owner);
-                stack.Attributes.SetString("ID", vEntity.RegisterID);
+                stack.Attributes.SetInt("ID", vEntity.RegisterID);
                 stack.Attributes.SetString("OwnerName", vEntity.OwnerName);
             }
                 

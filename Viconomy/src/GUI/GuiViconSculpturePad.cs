@@ -7,6 +7,7 @@ using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
+using Vintagestory.API.Util;
 
 namespace Viconomy.GUI
 {
@@ -14,7 +15,7 @@ namespace Viconomy.GUI
     {
         BEViconSculpturePad stall;
         InventoryGeneric vinInv;
-        ViconRegister[] registers;
+        ShopRegistration[] registers;
         ICoreClientAPI api;
 
         int sizeX;
@@ -27,7 +28,7 @@ namespace Viconomy.GUI
             api = capi;
             stall = capi.World.BlockAccessor.GetBlockEntity<BEViconSculpturePad>(BlockEntityPosition);
             ViconomyCore modSystem = capi.ModLoader.GetModSystem<ViconomyCore>();
-            registers = modSystem.GetRegistry().GetRegistersForOwner(stall.Owner);
+            registers = modSystem.GetRegistry().GetShopsForOwner(stall.Owner);
             vinInv = Inventory as InventoryGeneric;
 
             if (base.IsDuplicate)
@@ -76,7 +77,7 @@ namespace Viconomy.GUI
                 for (int iregister = 0; iregister < registers.Length; iregister++)
                 {
                     shopsNames[iregister + 1] = registers[iregister].Name;
-                    shopsKeys[iregister + 1] = registers[iregister].ID; 
+                    shopsKeys[iregister + 1] = registers[iregister].ID.ToString(); 
 
                     if (stall.RegisterID == registers[iregister].ID)
                     {
@@ -376,7 +377,8 @@ namespace Viconomy.GUI
             using (MemoryStream ms = new MemoryStream())
             {
                 BinaryWriter writer = new BinaryWriter(ms);
-                writer.Write(code);
+                int id = code.ToInt(-1);
+                writer.Write(id);
                 data = ms.ToArray();
             }
             this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_REGISTER_ID, data);
