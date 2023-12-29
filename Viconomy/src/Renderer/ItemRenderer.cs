@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Viconomy.BlockEntities;
-using Viconomy.Renderer;
+﻿using Viconomy.BlockEntities;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Util;
 
-namespace Viconomy.src.Renderer
+namespace Viconomy.Renderer
 {
     public class ItemRenderer : IItemRenderer
     {

@@ -121,14 +121,14 @@ namespace Viconomy.BlockEntities
 
             if (currency.Itemstack == null) {
                 //PrintClientMessage(player, "vinconomy:item-cost", new Object[] { currency.Itemstack.StackSize, currency.Itemstack.GetName() });
-                ViconomyCore.PrintClientMessage(player, TradingConstants.NO_PRICE);
+                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRICE);
                 return;
             } 
             
             // Does the shop have a register ID set?
             if (this.RegisterID != -1 && !this.isAdminShop)
             {
-                ViconomyCore.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
+                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
             }
 
@@ -137,7 +137,7 @@ namespace Viconomy.BlockEntities
             BEVRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
             if (register == null && !this.isAdminShop)
             {
-                ViconomyCore.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
+                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
             }
 
@@ -154,7 +154,7 @@ namespace Viconomy.BlockEntities
                         {
                             if (slot.Empty)
                             {
-                                ViconomyCore.PrintClientMessage(player, TradingConstants.NOT_ENOUGH_STOCK);
+                                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_ENOUGH_STOCK);
                                 return;
                             }
                             else
@@ -168,7 +168,7 @@ namespace Viconomy.BlockEntities
 
             if (!hasAtleastOneForSale)
             {
-                ViconomyCore.PrintClientMessage(player, TradingConstants.NO_PRODUCT);
+                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRODUCT);
                 return;
             }
 
@@ -240,7 +240,7 @@ namespace Viconomy.BlockEntities
             TradeResult result = TradingUtil.TryPurchaseItem(request);
             if (result.error != null)
             {
-                ViconomyCore.PrintClientMessage(player, result.error);
+                ViconomyCoreSystem.PrintClientMessage(player, result.error);
             }
             else
             {
@@ -443,7 +443,7 @@ namespace Viconomy.BlockEntities
                         {
                             if ( !((ICoreServerAPI)Api).Server.IsDedicated )
                             {
-                                ViconomyCore.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
+                                ViconomyCoreSystem.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
                             } else
                             {
                                 ((IServerPlayer)player).Disconnect("Nice try, but that wasn't yours. (Tried to access Stall they didn't own)");
@@ -736,7 +736,7 @@ namespace Viconomy.BlockEntities
         {
             if (player.PlayerUID != this.Owner)
             {
-                ViconomyCore.PrintClientMessage(player, TradingConstants.DOESNT_OWN, new object[] { });
+                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.DOESNT_OWN, new object[] { });
                 return;
             }
             GetSlotForGrid(x, y, z).isDisabled = disabled;
@@ -747,7 +747,7 @@ namespace Viconomy.BlockEntities
         {
             if (player.PlayerUID != this.Owner)
             {
-                ViconomyCore.PrintClientMessage(player, TradingConstants.DOESNT_OWN, new object[] { });
+                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.DOESNT_OWN, new object[] { });
                 return;
             }
             sculptureName = name;

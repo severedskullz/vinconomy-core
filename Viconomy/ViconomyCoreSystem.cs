@@ -12,34 +12,34 @@ using Vintagestory.API.Server;
 using Viconomy.Delegates;
 using System.Collections.Generic;
 using Viconomy.Renderer;
-using Viconomy.src.Renderer;
 using Viconomy.ItemTypes;
 using Cairo;
-using Viconomy.src.Database;
+using Viconomy.Database;
 using Viconomy.Trading;
 
 namespace Viconomy
 {
     using RayTraceResults = Tuple<BlockSelection, EntitySelection>;
 
-    public class ViconomyCore : ModSystem
+    public class ViconomyCoreSystem : ModSystem
     {
-        private ICoreServerAPI _coreServerAPI;
+        //Client Variables
         private ICoreClientAPI _coreClientAPI;
-
         private IClientNetworkChannel _clientChannel;
-        private IServerNetworkChannel _serverChannel;
-
-        public ViconConfig Config { get; internal set; }
-        public ShopRegistry ShopRegistry;
-        public ViconDatabase DB;
-
         private Dictionary<EnumItemClass, List<IItemRenderer>> renderers;
         private bool isRegisteringRenderers;
 
-        public override double ExecuteOrder() => 1;
+        //Server Variables
+        private ICoreServerAPI _coreServerAPI;
+        private IServerNetworkChannel _serverChannel;
+        public ViconDatabase DB;
 
- 
+        //Shared Variables
+        public ViconConfig Config { get; internal set; }
+        public ShopRegistry ShopRegistry;
+
+
+        public override double ExecuteOrder() => 1;
 
         // Called on server and client
         // Useful for registering block/entity classes on both sides
@@ -104,7 +104,7 @@ namespace Viconomy
         {
             _coreServerAPI = api;
             _serverChannel = api.Network.GetChannel("Vinconomy");
-                       
+          
             api.Event.SaveGameLoaded += OnSaveGameLoading;
             api.Event.GameWorldSave += OnSaveGameSaving;
             api.Event.PlayerJoin += SendRegisterUpdate;
@@ -133,6 +133,7 @@ namespace Viconomy
             _coreClientAPI = api;
             _clientChannel = api.Network.GetChannel("Vinconomy");
             _clientChannel.SetMessageHandler(new NetworkServerMessageHandler<RegistryUpdatePacket>(this.OnRecieveRegistryUpdate));
+
             ShopRegistry = new ShopRegistry(DB);
 
             renderers = new Dictionary<EnumItemClass, List<IItemRenderer>>();
@@ -170,8 +171,6 @@ namespace Viconomy
             _coreClientAPI.Event.OnTestBlockAccess += TestAccess;
             OnTestAccess += AllowStallUse;
         }
-
-
 
         private void BeginRendererRegistration()
         {

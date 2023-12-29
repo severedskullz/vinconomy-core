@@ -27,7 +27,7 @@ namespace Viconomy.Inventory
 
         public ItemSlot[] Slots => slots;
 
-        ViconomyCore modSystem;
+        ViconomyCoreSystem modSystem;
 
         public ViconomySculptureInventory(BEViconBase stall, string inventoryID, ICoreAPI api, int binSize, int itemsPerBin) : base(inventoryID, api)
         {
@@ -52,7 +52,7 @@ namespace Viconomy.Inventory
         public override void LateInitialize(string inventoryID, ICoreAPI api)
         {
             base.LateInitialize(inventoryID, api);
-            modSystem = Api.ModLoader.GetModSystem<ViconomyCore>();
+            modSystem = Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
             
         }
 

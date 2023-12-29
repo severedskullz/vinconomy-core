@@ -5,8 +5,10 @@ using Microsoft.Data.Sqlite;
 using Vintagestory.API.Server;
 using Viconomy.Registry;
 using Viconomy.Trading;
+using Viconomy.Network;
+using System.Collections.Generic;
 
-namespace Viconomy.src.Database
+namespace Viconomy.Database
 {
     public class ViconDatabase
     {
@@ -160,6 +162,41 @@ namespace Viconomy.src.Database
                 }
 
                 connection.Close();
+            }
+        }
+
+        public Dictionary<string, LedgerEntry> LoadSales(int shopId, int month, int year)
+        {
+            using (SqliteConnection connection = GetConnection())
+            {
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+                cmd.CommandText = "SELECT * FROM Sales WHERE ShopId = @ShopId AND Month = @Month AND Year = @Year ORDER BY Customer";
+                cmd.Parameters.Add("@ShopId", SqliteType.Integer).Value = shopId;
+                cmd.Parameters.Add("@Month", SqliteType.Integer).Value = month;
+                cmd.Parameters.Add("@Year", SqliteType.Integer).Value = year;
+                SqliteDataReader reader = cmd.ExecuteReader();
+
+                Dictionary<string, LedgerEntry> entries = new Dictionary<string, LedgerEntry>();
+                while (reader.Read())
+                {
+                    //@ShopId, @Customer, @Month, @Year, @ProductCode, @ProductQuantity, @ProductAttributes, @CurrencyCode, @CurrencyQuantity, @CurrencyAttributes
+                    LedgerEntry entry = new LedgerEntry();
+                    entry.Customer = reader.GetString(1);
+                    entry.ProductCode = reader.GetString(4);
+                    entry.ProductQuantity = reader.GetInt32(5);
+                    entry.ProductAttributes = reader.GetString(6);
+                    entry.CurrencyCode = reader.GetString(7);
+                    entry.CurrencyQuantity = reader.GetInt32(8);
+                    entry.CurrencyAttributes = reader.GetString(9);
+
+                    entries.Add(entry.Customer, entry);
+                   
+                }
+
+                connection.Close();
+
+                return entries;
             }
         }
 

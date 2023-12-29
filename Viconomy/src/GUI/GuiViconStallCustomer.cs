@@ -27,7 +27,7 @@ namespace Viconomy.GUI
 
             stall = capi.World.BlockAccessor.GetBlockEntity<BEViconStall>(BlockEntityPosition);
             curTab = stallSelection;
-            ViconomyCore modSystem = capi.ModLoader.GetModSystem<ViconomyCore>();
+            ViconomyCoreSystem modSystem = capi.ModLoader.GetModSystem<ViconomyCoreSystem>();
 
             if (base.IsDuplicate)
             {

@@ -59,7 +59,7 @@ namespace Viconomy.BlockEntities
         {
             if (this.Api.World is IServerWorldAccessor)
             {
-                ViconomyCore modSystem = Api.ModLoader.GetModSystem<ViconomyCore>();
+                ViconomyCoreSystem modSystem = Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
                 ShopRegistration register = modSystem.GetRegistry().GetShop(Owner, RegisterID);
 
                 byte[] data;
@@ -138,7 +138,7 @@ namespace Viconomy.BlockEntities
                         {
                             if (!((ICoreServerAPI)Api).Server.IsDedicated)
                             {
-                                ViconomyCore.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
+                                ViconomyCoreSystem.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
                             }
                             else
                             {
@@ -162,14 +162,14 @@ namespace Viconomy.BlockEntities
             ItemSlot currency = GetCurrencyForStall(stallSlot);
             if (currency.Itemstack == null)
             {
-                ViconomyCore.PrintClientMessage(player, TradingConstants.NO_PRICE, null);
+                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRICE, null);
                 return;
             }
 
             // Does the shop have a register ID set?
             if (this.RegisterID != -1 && !this.isAdminShop)
             {
-                ViconomyCore.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
+                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
             }
 
@@ -178,7 +178,7 @@ namespace Viconomy.BlockEntities
             BEVRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
             if (register == null && !this.isAdminShop)
             {
-                ViconomyCore.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
+                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
             }
 
@@ -216,7 +216,7 @@ namespace Viconomy.BlockEntities
             TradeResult result = TradingUtil.TryPurchaseItem(request);
             if (result.error != null)
             {
-                ViconomyCore.PrintClientMessage(player, result.error);
+                ViconomyCoreSystem.PrintClientMessage(player, result.error);
             }
         }
 

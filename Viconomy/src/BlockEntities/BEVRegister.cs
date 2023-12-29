@@ -44,7 +44,7 @@ namespace Viconomy.BlockEntities
 
         public void UpdateShop(string Owner, string OwnerName, int ID, string Name)
         {
-            ViconomyCore modSystem = this.Api.ModLoader.GetModSystem<ViconomyCore>();
+            ViconomyCoreSystem modSystem = this.Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
 
             if (this.Api.Side == EnumAppSide.Server)
             {
@@ -71,7 +71,7 @@ namespace Viconomy.BlockEntities
         public override void OnBlockBroken(IPlayer byPlayer = null)
         {
             base.OnBlockBroken(byPlayer);
-            ViconomyCore modSystem = this.Api.ModLoader.GetModSystem<ViconomyCore>();
+            ViconomyCoreSystem modSystem = this.Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
             modSystem.ShopRegistry.ClearShopPos(Owner, ID);
         }
 
@@ -159,7 +159,7 @@ namespace Viconomy.BlockEntities
         {
             if (this.Api.World is IServerWorldAccessor)
             {
-                ViconomyCore modSystem = Api.ModLoader.GetModSystem<ViconomyCore>();
+                ViconomyCoreSystem modSystem = Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
                 ShopRegistration register = modSystem.GetRegistry().GetShop(Owner, ID);
 
                 byte[] data;
@@ -233,7 +233,7 @@ namespace Viconomy.BlockEntities
                         {
                             if (!((ICoreServerAPI)Api).Server.IsDedicated)
                             {
-                                ViconomyCore.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
+                                ViconomyCoreSystem.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
                             }
                             else
                             {

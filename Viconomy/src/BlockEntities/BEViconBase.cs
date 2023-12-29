@@ -8,7 +8,7 @@ namespace Viconomy.BlockEntities
 {
     public abstract class BEViconBase : BlockEntityDisplay
     {
-        protected ViconomyCore modSystem;
+        protected ViconomyCoreSystem modSystem;
         protected Block block;
         public string Owner { get; protected set; }
         public string OwnerName { get; protected set; }
@@ -26,7 +26,7 @@ namespace Viconomy.BlockEntities
 
         public override void Initialize(ICoreAPI api)
         {
-            modSystem = api.ModLoader.GetModSystem<ViconomyCore>();
+            modSystem = api.ModLoader.GetModSystem<ViconomyCoreSystem>();
 
             this.block = api.World.BlockAccessor.GetBlock(this.Pos);
 
@@ -80,7 +80,7 @@ namespace Viconomy.BlockEntities
             TradeResult result = TradingUtil.TryPurchaseItem(request);
             if (result.error != null)
             {
-                ViconomyCore.PrintClientMessage(player, result.error);
+                ViconomyCoreSystem.PrintClientMessage(player, result.error);
             }
             else
             {
@@ -108,13 +108,13 @@ namespace Viconomy.BlockEntities
         {
             if (byPlayer.PlayerUID != this.Owner)
             {
-                ViconomyCore.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
+                ViconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
                 return;
             }
 
             if (!byPlayer.HasPrivilege("gamemode"))
             {
-                ViconomyCore.PrintClientMessage(byPlayer, TradingConstants.NO_PRIVLEGE, new object[] { });
+                ViconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.NO_PRIVLEGE, new object[] { });
                 return;
             }
 
@@ -147,7 +147,7 @@ namespace Viconomy.BlockEntities
         {
             if (byPlayer.PlayerUID != this.Owner)
             {
-                ViconomyCore.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
+                ViconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
                 return;
             }
 

@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Viconomy.BlockEntities;
-using Viconomy.Renderer;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
-namespace Viconomy.src.Renderer
+namespace Viconomy.Renderer
 {
     public class ClutterBlockRenderer : IItemRenderer
     {

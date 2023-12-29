@@ -27,7 +27,7 @@ namespace Viconomy.GUI
         {
             api = capi;
             stall = capi.World.BlockAccessor.GetBlockEntity<BEViconSculpturePad>(BlockEntityPosition);
-            ViconomyCore modSystem = capi.ModLoader.GetModSystem<ViconomyCore>();
+            ViconomyCoreSystem modSystem = capi.ModLoader.GetModSystem<ViconomyCoreSystem>();
             registers = modSystem.GetRegistry().GetShopsForOwner(stall.Owner);
             vinInv = Inventory as InventoryGeneric;
 
