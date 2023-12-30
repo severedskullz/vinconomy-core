@@ -73,7 +73,7 @@ namespace Viconomy
 
         private void OnRecieveLedgerRequestPacket(IServerPlayer player, LedgerEntryRequestPacket packet)
         {
-            Dictionary<string, LedgerEntry> sales = core.DB.LoadSales(packet.ShopId, packet.Month, packet.Year);
+            Dictionary<string, List<LedgerEntry>> sales = core.DB.LoadSales(packet.ShopId, packet.Month, packet.Year);
             _serverChannel.SendPacket(new LedgerEntryResponsePacket { entries = sales }, new IServerPlayer[] { player });
         }
 
@@ -82,12 +82,12 @@ namespace Viconomy
             LoadLedgerData(packet.entries);
         }
 
-        public void LoadLedgerData(Dictionary<string, LedgerEntry> data)
+        public void LoadLedgerData(Dictionary<string, List<LedgerEntry>> data)
         {
             OnLedgerData?.Invoke(data);
         }
         public event OnLedgerDataDelegate OnLedgerData;
-        public delegate void OnLedgerDataDelegate(Dictionary<string, LedgerEntry> data);
+        public delegate void OnLedgerDataDelegate(Dictionary<string, List<LedgerEntry>> data);
 
     }
 }

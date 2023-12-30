@@ -13,10 +13,11 @@ namespace Viconomy.Database
     public class ViconDatabase
     {
         private string ConnStr;
+        ICoreServerAPI api;
 
         public ViconDatabase(ICoreServerAPI api)
         {
-
+            this.api = api;
             string filePath = Path.Combine(GamePaths.DataPath, "ModData", api.World.SavegameIdentifier);
             string path = Path.Combine(filePath, "vinconomy.db");
 
@@ -165,7 +166,7 @@ namespace Viconomy.Database
             }
         }
 
-        public Dictionary<string, LedgerEntry> LoadSales(int shopId, int month, int year)
+        public Dictionary<string, List<LedgerEntry>> LoadSales(int shopId, int month, int year)
         {
             using (SqliteConnection connection = GetConnection())
             {
@@ -177,21 +178,40 @@ namespace Viconomy.Database
                 cmd.Parameters.Add("@Year", SqliteType.Integer).Value = year;
                 SqliteDataReader reader = cmd.ExecuteReader();
 
-                Dictionary<string, LedgerEntry> entries = new Dictionary<string, LedgerEntry>();
+                Dictionary<string, List<LedgerEntry>> entries = new Dictionary<string, List<LedgerEntry>>();
                 while (reader.Read())
                 {
                     //@ShopId, @Customer, @Month, @Year, @ProductCode, @ProductQuantity, @ProductAttributes, @CurrencyCode, @CurrencyQuantity, @CurrencyAttributes
                     LedgerEntry entry = new LedgerEntry();
-                    entry.Customer = reader.GetString(1);
+                    string uuid = reader.GetString(1);
+                    IServerPlayerData player = api.PlayerData.GetPlayerDataByUid(uuid);
+                    if (player != null )
+                    {
+                        entry.Customer = player.LastKnownPlayername;
+                    } else
+                    {
+                        entry.Customer = "Unknown Player";
+                    }
+                    
                     entry.ProductCode = reader.GetString(4);
                     entry.ProductQuantity = reader.GetInt32(5);
-                    entry.ProductAttributes = reader.GetString(6);
+                    if (!reader.IsDBNull(6)) {
+                        entry.ProductAttributes = reader.GetString(6);
+                    }
+                   
                     entry.CurrencyCode = reader.GetString(7);
                     entry.CurrencyQuantity = reader.GetInt32(8);
-                    entry.CurrencyAttributes = reader.GetString(9);
+                    if (!reader.IsDBNull(9))
+                    {
+                        entry.CurrencyAttributes = reader.GetString(9);
+                    }
 
-                    entries.Add(entry.Customer, entry);
-                   
+                    if (!entries.ContainsKey(entry.Customer))
+                    {
+                        entries.Add(entry.Customer, new List<LedgerEntry>());
+                    }
+                    entries[entry.Customer].Add(entry);
+
                 }
 
                 connection.Close();

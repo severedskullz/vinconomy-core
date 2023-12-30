@@ -8,7 +8,7 @@ namespace Viconomy.Network
     public class LedgerEntryResponsePacket
     {
         [ProtoMember(1)]
-        public Dictionary<string, LedgerEntry> entries;
+        public Dictionary<string, List<LedgerEntry>> entries;
     }
 
     [ProtoContract]

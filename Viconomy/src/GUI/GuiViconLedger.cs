@@ -1,14 +1,10 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using HarmonyLib;
 using System;
-using System.IO;
-using Viconomy.BlockEntities;
-using Viconomy.Inventory;
-using Viconomy.Util;
+using System.Collections.Generic;
+using Viconomy.Network;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Config;
-using Vintagestory.API.MathTools;
-using Vintagestory.API.Util;
+using Vintagestory.API.Common.Entities;
 
 namespace Viconomy.GUI
 {
@@ -34,9 +30,59 @@ namespace Viconomy.GUI
             Compose();
         }
 
-        private void ModSystem_OnLedgerData(System.Collections.Generic.Dictionary<string, Network.LedgerEntry> data)
+        private ItemStack ResolveBlockOrItem(string code, int size)
         {
-            textElem.SetNewText("Data has loaded!", CairoFont.WhiteSmallText());
+            AssetLocation location = new AssetLocation(code);
+            Item item = capi.World.GetItem(location);
+            if (item != null)
+            {
+                return new ItemStack(item, size);
+            }
+
+            Block block = capi.World.GetBlock(location);
+            if (block != null)
+            {
+                return new ItemStack(block, size);
+            }
+
+            return null;
+        }
+
+        private void ModSystem_OnLedgerData(Dictionary<string, List<LedgerEntry>> data)
+        {
+            CairoFont font = CairoFont.WhiteSmallText();
+            List<RichTextComponent> list = new List<RichTextComponent>();
+            try
+            {
+
+                if (data != null)
+                {
+                    foreach (var key in data.Keys)
+                    {
+                        list.Add(new RichTextComponent(capi, key + ":\r\n", font));
+                        foreach (var sale in data[key])
+                        {
+                            ItemStack product = ResolveBlockOrItem(sale.ProductCode, sale.ProductQuantity);
+                            ItemStack currency = ResolveBlockOrItem(sale.CurrencyCode, sale.CurrencyQuantity);
+
+                            list.Add(new RichTextComponent(capi, "\t" + product.GetName() + " x" + product.StackSize + " sold for " + currency.GetName() + " x" + currency.StackSize + "\r\n", font));
+                        }
+                        list.Add(new RichTextComponent(capi, "\r\n", font));
+                    }
+                    list.Add(new RichTextComponent(capi, "\r\n", font));
+                }
+                else
+                {
+                    list.Add(new RichTextComponent(capi, "There are no sales this month.", font));
+                }
+            } catch(Exception e) { }
+           
+            
+            
+
+
+            textElem.SetNewText(list.ToArray());
+            updateScrollbarBounds();
         }
 
         private void GuiViconLedger_OnClosed()
@@ -49,6 +95,9 @@ namespace Viconomy.GUI
 
             try
             {
+                int w = 500;
+                int h = 350;
+
                 ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);//.WithFixedAlignmentOffset(-GuiStyle.DialogToScreenPadding, 0.0);
 
 
@@ -67,12 +116,11 @@ namespace Viconomy.GUI
                 ElementBounds yearLabelBounds = ElementBounds.FixedSize(60, 25).FixedRightOf(monthSelectBounds).WithFixedOffset(10,10);
                 ElementBounds yearSelectionBounds = ElementBounds.FixedSize(75, 30).FixedRightOf(yearLabelBounds).WithFixedOffset(10,5);
 
-                ElementBounds buttonBounds = ElementBounds.FixedSize(90, 25).FixedRightOf(yearSelectionBounds).WithFixedOffset(15, 0);
+                ElementBounds buttonBounds = ElementBounds.FixedSize(90, 25).WithFixedOffset(w-65, 0);
 
 
 
-                int w = 380;
-                int h = 350;
+
                 ElementBounds textBounds = ElementBounds.Fixed(0, 0, w, h).FixedUnder(monthLabelBounds).WithFixedOffset(0,10);
                 clipBounds = textBounds.ForkBoundingParent(0.0, 0.0, 0.0, 0.0);
                 ElementBounds insetBounds = textBounds.FlatCopy().FixedGrow(3.0).WithFixedOffset(-2.0, -2.0);
@@ -188,12 +236,6 @@ namespace Viconomy.GUI
             if (year < 0)
                 year = 0;
             yearElem.SetValue(year);
-        }
-
-
-        private void SendInvPacket(object p)
-        {
-            //capi.Network.SendBlockEntityPacket(BlockEntityPosition.X, BlockEntityPosition.Y, BlockEntityPosition.Z, p);
         }
 
         private void OnTitleBarCloseClicked()
