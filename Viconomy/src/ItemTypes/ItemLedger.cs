@@ -4,8 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Viconomy.GUI;
+using Viconomy.Registry;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
+using Vintagestory.API.Server;
+using Vintagestory.GameContent;
 
 namespace Viconomy.ItemTypes
 {
@@ -17,15 +21,35 @@ namespace Viconomy.ItemTypes
            
             if (this.api.Side == EnumAppSide.Client)
             {
-                if (ledgerGUI == null || (ledgerGUI != null && !ledgerGUI.IsOpened()))
+
+                int shopID = slot.Itemstack.Attributes.GetInt("ShopId", -1);
+                if (shopID > 0)
                 {
-                    ledgerGUI = new GuiViconLedger("Ledger Name Here", (ICoreClientAPI)this.api);
-                    ledgerGUI.TryOpen();
-                } else
-                {
-                    ledgerGUI.TryClose();
-                    ledgerGUI = null;
+                    if (ledgerGUI == null || (ledgerGUI != null && !ledgerGUI.IsOpened()))
+                    {
+                        ViconomyCoreSystem modSys = api.ModLoader.GetModSystem<ViconomyCoreSystem>();
+
+                        string owner = slot.Itemstack.Attributes.GetString("Owner");
+                        ShopRegistration shop = modSys.GetRegistry().GetShop(owner, shopID);
+                        if (shop != null)
+                        {
+                            ledgerGUI = new GuiViconLedger(shop.Name, shopID, (ICoreClientAPI)this.api);
+                            ledgerGUI.TryOpen();
+                        } else
+                        {
+                            ((ICoreClientAPI)this.api).ShowChatMessage(Lang.Get("vinconomy:ledger-shop-not-found"));
+                        }
+                        
+                    }
+                    else
+                    {
+                        ledgerGUI.TryClose();
+                        ledgerGUI = null;
+                    }
+                } else {
+                    ((ICoreClientAPI)this.api).ShowChatMessage(Lang.Get("vinconomy:ledger-not-set"));
                 }
+               
             }
         }
     }

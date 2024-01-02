@@ -7,6 +7,7 @@ using Viconomy.Registry;
 using Viconomy.Trading;
 using Viconomy.Network;
 using System.Collections.Generic;
+using Microsoft.Win32;
 
 namespace Viconomy.Database
 {
@@ -265,6 +266,42 @@ namespace Viconomy.Database
                 cmd.Parameters.Add("@ID", SqliteType.Integer).Value = ID;
                 int numAffected = cmd.ExecuteNonQuery();
             }
+        }
+
+        public ShopRegistration GetShop(int ID)
+        {
+            using (SqliteConnection connection = GetConnection())
+            {
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+                cmd.CommandText = "SELECT * FROM Shops WHERE ID = @ID";
+
+                SqliteDataReader reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    ShopRegistration reg = new ShopRegistration();
+                    reg.ID = reader.GetInt32(0);
+                    reg.Name = reader.GetString(1);
+                    reg.Owner = reader.GetString(2);
+                    reg.OwnerName = reader.GetString(3);
+
+                    if (reader.IsDBNull(4))
+                    {
+                        reg.Position = null;
+                    }
+                    else
+                    {
+                        reg.X = reader.GetInt32(4);
+                        reg.Y = reader.GetInt32(5);
+                        reg.Z = reader.GetInt32(6);
+                    }
+
+
+                    return reg;
+                }
+            }
+            return null;
         }
     }
 }

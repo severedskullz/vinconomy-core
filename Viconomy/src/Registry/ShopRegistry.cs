@@ -35,7 +35,6 @@ namespace Viconomy.Registry
             }
         }
 
-
         public ShopRegistration GetShop(string owner, int registerID)
         {
             if ( registerID != -1 && owner != null && registers.ContainsKey(owner) && registers[owner].ContainsKey(registerID))

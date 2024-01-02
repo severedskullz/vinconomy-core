@@ -20,14 +20,15 @@ namespace Viconomy.GUI
         int year;
         int month;
 
-        public GuiViconLedger(string DialogTitle, ICoreClientAPI capi)
+        public GuiViconLedger(string DialogTitle, int shopID, ICoreClientAPI capi)
             : base(DialogTitle, capi)
         {
-            shopId = 1; // TODO: get from item.
+            shopId = shopID;
             modSystem = capi.ModLoader.GetModSystem<ViconomyLedgerSystem>();
             modSystem.OnLedgerData += ModSystem_OnLedgerData;
             this.OnClosed += GuiViconLedger_OnClosed;
             Compose();
+            ViewLedger();
         }
 
         private ItemStack ResolveBlockOrItem(string code, int size)

@@ -16,6 +16,11 @@
   "stall-open-menu": "Open Stall",
   "stall-purchase": "Purchase 1 item",
   "stall-purchase-bulk": "Purchase many items",
+  
+  "ledger-already-set" : "This ledger already recording sales for a shop",
+  "ledger-shop-not-found": "The Shop associated with this ledger no longer exists",
+  "ledger-not-set" : "This ledger is not set to any shop. Sneak-Right-Click a register to link it",
+  "ledger-set": "Ledger set to retrieve sales from {0}",
 
   "block-armorstand-*": "Shop Armor Stand",
   "block-helmetstand-*": "Shop Helmet Stand",
@@ -31,6 +36,7 @@
   "block-sculpturepad*": "Sculpture Stall",
 
   "item-sculpturebundle": "Sculpture Bundle",
+  "item-ledger": "Shop Ledger",
 
   "game:tabname-vinconomy": "Vinconomy",
 

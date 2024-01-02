@@ -136,10 +136,38 @@ namespace Viconomy.BlockEntities
 
         public bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
         {
+            bool shiftMod = byPlayer.Entity.Controls.Sneak;
 
-            if (byPlayer.PlayerUID == Owner)
+            ItemSlot handSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
+            if (shiftMod && handSlot.Itemstack?.Item?.Code.ToString() == "vinconomy:ledger")
             {
-               
+                if (Api.Side == EnumAppSide.Server)
+                {
+                    IServerPlayer player = ((IServerPlayer)byPlayer);
+                    if (player.PlayerUID == Owner)
+                    {
+                        if (handSlot.Itemstack.Attributes.GetInt("ShopId", -1) == -1)
+                        {
+                            handSlot.Itemstack.Attributes.SetInt("ShopId", ID);
+                            handSlot.Itemstack.Attributes.SetString("Owner", Owner);
+                            handSlot.MarkDirty();
+                            ViconomyCoreSystem modSystem = Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
+                            ShopRegistration shop = modSystem.GetRegistry().GetShop(Owner, ID);
+                            player.SendMessage(0, Lang.Get("vinconomy:ledger-set", new object[] { shop.Name }), EnumChatType.OwnMessage);
+                        }
+                        else
+                        {
+                            player.SendMessage(0, Lang.Get("vinconomy:ledger-already-set", new object[0]), EnumChatType.OwnMessage);
+                        }
+                    }
+                    else
+                    {
+                        player.SendMessage(0, Lang.Get("vinconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
+                    }
+                }
+            }
+            else if (byPlayer.PlayerUID == Owner)
+            {
                 // Open shop admin gui
                 OpenAdminForPlayer(byPlayer);
             }

@@ -1,5 +1,5 @@
 {
-  "code": "vicon-ledger",
+  "code": "ledger",
   "class": "ViconLedger",
   "maxstacksize": 1,
   "behaviors": [
