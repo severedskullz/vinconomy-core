@@ -31,7 +31,11 @@ namespace Viconomy.ItemTypes
 
                 if (byEntity.Controls.Sneak && byEntity.Controls.Sprint)
                 {
-                    //PlaceBundledItems(slot, player, blockSel);
+                    if (blockSel != null)
+                    {
+                        PlaceBundledItems(slot, player, blockSel);
+                    }
+                    
                 } else if (byEntity.Controls.Sneak) {
                     GiveBundledItems(slot, player);
 
@@ -40,7 +44,7 @@ namespace Viconomy.ItemTypes
             }
         }
 
-        private void PlaceBundledItems(ItemSlot slot, IPlayer player, BlockSelection blockSel)
+        private bool PlaceBundledItems(ItemSlot slot, IPlayer player, BlockSelection blockSel)
         {
             //BlockFacing[] horVer = Block.SuggestedHVOrientation(player, blockSel);
             //AssetLocation blockCode = this.block.CodeWithVariant(this.variantCode, horVer[0].Code);
@@ -61,16 +65,16 @@ namespace Viconomy.ItemTypes
             ItemStack[][][] matrix = new ItemStack[sizeY][][];
             for (int y = 0; y < sizeY; y++)
             {
-                matrix[y] = new ItemStack[sizeZ][];
-                for (int z = 0; z < sizeZ; z++)
+                matrix[y] = new ItemStack[sizeX][];
+                for (int x = 0; x < sizeX; x++)
                 {
-                    matrix[y][z] = new ItemStack[sizeX];
-                    for (int x = 0; x < sizeX; x++)
+                    matrix[y][x] = new ItemStack[sizeZ];
+                    for (int z = 0; z < sizeZ; z++)
                     {
-                        ItemStack blockStack = contents.GetItemstack(String.Format("{0}-{1}-{2}", x, y, z));
+                        ItemStack blockStack = contents.GetItemstack(String.Format("{0}-{1}-{2}", z, y, x));
                         if (blockStack != null)
                         {
-                            matrix[y][z][x] = blockStack;
+                            matrix[y][x][z] = blockStack;
                             blockStack.ResolveBlockOrItem(ent.World);
                         }
                     }
@@ -86,9 +90,11 @@ namespace Viconomy.ItemTypes
                 for (int i = 0; i < numRotations; i++)
                 {
                     VinUtils.Rotate(matrix[y]);
+                    
                 }
             }
 
+            
             // Check if we can place all the blocks.
             for (int y = 0; y < sizeY; y++)
             {
@@ -99,13 +105,13 @@ namespace Viconomy.ItemTypes
                         ItemStack blockStack = matrix[y][z][x];
                         if (blockStack != null)
                         {
-                            BlockPos newPos = new BlockPos(x + (int)pos.X, y + (int)pos.Y, z + (int)pos.Z, 0);
+                            BlockPos newPos = new BlockPos(x + (int)pos.X - (sizeX / 2), y + (int)pos.Y, z + (int)pos.Z - (sizeZ / 2), 0);
                             //Block worldBlock = ent.World.BlockAccessor.GetBlock(pos.X, pos.X, pos.X);
                             BlockSelection targetPos = new BlockSelection(newPos, blockSel.Face, blockSel.Block);
                             bool result = blockStack.Block.CanPlaceBlock(player.Entity.World, player, targetPos, ref failureCode);
                             if (!result)
                             {
-
+                                return false;
                             }
                         }
 
@@ -123,18 +129,40 @@ namespace Viconomy.ItemTypes
                         ItemStack blockStack = matrix[y][z][x];
                         if (blockStack != null)
                         {
-                            BlockPos newPos = new BlockPos(x + (int)pos.X, y + (int)pos.Y, z + (int)pos.Z, 0);
+                            BlockPos newPos = new BlockPos(x + (int)pos.X - (sizeX/2), y + (int)pos.Y, z + (int)pos.Z - (sizeZ/2), 0);
                             //Block worldBlock = ent.World.BlockAccessor.GetBlock(pos.X, pos.X, pos.X);
                             BlockSelection targetPos = new BlockSelection(newPos, blockSel.Face, blockSel.Block);
-                            bool result = blockStack.Block.TryPlaceBlock(player.Entity.World, player, blockStack, targetPos, ref failureCode);
+
+
+                            //TODO: This doesnt seem to be working even though it came from BlockBehaviourHorizontalOrientation
+                            Block block = blockStack.Block;
+                            AssetLocation blockCode = block.CodeWithVariant("horizontalorientation", facing[0].Code);
+                            Block orientedBlock = api.World.BlockAccessor.GetBlock(blockCode);
+                            if (orientedBlock != null)
+                            {
+                                block = orientedBlock;
+                            }
+
+
+                            bool result = block.TryPlaceBlock(api.World, player, blockStack, targetPos, ref failureCode);
                             if (!result)
                             {
-                                player.Entity.Api.Logger.Error("Error placing block at " + x + " " + y + " " + z + ": " + failureCode);
+                                api.Logger.Error("Error placing block at " + x + " " + y + " " + z + ": " + failureCode);
                                 player.InventoryManager.TryGiveItemstack(blockStack, true);
                                 if (blockStack.StackSize > 0)
                                 {
                                     //Console.WriteLine("Should have spawned item for " + String.Format("{0}-{1}-{2}", x, y, z));
                                     ent.World.SpawnItemEntity(blockStack, ent.SidedPos.XYZ.Add(0.0f, 0.5f, 0.0f), null);
+                                }
+                            } else
+                            {
+                                if (block is BlockChisel)
+                                {
+                                    BlockEntityMicroBlock be = api.World.BlockAccessor.GetBlockEntity<BlockEntityMicroBlock>(newPos);
+                                    if (be != null)
+                                    {
+                                        be.RotateModel(facing[0].Index * 90, EnumAxis.Z);
+                                    }
                                 }
                             }
                         }
@@ -142,7 +170,8 @@ namespace Viconomy.ItemTypes
                     }
                 }
             }
-            //slot.TakeOut(1);
+            slot.TakeOut(1);
+            return true;
         }
 
         private void GiveBundledItems(ItemSlot slot, IPlayer player)

@@ -1,21 +1,8 @@
-﻿using System;
-using Viconomy.BlockEntities;
-using Viconomy.BlockTypes;
-using Viconomy.Network;
-using Viconomy.Registry;
-using Viconomy.Config;
+﻿using Viconomy.Network;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Config;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
-using Viconomy.Delegates;
 using System.Collections.Generic;
-using Viconomy.Renderer;
-using Viconomy.ItemTypes;
-using Cairo;
-using Viconomy.Database;
-using Viconomy.Trading;
 
 namespace Viconomy
 {
@@ -24,11 +11,9 @@ namespace Viconomy
     public class ViconomyLedgerSystem : ModSystem
     {
         //Client Variables
-        private ICoreClientAPI _coreClientAPI;
         private IClientNetworkChannel _clientChannel;
 
         //Server Variables
-        private ICoreServerAPI _coreServerAPI;
         private IServerNetworkChannel _serverChannel;
 
         //Shared Variables
@@ -48,7 +33,6 @@ namespace Viconomy
 
         public override void StartServerSide(ICoreServerAPI api)
         {
-            _coreServerAPI = api;
             _serverChannel = api.Network.GetChannel("Vinconomy");
             _serverChannel.RegisterMessageType(typeof(LedgerEntryRequestPacket))
                 .RegisterMessageType(typeof(LedgerEntryResponsePacket));
@@ -59,7 +43,6 @@ namespace Viconomy
 
         public override void StartClientSide(ICoreClientAPI api)
         {
-            _coreClientAPI = api;
             _clientChannel = api.Network.GetChannel("Vinconomy");
             _clientChannel.RegisterMessageType(typeof(LedgerEntryRequestPacket))
                 .RegisterMessageType(typeof(LedgerEntryResponsePacket));

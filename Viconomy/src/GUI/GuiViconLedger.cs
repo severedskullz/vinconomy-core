@@ -77,10 +77,6 @@ namespace Viconomy.GUI
                 }
             } catch(Exception e) { }
            
-            
-            
-
-
             textElem.SetNewText(list.ToArray());
             updateScrollbarBounds();
         }

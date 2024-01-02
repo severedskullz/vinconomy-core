@@ -1,12 +1,4 @@
-﻿using Cairo;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using Vintagestory.API.Common;
+﻿using Vintagestory.API.Common;
 
 namespace Viconomy.src.Util
 {
@@ -38,26 +30,25 @@ namespace Viconomy.src.Util
         public static void Rotate(ItemStack[][] slots)
         {
             int size = slots.Length;
-            int layerCount = (int)Math.Ceiling(size / 2.0f);
 
-            for (int i = 0; i < layerCount; i++)
+            int n = slots.Length;
+            for (int i = 0; i < n / 2; i++)
             {
-                int first = i;
-                int last = size - first - 1;
-
-                for (int element = first; element < last; element++)
+                for (int j = i; j < n - i - 1; j++)
                 {
-                    int offset = element - first;
+                    /*
+                    ItemStack tmp = slots[i][j];
+                    slots[i][j] = slots[j][n - i - 1];
+                    slots[j][n - i - 1] = slots[n - i - 1][n - j - 1];
+                    slots[n - i - 1][n - j - 1] = slots[n - j - 1][i];
+                    slots[n - j - 1][i] = tmp;
+                    */
 
-                    ItemStack top = slots[first][element];
-                    ItemStack right = slots[element][last];
-                    ItemStack bottom = slots[element][last - offset];
-                    ItemStack left = slots[last - offset][first];
-
-                    slots[first][element] = left;
-                    slots[element][last] = top;
-                    slots[last][last - offset] = right;
-                    slots[last - offset][first] = bottom;
+                    ItemStack tmp = slots[i][j];
+                    slots[i][j] = slots[n - 1 - j][i];
+                    slots[n - 1 - j][i] = slots[n - 1 - i][n - 1 - j];
+                    slots[n - 1 - i][n - 1 - j] = slots[j][n - 1 - i];
+                    slots[j][n - 1 - i] = tmp;
                 }
             }
         }
