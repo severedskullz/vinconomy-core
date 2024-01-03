@@ -16,6 +16,8 @@ using Viconomy.ItemTypes;
 using Cairo;
 using Viconomy.Database;
 using Viconomy.Trading;
+using Vintagestory.GameContent;
+using Viconomy.Map;
 
 namespace Viconomy
 {
@@ -170,6 +172,8 @@ namespace Viconomy
 
             _coreClientAPI.Event.OnTestBlockAccess += TestAccess;
             OnTestAccess += AllowStallUse;
+
+            api.ModLoader.GetModSystem<WorldMapManager>().RegisterMapLayer<ShopMapLayer>("vinconomyShop", 20);
         }
 
         private void BeginRendererRegistration()
@@ -245,6 +249,17 @@ namespace Viconomy
            };
         }
 
+        private void RegisterWorldMapIcon(String key)
+        {
+            _coreClientAPI.Gui.Icons.CustomIcons["wp" + key] = delegate (Context ctx, int x, int y, float w, float h, double[] rgba)
+            {
+                AssetLocation loc = new AssetLocation("vinconomy:textures/icons/worldmap/" + key + ".svg");
+                IAsset asset = _coreClientAPI.Assets.TryGet(loc, true);
+                int color = ColorUtil.ColorFromRgba(175, 200, 175, 125);
+                _coreClientAPI.Gui.DrawSvg(asset, ctx.GetTarget() as ImageSurface, x, y, (int)w, (int)h, color);
+            };
+        }
+
         public RayTraceResults DoPlayerRaytrace(IClientPlayer player)
         {
             BlockSelection blockSelection = null;
@@ -266,7 +281,7 @@ namespace Viconomy
                 foreach (RegistryUpdate item in packet.registry)
                 {
                     //TODO: Figure out how to get local player.
-                    this.ShopRegistry.AddShop(new ShopRegistration() { Name = item.Name, ID = item.ID , Owner = item.Owner});
+                    this.ShopRegistry.AddShop(new ShopRegistration(item));
                 }
             }            
         }
@@ -305,62 +320,22 @@ namespace Viconomy
 
             this._coreServerAPI.Logger.Debug("| Loaded " + ShopRegistry.GetCount() + " Shops");
 
-            foreach (string ownerId in ShopRegistry.registers.Keys)
+            foreach (string ownerId in ShopRegistry.GetAllShopOwners())
             {
-                var shops = ShopRegistry.registers[ownerId];
-                this._coreServerAPI.Logger.Debug("|  Loaded " + shops.Values.Count + " Shops for Owner: " + ownerId);
-                foreach (int shopId in shops.Keys)
+                var shops = ShopRegistry.GetShopsForOwner(ownerId);
+                this._coreServerAPI.Logger.Debug("|  Loaded " + shops.Length + " Shops for Owner: " + ownerId);
+                foreach (ShopRegistration shop in shops)
                 {
-                    var shop = ShopRegistry.registers[ownerId][shopId];
                     this._coreServerAPI.Logger.Debug("|   Loading Shop " + shop.Name);
 
                     if (shop.Position == null)
                     {
-                        ShopRegistry.registers[ownerId].Remove(shopId);
+                        ShopRegistry.GetShopsForOwner(ownerId);
                         this._coreServerAPI.Logger.Debug("|     Shop " + shop.Name + " (" + shop.ID + ") does not exist anymore. Removing...");
                     }
                 }
             }
 
-            this._coreServerAPI.Logger.Debug("=============== Loaded Viconomy ================");
-        }
-
-        private void OnSaveGameLoadingOLD()
-        {
-            this._coreServerAPI.Logger.Debug("=============== Loading Viconomy ===============");
-            ShopRegistry = _coreServerAPI.WorldManager.SaveGame.GetData("vinconomy:registers", new ShopRegistry(DB));
-
-            if (ShopRegistry != null)
-            {
-                this._coreServerAPI.Logger.Debug("= Loaded " + ShopRegistry.GetCount() + " registers");
-
-                foreach (string ownerId in ShopRegistry.registers.Keys)
-                {
-                    var shops = ShopRegistry.registers[ownerId];
-
-                    //Shops can be null if they didnt have any registers place and we deserialized the Dictionary with nothing in it.
-                    if (shops == null) continue;
-
-                    this._coreServerAPI.Logger.Debug("== Loading " + shops.Values.Count + " registers for Owner: " + ownerId);
-                    foreach (int shopId in shops.Keys)
-                    {
-                        var shop = ShopRegistry.registers[ownerId][shopId];
-                        this._coreServerAPI.Logger.Debug("=== Loading shop " + shop.Name);
-
-                        if (shop.Position == null)
-                        {
-                            ShopRegistry.registers[ownerId].Remove(shopId);
-                            this._coreServerAPI.Logger.Debug("==== Shop " + shop.Name + " (" + shop.ID + ") does not exist anymore. Removing...");
-                        }
-                    }
-                }
-            } else
-            {
-                this._coreServerAPI.Logger.Debug("= Could not load Viconomy savegame data. Recreating Shop Registry. Shops will need to be remade and reinitialized");
-                ShopRegistry = new ShopRegistry(DB);
-            }
-           
-           
             this._coreServerAPI.Logger.Debug("=============== Loaded Viconomy ================");
         }
 
@@ -379,7 +354,7 @@ namespace Viconomy
 
                 for (int i = 0; i < shops.Length; i++)
                 {
-                    updates[i] = new RegistryUpdate(shops[i].Owner, shops[i].ID, shops[i].Name);
+                    updates[i] = new RegistryUpdate(shops[i]);
                 }
             }
             

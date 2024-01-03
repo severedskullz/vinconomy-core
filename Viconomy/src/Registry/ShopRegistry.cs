@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Viconomy.BlockEntities;
 using Viconomy.Database;
 using Vintagestory.API.MathTools;
+using Vintagestory.Server;
 
 namespace Viconomy.Registry
 {
@@ -11,43 +11,65 @@ namespace Viconomy.Registry
     {
         //TODO: Better checks / seperation for DB commits
         private ViconDatabase db;
-        internal Dictionary<string, Dictionary<int, ShopRegistration>> registers = new Dictionary<string, Dictionary<int, ShopRegistration>>();
+        private Dictionary<string, Dictionary<int, ShopRegistration>> shopsByOwner = new Dictionary<string, Dictionary<int, ShopRegistration>>();
+        private Dictionary<int, ShopRegistration> shops = new Dictionary<int, ShopRegistration>();
 
         public ShopRegistry(ViconDatabase db) { 
             this.db = db;
         }
 
+        public string[] GetAllShopOwners()
+        {
+            return shopsByOwner.Keys.ToArray();
+        }
+
+        public ShopRegistration[] GetAllShops()
+        {
+            return shops.Values.ToArray();
+        }
+
 
         public void ClearShop(string owner, int registerID)
         {
-            if (registers.ContainsKey(owner))
+            if (shopsByOwner.ContainsKey(owner))
             {
-                registers[owner].Remove(registerID);
+                shopsByOwner[owner].Remove(registerID);
+                shops.Remove(registerID);
                 if (db != null) db.DeleteShop(registerID);
             }
         }
         public void ClearShopPos(string owner, int id)
         {
-            if (registers.ContainsKey(owner) && registers[owner].ContainsKey(id))
+            if (shopsByOwner.ContainsKey(owner) && shopsByOwner[owner].ContainsKey(id))
             {
-                registers[owner][id].Position = null;
-                if (db != null) db.UpdateShop(registers[owner][id]);
+                shopsByOwner[owner][id].Position = null;
+                if (db != null) db.UpdateShop(shopsByOwner[owner][id]);
             }
         }
 
         public ShopRegistration GetShop(string owner, int registerID)
         {
-            if ( registerID != -1 && owner != null && registers.ContainsKey(owner) && registers[owner].ContainsKey(registerID))
+            if ( registerID != -1 && owner != null && shopsByOwner.ContainsKey(owner) && shopsByOwner[owner].ContainsKey(registerID))
             {
-                return registers[owner][registerID];
+                return shopsByOwner[owner][registerID];
             }
             return null; 
         }
+
+        public ShopRegistration GetShop(int registerID)
+        {
+            if (shops.ContainsKey(registerID))
+            {
+                return shops[registerID];
+            }
+            return null;
+        }
+
         public ShopRegistration[] GetShopsForOwner(string owner)
         {
-            if (registers.ContainsKey(owner) && registers[owner] != null)
+            if (shopsByOwner.ContainsKey(owner) && shopsByOwner[owner] != null)
             {
-                return registers[owner].Values.ToArray<ShopRegistration>();
+                return shopsByOwner[owner].Values.ToArray<ShopRegistration>();
             }
             return new ShopRegistration[0];
         }
@@ -55,10 +77,10 @@ namespace Viconomy.Registry
         public ShopRegistration UpdateShop(string owner, int id, string name, BlockPos pos)
         {
             ShopRegistration register = null;
-            if (registers.ContainsKey(owner) && registers[owner].ContainsKey(id))
+            if (shopsByOwner.ContainsKey(owner) && shopsByOwner[owner].ContainsKey(id))
             {
                 Console.WriteLine("Updating existing Register with ID " + id);
-                register = registers[owner][id];
+                register = shopsByOwner[owner][id];
                 if (name != null)
                     register.Name = name;
                 register.Position = pos;
@@ -94,19 +116,20 @@ namespace Viconomy.Registry
 
         public void AddShop(ShopRegistration register)
         {
-            if (!registers.ContainsKey(register.Owner) || registers[register.Owner] == null)
+            if (!shopsByOwner.ContainsKey(register.Owner) || shopsByOwner[register.Owner] == null)
             {
-                registers[register.Owner] = new Dictionary<int, ShopRegistration>();
+                shopsByOwner[register.Owner] = new Dictionary<int, ShopRegistration>();
             }
 
-            registers[register.Owner][register.ID] = register;
+            shopsByOwner[register.Owner][register.ID] = register;
+            shops[register.ID] = register;
             Console.WriteLine("Added Register with ID " + register.ID + " and owner " + register.Owner);
         }
 
         public int GetCount()
         {
             int i = 0;
-            foreach (Dictionary<int, ShopRegistration> item in registers.Values)
+            foreach (Dictionary<int, ShopRegistration> item in shopsByOwner.Values)
             {
                 if (item == null) 
                     continue;
