@@ -1,13 +1,10 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using Viconomy.Inventory;
 using Viconomy.Registry;
 using Viconomy.src.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
-using Vintagestory.GameContent;
 
 namespace Viconomy.Trading
 {
@@ -46,6 +43,11 @@ namespace Viconomy.Trading
 
                     if (productLeft <= 0) break;
                 }
+
+                if (productLeft > 0)
+                {
+                    //IDK Do something as an error?
+                }
             }
            
 
@@ -72,7 +74,6 @@ namespace Viconomy.Trading
             // Add the payment to the register
             if (purchaseResult.shopRegister != null)
             {
-                purchaseResult.shopRegister.PurchasedItem(purchaseResult.customer, purchaseResult.sellingEntity, productStackClone, paymentStack);
                 purchaseResult.shopRegister.AddItem(paymentStack, paymentStack.StackSize);
             }
 
@@ -262,6 +263,15 @@ namespace Viconomy.Trading
             }
             // Set the slots applicable for payment, override the amount we are trying to purhcase, and set it on the result too
             request.numPurchases = Math.Min(request.numPurchases, totalCurrency / currencyRequired);
+            int totalStock = 0;
+            foreach (ItemSlot slot in request.productSourceSlots)
+            {
+                if (slot.Itemstack != null)
+                {
+                    totalStock += slot.Itemstack.StackSize;
+                }
+            }
+            request.numPurchases = Math.Min(request.numPurchases, totalStock / request.productNeeded.StackSize);
             if (populatePurchaseResult)
             {
                 purchaseResult.currencySourceSlots = validCurrency;

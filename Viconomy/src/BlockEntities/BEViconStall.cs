@@ -130,7 +130,7 @@ namespace Viconomy.BlockEntities
             } 
             
             // Does the shop have a register ID set?
-            if (this.RegisterID != -1 && !this.isAdminShop)
+            if (this.RegisterID == -1 && !this.isAdminShop)
             {
                 ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;

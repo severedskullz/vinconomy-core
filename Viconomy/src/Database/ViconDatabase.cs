@@ -94,11 +94,7 @@ namespace Viconomy.Database
                     cmd.Parameters.Add("@WaypointColor", SqliteType.Integer).Value = shop.WaypointColor;
                 }
 
-
-
-
-                int lastId = Convert.ToInt32(cmd.ExecuteScalar());
-                shop.ID = lastId;
+                cmd.ExecuteNonQuery();
             }
             return shop;
         }
@@ -109,7 +105,7 @@ namespace Viconomy.Database
             {
                 connection.Open();
                 SqliteCommand cmd = connection.CreateCommand();
-                cmd.CommandText = "INSERT INTO Shops VALUES (NULL, @Name, @Owner, @OwnerName, @X, @Y, @Z); SELECT last_insert_rowid();";
+                cmd.CommandText = "INSERT INTO Shops VALUES (NULL, @Name, @Owner, @OwnerName, @X, @Y, @Z, false, NULL, NULL); SELECT last_insert_rowid();";
                 cmd.Parameters.Add("@Name", SqliteType.Text).Value = shop.Name;
                 cmd.Parameters.Add("@Owner", SqliteType.Text).Value = shop.Owner;
                 cmd.Parameters.Add("@OwnerName", SqliteType.Text).Value = shop.OwnerName;

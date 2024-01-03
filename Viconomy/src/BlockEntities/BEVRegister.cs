@@ -356,59 +356,6 @@ namespace Viconomy.BlockEntities
             //Console.WriteLine(Api.Side + ": Attempted to close GUI");
         }
 
-        /***
-         *  Records the purchase of an item. 
-         */
-        public void PurchasedItem(IPlayer player, BEViconBase stall, ItemStack productClone, ItemStack payment)
-        {
-            OnRecordPurchase?.Invoke(player, stall, productClone, payment);
-            RecordPurchase(player, productClone, payment);
-        }
-        public event OnRecordPurchaseDelegate OnRecordPurchase;
-
-
-        private void RecordPurchase(IPlayer player, ItemStack product, ItemStack payment)
-        {
-            EnumMonth month = this.Api.World.Calendar.MonthName;
-            int year = this.Api.World.Calendar.Year;
-
-            foreach (ItemSlot slot in this.inventory) { 
-                if (slot.Itemstack?.Collectible is ItemLedger)
-                {
-                    ITreeAttribute attr = slot.Itemstack.Attributes;
-                    //TODO: Convert to SQL. This is going to be a lot of data, fast.
-
-                    //I dont know if Attributes is ever null... Oh well
-                    if (attr == null)
-                    {
-                        attr = new TreeAttribute();
-                        slot.Itemstack.Attributes = attr;
-                    }
-
-                    ITreeAttribute itYear = attr.GetOrAddTreeAttribute("Year-" + year);
-                    ITreeAttribute itMonth = itYear.GetOrAddTreeAttribute("Month-" + month);
-                    ITreeAttribute itProduct = itMonth.GetOrAddTreeAttribute(product.Collectible.Code.Path);
-
-
-
-                    ITreeAttribute itProfits = itMonth.GetOrAddTreeAttribute("Profits");
-                    ITreeAttribute itCustomers = itProduct.GetOrAddTreeAttribute("Customers");
-
-                    int numSales = itProduct.GetInt("Sales", 0) +1;
-                    itProduct.SetInt("Sales", numSales);
-
-                    ITreeAttribute sale = itProduct.GetOrAddTreeAttribute("Sale-" + numSales);
-
-                    sale.SetString("Customer", player.PlayerUID);
-                    sale.SetString("Product" , product.GetName());
-                    sale.SetInt("ProductAmt", product.StackSize);
-                    sale.SetString("Payment", payment.GetName());
-                    sale.SetInt("PaymentAmt", payment.StackSize);
-
-                    return;
-                }
-            }
-        }
     }
 
 }

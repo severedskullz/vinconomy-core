@@ -12,7 +12,7 @@ namespace Viconomy.BlockEntities
         protected Block block;
         public string Owner { get; protected set; }
         public string OwnerName { get; protected set; }
-        public int RegisterID { get; protected set; }
+        public int RegisterID { get; protected set; } = -1;
         public bool isAdminShop { get; protected set; }
 
         public override string InventoryClassName { get { return "VinconomyInventory"; } }

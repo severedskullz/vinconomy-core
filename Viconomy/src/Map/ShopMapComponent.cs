@@ -30,6 +30,10 @@ namespace Viconomy.Map
 
         public override void Render(GuiElementMap map, float dt)
         {
+            if (waypoint == null || !waypoint.IsWaypointBroadcasted) {
+                return;
+            }
+
             Vec3d pos = new Vec3d(this.waypoint.X, this.waypoint.Y, this.waypoint.Z);
             map.TranslateWorldPosToViewPos(pos, ref this.viewPos);
              if (this.viewPos.X < -10f || this.viewPos.Y < -10f || (double)this.viewPos.X > map.Bounds.OuterWidth + 10.0 || (double)this.viewPos.Y > map.Bounds.OuterHeight + 10.0)
