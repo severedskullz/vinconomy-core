@@ -4,6 +4,7 @@ using Viconomy.Delegates;
 using Viconomy.GUI;
 using Viconomy.ItemTypes;
 using Viconomy.Registry;
+using Viconomy.src.GUI;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -20,6 +21,8 @@ namespace Viconomy.BlockEntities
         private BlockVRegister block;
         private InventoryGeneric inventory;
         private GuiViconRegister invDialog;
+        private GuiViconWaypoint waypointDialogue;
+        private ViconomyCoreSystem modSystem;
 
         public int ID { get; internal set; } = -1;
         public string Owner { get; internal set; }
@@ -36,17 +39,17 @@ namespace Viconomy.BlockEntities
 
         public override void Initialize(ICoreAPI api)
         {
-            this.block = (BlockVRegister)api.World.BlockAccessor.GetBlock(this.Pos);
+            base.Initialize(api);
 
-            base.Initialize(api);          
-                       
+            block = (BlockVRegister)api.World.BlockAccessor.GetBlock(this.Pos);
+            modSystem = Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
+
+
         }
 
         public void UpdateShop(string Owner, string OwnerName, int ID, string Name)
-        {
-            ViconomyCoreSystem modSystem = this.Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
-
-            if (this.Api.Side == EnumAppSide.Server)
+        {          
+            if (Api.Side == EnumAppSide.Server)
             {
                 if (ID == -1)
                 {
@@ -71,8 +74,7 @@ namespace Viconomy.BlockEntities
         public override void OnBlockBroken(IPlayer byPlayer = null)
         {
             base.OnBlockBroken(byPlayer);
-            ViconomyCoreSystem modSystem = this.Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
-            modSystem.ShopRegistry.ClearShopPos(Owner, ID);
+            modSystem.GetRegistry().ClearShopPos(ID);
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
@@ -152,7 +154,7 @@ namespace Viconomy.BlockEntities
                             handSlot.Itemstack.Attributes.SetString("Owner", Owner);
                             handSlot.MarkDirty();
                             ViconomyCoreSystem modSystem = Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
-                            ShopRegistration shop = modSystem.GetRegistry().GetShop(Owner, ID);
+                            ShopRegistration shop = modSystem.GetRegistry().GetShop(ID);
                             player.SendMessage(0, Lang.Get("vinconomy:ledger-set", new object[] { shop.Name }), EnumChatType.OwnMessage);
                         }
                         else
@@ -187,8 +189,7 @@ namespace Viconomy.BlockEntities
         {
             if (this.Api.World is IServerWorldAccessor)
             {
-                ViconomyCoreSystem modSystem = Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
-                ShopRegistration register = modSystem.GetRegistry().GetShop(Owner, ID);
+                ShopRegistration register = modSystem.GetRegistry().GetShop(ID);
 
                 byte[] data;
                 using (MemoryStream ms = new MemoryStream())
@@ -240,10 +241,11 @@ namespace Viconomy.BlockEntities
                 case VinConstants.SET_SHOP_NAME:
                     using (MemoryStream ms = new MemoryStream(data))
                     {
-                        BinaryReader reader = new BinaryReader(ms);
-                        string Name = reader.ReadString();
+
                         if (player.PlayerUID == Owner)
                         {
+                            BinaryReader reader = new BinaryReader(ms);
+                            string Name = reader.ReadString();
                             UpdateShop(Owner, OwnerName, ID, Name);
                         }
                         else
@@ -251,8 +253,24 @@ namespace Viconomy.BlockEntities
                             ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
                         }
                     }
+                    break;
+                case VinConstants.SET_WAYPOINT:
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
 
-                    
+                        if (player.PlayerUID == Owner)
+                        {
+                            BinaryReader reader = new BinaryReader(ms);
+                            bool enabled = reader.ReadBoolean();
+                            string icon = reader.ReadString();
+                            int color = reader.ReadInt32();
+                            modSystem.UpdateShopWaypoint(ID, enabled, icon, color);
+                        }
+                        else
+                        {
+                            ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
+                        }
+                    }
                     break;
                 default:
                     if (packetid < 1000)
@@ -322,6 +340,7 @@ namespace Viconomy.BlockEntities
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
             this.invDialog = new GuiViconRegister(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
+            this.waypointDialogue = new GuiViconWaypoint("Waypoint", this.Pos, this.ID, this.Api as ICoreClientAPI);
             //this.invDialog.OpenSound = this.OpenSound;
             //this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();
@@ -331,6 +350,7 @@ namespace Viconomy.BlockEntities
 
                 ((ClientCoreAPI) Api).Network.SendBlockEntityPacket(this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.CLOSE_GUI, null);
             };
+            this.waypointDialogue.TryOpen();
             //Console.WriteLine(Api.Side + ": Attempted to open Shop GUI");
         }
 

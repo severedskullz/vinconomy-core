@@ -124,7 +124,7 @@ namespace Viconomy.GUI
             //IconUtil.DrawArrowRight
             try
             {
-                SingleComposer = capi.Gui.CreateCompo("myAwesomeDialog", dialogBounds);
+                SingleComposer = capi.Gui.CreateCompo("ViconTeller", dialogBounds);
                 GuiComposer sc = SingleComposer;
                 sc.AddShadedDialogBG(bgBounds)
                     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);

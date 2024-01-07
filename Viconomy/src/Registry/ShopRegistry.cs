@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Viconomy.Database;
+using Viconomy.Network;
 using Vintagestory.API.MathTools;
 using Vintagestory.Server;
 
@@ -23,42 +25,38 @@ namespace Viconomy.Registry
             return shopsByOwner.Keys.ToArray();
         }
 
-        public ShopRegistration[] GetAllShops()
+        public List<ShopRegistration> GetAllShops()
         {
-            return shops.Values.ToArray();
+            return shops.Values.ToList();
         }
 
 
-        public void ClearShop(string owner, int registerID)
+        public void ClearShop(int registerID)
         {
-            if (shopsByOwner.ContainsKey(owner))
+            if (shops.ContainsKey(registerID))
             {
-                shopsByOwner[owner].Remove(registerID);
+                ShopRegistration shop = GetShop(registerID);
+                shopsByOwner[shop.Owner].Remove(registerID);
                 shops.Remove(registerID);
                 if (db != null) db.DeleteShop(registerID);
             }
         }
-        public void ClearShopPos(string owner, int id)
+        public void ClearShopPos(int id)
         {
-            if (shopsByOwner.ContainsKey(owner) && shopsByOwner[owner].ContainsKey(id))
+            ShopRegistration shop = GetShop(id);
+            if (shop != null)
             {
-                shopsByOwner[owner][id].Position = null;
-                if (db != null) db.UpdateShop(shopsByOwner[owner][id]);
+                shop.Position = null;
+                shop.IsWaypointBroadcasted = false;
+                shop.WaypointColor = 0;
+                shop.WaypointIcon = null;
+                if (db != null) db.UpdateShop(shop);
             }
-        }
-
-        public ShopRegistration GetShop(string owner, int registerID)
-        {
-            if ( registerID != -1 && owner != null && shopsByOwner.ContainsKey(owner) && shopsByOwner[owner].ContainsKey(registerID))
-            {
-                return shopsByOwner[owner][registerID];
-            }
-            return null; 
         }
 
         public ShopRegistration GetShop(int registerID)
         {
-            if (shops.ContainsKey(registerID))
+            if (registerID > 0 && shops.ContainsKey(registerID))
             {
                 return shops[registerID];
             }
@@ -74,25 +72,7 @@ namespace Viconomy.Registry
             return new ShopRegistration[0];
         }
 
-        public ShopRegistration UpdateShop(string owner, int id, string name, BlockPos pos)
-        {
-            ShopRegistration register = null;
-            if (shopsByOwner.ContainsKey(owner) && shopsByOwner[owner].ContainsKey(id))
-            {
-                Console.WriteLine("Updating existing Register with ID " + id);
-                register = shopsByOwner[owner][id];
-                if (name != null)
-                    register.Name = name;
-                register.Position = pos;
 
-                if (db != null) db.UpdateShop(register);
-            } else
-            {
-                throw new ArgumentException("Tried to update a non-existant shop");
-            }
-            return register;
-            
-        }
 
         public ShopRegistration AddShop(string owner, string ownerName, string name, BlockPos pos)
         {
@@ -140,6 +120,63 @@ namespace Viconomy.Registry
             return i;
         }
 
+        public ShopRegistration UpdateShop(int id, string name, BlockPos pos)
+        {
+            ShopRegistration register = GetShop(id);
+            if (register != null)
+            {
+                Console.WriteLine("Updating existing Register with ID " + id);
+                if (name != null)
+                    register.Name = name;
+                register.Position = pos;
 
+                if (db != null) db.UpdateShop(register);
+            }
+            else
+            {
+                throw new ArgumentException("Tried to update a non-existant shop");
+            }
+            return register;
+
+        }
+
+        public void UpdateShopWaypoint(int ID, bool enabled, string icon = null, int color = 0)
+        {
+            ShopRegistration shop = GetShop(ID);
+            if (shop != null)
+            {
+                shop.IsWaypointBroadcasted = enabled;
+                shop.WaypointIcon = icon;
+                shop.WaypointColor = color;
+                if (db != null) db.UpdateShop(shop);
+
+            }
+
+        }
+
+        public void UpdateShopFromServer(ShopUpdatePacket packet)
+        {
+            ShopRegistration reg = GetShop(packet.ID);
+            if (reg == null)
+            {
+                reg = new ShopRegistration();
+                reg.ID = packet.ID;
+                shops[packet.ID] = reg;
+            }
+
+            reg.Name = packet.Name;
+            reg.Owner = packet.Owner;
+            reg.IsWaypointBroadcasted = packet.IsWaypointBroadcasted;
+            if (reg.IsWaypointBroadcasted)
+            {
+                reg.WaypointIcon = packet.WaypointIcon;
+                reg.WaypointColor = packet.WaypointColor;
+                reg.X = packet.X;
+                reg.Y = packet.Y;
+                reg.Z = packet.Z;
+            }
+           
+            
+        }
     }
 }

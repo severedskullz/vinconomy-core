@@ -26,6 +26,7 @@ namespace Viconomy.Map
             this.waypoint = waypoint;
             this.wpLayer = wpLayer;
             ColorUtil.ToRGBAVec4f(this.waypoint.WaypointColor, ref this.color);
+            color.A = 1;
         }
 
         public override void Render(GuiElementMap map, float dt)
@@ -38,7 +39,7 @@ namespace Viconomy.Map
             map.TranslateWorldPosToViewPos(pos, ref this.viewPos);
              if (this.viewPos.X < -10f || this.viewPos.Y < -10f || (double)this.viewPos.X > map.Bounds.OuterWidth + 10.0 || (double)this.viewPos.Y > map.Bounds.OuterHeight + 10.0)
             {
-                //return;
+                return;
             }
             float x = (float)(map.Bounds.renderX + (double)this.viewPos.X);
             float y = (float)(map.Bounds.renderY + (double)this.viewPos.Y);
@@ -52,7 +53,8 @@ namespace Viconomy.Map
             LoadedTexture tex;
             if (!this.wpLayer.texturesByIcon.TryGetValue(this.waypoint.WaypointIcon, out tex))
             {
-                this.wpLayer.texturesByIcon.TryGetValue("shopGeneric", out tex);
+                this.waypoint.WaypointIcon = "genericViconShop";
+                this.wpLayer.texturesByIcon.TryGetValue("genericViconShop", out tex);
             }
             if (tex != null)
             {
@@ -69,15 +71,19 @@ namespace Viconomy.Map
             }
         }
 
-        // Token: 0x060007AD RID: 1965 RVA: 0x00045EB0 File Offset: 0x000440B0
         public override void Dispose()
         {
             base.Dispose();
         }
 
-        // Token: 0x060007AE RID: 1966 RVA: 0x00045EB8 File Offset: 0x000440B8
         public override void OnMouseMove(MouseEvent args, GuiElementMap mapElem, StringBuilder hoverText)
         {
+            //Somehow this is still triggering even when pos is null - prevent us from crashing...
+            if (this.waypoint.Position == null)
+            {
+                return;
+            }
+
             Vec2f viewPos = new Vec2f();
             mapElem.TranslateWorldPosToViewPos(this.waypoint.Position.ToVec3d(), ref viewPos);
             double x = (double)viewPos.X + mapElem.Bounds.renderX;
@@ -88,16 +94,12 @@ namespace Viconomy.Map
             float size = RuntimeEnv.GUIScale * 8f;
             if (this.mouseOver = (Math.Abs(dX) < (double)size && Math.Abs(dY) < (double)size))
             {
-                string text = Lang.Get("Shop {0}: {1}", new object[]
-                {
-                    this.waypointIndex,
-                    this.waypoint.Name
-                });
+                string text = Lang.Get("vinconomy:wp-" + waypoint.WaypointIcon) + ": " + this.waypoint.Name;
+
                 hoverText.AppendLine(text);
             }
         }
 
-        // Token: 0x060007AF RID: 1967 RVA: 0x0004604C File Offset: 0x0004424C
         public override void OnMouseUpOnElement(MouseEvent args, GuiElementMap mapElem)
         {
             /*

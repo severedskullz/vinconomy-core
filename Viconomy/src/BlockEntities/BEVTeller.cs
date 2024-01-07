@@ -60,7 +60,7 @@ namespace Viconomy.BlockEntities
             if (this.Api.World is IServerWorldAccessor)
             {
                 ViconomyCoreSystem modSystem = Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
-                ShopRegistration register = modSystem.GetRegistry().GetShop(Owner, RegisterID);
+                ShopRegistration register = modSystem.GetRegistry().GetShop(RegisterID);
 
                 byte[] data;
                 using (MemoryStream ms = new MemoryStream())

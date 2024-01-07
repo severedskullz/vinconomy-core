@@ -2,16 +2,13 @@
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Text;
-using System.Text.RegularExpressions;
 using Viconomy.Registry;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
-using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
@@ -20,41 +17,75 @@ namespace Viconomy.Map
     public class ShopMapLayer : MapLayer
     {
         private ViconomyCoreSystem core;
-
-
-        // Token: 0x04000684 RID: 1668
-        private ICoreServerAPI sapi;
-
-
-        // Token: 0x04000686 RID: 1670
         private List<MapComponent> wayPointComponents = new List<MapComponent>();
-
-        // Token: 0x04000687 RID: 1671
         public MeshRef quadModel;
-
-
-        // Token: 0x04000689 RID: 1673
         public Dictionary<string, LoadedTexture> texturesByIcon;
 
         public OrderedDictionary<string, CreateIconTextureDelegate> WaypointIcons { get; set; } = new OrderedDictionary<string, CreateIconTextureDelegate>();
-
+        public List<int> WaypointColors;
+        private static string[] hexcolors = new string[]
+        {
+            "#F9D0DC",
+            "#F179AF",
+            "#F15A4A",
+            "#ED272A",
+            "#A30A35",
+            "#FFDE98",
+            "#EFFD5F",
+            "#F6EA5E",
+            "#FDBB3A",
+            "#C8772E",
+            "#F47832",
+            "C3D941",
+            "#9FAB3A",
+            "#94C948",
+            "#47B749",
+            "#366E4F",
+            "#516D66",
+            "93D7E3",
+            "#7698CF",
+            "#20909E",
+            "#14A4DD",
+            "#204EA2",
+            "#28417A",
+            "#C395C4",
+            "#92479B",
+            "#8E007E",
+            "#5E3896",
+            "D9D4CE",
+            "#AFAAA8",
+            "#706D64",
+            "#4F4C2B",
+            "#BF9C86",
+            "#9885530",
+            "#5D3D21",
+            "#FFFFFF",
+            "#080504"
+        };
 
         public ShopMapLayer(ICoreAPI api, IWorldMapManager mapSink) : base(api, mapSink)
         {
             core = api.ModLoader.GetModSystem<ViconomyCoreSystem>();
             if (api.Side == EnumAppSide.Client)
             {
+                core.ShopMapLayer = this;
                 ICoreClientAPI capi = api as ICoreClientAPI;
-                List<IAsset> many = api.Assets.GetMany("textures/icons/worldmap/", null, false);
+
+                this.WaypointColors = new List<int>();
+                for (int i = 0; i < hexcolors.Length; i++)
+                {
+                    this.WaypointColors.Add(ColorUtil.Hex2Int(hexcolors[i]));
+                }
+
+
+                List<IAsset> many = api.Assets.GetMany("textures/icons/map/", null, false);
                 
                 using (List<IAsset>.Enumerator enumerator = many.GetEnumerator())
                 {
                     while (enumerator.MoveNext())
                     {
                         IAsset icon = enumerator.Current;
-                        string name = icon.Name.Substring(0, icon.Name.IndexOf("."));
-                        name = Regex.Replace(name, "\\d+\\-", "");
-                      
+                        string name = icon.Name.Substring(0, icon.Name.IndexOf("."));                      
                         this.WaypointIcons[name] = delegate ()
                         {
                             int size = (int)Math.Ceiling((double)(20f * RuntimeEnv.GUIScale));
@@ -120,11 +151,12 @@ namespace Viconomy.Map
 
 
 
-        private void RebuildMapComponents()
+        public void RebuildMapComponents()
         {
+            wayPointComponents.Clear();
             foreach(ShopRegistration shop in core.GetRegistry().GetAllShops())
             {
-                if (shop.IsWaypointBroadcasted || true)
+                if (shop.IsWaypointBroadcasted)
                 {
                     ShopMapComponent comp = new ShopMapComponent(0, shop, this, (ICoreClientAPI)api);
                     wayPointComponents.Add(comp);
@@ -160,7 +192,7 @@ namespace Viconomy.Map
                 this.texturesByIcon[val.Key] = val.Value();
             }
         }
-        // Token: 0x060007CD RID: 1997 RVA: 0x00047322 File Offset: 0x00045522
+
         public override void OnMapOpenedClient()
         {
             this.reloadIconTextures();
@@ -171,7 +203,7 @@ namespace Viconomy.Map
         {
             foreach (MapComponent val in this.wayPointComponents)
             {
-                this.wayPointComponents.Remove(val);
+                val.Dispose();
             }
             this.wayPointComponents.Clear();
         }

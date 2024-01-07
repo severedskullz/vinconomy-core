@@ -170,7 +170,7 @@ namespace Viconomy.GUI
             //IconUtil.DrawArrowRight
 
             // Lastly, create the dialog
-            SingleComposer = capi.Gui.CreateCompo("StallOwner", dialogBounds)
+            SingleComposer = capi.Gui.CreateCompo("ViconStallOwner", dialogBounds)
                 .AddShadedDialogBG(bgBounds)
                 .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);
 

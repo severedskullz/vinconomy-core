@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Viconomy.GUI;
+﻿using Viconomy.GUI;
 using Viconomy.Registry;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
-using Vintagestory.API.Server;
-using Vintagestory.GameContent;
 
 namespace Viconomy.ItemTypes
 {
@@ -29,8 +22,7 @@ namespace Viconomy.ItemTypes
                     {
                         ViconomyCoreSystem modSys = api.ModLoader.GetModSystem<ViconomyCoreSystem>();
 
-                        string owner = slot.Itemstack.Attributes.GetString("Owner");
-                        ShopRegistration shop = modSys.GetRegistry().GetShop(owner, shopID);
+                        ShopRegistration shop = modSys.GetRegistry().GetShop(shopID);
                         if (shop != null)
                         {
                             ledgerGUI = new GuiViconLedger(shop.Name, shopID, (ICoreClientAPI)this.api);

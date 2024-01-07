@@ -22,7 +22,7 @@ namespace Viconomy.Registry
         [ProtoMember(10)] public bool IsWaypointBroadcasted { get; set; }
 
         public ShopRegistration() { }
-        public ShopRegistration(RegistryUpdate item)
+        public ShopRegistration(ShopUpdatePacket item)
         {
            this.ID = item.ID;
             this.Name = item.Name;

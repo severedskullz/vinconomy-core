@@ -1,5 +1,7 @@
 ﻿using ProtoBuf;
+using System.Collections.Generic;
 using Viconomy.Registry;
+using Vintagestory.API.Server;
 
 namespace Viconomy.Network
 {
@@ -7,14 +9,13 @@ namespace Viconomy.Network
     public class RegistryUpdatePacket
     {
         [ProtoMember(1)]
-        public RegistryUpdate[] registry;
+        public List<ShopUpdatePacket> registry;
 
         public RegistryUpdatePacket()
         {
         }
 
-
-        public RegistryUpdatePacket(RegistryUpdate[] registry)
+        public RegistryUpdatePacket(List<ShopUpdatePacket> registry)
         {
             this.registry = registry;
         }
@@ -22,7 +23,7 @@ namespace Viconomy.Network
     }
 
     [ProtoContract]
-    public class RegistryUpdate
+    public class ShopUpdatePacket
     {
         [ProtoMember(1)] public int ID { get; internal set; } = -1;
         [ProtoMember(2)] public string Name { get; set; }
@@ -34,16 +35,18 @@ namespace Viconomy.Network
         [ProtoMember(8)] public string WaypointIcon { get; set; }
         [ProtoMember(9)] public int WaypointColor { get; set; }
         [ProtoMember(10)] public bool IsWaypointBroadcasted { get; set; }
+        [ProtoMember(11)] public bool IsRemoval { get; set; }
 
-        public RegistryUpdate() { }
-        public RegistryUpdate(ShopRegistration reg)
+        public ShopUpdatePacket() { }
+        public ShopUpdatePacket(ShopRegistration reg)
         {
             this.Owner = reg.Owner;
             this.ID = reg.ID;
             this.Name = reg.Name;
             this.OwnerName = reg.OwnerName;
             this.IsWaypointBroadcasted = reg.IsWaypointBroadcasted;
-            if (reg.IsWaypointBroadcasted)
+
+            if (IsWaypointBroadcasted )
             {
                 this.X = reg.X;
                 this.Y = reg.Y;
@@ -52,6 +55,11 @@ namespace Viconomy.Network
                 this.WaypointColor = reg.WaypointColor;
             }
 
+        }
+
+        public ShopUpdatePacket(int ID) {
+            this.ID = ID;
+            this.IsRemoval = true;
         }
 
     }

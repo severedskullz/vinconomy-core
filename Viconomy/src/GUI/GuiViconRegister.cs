@@ -27,7 +27,7 @@ namespace Viconomy.GUI
                 return;
             }
             capi.World.Player.InventoryManager.OpenInventory(Inventory);
-            this.Compose();
+           
         }
 
         private void Compose()
@@ -48,7 +48,7 @@ namespace Viconomy.GUI
             //IconUtil.DrawArrowRight
 
             // Lastly, create the dialog
-            SingleComposer = capi.Gui.CreateCompo("myAwesomeDialog", dialogBounds)
+            SingleComposer = capi.Gui.CreateCompo("ViconRegister", dialogBounds)
                 .AddShadedDialogBG(bgBounds)
                 .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked)
                 .AddStaticText("Shop Name:", CairoFont.WhiteSmallText(), shopNameLabelBounds)
@@ -85,7 +85,12 @@ namespace Viconomy.GUI
             TryClose();
         }
 
-       
+        public override bool TryOpen()
+        {
+            this.Compose();
+            return base.TryOpen();
+        }
+
 
         public override void OnGuiClosed()
         {

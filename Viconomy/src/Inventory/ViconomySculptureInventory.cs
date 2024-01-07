@@ -45,27 +45,22 @@ namespace Viconomy.Inventory
                 this.slots[i] = NewSlot(i);
             }
 
-          
-
         }
 
         public override void LateInitialize(string inventoryID, ICoreAPI api)
         {
             base.LateInitialize(inventoryID, api);
             modSystem = Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
-            
         }
 
         protected override ItemSlot NewSlot(int id)
         {
             if (id == 0)
                 return new ViconCurrencySlot(this);
-
             else
                 return new ViconItemSlot(this, id / (itemsPerBin + 1), id);
         }
 
-        
         public override ItemSlot this[int slotId]
         {
             get
@@ -105,7 +100,6 @@ namespace Viconomy.Inventory
                 {
                     this.stallSlots[stallSlot].slots[slotId] = (ViconItemSlot) value;
                 }
-                
             }
         }
 
@@ -116,7 +110,6 @@ namespace Viconomy.Inventory
             {
                 itemSlot.setFilter(filter);
             }
-
         }
 
         public ItemSlot FindFirstNonEmptyStockSlot(int stallSlot)
@@ -195,10 +188,6 @@ namespace Viconomy.Inventory
             }
         }
 
-        public int GetItemsPerPurchase(int stallSlot)
-        {
-            return this.StallSlots[stallSlot].itemsPerPurchase;
-        }
 
         public void SetSlotBackground(int stallSlot, string background = null, string hexColor = null)
         {

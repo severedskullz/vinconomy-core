@@ -219,7 +219,7 @@ namespace Viconomy.GUI
                 //IconUtil.DrawArrowRight
 
                 // Lastly, create the dialog
-                SingleComposer = capi.Gui.CreateCompo("myAwesomeDialog", dialogBounds)
+                SingleComposer = capi.Gui.CreateCompo("ViconSculpturePad", dialogBounds)
                     .AddShadedDialogBG(bgBounds)
                     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);
 

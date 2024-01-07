@@ -18,6 +18,7 @@ using Viconomy.Database;
 using Viconomy.Trading;
 using Vintagestory.GameContent;
 using Viconomy.Map;
+using System.Numerics;
 
 namespace Viconomy
 {
@@ -30,6 +31,7 @@ namespace Viconomy
         private IClientNetworkChannel _clientChannel;
         private Dictionary<EnumItemClass, List<IItemRenderer>> renderers;
         private bool isRegisteringRenderers;
+        public ShopMapLayer ShopMapLayer { get; set; }
 
         //Server Variables
         private ICoreServerAPI _coreServerAPI;
@@ -38,7 +40,7 @@ namespace Viconomy
 
         //Shared Variables
         public ViconConfig Config { get; internal set; }
-        public ShopRegistry ShopRegistry;
+        private ShopRegistry ShopRegistry { get; set; }
 
 
         public override double ExecuteOrder() => 1;
@@ -71,7 +73,8 @@ namespace Viconomy
             api.RegisterItemClass("ViconSculptureBundle", typeof(ItemSculptureBundle));
 
             api.Network.RegisterChannel("Vinconomy")
-                .RegisterMessageType(typeof(RegistryUpdatePacket));
+                .RegisterMessageType(typeof(RegistryUpdatePacket))
+                .RegisterMessageType(typeof(ShopUpdatePacket));
 
         }
 
@@ -108,8 +111,7 @@ namespace Viconomy
             _serverChannel = api.Network.GetChannel("Vinconomy");
           
             api.Event.SaveGameLoaded += OnSaveGameLoading;
-            api.Event.GameWorldSave += OnSaveGameSaving;
-            api.Event.PlayerJoin += SendRegisterUpdate;
+            api.Event.PlayerJoin += SendAllPublicRegisters;
 
             var parsers = api.ChatCommands.Parsers;
             api.ChatCommands.Create("viconomy")
@@ -134,7 +136,8 @@ namespace Viconomy
         {
             _coreClientAPI = api;
             _clientChannel = api.Network.GetChannel("Vinconomy");
-            _clientChannel.SetMessageHandler(new NetworkServerMessageHandler<RegistryUpdatePacket>(this.OnRecieveRegistryUpdate));
+            _clientChannel.SetMessageHandler(new NetworkServerMessageHandler<RegistryUpdatePacket>(this.OnRecieveRegistry));
+            _clientChannel.SetMessageHandler(new NetworkServerMessageHandler<ShopUpdatePacket>(this.OnRecieveRegistryUpdate));
 
             ShopRegistry = new ShopRegistry(DB);
 
@@ -174,6 +177,7 @@ namespace Viconomy
             OnTestAccess += AllowStallUse;
 
             api.ModLoader.GetModSystem<WorldMapManager>().RegisterMapLayer<ShopMapLayer>("vinconomyShop", 20);
+
         }
 
         private void BeginRendererRegistration()
@@ -227,7 +231,7 @@ namespace Viconomy
             else if (entity is BEVRegister) 
             {
                 BEVRegister register = ((BEVRegister)entity);
-                ShopRegistry.ClearShop(register.Owner, register.ID);
+                ShopRegistry.ClearShop(register.ID);
                 register.Owner = playerUUID;
                 UpdateShop(playerUUID, register.ID, playerData.LastKnownPlayername + "'s Shop", register.Pos);
             } else
@@ -249,17 +253,6 @@ namespace Viconomy
            };
         }
 
-        private void RegisterWorldMapIcon(String key)
-        {
-            _coreClientAPI.Gui.Icons.CustomIcons["wp" + key] = delegate (Context ctx, int x, int y, float w, float h, double[] rgba)
-            {
-                AssetLocation loc = new AssetLocation("vinconomy:textures/icons/worldmap/" + key + ".svg");
-                IAsset asset = _coreClientAPI.Assets.TryGet(loc, true);
-                int color = ColorUtil.ColorFromRgba(175, 200, 175, 125);
-                _coreClientAPI.Gui.DrawSvg(asset, ctx.GetTarget() as ImageSurface, x, y, (int)w, (int)h, color);
-            };
-        }
-
         public RayTraceResults DoPlayerRaytrace(IClientPlayer player)
         {
             BlockSelection blockSelection = null;
@@ -273,17 +266,31 @@ namespace Viconomy
 
         }
 
-        private void OnRecieveRegistryUpdate(RegistryUpdatePacket packet)
+        private void OnRecieveRegistry(RegistryUpdatePacket packet)
         {
-            //TODO: Need to figure out how to send partial and full registry updates. 
             ShopRegistry = new ShopRegistry(DB);
             if (packet.registry != null) {
-                foreach (RegistryUpdate item in packet.registry)
+                foreach (ShopUpdatePacket item in packet.registry)
                 {
-                    //TODO: Figure out how to get local player.
                     this.ShopRegistry.AddShop(new ShopRegistration(item));
                 }
-            }            
+            }
+            if (ShopMapLayer != null)
+                this.ShopMapLayer.RebuildMapComponents();
+        }
+
+        private void OnRecieveRegistryUpdate(ShopUpdatePacket packet)
+        {
+            if (packet.IsRemoval)
+            {
+                ShopRegistry.ClearShop(packet.ID);
+            } else
+            {
+                ShopRegistry.UpdateShopFromServer(packet);
+            }
+
+            if (ShopMapLayer != null)
+                this.ShopMapLayer.RebuildMapComponents();
         }
 
         public BEVRegister GetShopRegister(string owner, int registerID)
@@ -293,8 +300,14 @@ namespace Viconomy
                 return null;
             }
 
-            ShopRegistration register = ShopRegistry.GetShop(owner, registerID);
+            ShopRegistration register = ShopRegistry.GetShop(registerID);
             if (register == null || register.Position == null) { return null; }
+
+            //Make sure they still own the shop
+            if (register.Owner != owner)
+            {
+                return null;
+            }
 
             BEVRegister viconRegister = _coreServerAPI.World.BlockAccessor.GetBlockEntity(register.Position) as BEVRegister;
             if (viconRegister != null)
@@ -302,7 +315,7 @@ namespace Viconomy
                 return viconRegister;
             } else
             {
-                ShopRegistry.ClearShop(owner, registerID);
+                ShopRegistry.ClearShop(registerID);
             }
             return null;
         }
@@ -339,27 +352,21 @@ namespace Viconomy
             this._coreServerAPI.Logger.Debug("=============== Loaded Viconomy ================");
         }
 
-        private void OnSaveGameSaving()
+        private void SendAllPublicRegisters(IServerPlayer player)
         {
-            //_coreServerAPI.WorldManager.SaveGame.StoreData<ShopRegistry>("vinconomy:registers", ShopRegistry);
-        }
-
-        private void SendRegisterUpdate(IServerPlayer player)
-        {
-            ShopRegistration[] shops = this.ShopRegistry.GetShopsForOwner(player.PlayerUID);
-            RegistryUpdate[] updates = new RegistryUpdate[0];
+            List<ShopRegistration> shops = this.ShopRegistry.GetAllShops();
+            List<ShopUpdatePacket> updates = new List<ShopUpdatePacket>();
             if (shops != null)
             {
-                updates = new RegistryUpdate[shops.Length];
-
-                for (int i = 0; i < shops.Length; i++)
+               foreach (ShopRegistration shop in shops)
                 {
-                    updates[i] = new RegistryUpdate(shops[i]);
+                    if (shop.IsWaypointBroadcasted || shop.Owner == player.PlayerUID)
+                    {
+                        updates.Add(new ShopUpdatePacket(shop));
+                    }
                 }
             }
-            
-
-            _serverChannel.SendPacket(new RegistryUpdatePacket(updates), new IServerPlayer[]{ player });
+            _serverChannel.SendPacket(new RegistryUpdatePacket(updates), player);
         }
 
         public ShopRegistration AddShop(string owner, string ownerName, string name, BlockPos pos)
@@ -367,27 +374,42 @@ namespace Viconomy
             if (_coreServerAPI != null)
             {
                 ShopRegistration reg = this.GetRegistry().AddShop(owner, ownerName, name, pos);
-                IServerPlayer player = (IServerPlayer)_coreServerAPI.World.PlayerByUid(owner);
-                if (player.ConnectionState == EnumClientState.Playing)
+               
+                if (reg.IsWaypointBroadcasted)
                 {
-                    SendRegisterUpdate(player);
+                    BroadcastShopUpdate(reg.ID);
+                }
+                else
+                {
+                    IServerPlayer player = (IServerPlayer)_coreServerAPI.World.PlayerByUid(owner);
+                    if (player.ConnectionState == EnumClientState.Playing)
+                    {
+                        SendShopOwnerUpdate(reg, player);
+                    }
                 }
                 return reg;
             }
-
             return null;
         }
 
+
+
         public ShopRegistration UpdateShop(string owner, int iD, string name, BlockPos pos)
         {
-            ShopRegistration reg = ShopRegistry.UpdateShop(owner, iD, name, pos);
+            ShopRegistration reg = ShopRegistry.UpdateShop(iD, name, pos);
             if (_coreServerAPI != null)
             {
-                IServerPlayer player = (IServerPlayer)_coreServerAPI.World.PlayerByUid(owner);
-                if (player != null && player.ConnectionState == EnumClientState.Playing)
+                if (reg.IsWaypointBroadcasted)
                 {
-                    SendRegisterUpdate(player);
-                }
+                    BroadcastShopUpdate(iD);
+                } else
+                {
+                    IServerPlayer player = (IServerPlayer)_coreServerAPI.World.PlayerByUid(owner);
+                    if (player.ConnectionState == EnumClientState.Playing)
+                    {
+                        SendShopOwnerUpdate(reg, player);
+                    }
+                }                
             }
             return reg;
         }
@@ -409,6 +431,55 @@ namespace Viconomy
             {
                 ((IClientPlayer)player).ShowChatNotification(Lang.Get(message, args));
             }
+        }
+
+
+        public IItemRenderer GetRenderer(ItemStack stack)
+        {
+            List<IItemRenderer> typeRenderers = renderers[stack.Class];
+            foreach (IItemRenderer renderer in typeRenderers)
+            {
+                if (renderer.canHandle(stack))
+                    return renderer;
+            }
+
+            //This should have returned already, but in case someone fucked up
+            this._coreServerAPI.Logger.Error("Did not get a renderer for item " + stack.Collectible.Code.Path);
+            if (stack.Class == EnumItemClass.Block)
+                return new BlockRenderer();
+            else
+                return new ItemRenderer();
+        }
+
+        public void UpdateShopWaypoint(int ID, bool enabled, string icon, int color)
+        {
+            ShopRegistry.UpdateShopWaypoint(ID, enabled, icon, color);
+            BroadcastShopUpdate(ID);
+        }
+
+        private void BroadcastShopUpdate(int shopId)
+        {
+            ShopRegistration shop = ShopRegistry.GetShop(shopId);
+            if (shop != null)
+            {
+                ShopUpdatePacket update = new ShopUpdatePacket(shop);
+                _serverChannel.BroadcastPacket(update);
+            }
+        }
+
+        private void SendShopOwnerUpdate(ShopRegistration shop, IServerPlayer player)
+        {
+            ShopUpdatePacket update;
+            if (shop == null)
+            {
+                update = new ShopUpdatePacket(shop.ID);
+            }
+            else
+            {
+                update = new ShopUpdatePacket(shop);
+            }
+
+            _serverChannel.SendPacket(update, player);
         }
 
         #region Event Delegates
@@ -435,10 +506,10 @@ namespace Viconomy
         /// player: The player making the purchase<br/>
         /// register: The register that payment is meant to go to<br/>
         /// stallSlot: the stall slot the player is purchasing from<br/>
-        /// product: the item slot which is going to be used to purchase from<br/>
-        /// payment: the stack of items representing payment the player will owe<br/>
         /// desiredAmount: How many sales are in this transaction
         /// </summary>
+        /// 
+        //TODO: Multicast support
         public bool CanPurchaseItem(IPlayer player, BEViconBase stall, BEVRegister register, int stallSlot, int desiredAmount)
         {
             bool result = true;
@@ -455,8 +526,13 @@ namespace Viconomy
             bool result = true;
             if (OnTryPlaceBlock != null)
             {
-                result = OnTryPlaceBlock.Invoke(world, byPlayer,itemstack, blockSel);
+                Delegate[] delegates = OnTryPlaceBlock.GetInvocationList();
+                foreach (Delegate delegator in delegates)
+                {
+                    result = ((TryPlaceBlockDelegate)delegator).Invoke(world, byPlayer, itemstack, blockSel, result);
+                }
             }
+            
             return result;
         }
         public event TryPlaceBlockDelegate OnTryPlaceBlock;
@@ -492,6 +568,7 @@ namespace Viconomy
             }
             else return response;
         }
+        public event OnTestAccessDelegate OnTestAccess;
 
         public EnumWorldAccessResponse AllowStallUse(IPlayer player, BlockSelection blockSelection, EnumBlockAccessFlags accessType, string claimant, EnumWorldAccessResponse response)
         {
@@ -517,25 +594,6 @@ namespace Viconomy
             }
             return response;
         }
-
-        public IItemRenderer GetRenderer(ItemStack stack)
-        {
-            List<IItemRenderer> typeRenderers = renderers[stack.Class];
-            foreach (IItemRenderer renderer in typeRenderers)
-            {
-                if (renderer.canHandle(stack))
-                    return renderer;
-            }
-
-            //This should have returned already, but in case someone fucked up
-            this._coreServerAPI.Logger.Error("Did not get a renderer for item " + stack.Collectible.Code.Path);
-            if (stack.Class == EnumItemClass.Block)
-                return new BlockRenderer();
-            else
-                return new ItemRenderer();
-        }
-
-        public event OnTestAccessDelegate OnTestAccess;
 
         #endregion
 

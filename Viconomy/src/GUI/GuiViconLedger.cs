@@ -95,7 +95,7 @@ namespace Viconomy.GUI
                 int w = 500;
                 int h = 350;
 
-                ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);//.WithFixedAlignmentOffset(-GuiStyle.DialogToScreenPadding, 0.0);
+                ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
 
 
                 ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.DialogToScreenPadding);
@@ -133,7 +133,7 @@ namespace Viconomy.GUI
                 CairoFont font = CairoFont.WhiteSmallText().WithOrientation(EnumTextOrientation.Center);
 
                 // Lastly, create the dialog
-                SingleComposer = capi.Gui.CreateCompo("StallOwner", dialogBounds)
+                SingleComposer = capi.Gui.CreateCompo("ViconLedger", dialogBounds)
                     .AddShadedDialogBG(bgBounds)
                     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);
 
