@@ -425,7 +425,7 @@ namespace Viconomy
             }
             if (player is IServerPlayer)
             {
-                ((IServerPlayer)player).SendMessage(0, Lang.Get(message, args), EnumChatType.OwnMessage, null);
+                (player as IServerPlayer).SendMessage(0, Lang.GetL((player as IServerPlayer)?.LanguageCode ?? "en", message, args), EnumChatType.OwnMessage, null);
             }
             else
             {

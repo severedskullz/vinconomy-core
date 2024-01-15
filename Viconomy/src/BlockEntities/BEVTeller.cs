@@ -167,7 +167,7 @@ namespace Viconomy.BlockEntities
             }
 
             // Does the shop have a register ID set?
-            if (this.RegisterID != -1 && !this.isAdminShop)
+            if (this.RegisterID == -1 && !this.isAdminShop)
             {
                 ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
@@ -196,11 +196,23 @@ namespace Viconomy.BlockEntities
             ItemSlot fromCurrency = Inventory[stallSlot + (isLeft ? 1 : -1)];
 
             List<ItemSlot> productSlots = new List<ItemSlot>();
-            foreach (ItemSlot slot in shopRegister.Inventory) { 
-                if (slot.Itemstack != null && toCurrency.Itemstack.Satisfies(slot.Itemstack)) {
-                    productSlots.Add(slot);
+
+            if (isAdminShop)
+            {
+                InventoryGeneric genInv = new InventoryGeneric(1, "purchase-inv" + Inventory.InventoryID, Api);
+                genInv[0].Itemstack = TradingUtil.GetItemStackClone(toCurrency);
+                productSlots.Add(genInv[0]);
+            } else if (shopRegister != null)
+            {
+                foreach (ItemSlot slot in shopRegister.Inventory)
+                {
+                    if (slot.Itemstack != null && toCurrency.Itemstack.Satisfies(slot.Itemstack))
+                    {
+                        productSlots.Add(slot);
+                    }
                 }
             }
+
 
             TradeRequest request = new TradeRequest();
             request.customer = player;

@@ -227,8 +227,13 @@ namespace Viconomy.GUI
             byte[] data;
             using (MemoryStream ms = new MemoryStream())
             {
+                if (code == "None")
+                {
+                    code = "-1";
+                }
+
                 BinaryWriter writer = new BinaryWriter(ms);
-                writer.Write(code);
+                writer.Write(Int32.Parse(code));
                 data = ms.ToArray();
             }
             this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_REGISTER_ID, data);

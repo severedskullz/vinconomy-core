@@ -68,7 +68,7 @@ namespace Viconomy.src.GUI
                 SingleComposer.AddShadedDialogBG(bgBounds)
                     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked)
                     .AddStaticText("Waypoint Visible:", CairoFont.WhiteSmallText(), waypointLabel)
-                    .AddSwitch(new Action<bool>(OnToggleWaypointVisible), waypointVisible, "admin")
+                    .AddSwitch(new Action<bool>(OnToggleWaypointVisible), waypointVisible, "isvisible")
                     .AddStaticText("Color:", CairoFont.WhiteSmallText(), colorLabelBounds)
                     .AddColorListPicker(colors, onToggleColor, colorRow, 250, "colorpicker")
                     .AddStaticText("Icon:", CairoFont.WhiteSmallText(), iconLabelBounds)
@@ -83,6 +83,7 @@ namespace Viconomy.src.GUI
                     this.currentColor = shop.WaypointColor;
                     GuiComposerHelpers.IconListPickerSetValue(base.SingleComposer, "iconpicker", icons.IndexOf(shop.WaypointIcon));
                     this.currentIcon = shop.WaypointIcon;
+                    base.SingleComposer.GetSwitch("isvisible").On = true;
                 } else
                 {
                     GuiComposerHelpers.ColorListPickerSetValue(base.SingleComposer, "colorpicker", 0);
