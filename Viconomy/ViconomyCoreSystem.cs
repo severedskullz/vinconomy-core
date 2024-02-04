@@ -328,7 +328,7 @@ namespace Viconomy
         private void OnSaveGameLoading()
         {
             this._coreServerAPI.Logger.Debug("+============== Loading Viconomy ==============+");
-
+            DB.CleanupShops();
             DB.LoadShops(ShopRegistry);
 
             this._coreServerAPI.Logger.Debug("| Loaded " + ShopRegistry.GetCount() + " Shops");

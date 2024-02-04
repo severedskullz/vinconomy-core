@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Viconomy.BlockEntities;
 using Viconomy.Inventory;
@@ -33,7 +34,17 @@ namespace Viconomy.GUI
             stall = capi.World.BlockAccessor.GetBlockEntity<BEViconStall>(BlockEntityPosition);
             curTab = stallSelection;
             ViconomyCoreSystem modSystem = capi.ModLoader.GetModSystem<ViconomyCoreSystem>();
-            registers = modSystem.GetRegistry().GetShopsForOwner(stall.Owner);
+            ShopRegistration[] allRegisters = modSystem.GetRegistry().GetShopsForOwner(stall.Owner);
+            List<ShopRegistration> filteredRegisters = new List<ShopRegistration>();
+            foreach (ShopRegistration register in allRegisters)
+            {
+                if (register.Position != null)
+                {
+                    filteredRegisters.Add(register);
+                }
+            }
+
+            registers = filteredRegisters.ToArray();
             vinInv = Inventory as ViconomyInventory;
             this.stallSlotCount = stall.StallSlotCount;
             this.stacksPerSlot = stall.StacksPerSlot;

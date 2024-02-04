@@ -30,7 +30,6 @@ namespace Viconomy.Registry
             return shops.Values.ToList();
         }
 
-
         public void ClearShop(int registerID)
         {
             if (shops.ContainsKey(registerID))
@@ -162,6 +161,11 @@ namespace Viconomy.Registry
                 reg = new ShopRegistration();
                 reg.ID = packet.ID;
                 shops[packet.ID] = reg;
+                if (!shopsByOwner.ContainsKey(packet.Owner))
+                {
+                    shopsByOwner[packet.Owner] = new Dictionary<int, ShopRegistration>();
+                }
+                shopsByOwner[packet.Owner][packet.ID] = reg;
             }
 
             reg.Name = packet.Name;

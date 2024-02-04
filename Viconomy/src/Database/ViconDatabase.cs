@@ -287,6 +287,17 @@ namespace Viconomy.Database
             }
         }
 
+        public void CleanupShops()
+        {
+            using (SqliteConnection connection = GetConnection())
+            {
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+                cmd.CommandText = "DELETE FROM Shops WHERE X IS NULL AND Y IS NULL AND Z IS NULL";
+                int numAffected = cmd.ExecuteNonQuery();
+            }
+        }
+
         public ShopRegistration GetShop(int ID)
         {
             using (SqliteConnection connection = GetConnection())

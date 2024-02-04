@@ -51,7 +51,7 @@ namespace Viconomy.BlockEntities
         {          
             if (Api.Side == EnumAppSide.Server)
             {
-                if (ID == -1)
+                if (ID <= 0)
                 {
                     //Console.WriteLine("Register block was placed and did not have ID Set...");
                     ShopRegistration register = modSystem.AddShop(Owner, OwnerName, OwnerName + "'s Shop", this.Pos);
@@ -148,7 +148,7 @@ namespace Viconomy.BlockEntities
                     IServerPlayer player = ((IServerPlayer)byPlayer);
                     if (player.PlayerUID == Owner)
                     {
-                        if (handSlot.Itemstack.Attributes.GetInt("ShopId", -1) == -1)
+                        if (handSlot.Itemstack.Attributes.GetInt("ShopId", -1) <= 0)
                         {
                             handSlot.Itemstack.Attributes.SetInt("ShopId", ID);
                             handSlot.Itemstack.Attributes.SetString("Owner", Owner);
