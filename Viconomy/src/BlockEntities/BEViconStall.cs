@@ -116,6 +116,11 @@ namespace Viconomy.BlockEntities
                 desiredAmount = binaryReader.ReadInt32();
             }
 
+            if (desiredAmount <= 0)
+            {
+                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.PURCHASED_ZERO, null);
+                return;
+            }
 
             //Console.WriteLine(Api.Side + ": We tried to purchase item!");
             //PrintClientMessage(player, Api.Side + ": We tried to purchase item!");
@@ -350,7 +355,7 @@ namespace Viconomy.BlockEntities
             }
 
             this.inventory.StallSlots[stallSlot].itemsPerPurchase = amountItems;
-            //PrintClientMessage(byPlayer, "set quantity to " + amountItems, new object[] { amountItems });
+            //ViconomyCoreSystem.PrintClientMessage(byPlayer, "set quantity to " + amountItems, new object[] { amountItems });
             this.MarkDirty();
         }
 

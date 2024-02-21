@@ -186,7 +186,7 @@ namespace Viconomy.GUI
         {
             int val = 1;
             Int32.TryParse(amount, out val);
-            quantity = val;
+            quantity = Math.Max(0,val);
 
             Compose();
 
