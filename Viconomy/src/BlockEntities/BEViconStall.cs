@@ -115,10 +115,15 @@ namespace Viconomy.BlockEntities
                 desiredAmount = binaryReader.ReadInt32();
             }
 
+            if (desiredAmount <= 0)
+            {
+                ViconomyCore.PrintClientMessage(player, TradingConstants.PURCHASED_ZERO, null);
+                return;
+            }
 
             //Console.WriteLine(Api.Side + ": We tried to purchase item!");
             //PrintClientMessage(player, Api.Side + ": We tried to purchase item!");
-            
+
             ItemSlot currency = this.inventory.GetCurrencyForSelection(stallSlot);
             
 
