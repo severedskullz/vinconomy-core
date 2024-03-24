@@ -78,14 +78,26 @@ namespace Viconomy.Map
                 }
 
 
-                List<IAsset> many = api.Assets.GetMany("textures/icons/map/", null, false);
+                List<IAsset> many = api.Assets.GetMany("textures/icons/map/", "vinconomy", false);
                 
                 using (List<IAsset>.Enumerator enumerator = many.GetEnumerator())
                 {
                     while (enumerator.MoveNext())
                     {
                         IAsset icon = enumerator.Current;
-                        string name = icon.Name.Substring(0, icon.Name.IndexOf("."));                      
+                        // Adding in check to see if the . is the first file or doesnt exist.
+                        // Got a report that someone is crashing due to name.UcFirst() with the string being empty
+                        // We couldnt figure out how/why, but its specific to their machine.
+                        string name = icon.Name;
+                        int fileLength = icon.Name.IndexOf(".");
+                        if (fileLength > 0)
+                        {
+                            name = icon.Name.Substring(0, fileLength);
+                        } else
+                        {
+                            api.Logger.Warning("Could not find file extensil for file '" + icon.Name + "' Using the entire file name for the delegate...");
+                        }
+ 
                         this.WaypointIcons[name] = delegate ()
                         {
                             int size = (int)Math.Ceiling((double)(20f * RuntimeEnv.GUIScale));
