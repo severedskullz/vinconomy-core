@@ -95,7 +95,7 @@ namespace Viconomy.Map
                             name = icon.Name.Substring(0, fileLength);
                         } else
                         {
-                            api.Logger.Warning("Could not find file extensil for file '" + icon.Name + "' Using the entire file name for the delegate...");
+                            api.Logger.Warning("Could not find file extension for file '" + icon.Name + "' Using the entire file name for the delegate...");
                         }
  
                         this.WaypointIcons[name] = delegate ()
