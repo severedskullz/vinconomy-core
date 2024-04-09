@@ -126,7 +126,7 @@ namespace Viconomy.BlockEntities
             } 
             
             // Does the shop have a register ID set?
-            if (this.RegisterID != -1 && !this.isAdminShop)
+            if (this.RegisterID == -1 && !this.isAdminShop)
             {
                 ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
@@ -466,7 +466,7 @@ namespace Viconomy.BlockEntities
             tree.SetInt("SizeY", GetSizeY());
             tree.SetInt("MaxSizeXZ", GetMaxSizeXZ());
             tree.SetInt("MaxSizeY", GetMaxSizeY());
-            tree.SetString("ScultpureName", sculptureName);
+            tree.SetString("SculptureName", sculptureName);
             ITreeAttribute slotTree = tree.GetOrAddTreeAttribute("DisabledSlots");
             for (int y = 0; y < maxSizeY; y++)
             {
