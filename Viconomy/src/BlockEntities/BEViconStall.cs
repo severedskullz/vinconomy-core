@@ -24,6 +24,8 @@ namespace Viconomy.BlockEntities
         
         protected GuiDialogBlockEntity invDialog;
         protected ViconomyInventory inventory;
+        protected bool bypassShelvableAttributes;
+
         public override InventoryBase Inventory { get { return this.inventory; } }
 
         public override int DisplayedItems => StallSlotCount;
@@ -446,9 +448,9 @@ namespace Viconomy.BlockEntities
                 ItemSlot slot = this.inventory.FindFirstNonEmptyStockSlot(index);
                 if (slot != null)
                 {
-                    if (slot.Itemstack.Collectible.Code.Path.IndexOf("crock") == 0
-                        || slot.Itemstack.Collectible.Code.Path.IndexOf("bowl") == 0
-                        || slot.Itemstack.Collectible.Code.Path.IndexOf("claypot") == 0
+                    if (slot.Itemstack.Collectible.Code.Path.StartsWith("crock")
+                        || slot.Itemstack.Collectible.Code.Path.StartsWith("bowl")
+                        || slot.Itemstack.Collectible.Code.Path.StartsWith("claypot")
                         || slot.Itemstack.Class != EnumItemClass.Block)
                     {
                         scale = .85f;
@@ -599,40 +601,27 @@ namespace Viconomy.BlockEntities
                 return modeldata;
             }
 
-            /*
-            IContainedMeshSource containedMeshSource = stack.Collectible as IContainedMeshSource;
-            if (containedMeshSource != null)
-            {
-                modeldata =  containedMeshSource.GenMesh(stack, capi.BlockTextureAtlas, Pos);
-                if (modeldata != null)
-                {
-                    return modeldata;
-                }
-
-            }
-            */
-            
-
-
             IItemRenderer renderer = modSystem.GetRenderer(stack);
             if (renderer != null)
             {
                 modeldata = renderer.createMesh(this, stack, index);
 
-                /*
-                if (stack.Collectible.Attributes?[AttributeTransformCode].Exists ?? false)
+                //Bypass the Display and Shelvable transforms for Armor Stands, where we want the model coordinates to match the character, not the zero'd positions.
+                if (!bypassShelvableAttributes)
                 {
-                    ModelTransform modelTransform = stack.Collectible.Attributes?[AttributeTransformCode].AsObject<ModelTransform>();
-                    modelTransform.EnsureDefaultValues();
-                    modeldata.ModelTransform(modelTransform);
+                    if (stack.Collectible.Attributes?[AttributeTransformCode].Exists ?? false)
+                    {
+                        ModelTransform modelTransform = stack.Collectible.Attributes?[AttributeTransformCode].AsObject<ModelTransform>();
+                        modelTransform.EnsureDefaultValues();
+                        modeldata.ModelTransform(modelTransform);
+                    }
+                    else if (AttributeTransformCode == "onshelfTransform" && (stack.Collectible.Attributes?["onDisplayTransform"].Exists ?? false))
+                    {
+                        ModelTransform modelTransform2 = stack.Collectible.Attributes?["onDisplayTransform"].AsObject<ModelTransform>();
+                        modelTransform2.EnsureDefaultValues();
+                        modeldata.ModelTransform(modelTransform2);
+                    }
                 }
-                else if (AttributeTransformCode == "onShelfTransform" && (stack.Collectible.Attributes?["onDisplayTransform"].Exists ?? false))
-                {
-                    ModelTransform modelTransform2 = stack.Collectible.Attributes?["onDisplayTransform"].AsObject<ModelTransform>();
-                    modelTransform2.EnsureDefaultValues();
-                    modeldata.ModelTransform(modelTransform2);
-                }
-                */
 
                 if (stack.Class == EnumItemClass.Item && (stack.Item.Shape == null || stack.Item.Shape.VoxelizeTexture))
                 {

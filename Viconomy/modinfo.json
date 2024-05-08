@@ -6,7 +6,7 @@
         "Severed Skullz"
     ],
     "description": "An Economy / Trading Mod",
-    "version": "0.2.6",
+    "version": "0.2.7",
   "dependencies": {
     "game": "1.19.0"
   }

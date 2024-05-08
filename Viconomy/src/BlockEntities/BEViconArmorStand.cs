@@ -15,6 +15,10 @@ namespace Viconomy.BlockEntities
     {
         public override int StallSlotCount => 9;
         public override int BulkPurchaseAmount => 1;
+        
+        public BEViconArmorStand() { 
+            bypassShelvableAttributes = true;
+        }
 
         public override void ConfigureInventory()
         {
