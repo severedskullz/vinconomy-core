@@ -41,6 +41,11 @@ namespace Viconomy.Inventory
             this.itemstack = stack;
         }
 
+        public override ItemStack TakeOut(int quantity)
+        {
+            return null;
+        }
+
     }
     
 }

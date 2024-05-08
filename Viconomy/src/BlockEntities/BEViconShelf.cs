@@ -20,10 +20,15 @@ namespace Viconomy.BlockEntities
                 float scale = 0.35f;
                 ItemSlot slot = this.inventory.FindFirstNonEmptyStockSlot(index);
                 if (slot != null)
-                    if (slot.Itemstack.Class != EnumItemClass.Block)
+                {
+                    if (slot.Itemstack.Collectible.Code.Path == "crock-burned-east" 
+                        || slot.Itemstack.Collectible.Code.Path == "bowl-meal" 
+                        || slot.Itemstack.Collectible.Code.Path == "claypot-cooked" 
+                        ||slot.Itemstack.Class != EnumItemClass.Block)
                     {
                         scale = .85f;
                     }
+                }
 
                 Cuboidf sb = block.SelectionBoxes[index];
                 float left = .25f - (scale / 2);

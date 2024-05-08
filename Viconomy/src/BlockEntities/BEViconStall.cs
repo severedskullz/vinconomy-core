@@ -319,13 +319,7 @@ namespace Viconomy.BlockEntities
                     {
                         if (player.PlayerUID != Owner)
                         {
-                            if ( !((ICoreServerAPI)Api).Server.IsDedicated )
-                            {
-                                ViconomyCoreSystem.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
-                            } else
-                            {
-                                ((IServerPlayer)player).Disconnect("Nice try, but that wasn't yours. (Tried to access Stall they didn't own)");
-                            }
+                            ((IServerPlayer)player).Disconnect("Nice try, but that wasn't yours. (Tried to access Stall they didn't own)");
                             return;
                         }
 
@@ -451,11 +445,15 @@ namespace Viconomy.BlockEntities
                 float scale = 0.35f;
                 ItemSlot slot = this.inventory.FindFirstNonEmptyStockSlot(index);
                 if (slot != null)
-                    if (slot.Itemstack.Class != EnumItemClass.Block)
+                {
+                    if (slot.Itemstack.Collectible.Code.Path.IndexOf("crock") == 0
+                        || slot.Itemstack.Collectible.Code.Path.IndexOf("bowl") == 0
+                        || slot.Itemstack.Collectible.Code.Path.IndexOf("claypot") == 0
+                        || slot.Itemstack.Class != EnumItemClass.Block)
                     {
                         scale = .85f;
                     }
-
+                }
                 Cuboidf sb = block.SelectionBoxes[index];
                 float left = .25f - (scale / 2);
                 float right = left + .5f;
@@ -601,30 +599,40 @@ namespace Viconomy.BlockEntities
                 return modeldata;
             }
 
-
+            /*
             IContainedMeshSource containedMeshSource = stack.Collectible as IContainedMeshSource;
             if (containedMeshSource != null)
             {
-                return containedMeshSource.GenMesh(stack, capi.BlockTextureAtlas, Pos);
+                modeldata =  containedMeshSource.GenMesh(stack, capi.BlockTextureAtlas, Pos);
+                if (modeldata != null)
+                {
+                    return modeldata;
+                }
+
             }
+            */
+            
+
 
             IItemRenderer renderer = modSystem.GetRenderer(stack);
             if (renderer != null)
             {
                 modeldata = renderer.createMesh(this, stack, index);
 
+                /*
                 if (stack.Collectible.Attributes?[AttributeTransformCode].Exists ?? false)
                 {
                     ModelTransform modelTransform = stack.Collectible.Attributes?[AttributeTransformCode].AsObject<ModelTransform>();
                     modelTransform.EnsureDefaultValues();
                     modeldata.ModelTransform(modelTransform);
                 }
-                else if (AttributeTransformCode == "onshelfTransform" && (stack.Collectible.Attributes?["onDisplayTransform"].Exists ?? false))
+                else if (AttributeTransformCode == "onShelfTransform" && (stack.Collectible.Attributes?["onDisplayTransform"].Exists ?? false))
                 {
                     ModelTransform modelTransform2 = stack.Collectible.Attributes?["onDisplayTransform"].AsObject<ModelTransform>();
                     modelTransform2.EnsureDefaultValues();
                     modeldata.ModelTransform(modelTransform2);
                 }
+                */
 
                 if (stack.Class == EnumItemClass.Item && (stack.Item.Shape == null || stack.Item.Shape.VoxelizeTexture))
                 {
@@ -641,7 +649,7 @@ namespace Viconomy.BlockEntities
                 }
             }
 
-            
+
 
             return modeldata;
         }

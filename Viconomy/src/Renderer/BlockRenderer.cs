@@ -1,6 +1,7 @@
 ﻿using Viconomy.BlockEntities;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.GameContent;
 
 namespace Viconomy.Renderer
 {
@@ -18,6 +19,18 @@ namespace Viconomy.Renderer
         public MeshData createMesh(BEViconBase stall, ItemStack stack, int index)
         {
             ICoreClientAPI coreClientAPI = (ICoreClientAPI)stall.Api;
+
+            IContainedMeshSource containedMeshSource = stack.Collectible as IContainedMeshSource;
+            if (containedMeshSource != null)
+            {
+                MeshData modeldata = containedMeshSource.GenMesh(stack, coreClientAPI.BlockTextureAtlas, stall.Pos);
+                if (modeldata != null)
+                {
+                    return modeldata;
+                }
+
+            }
+
             return coreClientAPI.TesselatorManager.GetDefaultBlockMesh(stack.Block).Clone();
         }
 

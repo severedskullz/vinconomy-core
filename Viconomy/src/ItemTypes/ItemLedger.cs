@@ -8,7 +8,7 @@ namespace Viconomy.ItemTypes
 {
     public class ItemLedger : Item
     {
-        GuiDialogGeneric ledgerGUI;
+        //GuiDialogGeneric ledgerGUI;
         public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handling)
         {
            
@@ -18,6 +18,7 @@ namespace Viconomy.ItemTypes
                 int shopID = slot.Itemstack.Attributes.GetInt("ShopId", -1);
                 if (shopID > 0)
                 {
+                    /*
                     if (ledgerGUI == null || (ledgerGUI != null && !ledgerGUI.IsOpened()))
                     {
                         ViconomyCoreSystem modSys = api.ModLoader.GetModSystem<ViconomyCoreSystem>();
@@ -38,6 +39,9 @@ namespace Viconomy.ItemTypes
                         ledgerGUI.TryClose();
                         ledgerGUI = null;
                     }
+                    */
+                    ViconomyLedgerSystem modSys = api.ModLoader.GetModSystem<ViconomyLedgerSystem>();
+                    modSys.RequestToReadLedgerData(shopID);
                 } else {
                     ((ICoreClientAPI)this.api).ShowChatMessage(Lang.Get("vinconomy:ledger-not-set"));
                 }

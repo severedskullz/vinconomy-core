@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Numerics;
 using System.Reflection;
 using System.Text;
 using Viconomy.Filters;
@@ -10,6 +11,7 @@ using Viconomy.Trading;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
@@ -22,7 +24,7 @@ namespace Viconomy.BlockEntities
     {
         
         protected GuiDialogBlockEntity invDialog;
-        protected InventoryGeneric inventory;
+        protected InventoryBase inventory;
         int sizeXZ = 3;
         int sizeY = 3;
         int maxSizeXZ =3;
@@ -46,8 +48,8 @@ namespace Viconomy.BlockEntities
 
         public virtual void ConfigureInventory()
         {
-            this.inventory = new InventoryGeneric((maxSizeXZ * maxSizeXZ * maxSizeY) + 1, null, null, OnNewSlot);
-            
+            //this.inventory = new InventoryGeneric((maxSizeXZ * maxSizeXZ * maxSizeY) + 1, null, null, OnNewSlot);
+            this.inventory = new ViconomySculptureInventory((maxSizeXZ * maxSizeXZ * maxSizeY) + 1, null, null);
             /*for (int i = 0; i < StallSlotCount; i++)
             {
                 inventory.SetSlotFilter(i, ViconomyFilters.IsGenericItem);
@@ -141,7 +143,24 @@ namespace Viconomy.BlockEntities
                 return;
             }
 
-            // Check if every slot that is enabled has atleast 1 item.
+            
+
+            if (!CanSell())
+            {
+                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRODUCT);
+                return;
+            }
+
+
+            if (modSystem.CanPurchaseItem(player, this, register, stallSlot, desiredAmount))
+            {
+                PurchaseItem(player, stallSlot, desiredAmount, register);
+            }
+
+        }
+
+        private bool CanSell()
+        {
             bool hasAtleastOneForSale = false;
             for (int y = 0; y < sizeY; y++)
             {
@@ -154,8 +173,7 @@ namespace Viconomy.BlockEntities
                         {
                             if (slot.Empty)
                             {
-                                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_ENOUGH_STOCK);
-                                return;
+                                return false;
                             }
                             else
                             {
@@ -165,19 +183,7 @@ namespace Viconomy.BlockEntities
                     }
                 }
             }
-
-            if (!hasAtleastOneForSale)
-            {
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRODUCT);
-                return;
-            }
-
-
-            if (modSystem.CanPurchaseItem(player, this, register, stallSlot, desiredAmount))
-            {
-                PurchaseItem(player, stallSlot, desiredAmount, register);
-            }
-
+            return hasAtleastOneForSale;
         }
 
         private ItemStack GenNewSculptureBundle()
@@ -441,13 +447,7 @@ namespace Viconomy.BlockEntities
                     {
                         if (player.PlayerUID != Owner)
                         {
-                            if ( !((ICoreServerAPI)Api).Server.IsDedicated )
-                            {
-                                ViconomyCoreSystem.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
-                            } else
-                            {
-                                ((IServerPlayer)player).Disconnect("Nice try, but that wasn't yours. (Tried to access Stall they didn't own)");
-                            }
+                            ((IServerPlayer)player).Disconnect("Nice try, but that wasn't yours. (Tried to access Stall they didn't own)");
                             return;
                         }
 
@@ -796,7 +796,19 @@ namespace Viconomy.BlockEntities
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
-           
+
+
+                ItemSlot currency = inventory[0];
+                if (currency.Itemstack != null && CanSell())
+                {
+                    dsc.AppendLine(Lang.Get("vinconomy:for-sale", new Object[] { 1, 1, getSculptureName(), currency.Itemstack.StackSize, currency.Itemstack.GetName() }));
+                }
+                else
+                {
+                    dsc.AppendLine(Lang.Get("vinconomy:not-for-sale", new Object[] { 1 }));
+                }
+
+            
             //dsc.AppendLine();
             //base.GetBlockInfo(forPlayer, dsc);
         }
@@ -852,9 +864,6 @@ namespace Viconomy.BlockEntities
 
         public ViconSculptureBlockSlot GetSlotForGrid(int x, int y, int z)
         {
-            // 
-            // x = 2, y = 2, z = 2
-
             int layerOffset = y * GetMaxSizeXZ() * GetMaxSizeXZ();
             int zOffset = z * GetMaxSizeXZ();
             return (ViconSculptureBlockSlot)this.Inventory[layerOffset + zOffset + x + 1];

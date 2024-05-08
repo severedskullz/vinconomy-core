@@ -12,35 +12,21 @@ namespace Viconomy.Inventory
     {
         BEViconBase stall;
 
-        // the amount of items per item group
-        private int itemsPerBin = 9;
-
-        // The amount of different item groups there are for this inventory
-        private int binSize;
-
-        private StallSlot[] stallSlots;
-
         private ItemSlot[] slots;
-        public StallSlot[] StallSlots { get { return this.stallSlots; } }
-
-        public override int Count { get { return this.stallSlots.Length * (itemsPerBin + 1); } }
 
         public ItemSlot[] Slots => slots;
 
+        public override int Count => slots.Length;
+
+        public override ItemSlot this[int slotId] { get => slots[slotId]; set => slots[slotId] = value; }
+
         ViconomyCoreSystem modSystem;
 
-        public ViconomySculptureInventory(BEViconBase stall, string inventoryID, ICoreAPI api, int binSize, int itemsPerBin) : base(inventoryID, api)
+        public ViconomySculptureInventory(int numSlots, string inventoryID, ICoreAPI api) : base(inventoryID, api)
         {
-            this.stall = stall;
-            
-            this.binSize = binSize;
-            this.itemsPerBin = itemsPerBin;
 
-            int binSlotCount = itemsPerBin + 1; // 9 slots, plus 1 for the currency = 10
-            int totalSlots = binSlotCount * binSize; // 10 slots, times 4 bins = 40
-
-            this.slots = new ItemSlot[totalSlots];
-            for (int i = 0; i < totalSlots; i++)
+            this.slots = new ItemSlot[numSlots];
+            for (int i = 0; i < numSlots; i++)
             {
                 this.slots[i] = NewSlot(i);
             }
@@ -58,92 +44,7 @@ namespace Viconomy.Inventory
             if (id == 0)
                 return new ViconCurrencySlot(this);
             else
-                return new ViconItemSlot(this, id / (itemsPerBin + 1), id);
-        }
-
-        public override ItemSlot this[int slotId]
-        {
-            get
-            {
-                int stallSlot = slotId / (itemsPerBin + 1);
-                int itemSlot = slotId % (itemsPerBin + 1);
-                if (slotId < 0 || slotId >= this.Count)
-                {
-                    return null;
-                }
-                else
-                {
-                    //Console.WriteLine("Accessing ID " + slotId);
-                    if (itemSlot == itemsPerBin)
-                    {
-                        return this.stallSlots[stallSlot].currency;
-                    }
-                    return this.stallSlots[stallSlot].slots[itemSlot];
-                }
-            }
-            set
-            {
-                int stallSlot = slotId / itemsPerBin + 1;
-                int itemSlot = slotId % (itemsPerBin + 1);
-                if (slotId < 0 || slotId >= this.Count)
-                {
-                    throw new ArgumentOutOfRangeException("slotId");
-                }
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
-                if (itemSlot == itemsPerBin)
-                {
-                    this.stallSlots[stallSlot].currency = (ViconCurrencySlot) value;
-                } else
-                {
-                    this.stallSlots[stallSlot].slots[slotId] = (ViconItemSlot) value;
-                }
-            }
-        }
-
-        public void SetSlotFilter(int slot, Vintagestory.API.Common.Func<ItemSlot, bool> filter)
-        {
-            ViconItemSlot[] filteredSlots = stallSlots[slot].slots;
-            foreach (var itemSlot in filteredSlots)
-            {
-                itemSlot.setFilter(filter);
-            }
-        }
-
-        public ItemSlot FindFirstNonEmptyStockSlot(int stallSlot)
-        {
-            return stallSlots[stallSlot].FindFirstNonEmptyStockSlot();
-        }
-
-        public ItemSlot GetCurrencyForSelection(int stallSlot)
-        {
-            return stallSlots[stallSlot].currency; 
-        }
-
-        public ItemSlot[] GetSlotsForSelection(int stallSlot)
-        {
-            return stallSlots[stallSlot].slots;
-        }
-
-
-        public override void FromTreeAttributes(ITreeAttribute tree)
-        {
-            this.slots = this.SlotsFromTreeAttributes(tree, slots, null);
-            for (int i = 0; i < binSize; i++)
-            {
-                stallSlots[i].itemsPerPurchase = tree.GetAsInt("slotPrice-" + i, 1);
-            }
-        }
-
-        public override void ToTreeAttributes(ITreeAttribute tree)
-        {
-            base.SlotsToTreeAttributes(this.slots, tree);
-            for (int i = 0; i < binSize; i++)
-            {
-                 tree.SetInt("slotPrice-" + i, stallSlots[i].itemsPerPurchase);
-            }
+                return new ViconSculptureBlockSlot(this, id);
         }
 
         public override float GetTransitionSpeedMul(EnumTransitionType transType, ItemStack stack)
@@ -188,15 +89,14 @@ namespace Viconomy.Inventory
             }
         }
 
-
-        public void SetSlotBackground(int stallSlot, string background = null, string hexColor = null)
+        public override void FromTreeAttributes(ITreeAttribute tree)
         {
-            ItemSlot[] curSlots = this.GetSlotsForSelection(stallSlot);
-            foreach (var slot in curSlots)
-            {
-                slot.BackgroundIcon = background;
-                slot.HexBackgroundColor = hexColor;
-            }
+            this.slots = this.SlotsFromTreeAttributes(tree, slots, null);
+        }
+
+        public override void ToTreeAttributes(ITreeAttribute tree)
+        {
+            base.SlotsToTreeAttributes(this.slots, tree);
         }
     }
 }

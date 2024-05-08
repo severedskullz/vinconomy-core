@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Viconomy.BlockEntities;
 using Viconomy.Inventory;
@@ -29,7 +30,17 @@ namespace Viconomy.GUI
             teller = capi.World.BlockAccessor.GetBlockEntity<BEViconTeller>(BlockEntityPosition);
             this.isOwner = isOwner;
             ViconomyCoreSystem modSystem = capi.ModLoader.GetModSystem<ViconomyCoreSystem>();
-            registers = modSystem.GetRegistry().GetShopsForOwner(teller.Owner);
+            ShopRegistration[] allRegisters = modSystem.GetRegistry().GetShopsForOwner(teller.Owner);
+            List<ShopRegistration> filteredRegisters = new List<ShopRegistration>();
+            foreach (ShopRegistration register in allRegisters)
+            {
+                if (register.Position != null)
+                {
+                    filteredRegisters.Add(register);
+                }
+            }
+
+            registers = filteredRegisters.ToArray();
             vinInv = Inventory;      
             reverseTrade = new bool[length];
             

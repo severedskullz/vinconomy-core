@@ -15,7 +15,7 @@ namespace Viconomy.GUI
     public class GuiViconSculpturePadOwner : GuiDialogBlockEntity
     {
         BEViconSculpturePad stall;
-        InventoryGeneric vinInv;
+        ViconomySculptureInventory vinInv;
         ShopRegistration[] registers;
         ICoreClientAPI api;
 
@@ -40,7 +40,7 @@ namespace Viconomy.GUI
             }
 
             registers = filteredRegisters.ToArray();
-            vinInv = Inventory as InventoryGeneric;
+            vinInv = Inventory as ViconomySculptureInventory;
 
             if (base.IsDuplicate)
             {
@@ -65,7 +65,6 @@ namespace Viconomy.GUI
                 ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.DialogToScreenPadding);
                 bgBounds.BothSizing = ElementSizing.FitToChildren;
 
-                InventoryGeneric vinInv = Inventory as InventoryGeneric;
                 int itemsPerLayer = stall.GetMaxSizeXZ() * stall.GetMaxSizeXZ();
                 int[] uiSlots = new int[itemsPerLayer];
                 int layerOffset = (curTab * itemsPerLayer) + 1;

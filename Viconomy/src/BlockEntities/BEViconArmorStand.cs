@@ -93,7 +93,12 @@ namespace Viconomy.BlockEntities
                     {
                         matrix.RotateYDeg(this.block.Shape.rotateY - 90);
                         matrix.Translate(-0.05f, 0.10f, -0.0125f);
-                    } 
+                    }
+                    else if (ViconomyFilters.IsBootsSlot(slot))
+                    {
+                        matrix.RotateYDeg(this.block.Shape.rotateY + 90);
+                        matrix.Translate(-0.05f, 0.10f, -0.0125f);
+                    }
                     else
                     {
                         matrix.RotateYDeg(this.block.Shape.rotateY + 90);

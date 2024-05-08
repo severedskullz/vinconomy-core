@@ -89,10 +89,8 @@ namespace Viconomy
                     config = new ViconConfig();
                     api.StoreModConfig<ViconConfig>(config, filename);
                 }
-                else
-                {
-                    this.Config = config;
-                }
+
+                this.Config = config;
             }
             catch
             {
@@ -327,29 +325,29 @@ namespace Viconomy
 
         private void OnSaveGameLoading()
         {
-            this._coreServerAPI.Logger.Debug("+============== Loading Viconomy ==============+");
+            this.Mod.Logger.Debug("+============== Loading Viconomy ==============+");
             DB.CleanupShops();
             DB.LoadShops(ShopRegistry);
 
-            this._coreServerAPI.Logger.Debug("| Loaded " + ShopRegistry.GetCount() + " Shops");
+            this.Mod.Logger.Debug("| Loaded " + ShopRegistry.GetCount() + " Shops");
 
             foreach (string ownerId in ShopRegistry.GetAllShopOwners())
             {
                 var shops = ShopRegistry.GetShopsForOwner(ownerId);
-                this._coreServerAPI.Logger.Debug("|  Loaded " + shops.Length + " Shops for Owner: " + ownerId);
+                this.Mod.Logger.Debug("|  Loaded " + shops.Length + " Shops for Owner: " + ownerId);
                 foreach (ShopRegistration shop in shops)
                 {
-                    this._coreServerAPI.Logger.Debug("|   Loading Shop " + shop.Name);
+                    this.Mod.Logger.Debug("|   Loading Shop " + shop.Name);
 
                     if (shop.Position == null)
                     {
                         ShopRegistry.GetShopsForOwner(ownerId);
-                        this._coreServerAPI.Logger.Debug("|     Shop " + shop.Name + " (" + shop.ID + ") does not exist anymore. Removing...");
+                        this.Mod.Logger.Debug("|     Shop " + shop.Name + " (" + shop.ID + ") does not exist anymore. Removing...");
                     }
                 }
             }
 
-            this._coreServerAPI.Logger.Debug("=============== Loaded Viconomy ================");
+            this.Mod.Logger.Debug("=============== Loaded Viconomy ================");
         }
 
         private void SendAllPublicRegisters(IServerPlayer player)
@@ -444,7 +442,7 @@ namespace Viconomy
             }
 
             //This should have returned already, but in case someone fucked up
-            this._coreServerAPI.Logger.Error("Did not get a renderer for item " + stack.Collectible.Code.Path);
+            this.Mod.Logger.Error("Did not get a renderer for item " + stack.Collectible.Code.Path);
             if (stack.Class == EnumItemClass.Block)
                 return new BlockRenderer();
             else
@@ -578,8 +576,8 @@ namespace Viconomy
                 // We are the Client!
                 api = this._coreClientAPI;
             }
-            
-            //this._coreClientAPI.Logger.Debug("AllowStallUse - Claimant is:" + claimant + " Response: " + response + " accessType: " + accessType);
+
+            //this.Mod.Logger.Debug("AllowStallUse - Claimant is:" + claimant + " Response: " + response + " accessType: " + accessType);
 
             if (accessType == EnumBlockAccessFlags.Use && response == EnumWorldAccessResponse.LandClaimed)
             {
