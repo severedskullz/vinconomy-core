@@ -425,15 +425,17 @@ namespace Viconomy.BlockEntities
         }
         public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
         {
-            for (int i = 0; i < StallSlotCount; i++)
+            if (shouldRenderInventory)
             {
-                ItemSlot slot = this.inventory.FindFirstNonEmptyStockSlot(i);
-                if (slot != null && !slot.Empty && tfMatrices != null)
+                for (int i = 0; i < StallSlotCount; i++)
                 {
-                    mesher.AddMeshData(getOrCreateMesh(slot.Itemstack, i), tfMatrices[i]);
+                    ItemSlot slot = this.inventory.FindFirstNonEmptyStockSlot(i);
+                    if (slot != null && !slot.Empty && tfMatrices != null)
+                    {
+                        mesher.AddMeshData(getOrCreateMesh(slot.Itemstack, i), tfMatrices[i]);
+                    }
                 }
             }
-
             return false;
         }
 

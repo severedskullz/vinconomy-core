@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Viconomy.src.Renderer;
 using Viconomy.Trading;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -20,6 +21,9 @@ namespace Viconomy.BlockEntities
         public virtual int StallSlotCount { get; protected set; } = 4;
         public virtual int StacksPerSlot { get; protected set; } = 9;
         public virtual int BulkPurchaseAmount { get; protected set; } = 5;
+
+        public bool shouldRenderInventory;
+        protected DistanceRenderer distanceRenderer;
 
         protected AssetLocation OpenSound;
         protected AssetLocation CloseSound;
@@ -47,6 +51,11 @@ namespace Viconomy.BlockEntities
 
             this.OpenSound = (openSound == null) ? null : AssetLocation.Create(openSound, block.Code.Domain);
             this.CloseSound = (closeSound == null) ? null : AssetLocation.Create(closeSound, block.Code.Domain);
+
+            if (api.Side == EnumAppSide.Client)
+            {
+                this.distanceRenderer = new DistanceRenderer(this);
+            }
         }
 
         public void SetOwner(IPlayer player)
