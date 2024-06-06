@@ -279,6 +279,7 @@ namespace Viconomy
 
         private void OnRecieveRegistryUpdate(ShopUpdatePacket packet)
         {
+            this.Mod.Logger.Debug("Got an update packet for shop " + packet.ID + ". It has coords " + packet.X + "/" + packet.Y + "/" + packet.Z + " and broadcasting is " + packet.IsWaypointBroadcasted);
             if (packet.IsRemoval)
             {
                 ShopRegistry.ClearShop(packet.ID);
@@ -311,10 +312,12 @@ namespace Viconomy
             if (viconRegister != null)
             {
                 return viconRegister;
-            } else
-            {
-                ShopRegistry.ClearShop(registerID);
-            }
+            } 
+            //TODO: Disabling this until I figure out a better handling for registers in unloaded chunks
+            //else
+            //{
+            //    ShopRegistry.ClearShopPos(registerID);
+            //}
             return null;
         }
 
@@ -360,7 +363,7 @@ namespace Viconomy
                 {
                     if (shop.IsWaypointBroadcasted || shop.Owner == player.PlayerUID)
                     {
-                        updates.Add(new ShopUpdatePacket(shop));
+                        updates.Add(new ShopUpdatePacket(shop, shop.Owner == player.PlayerUID));
                     }
                 }
             }
@@ -460,7 +463,7 @@ namespace Viconomy
             ShopRegistration shop = ShopRegistry.GetShop(shopId);
             if (shop != null)
             {
-                ShopUpdatePacket update = new ShopUpdatePacket(shop);
+                ShopUpdatePacket update = new ShopUpdatePacket(shop, false);
                 _serverChannel.BroadcastPacket(update);
             }
         }
@@ -474,7 +477,7 @@ namespace Viconomy
             }
             else
             {
-                update = new ShopUpdatePacket(shop);
+                update = new ShopUpdatePacket(shop, true);
             }
 
             _serverChannel.SendPacket(update, player);

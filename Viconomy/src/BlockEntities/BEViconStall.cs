@@ -148,7 +148,7 @@ namespace Viconomy.BlockEntities
             BEVRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
             if (register == null && !this.isAdminShop)
             {
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
+                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.COULDNT_GET_REGISTER);
                 return;
             }
   

@@ -125,15 +125,16 @@ namespace Viconomy.Registry
             if (register != null)
             {
                 Console.WriteLine("Updating existing Register with ID " + id);
-                if (name != null)
+                if (name != null) { 
                     register.Name = name;
+                }
                 register.Position = pos;
 
                 if (db != null) db.UpdateShop(register);
             }
             else
             {
-                throw new ArgumentException("Tried to update a non-existant shop");
+                throw new ArgumentException("Tried to update a non-existant shop with ID " + id);
             }
             return register;
 
@@ -170,17 +171,29 @@ namespace Viconomy.Registry
 
             reg.Name = packet.Name;
             reg.Owner = packet.Owner;
+            reg.X = packet.X;
+            reg.Y = packet.Y;
+            reg.Z = packet.Z;
             reg.IsWaypointBroadcasted = packet.IsWaypointBroadcasted;
             if (reg.IsWaypointBroadcasted)
             {
                 reg.WaypointIcon = packet.WaypointIcon;
                 reg.WaypointColor = packet.WaypointColor;
-                reg.X = packet.X;
-                reg.Y = packet.Y;
-                reg.Z = packet.Z;
             }
            
             
+        }
+
+        public string GetShopName(int ID)
+        {
+            ShopRegistration shop = GetShop(ID);
+            if (shop == null)
+            {
+                return "Unknown Shop";
+            } else
+            {
+                return shop.Name;
+            }
         }
     }
 }

@@ -60,8 +60,17 @@ namespace Viconomy.BlockEntities
                 }
                 else
                 {
-                    //Console.WriteLine("Register block was placed and had ID Set... Updating");
-                    ShopRegistration register = modSystem.UpdateShop(Owner, ID, Name, this.Pos);
+                    ShopRegistration reg = modSystem.GetRegistry().GetShop(ID);
+                    if (reg != null)
+                    {
+                        //Console.WriteLine("Register block was placed and had ID Set... Updating");
+                        ShopRegistration register = modSystem.UpdateShop(Owner, ID, Name, this.Pos);
+                    } else {
+                        modSystem.Mod.Logger.Warning("Somehow the shop with ID " + ID + " got removed. Recreating it...");
+                        ShopRegistration register = modSystem.AddShop(Owner, OwnerName, Name, this.Pos);
+                        ID = register.ID;
+                    }
+                    
                 }
             }
 

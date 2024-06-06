@@ -47,12 +47,6 @@ namespace Viconomy.GUI
             this.Compose();
         }
 
-        public void DoPurchase()
-        {
-            Console.WriteLine("Attempted to purchase item.");
-        }
-
-
         private void Compose()
         {
             ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);

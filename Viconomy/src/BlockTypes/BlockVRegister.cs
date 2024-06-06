@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Viconomy.BlockEntities;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 
@@ -42,7 +43,7 @@ namespace Viconomy.BlockTypes
                 {
                     if (Owner != null)
                     {
-                        vEntity.UpdateShop(Owner, byItemStack.Attributes.GetString("OwnerName"), byItemStack.Attributes.GetInt("ID"), null);                        
+                        vEntity.UpdateShop(Owner, byItemStack.Attributes.GetString("OwnerName"), byItemStack.Attributes.GetInt("ID"), byItemStack.Attributes.GetString("ShopName"));                        
                     }
                     else
                     {
@@ -69,6 +70,8 @@ namespace Viconomy.BlockTypes
                 stack.Attributes.SetString("Owner", vEntity.Owner);
                 stack.Attributes.SetInt("ID", vEntity.ID);
                 stack.Attributes.SetString("OwnerName", vEntity.OwnerName);
+                ViconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
+                stack.Attributes.SetString("ShopName", modSystem.GetRegistry().GetShopName(vEntity.ID));
             }
                 
             return new ItemStack[] { stack };
@@ -113,6 +116,16 @@ namespace Viconomy.BlockTypes
                 return false;
             }
             return base.TryPlaceBlock(world, byPlayer, itemstack, blockSel, ref failureCode);
+        }
+
+        public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
+        {
+            ITreeAttribute attrs = inSlot.Itemstack.Attributes;
+            dsc.AppendLine("Owner: " + attrs.GetString("OwnerName", "None"));
+            dsc.AppendLine("Shop: " + attrs.GetString("ShopName", "None"));
+            base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
+
+
         }
 
     }

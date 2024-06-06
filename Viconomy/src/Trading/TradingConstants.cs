@@ -18,5 +18,6 @@ namespace Viconomy.Trading
         public static string DOESNT_OWN = "vinconomy:doesnt-own";
         internal static string NO_PRIVLEGE = "vinconomy:no-privelege";
         internal static string PURCHASED_ITEMS = "vinconomy:purchased-item";
+        internal static string COULDNT_GET_REGISTER = "vinconomy:couldnt-find-register";
     }
 }

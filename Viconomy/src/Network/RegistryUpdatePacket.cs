@@ -38,7 +38,7 @@ namespace Viconomy.Network
         [ProtoMember(11)] public bool IsRemoval { get; set; }
 
         public ShopUpdatePacket() { }
-        public ShopUpdatePacket(ShopRegistration reg)
+        public ShopUpdatePacket(ShopRegistration reg, bool isOwner)
         {
             this.Owner = reg.Owner;
             this.ID = reg.ID;
@@ -46,11 +46,15 @@ namespace Viconomy.Network
             this.OwnerName = reg.OwnerName;
             this.IsWaypointBroadcasted = reg.IsWaypointBroadcasted;
 
-            if (IsWaypointBroadcasted )
+            if (reg.IsWaypointBroadcasted || isOwner)
             {
                 this.X = reg.X;
                 this.Y = reg.Y;
                 this.Z = reg.Z;
+            }
+
+            if (IsWaypointBroadcasted )
+            {
                 this.WaypointIcon = reg.WaypointIcon;
                 this.WaypointColor = reg.WaypointColor;
             }

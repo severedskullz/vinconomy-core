@@ -9,6 +9,7 @@
     "purchased-zero-quantity": "You must purchase atleast 1 item at a time.",
     "not-enough-money": "Not enough items in your hand to purchase this item.",
     "not-registered-with-shop": "This stall is not registered with a shop yet. Unable to make a purchase.",
+    "couldnt-find-register": "Unable to find the register block for shop - is it in an unloaded chunk? DEV NOTE: I am working on fixing this!",
     "item-cost": "This item costs {0}x {1}. Please have payment in your hand.",
     "for-sale": "Slot {0}: {1}x {2} for {3}x {4}",
     "not-for-sale": "Slot {0}: Not for Sale",

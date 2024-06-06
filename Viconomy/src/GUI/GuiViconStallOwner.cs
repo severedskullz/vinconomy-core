@@ -64,12 +64,6 @@ namespace Viconomy.GUI
             this.Compose();
         }
 
-        public void DoPurchase()
-        {
-            Console.WriteLine("Attempted to purchase item.");
-        }
-
-
         private void Compose()
         {
 
@@ -309,35 +303,5 @@ namespace Viconomy.GUI
             TryClose();
         }
 
-        /*
-        public override void OnGuiClosed()
-        {
-            
-
-            SingleComposer.GetSlotGrid("inputSlot").OnGuiClosed(capi);
-            SingleComposer.GetSlotGrid("outputslot").OnGuiClosed(capi);
-
-            base.OnGuiClosed();
-        }
-        
-
-        public override void OnGuiClosed()
-        {
-            //This is identical to base, except the fact that Im using VinConstants for the packet ID
-            if (this.Inventory != null)
-            {
-                this.Inventory.Close(this.capi.World.Player);
-                this.capi.World.Player.InventoryManager.CloseInventory(this.Inventory);
-            }
-            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.CLOSE_GUI, null);
-            this.capi.Gui.PlaySound(this.CloseSound, true, 1f);
-
-        }
-        */
-        private void OnInventorySlotModified(int slotid)
-        {
-            // Direct call can cause InvalidOperationException
-            capi.Event.EnqueueMainThreadTask(Compose, "setupvicondlg");
-        }
     }
 }
