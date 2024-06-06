@@ -12,7 +12,7 @@
   "variantgroups": [
     {
       "code": "cloth",
-      "states": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "purple", "red", "white", "yellow" ]
+        "states": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
     },
     {
       "code": "side",

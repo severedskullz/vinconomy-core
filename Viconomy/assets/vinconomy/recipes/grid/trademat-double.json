@@ -11,7 +11,7 @@
       "type": "item",
       "code": "game:cloth-*",
       "name": "color",
-      "allowedVariants": [ "blue", "red", "yellow", "purple", "brown", "green", "orange", "black", "gray", "pink", "white" ]
+        "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
     },
     "O": {
       "type": "block",

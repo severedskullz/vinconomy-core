@@ -5,7 +5,7 @@
       "type": "item",
       "code": "game:cloth-*",
       "name": "cloth",
-      "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "purple", "red", "white", "yellow" ]
+      "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
     },
     "S": {
       "type": "block",
