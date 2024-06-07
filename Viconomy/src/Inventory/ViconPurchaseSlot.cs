@@ -9,7 +9,7 @@ namespace Viconomy.Inventory
 {
     public class ViconPurchaseSlot : ItemSlot
     {
-        private int stallSlot;
+        public int stallSlot { get; private set; }
 
         public ViconPurchaseSlot(InventoryBase inventory, int stallSlot) : base(inventory)
         {

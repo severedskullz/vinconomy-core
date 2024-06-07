@@ -28,32 +28,15 @@ namespace Viconomy.Inventory
             return false;
         }
 
-        /*
-        protected override void ActivateSlotLeftClick(ItemSlot sourceSlot, ref ItemStackMoveOperation op)
+        public override bool CanTakeFrom(ItemSlot sourceSlot, EnumMergePriority priority = EnumMergePriority.AutoMerge)
         {
-                base.ActivateSlotLeftClick(sourceSlot, ref op);
-        }
-
-        public override void ActivateSlot(ItemSlot sourceSlot, ref ItemStackMoveOperation op)
-        {
-            //Console.WriteLine("We called Activate Slot.");
-           
-            if (sourceSlot.Empty && Itemstack == null)
+            if (CanHold(sourceSlot))
             {
-                setSlotDisabled(!isDisabled);
+                return base.CanTakeFrom(sourceSlot, priority);
             }
-            else
-            {
-                base.ActivateSlot(sourceSlot, ref op);
-            }
-        }
 
-        public void setSlotDisabled(bool isDisabled)
-        {
-            this.isDisabled = isDisabled;
-            this.HexBackgroundColor = isDisabled ? disabledColor : enabledColor;
+            return false;
         }
-        */
 
     }
 

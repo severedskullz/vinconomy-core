@@ -537,21 +537,22 @@ namespace Viconomy.BlockEntities
         public override void OnBlockRemoved()
         {
             base.OnBlockRemoved();
-            GuiDialogBlockEntity guiDialogBlockEntity = this.invDialog;
-            if (guiDialogBlockEntity != null && guiDialogBlockEntity.IsOpened())
+
+            if (this.invDialog != null)
             {
-                GuiDialogBlockEntity guiDialogBlockEntity2 = this.invDialog;
-                if (guiDialogBlockEntity2 != null)
+                if (this.invDialog.IsOpened())
                 {
-                    guiDialogBlockEntity2.TryClose();
+                    this.invDialog.TryClose();
                 }
+
             }
-            GuiDialogBlockEntity guiDialogBlockEntity3 = this.invDialog;
-            if (guiDialogBlockEntity3 == null)
+
+            if (this.invDialog != null)
             {
-                return;
+                this.invDialog.Dispose();
             }
-            guiDialogBlockEntity3.Dispose();
+
+            this.invDialog = null;
         }
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)

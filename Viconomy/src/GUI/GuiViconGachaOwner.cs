@@ -56,7 +56,7 @@ namespace Viconomy.GUI
 
         private void Inventory_SlotModified(int obj)
         {
-            Compose();
+            UpdateSlotWinningChances();
         }
 
         private void Compose()
@@ -129,7 +129,7 @@ namespace Viconomy.GUI
                 int slotCount = vinInv.Count - 1;
                 int slotsPerRow = 3;
                 int rows = (int)Math.Ceiling(((double)slotCount) / slotsPerRow);
-                Console.WriteLine("We need " + rows + " rows...");
+                //Console.WriteLine("We need " + rows + " rows...");
 
                 //This is a lot more complicated than it needs to be. Basically, keep track of the last Row/Column element and put it either
                 // Under the last row if its not null, or Right of the last column if its not null. At the end of the row loop, update our last
@@ -222,7 +222,7 @@ namespace Viconomy.GUI
 
                 for (int i = 0; i < slotBounds.Length; i++)
                 {
-                    SingleComposer.AddStaticText("0%", font, labelBounds[i], "percentage"+i);
+                    SingleComposer.AddDynamicText("0%", font, labelBounds[i], "percentage"+i);
                     SingleComposer.AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 5, new int[] { i + 1}, slotBounds[i], "inventory" + i);
                 }
 
@@ -266,8 +266,8 @@ namespace Viconomy.GUI
                     }
                 }
                 string percentage = percent+"%";
-                GuiElementStaticText text = SingleComposer.GetStaticText("percentage" + i);
-                text.SetValue(percentage);
+                GuiElementDynamicText text = SingleComposer.GetDynamicText("percentage" + i);
+                text.SetNewText(percentage);
             }
         }
 
@@ -281,7 +281,8 @@ namespace Viconomy.GUI
                 data = ms.ToArray();
             }
             useTotalRandomizer = isToggled;
-            Compose();
+            UpdateSlotWinningChances();
+            //Compose();
             this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_TOTAL_RANDOMIZER, data);
 
         }
@@ -321,6 +322,12 @@ namespace Viconomy.GUI
         private void OnTitleBarCloseClicked()
         {
             TryClose();
+        }
+
+        public override void OnGuiClosed()
+        {
+            base.OnGuiClosed();
+            vinInv.SlotModified -= Inventory_SlotModified;
         }
 
     }

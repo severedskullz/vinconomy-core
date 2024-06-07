@@ -56,6 +56,7 @@ namespace Viconomy
             api.RegisterBlockClass("ViconClothingDisplay", typeof(BlockVClothingDisplay));
             api.RegisterBlockClass("ViconClothingDisplayTop", typeof(BlockVClothingDisplayTop));
             api.RegisterBlockClass("ViconJobboard", typeof(BlockVJobboard));
+            api.RegisterBlockClass("ViconGacha", typeof(BlockVGacha));
 
             api.RegisterBlockEntityClass("BEViconStall", typeof(BEViconStall));
             api.RegisterBlockEntityClass("BEViconHelmetStand", typeof(BEViconHelmetStand));

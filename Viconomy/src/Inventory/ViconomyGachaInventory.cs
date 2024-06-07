@@ -102,6 +102,24 @@ namespace Viconomy.Inventory
             return true;
         }
 
+        public double GetChanceForSlot(int slot, bool useTotalRandomizer)
+        {
+            double percent = 0;
+            ItemSlot item = slots[slot];
+            if (item.StackSize > 0)
+            {
+                if (useTotalRandomizer)
+                {
+                    percent = Math.Round(((double)item.StackSize / (double)GetTotalItems()) * 100, 2);
+                }
+                else
+                {
+                    percent = Math.Round(((double)1 / (double) GetNonEmptySlotCount()) * 100, 2);
+                }
+            }
+            return percent;
+        }
+
         public ViconGachaSlot GetRandomItem(bool isPickAbsolute)
         {
             ItemSlot[] filled = GetNonEmptySlots();

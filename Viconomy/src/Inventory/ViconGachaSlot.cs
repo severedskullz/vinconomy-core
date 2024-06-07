@@ -12,7 +12,7 @@ namespace Viconomy.Inventory
         public ViconGachaSlot(InventoryBase inventory,int itemSlot) : base(inventory)
         {
             //this.HexBackgroundColor = "#65d934";
-            this.BackgroundIcon = "vicon-boots";
+            this.BackgroundIcon = "vicon-general";
             this.Slot = itemSlot;
         }
 
@@ -31,33 +31,15 @@ namespace Viconomy.Inventory
             return false;
         }
 
-        /*
-        protected override void ActivateSlotLeftClick(ItemSlot sourceSlot, ref ItemStackMoveOperation op)
+        public override bool CanTakeFrom(ItemSlot sourceSlot, EnumMergePriority priority = EnumMergePriority.AutoMerge)
         {
-                base.ActivateSlotLeftClick(sourceSlot, ref op);
-        }
-
-        public override void ActivateSlot(ItemSlot sourceSlot, ref ItemStackMoveOperation op)
-        {
-            //Console.WriteLine("We called Activate Slot.");
+            if (CanHold(sourceSlot))
+            {
+                return base.CanTakeFrom(sourceSlot, priority);
+            }
            
-            if (sourceSlot.Empty && Itemstack == null)
-            {
-                setSlotDisabled(!isDisabled);
-            }
-            else
-            {
-                base.ActivateSlot(sourceSlot, ref op);
-            }
+            return false;
         }
-
-        public void setSlotDisabled(bool isDisabled)
-        {
-            this.isDisabled = isDisabled;
-            this.HexBackgroundColor = isDisabled ? disabledColor : enabledColor;
-        }
-        */
-
     }
 
 }

@@ -12,6 +12,7 @@
     "couldnt-find-register": "Unable to find the register block for shop - is it in an unloaded chunk? DEV NOTE: I am working on fixing this!",
     "item-cost": "This item costs {0}x {1}. Please have payment in your hand.",
     "for-sale": "Slot {0}: {1}x {2} for {3}x {4}",
+    "gacha-possibility": "{0}% chance of obtaining a {1}",
     "not-for-sale": "Slot {0}: Not for Sale",
     "stall-add": "Add item to stall",
     "stall-open-menu": "Open Stall",
@@ -35,6 +36,7 @@
     "block-clothingstand*": "Shop Clothing Stand",
     "block-tellermachine*": "Shop Teller Machine",
     "block-sculpturepad*": "Sculpture Stall",
+    "block-gacha*": "Gacha Stall",
 
     "item-sculpturebundle": "Sculpture Bundle",
     "item-ledger": "Shop Ledger",

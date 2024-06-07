@@ -48,22 +48,6 @@ namespace Viconomy.Inventory
             return false;
         }
 
-        public override int TryPutInto(ItemSlot sinkSlot, ref ItemStackMoveOperation op)
-        {
-            //Console.WriteLine("TryPutInto " + stallSlot + " called...");
-            return base.TryPutInto(sinkSlot, ref op);
-        }
-
-        protected override void ActivateSlotLeftClick(ItemSlot sourceSlot, ref ItemStackMoveOperation op)
-        {
-           base.ActivateSlotLeftClick(sourceSlot, ref op);
-        }
-        public override void ActivateSlot(ItemSlot sourceSlot, ref ItemStackMoveOperation op)
-        {
-            //Console.WriteLine("We called Activate Slot.");
-            base.ActivateSlot(sourceSlot, ref op);
-        }
-
         public void setFilter(Func<ItemSlot, bool> filter)
         {
             this.slotFilter = filter;

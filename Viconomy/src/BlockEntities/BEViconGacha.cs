@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Viconomy.Filters;
+using Viconomy.BlockEntities;
 using Viconomy.GUI;
 using Viconomy.Inventory;
-using Viconomy.Renderer;
 using Viconomy.Trading;
 using Viconomy.Util;
 using Vintagestory.API.Client;
@@ -45,11 +45,7 @@ namespace Viconomy.BlockEntities
             int slotIndex = blockSel.SelectionBoxIndex;
             //Console.WriteLine("Calling OnPlayerRightClick from " + Api.Side);
             bool shiftMod = byPlayer.Entity.Controls.Sneak;
-            bool ctrlMod = byPlayer.Entity.Controls.Sprint;
-
-
-            ItemSlot hotbarslot = byPlayer.InventoryManager.ActiveHotbarSlot;
-
+           
             if (byPlayer.PlayerUID == Owner)
             {
                 if (shiftMod)
@@ -61,14 +57,7 @@ namespace Viconomy.BlockEntities
                         if (currency != null && TradingUtil.isMatchingCurrency(currency.Itemstack, handSlot.Itemstack))
                         {
                             RequestPurchaseItem();
-                        } else
-                        {
-                            TryPut(hotbarslot, blockSel, ctrlMod);
                         }                      
-                    } else
-                    {
-                        //Add items to slot
-                        TryPut(hotbarslot, blockSel, ctrlMod);
                     }
                 }
                 else
@@ -184,7 +173,7 @@ namespace Viconomy.BlockEntities
             if (isOwner)
                 this.invDialog = new GuiViconGachaOwner(dialogTitle, this.inventory, this.Pos, this.Api as ICoreClientAPI);
             else
-                this.invDialog = new GuiDialogViconGachaCustomer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
+                this.invDialog = new GuiDialogViconGachaCustomer(dialogTitle, this.inventory, this.Pos, this.Api as ICoreClientAPI);
             this.invDialog.OpenSound = this.OpenSound;
             this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();
@@ -304,12 +293,12 @@ namespace Viconomy.BlockEntities
             {
                 if (this.invDialog != null)
                 {
-                    Console.WriteLine(Api.Side + ": Toggling GUI OFF");
+                    //Console.WriteLine(Api.Side + ": Toggling GUI OFF");
                     CloseGui(clientWorld);
                 }
                 else
                 {
-                    Console.WriteLine(Api.Side + ": Toggling GUI ON");
+                    //Console.WriteLine(Api.Side + ": Toggling GUI ON");
                     OpenShopGui(data);
                 }
 
@@ -417,7 +406,7 @@ namespace Viconomy.BlockEntities
                     this.invDialog.TryClose();
                 }
 
-                this.invDialog.Dispose();
+                //this.invDialog.Dispose(); // Got a Null Pointer when I had this closed the game when menu was open... how is invDialog null here?
                 this.invDialog = null;
             }
 
@@ -446,20 +435,27 @@ namespace Viconomy.BlockEntities
        
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
-            
-                int numItems = inventory.GetTotalItems();
-                ItemSlot currency = inventory.GetCurrency();
-                if (numItems > 0 && currency != null && currency.Itemstack != null)
+            int numItems = inventory.GetTotalItems();
+            ItemSlot currency = inventory.GetCurrency();
+            if (numItems > 0 && currency != null && currency.Itemstack != null)
+            {
+                dsc.AppendLine(Lang.Get("vinconomy:for-sale", new Object[] { 0, 1, "Mystery Item", currency.Itemstack.StackSize, currency.Itemstack.GetName() }));
+                dsc.AppendLine();
+                for (int i = 1; i < inventory.Slots.Length; i++)
                 {
-                    dsc.AppendLine(Lang.Get("vinconomy:for-sale", new Object[] {0, 1, "Mystery Item", currency.Itemstack.StackSize,  currency.Itemstack.GetName()}));
-                } else
-                {
-                    dsc.AppendLine(Lang.Get("vinconomy:not-for-sale", new Object[] { 0 }));
+                    if (inventory.Slots[i].Itemstack != null)
+                    {
+                        dsc.AppendLine(Lang.Get("vinconomy:gacha-possibility", new Object[] { inventory.GetChanceForSlot(i,useTotalRandomizer), inventory.Slots[i].Itemstack.GetName() }));
+                    }
+                    
                 }
                 
-            
-            //dsc.AppendLine();
-            base.GetBlockInfo(forPlayer, dsc);
+            } else
+            {
+                dsc.AppendLine(Lang.Get("vinconomy:not-for-sale", new Object[] { 0 }));
+            }
+
+            //base.GetBlockInfo(forPlayer, dsc);
         }
 
         public override void DropContents(Vec3d atPos)
@@ -474,6 +470,7 @@ namespace Viconomy.BlockEntities
 
         public override ItemSlot[] GetSlotsForStall(int stallSlot)
         {
+
             return new ItemSlot[] { inventory[stallSlot] };
         }
 
@@ -498,6 +495,8 @@ namespace Viconomy.BlockEntities
             base.FromTreeAttributes(tree, world);
             this.useTotalRandomizer = tree.GetBool("useTotalRandomizer");
         }
+
+  
 
 
     }

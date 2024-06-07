@@ -33,7 +33,7 @@ namespace Viconomy.GUI
             {
                 return;
             }
-            capi.World.Player.InventoryManager.OpenInventory(Inventory);
+            //capi.World.Player.InventoryManager.OpenInventory(Inventory);
             this.DialogTitle = DialogTitle;
 
             this.inv = new DummyInventory(capi, 2);
@@ -144,18 +144,18 @@ namespace Viconomy.GUI
 
         private bool OnPurchase()
         {
-            capi.Logger.Chat("Attempting to purchase item from slot " + curTab);
+            //capi.Logger.Chat("Attempting to purchase item from slot " + curTab);
 
-                byte[] data;
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    BinaryWriter writer = new BinaryWriter(ms);
-                    writer.Write(curTab);
-                    writer.Write(quantity);
-                    writer.Write(true);
-                    data = ms.ToArray();
+            byte[] data;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BinaryWriter writer = new BinaryWriter(ms);
+                writer.Write(curTab);
+                writer.Write(quantity);
+                writer.Write(true);
+                data = ms.ToArray();
                 
-              capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.PURCHASE_ITEMS, data);
+                capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.PURCHASE_ITEMS, data);
             }
             return true;
         }
