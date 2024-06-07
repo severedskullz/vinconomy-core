@@ -84,6 +84,7 @@ namespace Viconomy.src.GUI
                     GuiComposerHelpers.IconListPickerSetValue(base.SingleComposer, "iconpicker", icons.IndexOf(shop.WaypointIcon));
                     this.currentIcon = shop.WaypointIcon;
                     base.SingleComposer.GetSwitch("isvisible").On = true;
+                    this.isVisible = true;
                 } else
                 {
                     GuiComposerHelpers.ColorListPickerSetValue(base.SingleComposer, "colorpicker", 0);

@@ -22,6 +22,7 @@ namespace Viconomy.Util
         public const int SET_SCULPTURE_Y = 2007;
         public const int SET_SCULPTURE_NAME = 2008;
         public const int SET_WAYPOINT = 2009;
+        public const int SET_TOTAL_RANDOMIZER = 2010;
 
         // Customer Packets
         public const int PURCHASE_ITEMS = 3002;

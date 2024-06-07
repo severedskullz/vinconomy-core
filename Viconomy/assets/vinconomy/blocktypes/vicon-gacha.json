@@ -1,0 +1,104 @@
+{
+    "code": "gacha",
+    "class": "ViconContainer",
+    "entityClass": "BEViconGacha",
+    "priorityInteract": true,
+    "creativeinventory": { "vinconomy": [ "*-east" ] },
+    "attributes": { "handbook": { "groupBy": [ "gacha-*-east" ] } },
+    "behaviors": [ { "name": "HorizontalOrientable" } ],
+    "heldTpIdleAnimation": "holdbothhandslarge",
+    "heldTpUseAnimation": "twohandplaceblock",
+    "blockmaterial": "Metal",
+    "variantgroups": [
+        {
+            "code": "side",
+            "loadFromProperties": "abstract/horizontalorientation"
+        }
+    ],
+    "tpHandTransform": {
+        "translation": {
+            "x": -2.1,
+            "y": -1.8,
+            "z": -1.1
+        },
+        "rotation": {
+            "x": 16,
+            "y": -1,
+            "z": -98
+        }
+    },
+    "shapebytype": {
+        "*-north": {
+            "base": "block/gacha",
+            "rotateY": 0
+        },
+        "*-east": {
+            "base": "block/gacha",
+            "rotateY": 270
+        },
+        "*-south": {
+            "base": "block/gacha",
+            "rotateY": 180
+        },
+        "*-west": {
+            "base": "block/gacha",
+            "rotateY": 90
+        }
+    },
+    "selectionBox": {
+        "x1": 0,
+        "y1": 0,
+        "z1": 0,
+        "x2": 1,
+        "y2": 1,
+        "z2": 0.875
+    },
+
+    "collisionboxes": [
+        {
+            "x1": 0,
+            "y1": 0,
+            "z1": 0,
+            "x2": 1,
+            "y2": 1,
+            "z2": 0.875,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        }
+    ],
+
+    "selectionBoxes": [
+        {
+            "x1": 0,
+            "y1": 0,
+            "z1": 0,
+            "x2": 1,
+            "y2": 1,
+            "z2": 0.875,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        }
+    ],
+    "lightAbsorption": 0,
+    "sidesolid": {
+        "all": "false"
+    },
+    "sideopaque": {
+        "all": "false"
+    },
+    "resistance": 3.5,
+    "sounds": {
+        "hit": "game:block/planks",
+        "break": "game:block/planks",
+        "place": "game:block/planks",
+        "walk": "game:walk/wood"
+    }
+}

@@ -55,6 +55,7 @@
   <Content Include="assets\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>
+  <None Remove="assets\vinconomy\blocktypes\vicon-gacha.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-jobboard.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-sculpturepad.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-tellermachine.json" />
