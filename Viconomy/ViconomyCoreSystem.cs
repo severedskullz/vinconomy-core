@@ -594,7 +594,7 @@ namespace Viconomy
                     // I dont know why Block isnt set.
                     block = api.World.BlockAccessor.GetBlock(blockSelection.Position);
                 }
-                if (block is BlockVContainer || block is BlockVClothingDisplay || block is BlockVClothingDisplayTop)   
+                if (block is BlockVContainer || block is BlockVClothingDisplay || block is BlockVClothingDisplayTop || block is BlockVTeller)   
                     return EnumWorldAccessResponse.Granted;
             }
             return response;
