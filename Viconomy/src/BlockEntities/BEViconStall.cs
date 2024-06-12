@@ -264,7 +264,7 @@ namespace Viconomy.BlockEntities
             }
 
             this.invDialog = null;
-            Console.WriteLine(Api.Side + ": Attempted to close GUI");
+            //Console.WriteLine(Api.Side + ": Attempted to close GUI");
         }
 
         #endregion
@@ -279,6 +279,7 @@ namespace Viconomy.BlockEntities
             IPlayerInventoryManager inventoryManager = player.InventoryManager;
             switch (packetid)
             {
+                /*
                 case VinConstants.OPEN_GUI:
                     if (inventoryManager == null)
                     {
@@ -286,6 +287,7 @@ namespace Viconomy.BlockEntities
                     }
                     inventoryManager.OpenInventory(this.Inventory);
                     break;
+                */
 
                 case VinConstants.CLOSE_GUI:
                     if (inventoryManager != null)

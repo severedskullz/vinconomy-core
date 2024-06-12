@@ -4,8 +4,8 @@ namespace Viconomy.Inventory
 {
     public class ViconItemSlot : ItemSlot
     {
-        int stallSlot = 0;
-        int itemSlot = 0;
+        public int stallSlot { get; private set; } = 0;
+        public int itemSlot { get; private set; } = 0;
         Func<ItemSlot, bool> slotFilter = null;
         public ViconItemSlot(InventoryBase inventory, int stallSlot, int itemSlot) : base(inventory)
         {
@@ -21,21 +21,27 @@ namespace Viconomy.Inventory
                 return false;
             }
 
-            ItemSlot slot = ((ViconomyInventory)this.inventory).FindFirstNonEmptyStockSlot(stallSlot);
-            if (slot == null)
-            {
-                //Console.WriteLine("Stall Slot " +stallSlot +":First Non-Empty Slot was null, so we called Base");
-                return base.CanHold(sourceSlot);
-            } else if (slot.Itemstack == null) {
-                //Console.WriteLine("Stall Slot " + stallSlot + ":First Non-Empty Slot Item Stack was null, so we called Base");
-                return base.CanHold(sourceSlot);
-            } else if (slot.Itemstack.Satisfies(sourceSlot.Itemstack)) { 
-                //Console.WriteLine("Stall Slot " + stallSlot + ":First Non-Empty Slot satisfied, so we called Base");
-                return base.CanHold(sourceSlot); 
-            }
+            if (this.inventory is ViconomyInventory) { 
+                ItemSlot slot = ((ViconomyInventory)this.inventory).FindFirstNonEmptyStockSlot(stallSlot);
+                if (slot == null)
+                {
+                    //Console.WriteLine("Stall Slot " +stallSlot +":First Non-Empty Slot was null, so we called Base");
+                    return base.CanHold(sourceSlot);
+                } else if (slot.Itemstack == null) {
+                    //Console.WriteLine("Stall Slot " + stallSlot + ":First Non-Empty Slot Item Stack was null, so we called Base");
+                    return base.CanHold(sourceSlot);
+                } else if (slot.Itemstack.Satisfies(sourceSlot.Itemstack)) {
+                    //Console.WriteLine("Stall Slot " + stallSlot + ":First Non-Empty Slot satisfied, so we called Base");
+                    return base.CanHold(sourceSlot);
+                } else
+                {
+                    return false;
+                }
+                    
+            } 
             
             //Console.WriteLine("Stall Slot " + stallSlot + ":First Non-Empty Slot was not satisfied, so we return false");
-            return false;
+            return base.CanHold(sourceSlot);
         }
 
         public override bool CanTakeFrom(ItemSlot sourceSlot, EnumMergePriority priority = EnumMergePriority.AutoMerge)

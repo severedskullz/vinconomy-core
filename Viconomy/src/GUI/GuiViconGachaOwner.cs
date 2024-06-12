@@ -143,7 +143,7 @@ namespace Viconomy.GUI
                     for (int i = 0; i < slotsPerRow; i++)
                     {
                         int curIn = (row * slotsPerRow) + i;
-                        Console.WriteLine("Currently on index" + curIn);
+                        //Console.WriteLine("Currently on index" + curIn);
                         if (curIn >= slotCount)
                         {
                             //TODO: Figure out a LESS fucking complicated way to get out of this loop and avoid IndexOutOfRangeException.

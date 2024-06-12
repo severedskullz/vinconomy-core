@@ -111,7 +111,7 @@ namespace Viconomy.BlockEntities
                 return;
             }
 
-            ViconGachaSlot stockSlot = this.inventory.GetRandomItem(this.useTotalRandomizer);
+            ViconItemSlot stockSlot = this.inventory.GetRandomItem(this.useTotalRandomizer);
             if (stockSlot == null)
             {
                 //Console.WriteLine(Api.Side + ": Not enough stock to purchase item");
@@ -121,7 +121,7 @@ namespace Viconomy.BlockEntities
 
             if (modSystem.CanPurchaseItem(player, this, register, 0, 1))
             {
-                PurchaseItem(player, stockSlot.Slot, 1, register);
+                PurchaseItem(player, stockSlot.itemSlot, 1, register);
             }
 
         }

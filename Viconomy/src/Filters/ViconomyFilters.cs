@@ -117,5 +117,16 @@ namespace Viconomy.Filters
         {
             return IsDressType(slot.Itemstack, EnumCharacterDressType.Neck) || IsDressType(slot.Itemstack, EnumCharacterDressType.Emblem);
         }
+
+        public static bool IsEmptyGachaSlot(ItemSlot slot)
+        {
+
+            return slot.Itemstack.Item?.Code.Path == "gachaball";
+        }
+
+        public static bool IsFilledGachaSlot(ItemSlot slot)
+        {
+            return slot.Itemstack.Item?.Code.Path == "gachaball";
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Viconomy.BlockEntities;
-using Viconomy.Config;
+using Viconomy.Filters;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
@@ -45,7 +45,12 @@ namespace Viconomy.Inventory
             if (id == 0)
                 return new ViconCurrencySlot(this);
             else
-                return new ViconGachaSlot(this, id);
+            {
+                ViconItemSlot slot = new ViconItemSlot(this, 0, id);
+                slot.setFilter(ViconomyFilters.IsEmptyGachaSlot);
+                slot.BackgroundIcon = "vicon-general";
+                return slot;
+            }
         }
 
         public override float GetTransitionSpeedMul(EnumTransitionType transType, ItemStack stack)
@@ -120,9 +125,9 @@ namespace Viconomy.Inventory
             return percent;
         }
 
-        public ViconGachaSlot GetRandomItem(bool isPickAbsolute)
+        public ViconItemSlot GetRandomItem(bool isPickAbsolute)
         {
-            ItemSlot[] filled = GetNonEmptySlots();
+            ViconItemSlot[] filled = GetNonEmptySlots();
             if (filled.Length == 0)
             {
                 return null;
@@ -133,10 +138,10 @@ namespace Viconomy.Inventory
             {
                 double percent = random.NextDouble();
                 int totalItems = GetTotalItems();
-                ViconGachaSlot slot = null;
+                ViconItemSlot slot = null;
                 for (int i = 0; i < filled.Length; i++)
                 {
-                    slot = (ViconGachaSlot) filled[i];
+                    slot = filled[i];
                     double curPercent = (double)slot.StackSize / (double)totalItems;
                     // Given we have 3 slots filled, Say the slots have 100, 80, and 20 items in their respective stacks.
                     // These slots would be worth 50%, 40% and 10% respectively.
@@ -157,7 +162,7 @@ namespace Viconomy.Inventory
                 return slot;
             } else
             {
-                return (ViconGachaSlot) filled[random.Next(filled.Length)];
+                return filled[random.Next(filled.Length)];
             }
         }
 
@@ -166,14 +171,14 @@ namespace Viconomy.Inventory
             return GetNonEmptySlots().Length;
         }
 
-        private ItemSlot[] GetNonEmptySlots()
+        private ViconItemSlot[] GetNonEmptySlots()
         {
-            List<ItemSlot> filledSlots = new List<ItemSlot>();
+            List<ViconItemSlot> filledSlots = new List<ViconItemSlot>();
             for (int i = 1; i < slots.Length; i++)
             {
                 if (slots[i].Itemstack != null)
                 {
-                    filledSlots.Add(slots[i]);
+                    filledSlots.Add((ViconItemSlot)slots[i]);
                 }
             }
             return filledSlots.ToArray();

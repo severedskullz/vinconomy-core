@@ -206,6 +206,7 @@ namespace Viconomy.ItemTypes
                 }
             }
             slot.TakeOut(1);
+            slot.MarkDirty();
         }
 
         public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
