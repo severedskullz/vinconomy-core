@@ -19,6 +19,10 @@
     "stall-purchase": "Purchase 1 item",
     "stall-purchase-bulk": "Purchase many items",
 
+    "no-gacha-ball": "No gacha ball provided in input slot",
+    "gacha-atleast-one": "You need to bundle a gacha ball with atleast one item",
+    "gacha-bundled-zero": "You must bundle atleast one gacha ball",
+
     "ledger-already-set": "This ledger already recording sales for a shop",
     "ledger-shop-not-found": "The Shop associated with this ledger no longer exists",
     "ledger-not-set": "This ledger is not set to any shop. Sneak-Right-Click a register to link it",

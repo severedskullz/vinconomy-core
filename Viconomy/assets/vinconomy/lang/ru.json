@@ -19,6 +19,15 @@
     "stall-purchase": "Купить 1 предмет",
     "stall-purchase-bulk": "Купить несколько предметов",
 
+    "no-gacha-ball": "No gacha ball provided in input slot",
+    "gacha-atleast-one": "You need to bundle a gacha ball with atleast one item",
+    "gacha-bundled-zero": "You must bundle atleast one gacha ball",
+
+    "ledger-already-set": "This ledger already recording sales for a shop",
+    "ledger-shop-not-found": "The Shop associated with this ledger no longer exists",
+    "ledger-not-set": "This ledger is not set to any shop. Sneak-Right-Click a register to link it",
+    "ledger-set": "Ledger set to retrieve sales from {0}",
+
     "block-armorstand-*": "Витрина для брони",
     "block-helmetstand-*": "Витрина под шлем",
     "block-producecrate-*": "Витрина для продуктов",
@@ -31,10 +40,13 @@
     "block-clothingstand*": "Витрина под одежду",
     "block-tellermachine*": "Банкомат магазина",
     "block-sculpturepad*": "Витрина Скульптурный",
+    "block-gacha-*": "Gacha Stall",
 
     "item-sculpturebundle": "Скульптура",
+    "item-ledger": "Shop Ledger",
 
     "game:tabname-vinconomy": "Vinconomy",
+    "game:maplayer-VinconomyShops": "Player Shops",
 
     "stall-purchase-armor0": "Приобрести обувь",
     "stall-purchase-armor1": "Приобрести брюки",
@@ -54,5 +66,35 @@
     "stall-add-armor5": "Разместить наплечники",
     "stall-add-armor6": "Разместить ожерелье",
     "stall-add-armor7": "Разместить маску",
-    "stall-add-armor8": "Разместить шлем"
+    "stall-add-armor8": "Разместить шлем",
+
+    "wp-genericCoins": "Shop",
+    "wp-genericLodging": "Lodging",
+    "wp-genericRegister": "Shop",
+    "wp-genericSale": "Shop (Sale)",
+    "wp-genericViconShop": "Shop",
+    "wp-shopAnimals": "Livestock Shop",
+    "wp-shopArt": "Art Shop",
+    "wp-shopBakedGoods": "Bakery",
+    "wp-shopBakery": "Bakery",
+    "wp-shopBook": "Library",
+    "wp-shopCandy": "Sweets Shop",
+    "wp-shopChurch": "Religious Shop",
+    "wp-shopClothing": "Clothing Shop",
+    "wp-shopDelivery": "Logistics Shop",
+    "wp-shopDrink": "Drink Shop",
+    "wp-shopFarming": "Farming Shop",
+    "wp-shopFruit": "Produce Shop",
+    "wp-shopFruit1": "Fruit Shop",
+    "wp-shopGem": "Gem Shop",
+    "wp-shopGeneral": "General Shop",
+    "wp-shopJewlery": "Jewlery Shop",
+    "wp-shopMeat": "Butchery",
+    "wp-shopMedical": "Hospital",
+    "wp-shopSale": "Shop (Sale)",
+    "wp-shopShoes": "Shoe Shop",
+    "wp-shopStorage": "Misc. Shop",
+    "wp-shopTavern": "Tavern",
+    "wp-shopTools": "Tool Shop",
+    "wp-shopTrade": "Misc. Shop"
 }

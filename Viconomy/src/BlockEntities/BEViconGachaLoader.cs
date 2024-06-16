@@ -198,7 +198,7 @@ namespace Viconomy.BlockEntities
         {
 
             if (Inventory[GACHA_SLOT].StackSize <= 0) {
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.PURCHASED_ZERO, null);
+                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_GACHA_BALL, null);
                 return;
             }
 
@@ -240,14 +240,14 @@ namespace Viconomy.BlockEntities
 
             if (!bundlesAlteastOneItem)
             {
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.PURCHASED_ZERO, null);
+                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.GACHA_ATLEAST_ONE, null);
                 return;
             }
 
 
             if (Inventory[GACHA_SLOT].StackSize <= 0)
             {
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.PURCHASED_ZERO, null);
+                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.GACHA_BUNDLED_ZERO, null);
                 return;
             }
 
