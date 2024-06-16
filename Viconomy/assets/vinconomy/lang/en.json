@@ -41,6 +41,7 @@
     "block-tellermachine*": "Shop Teller Machine",
     "block-sculpturepad*": "Sculpture Stall",
     "block-gacha-*": "Gacha Stall",
+    "block-gachaloader-*": "Gacha Ball Loader",
 
     "item-sculpturebundle": "Sculpture Bundle",
     "item-ledger": "Shop Ledger",

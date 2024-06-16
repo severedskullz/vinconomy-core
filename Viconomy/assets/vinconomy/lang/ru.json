@@ -41,6 +41,7 @@
     "block-tellermachine*": "Банкомат магазина",
     "block-sculpturepad*": "Витрина Скульптурный",
     "block-gacha-*": "Gacha Stall",
+    "block-gachaloader-*": "Gacha Ball Loader",
 
     "item-sculpturebundle": "Скульптура",
     "item-ledger": "Shop Ledger",

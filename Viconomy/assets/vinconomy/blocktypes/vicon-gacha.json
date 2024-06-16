@@ -3,9 +3,14 @@
     "class": "ViconGacha",
     "entityClass": "BEViconGacha",
     "priorityInteract": true,
-    "creativeinventory": { "vinconomy": [ "*-east" ] },
-    "attributes": { "handbook": { "groupBy": [ "gacha-east" ] } },
-    "behaviors": [ { "name": "HorizontalOrientable", properties: {  dropBlockFace: "south" }} ],
+    "creativeinventory": { "vinconomy": [ "*-north" ] },
+    "attributes": { "handbook": { "groupBy": [ "gacha-north" ] } },
+    "behaviors": [
+        {
+            "name": "HorizontalOrientable",
+            "properties": { "dropBlockFace": "north" }
+        }
+    ],
     "heldTpIdleAnimation": "holdbothhandslarge",
     "heldTpUseAnimation": "twohandplaceblock",
     "blockmaterial": "Metal",
@@ -15,6 +20,13 @@
             "loadFromProperties": "abstract/horizontalorientation"
         }
     ],
+    "guiTransform": {
+        "rotation": {
+            "x": -22,
+            "y": 135,
+            "z": 0
+        }
+    },
     "tpHandTransform": {
         "translation": {
             "x": -2.1,
@@ -22,8 +34,8 @@
             "z": -1.1
         },
         "rotation": {
-            "x": 16,
-            "y": -1,
+            "x": 105,
+            "y": 16,
             "z": -98
         }
     },
