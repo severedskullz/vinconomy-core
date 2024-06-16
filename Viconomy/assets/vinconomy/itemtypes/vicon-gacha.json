@@ -3,10 +3,7 @@
     "class": "ViconGachaBall",
     "maxstacksize": 128,
 
-    "shape": { "base": "item/sculpturebundle" },
-    "textures": {
-        "all": { "base": "game:item/lore/normal-brickred" }
-    },
+    "shape": { "base": "item/gachaball" },
     "creativeinventory": {
         "vinconomy": [ "*" ]
     },
@@ -18,8 +15,8 @@
         },
         "rotation": {
             "x": -180,
-            "y": 123,
-            "z": 33
+            "y": 45,
+            "z": -24
         },
         "origin": {
             "x": 0.48,
@@ -27,9 +24,9 @@
             "z": 0.5
         },
         "scaleXyz": {
-            "x": -2.35,
-            "y": 2.35,
-            "z": 2.35
+            "x": -2.33,
+            "y": 2.33,
+            "z": 2.33
         }
     },
     "fpHandTransform": {

@@ -1,0 +1,29 @@
+[
+  {
+    "ingredientPattern": "HH,OC",
+    "ingredients": {
+
+        "H": {
+            "type": "block",
+            "code": "game:hopper"
+        },
+        "O": {
+            "type": "item",
+            "code": "game:metalplate-*",
+            "name": "outermetal",
+            "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "C": {
+            "type": "block",
+            "code": "game:chest-east",
+            "attributes": { "type": "normal-generic" }
+        }
+    },
+    "width": 2,
+    "height": 2,
+    "output": {
+      "type": "block",
+      "code": "gachaloader-north"
+    }
+  }
+]

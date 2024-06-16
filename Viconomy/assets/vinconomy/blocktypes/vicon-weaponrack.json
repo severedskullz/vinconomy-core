@@ -3,12 +3,12 @@
   "class": "ViconContainer",
   "entityClass": "BEViconWeaponrack",
   "priorityInteract": true,
-  "creativeinventory": { "vinconomy": [ "*-east" ] },
-  "attributes": { "handbook": { "groupBy": [ "weaponrack-*-east" ] } },
+  "creativeinventory": { "vinconomy": [ "*-north" ] },
+  "attributes": { "handbook": { "groupBy": [ "weaponrack-*-north" ] } },
   "behaviors": [
     {
       "name": "HorizontalAttachable",
-      "properties": { "dropBlockFace": "east" }
+      "properties": { "dropBlockFace": "north" }
     }
   ],
   "heldTpIdleAnimation": "holdbothhandslarge",

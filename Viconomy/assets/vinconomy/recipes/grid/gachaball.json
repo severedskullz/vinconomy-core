@@ -1,0 +1,55 @@
+﻿[
+    {
+        "ingredientPattern": "C,G,W",
+        "ingredients": {
+            "G": {
+                "type": "block",
+                "code": "game:glassslab-*"
+            },
+            "W": {
+                "type": "block",
+                "code": "game:plankslab-*"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:chisel-*",
+                "isTool": true
+            }
+        },
+        "recipeGroup": 1,
+        "width": 1,
+        "height": 3,
+        "output": {
+            "type": "item",
+            "code": "gachaball",
+            "quantity": 32
+        }
+    },
+
+    {
+        "ingredientPattern": "C,G,W",
+        "ingredients": {
+            "G": {
+                "type": "block",
+                "code": "game:glass-*"
+            },
+            "W": {
+                "type": "block",
+                "code": "game:planks-*"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:chisel-*",
+                "isTool": true
+            }
+        },
+        "recipeGroup": 1,
+        "width": 1,
+        "height": 3,
+        "output": {
+            "type": "item",
+            "code": "gachaball",
+            "quantity": 64
+        }
+    }
+]

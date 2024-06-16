@@ -121,12 +121,12 @@ namespace Viconomy.Filters
         public static bool IsEmptyGachaSlot(ItemSlot slot)
         {
 
-            return slot.Itemstack.Item?.Code.Path == "gachaball";
+            return slot.Itemstack.Item?.Code.Path == "gachaball" && slot.Itemstack.Attributes.GetTreeAttribute("Contents") == null;
         }
 
         public static bool IsFilledGachaSlot(ItemSlot slot)
         {
-            return slot.Itemstack.Item?.Code.Path == "gachaball";
+            return slot.Itemstack.Item?.Code.Path == "gachaball" && slot.Itemstack.Attributes.GetTreeAttribute("Contents") != null;
         }
     }
 }

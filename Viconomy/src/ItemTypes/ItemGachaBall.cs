@@ -1,7 +1,4 @@
-﻿
-using System;
-using System.Runtime.CompilerServices;
-using System.Text;
+﻿using System.Text;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
@@ -74,7 +71,29 @@ namespace Viconomy.ItemTypes
 
         public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
         {
-            ITreeAttribute attrs = inSlot.Itemstack.Attributes;
+            ITreeAttribute treeAttr = inSlot.Itemstack.Attributes;
+            ITreeAttribute contents = (TreeAttribute)treeAttr.GetTreeAttribute("Contents");
+
+            if (contents != null)
+            {
+                dsc.AppendLine("Contents:");
+                for (int i = 0; i < 6; i++)
+                {
+                    ItemStack blockStack = contents.GetItemstack($"Item{i}");
+                    if (blockStack != null)
+                    {
+                        blockStack.ResolveBlockOrItem(world);
+
+                        if (blockStack.StackSize > 0)
+                        {
+                            dsc.AppendLine($"{blockStack.StackSize}x {blockStack.GetName()}");
+                        }
+
+                    }
+                }
+            }
+           
+
             base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
         }
     }

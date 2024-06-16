@@ -1,0 +1,35 @@
+[
+  {
+    "ingredientPattern": "II,GC,OO",
+    "ingredients": {
+
+        "I": {
+            "type": "item",
+            "code": "game:metalplate-*",
+            "name": "innermetal",
+            "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "O": {
+            "type": "item",
+            "code": "game:metalplate-*",
+            "name": "outermetal",
+            "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "G": {
+            "type": "block",
+            "code": "game:glass-*"
+        },
+        "C": {
+            "type": "block",
+            "code": "game:chest-east",
+            "attributes": { "type": "normal-generic" }
+        }
+    },
+    "width": 2,
+    "height": 3,
+    "output": {
+      "type": "block",
+      "code": "gacha-east"
+    }
+  }
+]

@@ -349,53 +349,6 @@ namespace Viconomy.BlockEntities
             return false;
         }
 
-        private bool TryPut(ItemSlot slot, BlockSelection blockSel, bool bulk)
-        {
-
-            if (slot?.Itemstack == null)
-            {
-                return false;
-            }
-
-            ItemSlot[] slots = this.inventory.Slots;
-            int amountItem = bulk ? slot.Itemstack.StackSize : 1;
-            bool movedItems = false;
-           
-            for (int i = 1; i < slots.Length; i++)
-            {
-                if (slot.Itemstack != null)
-                {
-                    int moved = slot.TryPutInto(this.Api.World, slots[i], bulk ? slot.Itemstack.StackSize : 1);
-                    amountItem -= moved;
-                    if (moved > 0)
-                    {
-                        movedItems = true;
-                    }
-
-                    if (amountItem <= 0)
-                    {
-                        break;
-                    }
-                }
-            }
-            
-
-          
-            if (movedItems) {
-                //this.updateMeshes();
-                this.MarkDirty(true, null);
-                ICoreClientAPI coreClientAPI = this.Api as ICoreClientAPI;
-                if (coreClientAPI != null)
-                {
-                    coreClientAPI.World.Player.TriggerFpAnimation(EnumHandInteract.HeldItemInteract);
-                    updateMeshes();
-                }
-            }
-          
-            return false;
-        }
-
-
         public override void OnBlockUnloaded()
         {
             base.OnBlockUnloaded();

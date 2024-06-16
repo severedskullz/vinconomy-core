@@ -156,7 +156,7 @@ namespace Viconomy.BlockEntities
                         //string name = reader.ReadString();
                         int index = reader.ReadInt32();
                         int amount = reader.ReadInt32();
-                        Console.WriteLine($"Got ID {index} with value of {amount}");
+                        //Console.WriteLine($"Got ID {index} with value of {amount}");
                         this.ItemsPerSlot[index] = amount;
                         MarkDirty();
                     }
@@ -209,8 +209,14 @@ namespace Viconomy.BlockEntities
                 maxAmount = Inventory[GACHA_SLOT].StackSize;
             }
 
+            bool bundlesAlteastOneItem = false;
             for (int i = 0; i < 6; i++)
             {
+                if (this.ItemsPerSlot[i] > 0)
+                {
+                    bundlesAlteastOneItem = true;
+                }
+
                 ItemSlot slot = Inventory[i + 2];
                 int stackSize = slot.StackSize;
                 //Stack size MUST be 0 if we want to ignore. This is to prevent players from using up all stock in 1 click, and miss inserting items in the next.
@@ -230,6 +236,19 @@ namespace Viconomy.BlockEntities
                 {
                     maxAmount = stackSize / this.ItemsPerSlot[i];
                 }
+            }
+
+            if (!bundlesAlteastOneItem)
+            {
+                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.PURCHASED_ZERO, null);
+                return;
+            }
+
+
+            if (Inventory[GACHA_SLOT].StackSize <= 0)
+            {
+                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.PURCHASED_ZERO, null);
+                return;
             }
 
             ItemStack gacha = Inventory[GACHA_SLOT].TakeOut(maxAmount);
