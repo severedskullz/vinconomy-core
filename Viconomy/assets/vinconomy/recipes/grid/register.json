@@ -22,7 +22,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "register-acacia-{metal}-east"
+      "code": "register-acacia-{metal}-north"
     }
   },
   {
@@ -48,7 +48,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "register-baldcypress-{metal}-east"
+      "code": "register-baldcypress-{metal}-north"
     }
   },
   {
@@ -74,7 +74,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "register-birch-{metal}-east"
+      "code": "register-birch-{metal}-north"
     }
   },
   {
@@ -100,7 +100,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "register-ebony-{metal}-east"
+      "code": "register-ebony-{metal}-north"
     }
   },
   {
@@ -126,7 +126,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "register-kapok-{metal}-east"
+      "code": "register-kapok-{metal}-north"
     }
   },
   {
@@ -152,7 +152,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "register-larch-{metal}-east"
+      "code": "register-larch-{metal}-north"
     }
   },
   {
@@ -178,7 +178,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "register-maple-{metal}-east"
+      "code": "register-maple-{metal}-north"
     }
   },
   {
@@ -204,7 +204,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "register-oak-{metal}-east"
+      "code": "register-oak-{metal}-north"
     }
   },
   {
@@ -230,7 +230,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "register-pine-{metal}-east"
+      "code": "register-pine-{metal}-north"
     }
   },
   {
@@ -256,7 +256,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "register-purpleheart-{metal}-east"
+      "code": "register-purpleheart-{metal}-north"
     }
   },
   {
@@ -282,7 +282,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "register-redwood-{metal}-east"
+      "code": "register-redwood-{metal}-north"
     }
   },
   {
@@ -308,7 +308,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "register-walnut-{metal}-east"
+      "code": "register-walnut-{metal}-north"
     }
   }
 ]

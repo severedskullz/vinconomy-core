@@ -1,6 +1,11 @@
-﻿using Vintagestory.API.Common;
+﻿using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Vintagestory.API.Common;
+using Vintagestory.Common;
+using static Vintagestory.Common.VSWebClient;
 
-namespace Viconomy.src.Util
+namespace Viconomy.Util
 {
     public class VinUtils
     {
@@ -53,5 +58,37 @@ namespace Viconomy.src.Util
             }
         }
 
+        public static Task GetAsync(string uri, PostCompleteHandler onFinished)
+        {
+            return Task.Run(async delegate
+            {
+                _ = 1;
+                try
+                {
+                    HttpResponseMessage res = await Inst.GetAsync(uri);
+                    string response = await res.Content.ReadAsStringAsync();
+                    CompletedArgs args = new CompletedArgs
+                    {
+                        State = ((!res.IsSuccessStatusCode) ? CompletionState.Error : CompletionState.Good),
+                        StatusCode = (int)res.StatusCode,
+                        Response = response,
+                        ErrorMessage = res.ReasonPhrase
+                    };
+                    onFinished(args);
+                }
+                catch (Exception ex)
+                {
+                    CompletedArgs args = new CompletedArgs
+                    {
+                        State = CompletionState.Error,
+                        ErrorMessage = ex.Message
+                    };
+                    onFinished(args);
+                }
+
+            });
+        }
+
     }
+
 }

@@ -1,28 +1,28 @@
 {
-  "ingredientPattern": "_OC,CCW",
-  "ingredients": {
-    "W": {
-      "type": "item",
-      "code": "game:plank-*",
-      "name": "wood",
-      "allowedVariants": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+    "ingredientPattern": "_OC,CCW",
+    "ingredients": {
+        "W": {
+            "type": "item",
+            "code": "game:plank-*",
+            "name": "wood",
+            "allowedVariants": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+        },
+        "C": {
+            "type": "item",
+            "code": "game:cloth-*",
+            "name": "color",
+            "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
+        },
+        "O": {
+            "type": "block",
+            "code": "game:chest-east",
+            "attributes": { "type": "normal-generic" }
+        }
     },
-    "C": {
-      "type": "item",
-      "code": "game:cloth-*",
-      "name": "color",
-        "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
-    },
-    "O": {
-      "type": "block",
-      "code": "game:chest-east",
-      "attributes": { "type": "normal-generic" }
+    "width": 3,
+    "height": 2,
+    "output": {
+        "type": "block",
+        "code": "tradematdouble-{color}-{wood}-north"
     }
-  },
-  "width": 3,
-  "height": 2,
-  "output": {
-    "type": "block",
-    "code": "tradematdouble-{color}-{wood}-east"
-  }
 }

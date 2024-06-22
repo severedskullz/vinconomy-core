@@ -1,10 +1,13 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using Viconomy.Network;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Datastructures;
 
 namespace Viconomy.GUI
 {
@@ -64,8 +67,11 @@ namespace Viconomy.GUI
                         foreach (var sale in data[key])
                         {
                             ItemStack product = ResolveBlockOrItem(sale.ProductCode, sale.ProductQuantity);
+                            JsonObject productAttr = JsonObject.FromJson(sale.ProductAttributes);
+                            product.Attributes = (ITreeAttribute)productAttr.ToAttribute();
                             ItemStack currency = ResolveBlockOrItem(sale.CurrencyCode, sale.CurrencyQuantity);
-
+                            JsonObject currencyAttr = JsonObject.FromJson(sale.CurrencyAttributes);
+                            currency.Attributes = (ITreeAttribute)currencyAttr.ToAttribute();
                             list.Add(new RichTextComponent(capi, "\t" + product.GetName() + " x" + product.StackSize + " sold for " + currency.GetName() + " x" + currency.StackSize + "\r\n", font));
                         }
                         list.Add(new RichTextComponent(capi, "\r\n", font));

@@ -258,7 +258,7 @@ namespace Viconomy.GUI
             int val = 1;
             Int32.TryParse(amount, out val);
 
-            if (val > 0 && val <= 64 && val != stallSlot.itemsPerPurchase)
+            if (val > 0 && val <= 1024 && val != stallSlot.itemsPerPurchase)
             {
                 stallSlot.itemsPerPurchase = val;
                 byte[] data;

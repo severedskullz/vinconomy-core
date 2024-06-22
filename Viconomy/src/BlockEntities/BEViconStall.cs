@@ -427,11 +427,17 @@ namespace Viconomy.BlockEntities
             {
                 for (int i = 0; i < StallSlotCount; i++)
                 {
-                    ItemSlot slot = this.inventory.FindFirstNonEmptyStockSlot(i);
-                    if (slot != null && !slot.Empty && tfMatrices != null)
+                    try
                     {
-                        mesher.AddMeshData(getOrCreateMesh(slot.Itemstack, i), tfMatrices[i]);
+                        ItemSlot slot = this.inventory.FindFirstNonEmptyStockSlot(i);
+                        if (slot != null && !slot.Empty && tfMatrices != null)
+                        {
+                            mesher.AddMeshData(getOrCreateMesh(slot.Itemstack, i), tfMatrices[i]);
+                        }
+                    } catch {
+                        Console.WriteLine("Had some trouble rendering a mesh in a stall for item");
                     }
+                    
                 }
             }
             return false;

@@ -7,9 +7,6 @@
   "textures": {
     "all": { "base": "game:item/lore/normal-brickred" }
   },
-  "creativeinventory": {
-    "vinconomy": [ "*" ]
-  },
   "guiTransform": {
     "translation": {
       "x": 0,

@@ -3,7 +3,6 @@
   "class": "ViconJobboard",
   "entityClass": "BEViconJobboard",
   "priorityInteract": true,
-  "creativeinventory": { "vinconomy": [ "*-east" ] },
   "attributes": {
     "handbook": {
       "groupBy": [ "jobboard-east" ],

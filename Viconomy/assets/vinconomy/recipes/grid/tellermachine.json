@@ -22,7 +22,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "tellermachine-acacia-{metal}-east"
+      "code": "tellermachine-acacia-{metal}-north"
     }
   },
   {
@@ -48,7 +48,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "tellermachine-baldcypress-{metal}-east"
+      "code": "tellermachine-baldcypress-{metal}-north"
     }
   },
   {
@@ -74,7 +74,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "tellermachine-birch-{metal}-east"
+      "code": "tellermachine-birch-{metal}-north"
     }
   },
   {
@@ -100,7 +100,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "tellermachine-ebony-{metal}-east"
+      "code": "tellermachine-ebony-{metal}-north"
     }
   },
   {
@@ -126,7 +126,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "tellermachine-kapok-{metal}-east"
+      "code": "tellermachine-kapok-{metal}-north"
     }
   },
   {
@@ -152,7 +152,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "tellermachine-larch-{metal}-east"
+      "code": "tellermachine-larch-{metal}-north"
     }
   },
   {
@@ -178,7 +178,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "tellermachine-maple-{metal}-east"
+      "code": "tellermachine-maple-{metal}-north"
     }
   },
   {
@@ -204,7 +204,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "tellermachine-oak-{metal}-east"
+      "code": "tellermachine-oak-{metal}-north"
     }
   },
   {
@@ -230,7 +230,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "tellermachine-pine-{metal}-east"
+      "code": "tellermachine-pine-{metal}-north"
     }
   },
   {
@@ -256,7 +256,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "tellermachine-purpleheart-{metal}-east"
+      "code": "tellermachine-purpleheart-{metal}-north"
     }
   },
   {
@@ -282,7 +282,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "tellermachine-redwood-{metal}-east"
+      "code": "tellermachine-redwood-{metal}-north"
     }
   },
   {
@@ -308,7 +308,7 @@
     "height": 3,
     "output": {
       "type": "block",
-      "code": "tellermachine-walnut-{metal}-east"
+      "code": "tellermachine-walnut-{metal}-north"
     }
   }
 ]

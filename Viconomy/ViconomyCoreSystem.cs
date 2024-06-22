@@ -18,7 +18,7 @@ using Viconomy.Database;
 using Viconomy.Trading;
 using Vintagestory.GameContent;
 using Viconomy.Map;
-using System.Numerics;
+using Vintagestory.API.Datastructures;
 
 namespace Viconomy
 {
@@ -72,18 +72,17 @@ namespace Viconomy
             api.RegisterBlockEntityClass("BEViconGacha", typeof(BEViconGacha));
             api.RegisterBlockEntityClass("BEViconGachaLoader", typeof(BEViconGachaLoader));
 
-
             api.RegisterBlockEntityClass("BEViconJobboard", typeof(BEViconJobboard));
 
             api.RegisterItemClass("ViconLedger", typeof(ItemLedger));
             api.RegisterItemClass("ViconSculptureBundle", typeof(ItemSculptureBundle));
             api.RegisterItemClass("ViconGachaBall", typeof(ItemGachaBall));
-
-            
+            api.RegisterItemClass("ViconTenretni", typeof(ItemTenretniBook));          
 
             api.Network.RegisterChannel("Vinconomy")
                 .RegisterMessageType(typeof(RegistryUpdatePacket))
-                .RegisterMessageType(typeof(ShopUpdatePacket));
+                .RegisterMessageType(typeof(ShopUpdatePacket))
+                .RegisterMessageType(typeof(TenretniPacket));
 
         }
 
@@ -95,19 +94,28 @@ namespace Viconomy
                 ViconConfig config = api.LoadModConfig<ViconConfig>(filename);
                 if (config == null)
                 {
-                    config = new ViconConfig();
-                    api.StoreModConfig<ViconConfig>(config, filename);
+                    config = ResetModConfig();
+                    api.StoreModConfig(config, filename);
                 }
 
                 this.Config = config;
             }
             catch
             {
-                Config = new ViconConfig();
+                Config = ResetModConfig();
+                this.Mod.Logger.Error("Could not load Mod Config for Vinconomy. Loading defaults instead. Check your config and ensure there are no errors.");
                 //api.StoreModConfig<ViconConfig>(new ViconConfig(), filename);
             }
 
             base.StartPre(api);
+        }
+
+        public ViconConfig ResetModConfig()
+        {
+            ViconConfig config = new ViconConfig();
+            config.ViconTenretniWhitelists = new ViconTenretniWhitelist[] { new ViconTenretniWhitelist { name = "Pastebin.com", baseURL = "https://pastebin.com/raw/" } };
+
+            return config;
         }
 
 
@@ -116,7 +124,8 @@ namespace Viconomy
         {
             _coreServerAPI = api;
             _serverChannel = api.Network.GetChannel("Vinconomy");
-          
+            _serverChannel.SetMessageHandler(new NetworkClientMessageHandler<TenretniPacket>(this.OnRecieveTenretniInfo));
+
             api.Event.SaveGameLoaded += OnSaveGameLoading;
             api.Event.PlayerJoin += SendAllPublicRegisters;
 
@@ -138,6 +147,25 @@ namespace Viconomy
 
         }
 
+        private void OnRecieveTenretniInfo(IServerPlayer fromPlayer, TenretniPacket packet)
+        {
+            ItemSlot slot = fromPlayer.InventoryManager.ActiveHotbarSlot;
+            if (slot == null || slot.Itemstack == null || slot.Itemstack.Item == null)
+            {
+                return;
+            }
+            string name = slot.Itemstack.Item.Code.GetName();
+            if (name.StartsWith("book-tenretni") && slot.Itemstack.Attributes.GetString("Archive") == null) 
+            {
+                ITreeAttribute attr = slot.Itemstack.Attributes;
+                attr.SetString("Archive", packet.Archive);
+                attr.SetString("BaseURL", packet.BaseURL);
+                attr.SetString("ID", packet.ID);
+                attr.SetString("Name", packet.Name);
+                attr.SetString("Scribe", fromPlayer.PlayerName);
+                slot.MarkDirty();
+            }
+        }
 
         public override void StartClientSide(ICoreClientAPI api)
         {
@@ -185,14 +213,22 @@ namespace Viconomy
 
             api.ModLoader.GetModSystem<WorldMapManager>().RegisterMapLayer<ShopMapLayer>("vinconomyShop", 20);
 
+
+            // Ensure Pastebin is on the client whitelist for now, untill I get an actual client-sided whitelist implemented.
+            // Also ensure that the BaseURL is on the CLIENT's whitelist, and not the server. We dont want people using "Pastebin.com" as the name, but actually points somewhere else. 
+            if (Config.ViconTenretniWhitelists == null || Config.ViconTenretniWhitelists.Length == 0)
+            {
+                Config.ViconTenretniWhitelists = new ViconTenretniWhitelist[] { new ViconTenretniWhitelist { name = "Pastebin.com", baseURL = "https://pastebin.com/raw/" } };
+
+            }
         }
 
-        private void BeginRendererRegistration()
+        public void BeginRendererRegistration()
         {
             isRegisteringRenderers = true;
         }
 
-        private void RegisterRenderer(IItemRenderer blockRenderer)
+        public void RegisterRenderer(IItemRenderer blockRenderer)
         {
             renderers[blockRenderer.getRendererClass()].Add(blockRenderer);
             if (!isRegisteringRenderers)
@@ -200,7 +236,7 @@ namespace Viconomy
                 renderers[blockRenderer.getRendererClass()].Sort((i1, i2) => { return i2.getPriority().CompareTo(i1.getPriority()); });
             }
         }
-        private void EndRendererRegistration()
+        public void EndRendererRegistration()
         {
             isRegisteringRenderers = false;
             foreach (EnumItemClass i in Enum.GetValues(typeof(EnumItemClass)))

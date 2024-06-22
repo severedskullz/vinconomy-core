@@ -13,5 +13,13 @@ namespace Viconomy.Config
         public bool EnforceShopLimits { get; set; } = false;
         public int StallsPerPlayer { get; set; } = 20;
         public int ShopsPerPlayer { get; set; } = 5;
+
+        public ViconTenretniWhitelist[] ViconTenretniWhitelists { get; set; }
+    }
+
+    public class ViconTenretniWhitelist
+    {
+        public string baseURL { get; set; }
+        public string name { get; set; }
     }
 }

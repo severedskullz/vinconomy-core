@@ -18,7 +18,7 @@
   "height": 3,
   "output": {
     "type": "block",
-    "code": "weaponrack-{wood}-east",
+    "code": "weaponrack-{wood}-north",
     "quantity": 1
   }
 }

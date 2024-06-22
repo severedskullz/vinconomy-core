@@ -36,11 +36,15 @@ namespace Viconomy.Database
                 cmd.CommandText = "CREATE TABLE IF NOT EXISTS Shops (Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Owner TEXT, OwnerName TEXT, X INTEGER, Y INTEGER, Z INTEGER, BroadcastWaypoint INTEGER, WaypointIcon TEXT, WaypointColor INTEGER);";
                 cmd.ExecuteNonQuery();
 
-                cmd.CommandText = @"CREATE TABLE IF NOT EXISTS Sales (ShopId INTEGER, Customer TEXT, Month INTEGER, Year INTEGER, ProductCode TEXT, ProductQuantity INTEGER, ProductAttributes TEXT, CurrencyCode TEXT, CurrencyQuantity INTEGER, CurrencyAttributes TEXT);";
+                cmd.CommandText = "CREATE TABLE IF NOT EXISTS Sales (ShopId INTEGER, Customer TEXT, Month INTEGER, Year INTEGER, ProductCode TEXT, ProductQuantity INTEGER, ProductAttributes TEXT, ProductName TEXT, CurrencyCode TEXT, CurrencyQuantity INTEGER, CurrencyAttributes TEXT, CurrencyName TEXT);";
                 cmd.ExecuteNonQuery();
 
                 cmd.CommandText = "CREATE TABLE IF NOT EXISTS Stalls (ShopId INTEGER, X INTEGER, Y INTEGER, Z INTEGER, StallSlot INTEGER, ProductCode TEXT, ProductQuantity INTEGER, ProductAttributes TEXT, CurrencyCode TEXT, CurrencyQuantity INTEGER, CurrencyAttributes TEXT);";
                 cmd.ExecuteNonQuery();
+
+                //Introduced in 0.2.9
+                //cmd.CommandText = "ALTER TABLE Sales ADD COLUMN IF NOT EXISTS ProductName TEXT; ALTER TABLE Sales ADD COLUMN IF NOT EXISTS CurrencyName TEXT;";
+                //cmd.ExecuteNonQuery();
 
                 connection.Close();
             }
@@ -141,10 +145,10 @@ namespace Viconomy.Database
                 cmd.Parameters.Add("@Year", SqliteType.Integer).Value = purchaseResult.coreApi.World.Calendar.Year;
                 cmd.Parameters.Add("@ProductCode", SqliteType.Text).Value = purchaseResult.purchasedItems.Collectible.Code.ToString();
                 cmd.Parameters.Add("@ProductQuantity", SqliteType.Text).Value = purchaseResult.purchasedItems.StackSize;
-                cmd.Parameters.Add("@ProductAttributes", SqliteType.Text).Value = DBNull.Value; //purchaseResult.purchasedItems.Attributes.ToJsonToken().GetHashCode();
+                cmd.Parameters.Add("@ProductAttributes", SqliteType.Text).Value = purchaseResult.purchasedItems.Attributes.ToJsonToken();
                 cmd.Parameters.Add("@CurrencyCode", SqliteType.Text).Value = purchaseResult.purchasedCurrencyUsed.Collectible.Code.ToString();
                 cmd.Parameters.Add("@CurrencyQuantity", SqliteType.Text).Value = purchaseResult.purchasedCurrencyUsed.StackSize;
-                cmd.Parameters.Add("@CurrencyAttributes", SqliteType.Text).Value = DBNull.Value; //purchaseResult.purchasedCurrencyUsed.Attributes.ToJsonToken().GetHashCode();
+                cmd.Parameters.Add("@CurrencyAttributes", SqliteType.Text).Value = purchaseResult.purchasedCurrencyUsed.Attributes.ToJsonToken();
 
                 cmd.CommandText = @"SELECT Count(*) FROM Sales 
                                     WHERE ShopId = @ShopId 

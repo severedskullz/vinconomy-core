@@ -1,0 +1,46 @@
+[
+    {
+        "ingredientPattern": "BQ,G_",
+        "ingredients": {
+            "B": {
+                "type": "item",
+                "code": "game:book-normal-*",
+                "name": "color"
+            },
+            "Q": {
+                "type": "item",
+                "code": "game:inkandquill"
+            },
+            "G": {
+                "type": "item",
+                "code": "game:gear-temporal"
+            }
+        },
+        "width": 2,
+        "height": 2,
+        "output": {
+            "type": "item",
+            "code": "book-tenretni-{color}",
+            "quantity": 1
+        }
+    },
+    {
+        "ingredientPattern": "T",
+        "ingredients": {
+            "T": {
+                "type": "item",
+                "code": "book-tenretni-*",
+                "name": "color"
+            }
+        },
+        "recipeGroup": 1,
+        "width": 1,
+        "height": 1,
+        "shapeless": true,
+        "output": {
+            "type": "item",
+            "code": "book-tenretni-{color}",
+            "quantity": 1
+        }
+    }
+]

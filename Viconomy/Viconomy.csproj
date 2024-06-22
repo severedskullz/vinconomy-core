@@ -64,6 +64,7 @@
   <None Remove="assets\vinconomy\itemtypes\vicon-ledger.json" />
   <None Remove="assets\vinconomy\itemtypes\vicon-playerfilter.json" />
   <None Remove="assets\vinconomy\itemtypes\vicon-sculpturebundle.json" />
+  <None Remove="assets\vinconomy\itemtypes\vicon-tenretnibook.json" />
   <None Remove="assets\vinconomy\lang\ru.json" />
   <None Remove="assets\vinconomy\recipes\grid\armorstand.json" />
   <None Remove="assets\vinconomy\recipes\grid\gachaball.json" />
@@ -72,6 +73,7 @@
   <None Remove="assets\vinconomy\recipes\grid\ledger.json" />
   <None Remove="assets\vinconomy\recipes\grid\sculpturepad.json" />
   <None Remove="assets\vinconomy\recipes\grid\tellermachine.json" />
+  <None Remove="assets\vinconomy\recipes\grid\tenretni.json" />
   <None Remove="assets\vinconomy\shapes\block\Gachaloader.json" />
   <None Remove="assets\vinconomy\shapes\block\sculptureslab.json" />
   <Content Include="modinfo.json">
