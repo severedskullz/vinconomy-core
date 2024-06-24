@@ -67,11 +67,17 @@ namespace Viconomy.GUI
                         foreach (var sale in data[key])
                         {
                             ItemStack product = ResolveBlockOrItem(sale.ProductCode, sale.ProductQuantity);
-                            JsonObject productAttr = JsonObject.FromJson(sale.ProductAttributes);
-                            product.Attributes = (ITreeAttribute)productAttr.ToAttribute();
+                            if (sale.ProductAttributes != null)
+                            {
+                                JsonObject productAttr = JsonObject.FromJson(sale.ProductAttributes);
+                                product.Attributes = (ITreeAttribute)productAttr.ToAttribute();
+                            }
                             ItemStack currency = ResolveBlockOrItem(sale.CurrencyCode, sale.CurrencyQuantity);
-                            JsonObject currencyAttr = JsonObject.FromJson(sale.CurrencyAttributes);
-                            currency.Attributes = (ITreeAttribute)currencyAttr.ToAttribute();
+                            if (sale.CurrencyAttributes != null)
+                            {
+                                JsonObject currencyAttr = JsonObject.FromJson(sale.CurrencyAttributes);
+                                currency.Attributes = (ITreeAttribute)currencyAttr.ToAttribute();
+                            }
                             list.Add(new RichTextComponent(capi, "\t" + product.GetName() + " x" + product.StackSize + " sold for " + currency.GetName() + " x" + currency.StackSize + "\r\n", font));
                         }
                         list.Add(new RichTextComponent(capi, "\r\n", font));
@@ -82,7 +88,9 @@ namespace Viconomy.GUI
                 {
                     list.Add(new RichTextComponent(capi, "There are no sales this month.", font));
                 }
-            } catch(Exception e) { }
+            } catch(Exception e) {
+                list.Add(new RichTextComponent(capi, "There was a problem loading the ledger info - Please forward this to the developer, so he can fix it: " + e.Message, font));
+            }
            
             textElem.SetNewText(list.ToArray());
             updateScrollbarBounds();
