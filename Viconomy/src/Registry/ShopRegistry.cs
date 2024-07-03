@@ -73,13 +73,13 @@ namespace Viconomy.Registry
 
 
 
-        public ShopRegistration AddShop(string owner, string ownerName, string name, BlockPos pos)
+        public ShopRegistration AddShop(string owner, string ownerName, string name, BlockPos pos, int ID = -1)
         {
             Console.WriteLine("Adding new Shop for " + owner );
-            ShopRegistration register = new ShopRegistration() {Owner = owner, OwnerName = ownerName, Name = name, Position = pos };
+            ShopRegistration register = new ShopRegistration() {Owner = owner, OwnerName = ownerName, Name = name, Position = pos, ID = ID };
 
             db.AddShop(register);
-            if (register.ID > -1)
+            if (register.ID > 0)
             {
                 this.AddShop(register);
             }

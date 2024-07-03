@@ -49,7 +49,8 @@ namespace Viconomy.Filters
                 return false;
 
             return IsDressType(slot.Itemstack, EnumCharacterDressType.Arm)
-                || IsDressType(slot.Itemstack, EnumCharacterDressType.Hand);
+                || IsDressType(slot.Itemstack, EnumCharacterDressType.Hand)
+                || IsDressType(slot.Itemstack, EnumCharacterDressType.Shoulder);
         }
         public static bool IsWaistSlot(ItemSlot slot)
         {

@@ -321,7 +321,7 @@ namespace Viconomy.Trading
         {
             return source != null 
                 && payment != null 
-                && payment.Satisfies(source);
+                && source.Satisfies(payment);
         }
         public static bool isMatchingCurrency(ItemSlot source, ItemSlot payment)
         {

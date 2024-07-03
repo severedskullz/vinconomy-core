@@ -67,8 +67,8 @@ namespace Viconomy.BlockEntities
                         ShopRegistration register = modSystem.UpdateShop(Owner, ID, Name, this.Pos);
                     } else {
                         modSystem.Mod.Logger.Warning("Somehow the shop with ID " + ID + " got removed. Recreating it...");
-                        ShopRegistration register = modSystem.AddShop(Owner, OwnerName, Name, this.Pos);
-                        ID = register.ID;
+                        ShopRegistration register = modSystem.AddShop(Owner, OwnerName, Name, this.Pos, ID);
+                        ID = register.ID; //Note: This *should* be redundant, but leaving in for a sanity check.
                     }
                     
                 }

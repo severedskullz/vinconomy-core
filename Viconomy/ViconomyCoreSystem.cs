@@ -385,12 +385,14 @@ namespace Viconomy
                 this.Mod.Logger.Debug("|  Loaded " + shops.Length + " Shops for Owner: " + ownerId);
                 foreach (ShopRegistration shop in shops)
                 {
-                    this.Mod.Logger.Debug("|   Loading Shop " + shop.Name);
-
+                    
                     if (shop.Position == null)
                     {
-                        ShopRegistry.GetShopsForOwner(ownerId);
-                        this.Mod.Logger.Debug("|     Shop " + shop.Name + " (" + shop.ID + ") does not exist anymore. Removing...");
+                        this.Mod.Logger.Debug("|   Skipping Shop " + shop.Name + " (" + shop.ID + ") as it does not exist anymore");
+                    } else
+                    {
+                        this.Mod.Logger.Debug("|   Loading Shop " + shop.Name);
+
                     }
                 }
             }
@@ -415,11 +417,11 @@ namespace Viconomy
             _serverChannel.SendPacket(new RegistryUpdatePacket(updates), player);
         }
 
-        public ShopRegistration AddShop(string owner, string ownerName, string name, BlockPos pos)
+        public ShopRegistration AddShop(string owner, string ownerName, string name, BlockPos pos, int ID = -1)
         {
             if (_coreServerAPI != null)
             {
-                ShopRegistration reg = this.GetRegistry().AddShop(owner, ownerName, name, pos);
+                ShopRegistration reg = this.GetRegistry().AddShop(owner, ownerName, name, pos, ID);
                
                 if (reg.IsWaypointBroadcasted)
                 {
