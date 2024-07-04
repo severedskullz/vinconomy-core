@@ -12,7 +12,7 @@ namespace Viconomy.GUI
 {
     public class GuiDialogViconStallCustomer : GuiDialogBlockEntity
     {
-        BEViconStall stall;
+        BEViconStallNew stall;
 
         int curTab;
         int quantity = 1;
@@ -25,7 +25,7 @@ namespace Viconomy.GUI
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
 
-            stall = capi.World.BlockAccessor.GetBlockEntity<BEViconStall>(BlockEntityPosition);
+            stall = capi.World.BlockAccessor.GetBlockEntity<BEViconStallNew>(BlockEntityPosition);
             curTab = stallSelection;
             ViconomyCoreSystem modSystem = capi.ModLoader.GetModSystem<ViconomyCoreSystem>();
 

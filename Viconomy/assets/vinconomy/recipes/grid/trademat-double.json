@@ -10,7 +10,7 @@
         "C": {
             "type": "item",
             "code": "game:cloth-*",
-            "name": "color",
+            "name": "cloth",
             "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
         },
         "O": {
@@ -19,10 +19,16 @@
             "attributes": { "type": "normal-generic" }
         }
     },
+    "recipeGroup" : 1,
     "width": 3,
     "height": 2,
     "output": {
         "type": "block",
-        "code": "tradematdouble-{color}-{wood}-north"
+        "code": "tradematdoublenew-north",
+        "attributes": {
+            "PrimaryMaterial": "{cloth}",
+            "SecondaryMaterial": "{wood}",
+            "DecoMaterial" : "default"
+        }
     }
 }

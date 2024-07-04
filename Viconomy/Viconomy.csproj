@@ -60,6 +60,7 @@
   <None Remove="assets\vinconomy\blocktypes\vicon-jobboard.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-sculpturepad.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-tellermachine.json" />
+  <None Remove="assets\vinconomy\blocktypes\vicon-tradematdouble - Copy.json" />
   <None Remove="assets\vinconomy\itemtypes\vicon-gacha.json" />
   <None Remove="assets\vinconomy\itemtypes\vicon-ledger.json" />
   <None Remove="assets\vinconomy\itemtypes\vicon-playerfilter.json" />

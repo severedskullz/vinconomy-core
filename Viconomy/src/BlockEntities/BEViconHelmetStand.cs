@@ -9,7 +9,7 @@ using Viconomy.Filters;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEViconHelmetStand : BEViconStall
+    public class BEViconHelmetStand : BEViconStallNew
     {
         public override int StallSlotCount => 1;
 

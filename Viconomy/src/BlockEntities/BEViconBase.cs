@@ -21,6 +21,9 @@ namespace Viconomy.BlockEntities
         public virtual int StallSlotCount { get; protected set; } = 4;
         public virtual int StacksPerSlot { get; protected set; } = 9;
         public virtual int BulkPurchaseAmount { get; protected set; } = 5;
+        public string PrimaryMaterial { get; internal set; }
+        public string SecondaryMaterial { get; internal set; }
+        public string DecoMaterial { get; internal set; }
 
         public bool shouldRenderInventory;
         protected DistanceRenderer distanceRenderer;
@@ -140,6 +143,9 @@ namespace Viconomy.BlockEntities
             tree.SetString("OwnerName", this.OwnerName);
             tree.SetInt("RegisterID", this.RegisterID);
             tree.SetBool("isAdminShop", this.isAdminShop);
+            tree.SetString("PrimaryMaterial", this.PrimaryMaterial);
+            tree.SetString("SecondaryMaterial", this.SecondaryMaterial);
+            tree.SetString("DecoMaterial", this.DecoMaterial);
 
         }
 
@@ -150,6 +156,13 @@ namespace Viconomy.BlockEntities
             this.OwnerName = tree.GetString("OwnerName");
             this.RegisterID = tree.GetInt("RegisterID");
             this.isAdminShop = tree.GetBool("isAdminShop");
+            this.PrimaryMaterial = tree.GetString("PrimaryMaterial", "default");
+            this.SecondaryMaterial = tree.GetString("SecondaryMaterial", "default");
+            this.DecoMaterial = tree.GetString("DecoMaterial", "default");
+            if (this.Api != null && this.Api.Side == EnumAppSide.Client)
+            {
+                this.MarkDirty(true, null);
+            }
         }
 
         protected void SetStallRegisterID(IPlayer byPlayer, byte[] data)

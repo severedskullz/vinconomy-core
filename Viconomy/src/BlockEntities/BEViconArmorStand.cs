@@ -11,7 +11,7 @@ using Viconomy.BlockTypes;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEViconArmorStand : BEViconStall
+    public class BEViconArmorStand : BEViconStallNew
     {
         public override int StallSlotCount => 9;
         public override int BulkPurchaseAmount => 1;

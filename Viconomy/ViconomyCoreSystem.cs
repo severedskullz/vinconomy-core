@@ -60,6 +60,7 @@ namespace Viconomy
             api.RegisterBlockClass("ViconGachaLoader", typeof(BlockVGachaLoader));
 
             api.RegisterBlockEntityClass("BEViconStall", typeof(BEViconStall));
+            api.RegisterBlockEntityClass("BEViconStallNew", typeof(BEViconStallNew));
             api.RegisterBlockEntityClass("BEViconHelmetStand", typeof(BEViconHelmetStand));
             api.RegisterBlockEntityClass("BEViconArmorStand", typeof(BEViconArmorStand));
             api.RegisterBlockEntityClass("BEVRegister", typeof(BEVRegister));

@@ -4,7 +4,7 @@ using Vintagestory.API.MathTools;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEViconShelf : BEViconStall
+    public class BEViconShelf : BEViconStallNew
     {
         protected override float[][] genTransformationMatrices()
         {

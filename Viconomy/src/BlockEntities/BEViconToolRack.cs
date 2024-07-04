@@ -6,7 +6,7 @@ using Vintagestory.API.Common;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEViconToolRack : BEViconStall
+    public class BEViconToolRack : BEViconStallNew
     {
 
         public override void ConfigureInventory()
