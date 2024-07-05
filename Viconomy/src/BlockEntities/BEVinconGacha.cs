@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Viconomy.BlockEntities;
 using Viconomy.GUI;
 using Viconomy.Inventory;
 using Viconomy.Trading;
@@ -16,7 +15,7 @@ using Vintagestory.API.Server;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEViconGacha : BEViconBase
+    public class BEVinconGacha : BEViconBase
     {
         
         protected GuiDialogBlockEntity invDialog;
@@ -28,7 +27,7 @@ namespace Viconomy.BlockEntities
 
         public override int DisplayedItems => StallSlotCount;
 
-        public BEViconGacha()
+        public BEVinconGacha()
         {
             this.inventory = new ViconomyGachaInventory(10, null, Api);
             this.inventory.SlotModified += Inventory_SlotModified;
@@ -104,7 +103,7 @@ namespace Viconomy.BlockEntities
 
             
             // Is there a shop with the given Register ID?
-            BEVRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
+            BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
             if (register == null && !this.isAdminShop)
             {
                 ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.COULDNT_GET_REGISTER);

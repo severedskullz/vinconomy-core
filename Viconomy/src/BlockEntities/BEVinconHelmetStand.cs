@@ -9,11 +9,11 @@ using Viconomy.Filters;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEViconHelmetStand : BEViconStallNew
+    public class BEVinconHelmetStand : BEVinconContainer
     {
         public override int StallSlotCount => 1;
 
-        public BEViconHelmetStand()
+        public BEVinconHelmetStand()
         {
             inventory = new ViconomyInventory(this, null, null, StallSlotCount, StacksPerSlot);
             inventory.SlotModified += base.Inventory_SlotModified;

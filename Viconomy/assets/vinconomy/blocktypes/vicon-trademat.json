@@ -1,27 +1,59 @@
 {
-  "code": "trademat",
-  "class": "ViconContainer",
-  "entityClass": "BEViconStall",
+  "code": "mat",
+  "class": "VinconContainer",
+  "entityClass": "BEVinconContainer",
   "priorityInteract": true,
-  "creativeinventory": { "vinconomy": [ "*-east" ] },
-  "attributes": { "handbook": { "groupBy": [ "trademat-*-east" ] } },
+  "creativeinventory": {},
+    "creativeinventoryStacksByType": {
+        "*-north": [
+            {
+                "tabs": [ "vinconomy" ],
+                "stacks": [
+                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "black"}},
+                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "blue"}},
+                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "brown"}},
+                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "gray"}},
+                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "green"}},
+                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "mordant"}},
+                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "orange"}},
+                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "pink"}},
+                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "plain"}},
+                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "purple"}},
+                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "red"}},
+                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "white"}},
+                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "yellow"}}
+                ]
+            }
+        ]
+    },
+  "attributes": { "handbook": { "groupBy": [ "mat-north" ] } },
   "behaviors": [ { "name": "HorizontalOrientable" } ],
   "heldTpIdleAnimation": "holdbothhandslarge",
   "heldTpUseAnimation": "twohandplaceblock",
   "blockmaterial": "Cloth",
   "variantgroups": [
     {
-      "code": "cloth",
-        "states": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
-    },
-    {
       "code": "side",
       "loadFromProperties": "abstract/horizontalorientation"
     }
   ],
-  "textures": {
-    "all": { "base": "game:block/cloth/linen/{cloth}" }
-  },
+ "textures": {
+        "default": { "base": "game:block/cloth/linen/plain" },
+
+        "black": { "base": "game:block/cloth/linen/black" },
+        "blue": { "base": "game:block/cloth/linen/blue" },
+        "brown": { "base": "game:block/cloth/linen/brown" },
+        "gray": { "base": "game:block/cloth/linen/gray" },
+        "green": { "base": "game:block/cloth/linen/green" },
+        "mordant": { "base": "game:block/cloth/linen/mordant" },
+        "orange": { "base": "game:block/cloth/linen/orange" },
+        "pink": { "base": "game:block/cloth/linen/pink" },
+        "plain": { "base": "game:block/cloth/linen/plain" },
+        "purple": { "base": "game:block/cloth/linen/purple" },
+        "red": { "base": "game:block/cloth/linen/red" },
+        "white": { "base": "game:block/cloth/linen/white" },
+        "yellow": { "base": "game:block/cloth/linen/yellow" }
+    },
   "shapebytype": {
     "*-north": {
       "base": "block/trademat",

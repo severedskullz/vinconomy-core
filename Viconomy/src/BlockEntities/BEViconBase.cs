@@ -1,13 +1,13 @@
 ﻿using System.IO;
+using Viconomy.BlockEntities.TextureSwappable;
 using Viconomy.src.Renderer;
 using Viconomy.Trading;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
-using Vintagestory.GameContent;
 
 namespace Viconomy.BlockEntities
 {
-    public abstract class BEViconBase : BlockEntityDisplay
+    public abstract class BEViconBase : BETextureSwappableBlockDisplay
     {
         protected ViconomyCoreSystem modSystem;
         protected Block block;
@@ -21,9 +21,6 @@ namespace Viconomy.BlockEntities
         public virtual int StallSlotCount { get; protected set; } = 4;
         public virtual int StacksPerSlot { get; protected set; } = 9;
         public virtual int BulkPurchaseAmount { get; protected set; } = 5;
-        public string PrimaryMaterial { get; internal set; }
-        public string SecondaryMaterial { get; internal set; }
-        public string DecoMaterial { get; internal set; }
 
         public bool shouldRenderInventory;
         protected DistanceRenderer distanceRenderer;
@@ -74,7 +71,7 @@ namespace Viconomy.BlockEntities
 
         public abstract bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel);
 
-        public virtual void PurchaseItem(IPlayer player, int stallSlot, int desiredAmount, BEVRegister shopRegister)
+        public virtual void PurchaseItem(IPlayer player, int stallSlot, int desiredAmount, BEVinconRegister shopRegister)
         {
             ItemSlot[] slots = GetSlotsForStall(stallSlot);
 
@@ -143,10 +140,6 @@ namespace Viconomy.BlockEntities
             tree.SetString("OwnerName", this.OwnerName);
             tree.SetInt("RegisterID", this.RegisterID);
             tree.SetBool("isAdminShop", this.isAdminShop);
-            tree.SetString("PrimaryMaterial", this.PrimaryMaterial);
-            tree.SetString("SecondaryMaterial", this.SecondaryMaterial);
-            tree.SetString("DecoMaterial", this.DecoMaterial);
-
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor world)
@@ -156,13 +149,7 @@ namespace Viconomy.BlockEntities
             this.OwnerName = tree.GetString("OwnerName");
             this.RegisterID = tree.GetInt("RegisterID");
             this.isAdminShop = tree.GetBool("isAdminShop");
-            this.PrimaryMaterial = tree.GetString("PrimaryMaterial", "default");
-            this.SecondaryMaterial = tree.GetString("SecondaryMaterial", "default");
-            this.DecoMaterial = tree.GetString("DecoMaterial", "default");
-            if (this.Api != null && this.Api.Side == EnumAppSide.Client)
-            {
-                this.MarkDirty(true, null);
-            }
+
         }
 
         protected void SetStallRegisterID(IPlayer byPlayer, byte[] data)

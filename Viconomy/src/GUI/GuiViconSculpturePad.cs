@@ -14,7 +14,7 @@ namespace Viconomy.GUI
 {
     public class GuiViconSculpturePadOwner : GuiDialogBlockEntity
     {
-        BEViconSculpturePad stall;
+        BEVinconSculpturePad stall;
         ViconomySculptureInventory vinInv;
         ShopRegistration[] registers;
         ICoreClientAPI api;
@@ -27,7 +27,7 @@ namespace Viconomy.GUI
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
             api = capi;
-            stall = capi.World.BlockAccessor.GetBlockEntity<BEViconSculpturePad>(BlockEntityPosition);
+            stall = capi.World.BlockAccessor.GetBlockEntity<BEVinconSculpturePad>(BlockEntityPosition);
             ViconomyCoreSystem modSystem = capi.ModLoader.GetModSystem<ViconomyCoreSystem>();
             ShopRegistration[] allRegisters = modSystem.GetRegistry().GetShopsForOwner(stall.Owner);
             List<ShopRegistration> filteredRegisters = new List<ShopRegistration>();

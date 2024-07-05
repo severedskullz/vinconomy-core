@@ -1,7 +1,7 @@
 {
     "code": "clothingstand",
-    "class": "ViconClothingDisplay",
-    "entityClass": "BEViconArmorStand",
+    "class": "VinconClothingDisplay",
+    "entityClass": "BEVinconArmorStand",
     "priorityInteract": true,
     "creativeinventory": { "vinconomy": [ "*-east" ] },
     "attributes": { "handbook": { "groupBy": [ "clothingstand-east" ] } },

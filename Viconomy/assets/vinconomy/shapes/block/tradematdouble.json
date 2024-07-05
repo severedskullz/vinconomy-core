@@ -9,7 +9,6 @@
 	},
 	"textures": {
 		"default": "game:block/cloth/linen/white",
-		"": "game:block/cloth/linen/white",
 		"primary": "game:block/cloth/linen/white",
 		"secondary": "game:block/wood/planks/oak1"
 	},

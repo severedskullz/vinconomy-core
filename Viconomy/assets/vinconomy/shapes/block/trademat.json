@@ -8,7 +8,7 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"white": "block/cloth/linen/white"
+		"primary": "game:block/cloth/linen/white"
 	},
 	"elements": [
 		{
@@ -16,12 +16,12 @@
 			"from": [ 0.0, 0.0, 0.0 ],
 			"to": [ 16.0, 1.0, 16.0 ],
 			"faces": {
-				"north": { "texture": "#white", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
-				"east": { "texture": "#white", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
-				"south": { "texture": "#white", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
-				"west": { "texture": "#white", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
-				"up": { "texture": "#white", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
-				"down": { "texture": "#white", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+				"north": { "texture": "#primary", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
+				"east": { "texture": "#primary", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
+				"south": { "texture": "#primary", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
+				"west": { "texture": "#primary", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
+				"up": { "texture": "#primary", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"down": { "texture": "#primary", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
 			}
 		}
 	]}

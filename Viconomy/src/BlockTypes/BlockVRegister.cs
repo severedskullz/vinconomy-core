@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using Viconomy.BlockEntities;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -12,11 +8,11 @@ using Vintagestory.API.Server;
 
 namespace Viconomy.BlockTypes
 {
-    public class BlockVRegister : Block
+    public class BlockVRegister : TextureSwappableBlock
     {
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
-            BEVRegister be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVRegister;
+            BEVinconRegister be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVinconRegister;
             if (be != null)
             {
                 return be.OnPlayerRightClick(byPlayer, blockSel);
@@ -38,7 +34,7 @@ namespace Viconomy.BlockTypes
             {
 
                 string Owner = byItemStack.Attributes.GetString("Owner");
-                BEVRegister vEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVRegister;
+                BEVinconRegister vEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVinconRegister;
                 if (vEntity != null)
                 {
                     if (Owner != null)
@@ -64,7 +60,7 @@ namespace Viconomy.BlockTypes
             }
             ;
             ItemStack stack = new ItemStack(world.GetBlock(new AssetLocation(Code.Domain, this.CodeWithoutParts(1) +"-east")));
-            BEVRegister vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEVRegister;
+            BEVinconRegister vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEVinconRegister;
             if (vEntity != null)
             {
                 stack.Attributes.SetString("Owner", vEntity.Owner);
@@ -82,7 +78,7 @@ namespace Viconomy.BlockTypes
             if (byPlayer == null)
                 return;
 
-            BEVRegister vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEVRegister;
+            BEVinconRegister vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEVinconRegister;
             if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID || byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative)
             {
                 ViconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyCoreSystem>();

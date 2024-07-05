@@ -24,7 +24,7 @@
     "height": 2,
     "output": {
         "type": "block",
-        "code": "tradematdoublenew-north",
+        "code": "matdouble-north",
         "attributes": {
             "PrimaryMaterial": "{cloth}",
             "SecondaryMaterial": "{wood}",

@@ -1,6 +1,6 @@
 {
   "code": "clothingstandtop",
-  "class": "ViconClothingDisplayTop",
+  "class": "VinconClothingDisplayTop",
   "priorityInteract": true,
   "behaviors": [ { "name": "HorizontalOrientable" } ],
   "heldTpIdleAnimation": "holdbothhandslarge",

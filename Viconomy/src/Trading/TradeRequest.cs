@@ -1,7 +1,6 @@
 ﻿
 using System.Collections.Generic;
 using Viconomy.BlockEntities;
-using Viconomy.Inventory;
 using Vintagestory.API.Common;
 
 namespace Viconomy.Trading
@@ -10,7 +9,7 @@ namespace Viconomy.Trading
     {
         public ICoreAPI coreApi;
         public IPlayer customer;
-        public BEVRegister shopRegister;
+        public BEVinconRegister shopRegister;
 
         public ItemStack currencyNeeded;
         //public ItemSlot[] currencySourceSlots;

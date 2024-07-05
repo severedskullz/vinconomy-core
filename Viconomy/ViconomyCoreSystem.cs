@@ -19,6 +19,7 @@ using Viconomy.Trading;
 using Vintagestory.GameContent;
 using Viconomy.Map;
 using Vintagestory.API.Datastructures;
+using Viconomy.BlockEntities.Legacy;
 
 namespace Viconomy
 {
@@ -50,6 +51,32 @@ namespace Viconomy
         public override void Start(ICoreAPI api)
         {
  
+            // 3.0 Block Mappings
+            api.RegisterBlockClass("VinconContainer", typeof(BlockVContainer));
+            api.RegisterBlockClass("VinconRegister", typeof(BlockVRegister));
+            api.RegisterBlockClass("VinconTeller", typeof(BlockVTeller));
+            api.RegisterBlockClass("VinconClothingDisplay", typeof(BlockVClothingDisplay));
+            api.RegisterBlockClass("VinconClothingDisplayTop", typeof(BlockVClothingDisplayTop));
+            api.RegisterBlockClass("VinconGacha", typeof(BlockVGacha));
+            api.RegisterBlockClass("VinconGachaLoader", typeof(BlockVGachaLoader));
+            api.RegisterBlockClass("VinconJobboard", typeof(BlockVJobboard));
+
+            // 3.0 Block Entity Mappings
+            api.RegisterBlockEntityClass("BEVinconContainer", typeof(BEVinconContainer));
+            api.RegisterBlockEntityClass("BEVinconShelf", typeof(BEVinconShelf));
+            api.RegisterBlockEntityClass("BEVinconHelmetStand", typeof(BEVinconHelmetStand));
+            api.RegisterBlockEntityClass("BEVinconArmorStand", typeof(BEVinconArmorStand));
+            api.RegisterBlockEntityClass("BEVinconRegister", typeof(BEVinconRegister));
+            api.RegisterBlockEntityClass("BEVinconTeller", typeof(BEVinconTeller));
+            api.RegisterBlockEntityClass("BEVinconSculpturePad", typeof(BEVinconSculpturePad));
+            api.RegisterBlockEntityClass("BEVinconWeaponrack", typeof(BEVinconWeaponRack));
+            api.RegisterBlockEntityClass("BEVinconToolrack", typeof(BEVinconToolRack));
+            api.RegisterBlockEntityClass("BEVinconArmorStand", typeof(BEVinconArmorStand));
+            api.RegisterBlockEntityClass("BEVinconGacha", typeof(BEVinconGacha));
+            api.RegisterBlockEntityClass("BEVinconGachaLoader", typeof(BEVinconGachaLoader));
+            api.RegisterBlockEntityClass("BEVinconJobboard", typeof(BEVinconJobboard));
+
+            //2.10 Legacy Block Entity
             api.RegisterBlockClass("ViconContainer", typeof(BlockVContainer));
             api.RegisterBlockClass("ViconRegister", typeof(BlockVRegister));
             api.RegisterBlockClass("ViconTeller", typeof(BlockVTeller));
@@ -59,22 +86,22 @@ namespace Viconomy
             api.RegisterBlockClass("ViconGacha", typeof(BlockVGacha));
             api.RegisterBlockClass("ViconGachaLoader", typeof(BlockVGachaLoader));
 
-            api.RegisterBlockEntityClass("BEViconStall", typeof(BEViconStall));
-            api.RegisterBlockEntityClass("BEViconStallNew", typeof(BEViconStallNew));
-            api.RegisterBlockEntityClass("BEViconHelmetStand", typeof(BEViconHelmetStand));
-            api.RegisterBlockEntityClass("BEViconArmorStand", typeof(BEViconArmorStand));
-            api.RegisterBlockEntityClass("BEVRegister", typeof(BEVRegister));
-            api.RegisterBlockEntityClass("BEViconTeller", typeof(BEViconTeller));
-            api.RegisterBlockEntityClass("BEViconShelf", typeof(BEViconShelf));
-            api.RegisterBlockEntityClass("BEViconSculpturePad", typeof(BEViconSculpturePad));
-            api.RegisterBlockEntityClass("BEViconWeaponrack", typeof(BEViconWeaponRack));
-            api.RegisterBlockEntityClass("BEViconToolrack", typeof(BEViconToolRack));
-            api.RegisterBlockEntityClass("BEViconArmorStand", typeof(BEViconArmorStand));
-            api.RegisterBlockEntityClass("BEViconGacha", typeof(BEViconGacha));
-            api.RegisterBlockEntityClass("BEViconGachaLoader", typeof(BEViconGachaLoader));
+            // 2.10 Legacy Block Entity Mappings
+            api.RegisterBlockEntityClass("BEViconStall", typeof(BEViconStallLegacy));
+            api.RegisterBlockEntityClass("BEViconShelf", typeof(BEVinconShelf));
+            api.RegisterBlockEntityClass("BEViconHelmetStand", typeof(BEVinconHelmetStand));
+            api.RegisterBlockEntityClass("BEViconArmorStand", typeof(BEVinconArmorStand));
+            api.RegisterBlockEntityClass("BEVRegister", typeof(BEVinconRegister));
+            api.RegisterBlockEntityClass("BEViconTeller", typeof(BEVinconTeller));
+            api.RegisterBlockEntityClass("BEViconSculpturePad", typeof(BEVinconSculpturePad));
+            api.RegisterBlockEntityClass("BEViconWeaponrack", typeof(BEVinconWeaponRack));
+            api.RegisterBlockEntityClass("BEViconToolrack", typeof(BEVinconToolRack));
+            api.RegisterBlockEntityClass("BEViconArmorStand", typeof(BEVinconArmorStand));
+            api.RegisterBlockEntityClass("BEViconGacha", typeof(BEVinconGacha));
+            api.RegisterBlockEntityClass("BEViconGachaLoader", typeof(BEVinconGachaLoader));
+            api.RegisterBlockEntityClass("BEViconJobboard", typeof(BEVinconJobboard));
 
-            api.RegisterBlockEntityClass("BEViconJobboard", typeof(BEViconJobboard));
-
+            //Item Types
             api.RegisterItemClass("ViconLedger", typeof(ItemLedger));
             api.RegisterItemClass("ViconSculptureBundle", typeof(ItemSculptureBundle));
             api.RegisterItemClass("ViconGachaBall", typeof(ItemGachaBall));
@@ -272,9 +299,9 @@ namespace Viconomy
             if (entity is BEViconBase) {
                 ((BEViconBase)entity).SetOwner(playerUUID, playerData.LastKnownPlayername);
             }
-            else if (entity is BEVRegister) 
+            else if (entity is BEVinconRegister) 
             {
-                BEVRegister register = ((BEVRegister)entity);
+                BEVinconRegister register = ((BEVinconRegister)entity);
                 ShopRegistry.ClearShop(register.ID);
                 register.Owner = playerUUID;
                 UpdateShop(playerUUID, register.ID, playerData.LastKnownPlayername + "'s Shop", register.Pos);
@@ -338,7 +365,7 @@ namespace Viconomy
                 this.ShopMapLayer.RebuildMapComponents();
         }
 
-        public BEVRegister GetShopRegister(string owner, int registerID)
+        public BEVinconRegister GetShopRegister(string owner, int registerID)
         {
             if (owner == null)
             {
@@ -354,7 +381,7 @@ namespace Viconomy
                 return null;
             }
 
-            BEVRegister viconRegister = _coreServerAPI.World.BlockAccessor.GetBlockEntity(register.Position) as BEVRegister;
+            BEVinconRegister viconRegister = _coreServerAPI.World.BlockAccessor.GetBlockEntity(register.Position) as BEVinconRegister;
             if (viconRegister != null)
             {
                 return viconRegister;
@@ -559,7 +586,7 @@ namespace Viconomy
         /// </summary>
         /// 
         //TODO: Multicast support
-        public bool CanPurchaseItem(IPlayer player, BEViconBase stall, BEVRegister register, int stallSlot, int desiredAmount)
+        public bool CanPurchaseItem(IPlayer player, BEViconBase stall, BEVinconRegister register, int stallSlot, int desiredAmount)
         {
             bool result = true;
             if (OnCanPurchaseItem != null)

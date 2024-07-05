@@ -1,0 +1,79 @@
+{
+  "code": "helmetstand",
+  "class": "ViconContainer",
+  "entityClass": "BEViconHelmetStand",
+  "priorityInteract": true,
+  "creativeinventory": { "vinconomy-legacy": [ "*-oak-*-east" ] },
+  "attributes": { "handbook": { "groupBy": [ "helmetstand-*-*-east" ] } },
+  "behaviors": [ { "name": "HorizontalOrientable" } ],
+  "heldTpIdleAnimation": "holdbothhandslarge",
+  "heldTpUseAnimation": "twohandplaceblock",
+  "blockmaterial": "Wood",
+  "variantgroups": [
+    {
+      "code": "stand",
+      "loadFromProperties": "block/wood"
+    },
+    {
+      "code": "base",
+      "states": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+    },
+    {
+      "code": "side",
+      "loadFromProperties": "abstract/horizontalorientation"
+    }
+  ],
+  "textures": {
+    "all": { "base": "block/obsolete" },
+    "default": { "base": "block/obsolete" }
+  },
+  "shapebytype": {
+    "*-north": {
+      "base": "block/helmetstand",
+      "rotateY": 0
+    },
+    "*-east": {
+      "base": "block/helmetstand",
+      "rotateY": 270
+    },
+    "*-south": {
+      "base": "block/helmetstand",
+      "rotateY": 180
+    },
+    "*-west": {
+      "base": "block/helmetstand",
+      "rotateY": 90
+    }
+  },
+
+  "collisionSelectionBoxes": [
+    {
+      "x1": 0.125,
+      "y1": 0,
+      "z1": 0.125,
+      "x2": 0.875,
+      "y2": 0.65,
+      "z2": 0.875,
+      "rotateYByType": {
+        "*-north": 0,
+        "*-east": 270,
+        "*-west": 90,
+        "*-south": 180
+      }
+    }
+  ],
+  "lightAbsorption": 0,
+  "sidesolid": {
+    "all": "false"
+  },
+  "sideopaque": {
+    "all": "false"
+  },
+  "resistance": 3.5,
+  "sounds": {
+    "hit": "game:block/planks",
+    "break": "game:block/planks",
+    "place": "game:block/planks",
+    "walk": "game:walk/wood"
+  }
+}

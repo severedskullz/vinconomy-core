@@ -55,12 +55,17 @@
   <Content Include="assets\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>
+  <None Remove="assets\vinconomy\blocktypes\legacy\vicon-toolrack-legacy.json" />
+  <None Remove="assets\vinconomy\blocktypes\legacy\vicon-weaponrack-legacy.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-gacha.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-gachaloader.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-jobboard.json" />
+  <None Remove="assets\vinconomy\blocktypes\vicon-register-legacy.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-sculpturepad.json" />
+  <None Remove="assets\vinconomy\blocktypes\vicon-shelf-legacy.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-tellermachine.json" />
-  <None Remove="assets\vinconomy\blocktypes\vicon-tradematdouble - Copy.json" />
+  <None Remove="assets\vinconomy\blocktypes\vicon-trademat.json" />
+  <None Remove="assets\vinconomy\blocktypes\vicon-tradematdouble.json" />
   <None Remove="assets\vinconomy\itemtypes\vicon-gacha.json" />
   <None Remove="assets\vinconomy\itemtypes\vicon-ledger.json" />
   <None Remove="assets\vinconomy\itemtypes\vicon-playerfilter.json" />

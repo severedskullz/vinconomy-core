@@ -21,7 +21,7 @@ namespace Viconomy.BlockTypes
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
             //Console.WriteLine(api.Side + ": On interaction start was called!");
-            BEViconArmorStand be = world.BlockAccessor.GetBlockEntity(blockSel.Position.DownCopy(1)) as BEViconArmorStand;
+            BEVinconArmorStand be = world.BlockAccessor.GetBlockEntity(blockSel.Position.DownCopy(1)) as BEVinconArmorStand;
             if (be != null)
             {
                 BlockSelection newSel = blockSel.Clone();
@@ -34,7 +34,7 @@ namespace Viconomy.BlockTypes
 
         public override WorldInteraction[] GetPlacedBlockInteractionHelp(IWorldAccessor world, BlockSelection selection, IPlayer forPlayer)
         {
-            BEViconArmorStand be = world.BlockAccessor.GetBlockEntity(selection.Position.DownCopy(1)) as BEViconArmorStand;
+            BEVinconArmorStand be = world.BlockAccessor.GetBlockEntity(selection.Position.DownCopy(1)) as BEVinconArmorStand;
             List<WorldInteraction> interactions = new List<WorldInteraction>();
             if (be != null)
             {

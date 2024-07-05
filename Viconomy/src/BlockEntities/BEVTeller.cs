@@ -15,7 +15,7 @@ using Vintagestory.Client.NoObf;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEViconTeller : BEViconBase
+    public class BEVinconTeller : BEViconBase
     {
         private ViconomyTellerInventory inventory;
         private GuiViconTeller invDialog;
@@ -25,7 +25,7 @@ namespace Viconomy.BlockEntities
 
         public override string InventoryClassName => "ViconomyRegisteryInventory";
 
-        public BEViconTeller()
+        public BEVinconTeller()
         {
             this.inventory = new ViconomyTellerInventory(this, null, null);
         }
@@ -175,7 +175,7 @@ namespace Viconomy.BlockEntities
 
 
             // Is there a shop with the given Register ID?
-            BEVRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
+            BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
             if (register == null && !this.isAdminShop)
             {
                 ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
@@ -189,7 +189,7 @@ namespace Viconomy.BlockEntities
 
         }
 
-        public override void PurchaseItem(IPlayer player, int stallSlot, int desiredAmount, BEVRegister shopRegister)
+        public override void PurchaseItem(IPlayer player, int stallSlot, int desiredAmount, BEVinconRegister shopRegister)
         {
             bool isLeft = stallSlot % 2 == 0;
             ItemSlot toCurrency = Inventory[stallSlot];

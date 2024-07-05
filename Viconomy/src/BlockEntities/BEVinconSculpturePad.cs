@@ -20,7 +20,7 @@ using Vintagestory.GameContent;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEViconSculpturePad : BEViconBase
+    public class BEVinconSculpturePad : BEViconBase
     {
         
         protected GuiDialogBlockEntity invDialog;
@@ -34,7 +34,7 @@ namespace Viconomy.BlockEntities
 
         public override int DisplayedItems => maxSizeXZ * maxSizeXZ * maxSizeY;
 
-        public BEViconSculpturePad()
+        public BEVinconSculpturePad()
         {
             ConfigureInventory();
             this.inventory.SlotModified += Inventory_SlotModified;
@@ -121,7 +121,7 @@ namespace Viconomy.BlockEntities
 
             
             // Is there a shop with the given Register ID?
-            BEVRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
+            BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
             if (register == null && !this.isAdminShop)
             {
                 ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
@@ -209,7 +209,7 @@ namespace Viconomy.BlockEntities
             return stack;
         }
 
-        public override void PurchaseItem(IPlayer player, int stallSlot, int desiredAmount, BEVRegister shopRegister)
+        public override void PurchaseItem(IPlayer player, int stallSlot, int desiredAmount, BEVinconRegister shopRegister)
         {
             InventoryGeneric genInv = new InventoryGeneric(1, "purchase-inv" + Inventory.InventoryID, Api);
             genInv[0].Itemstack = GenNewSculptureBundle();

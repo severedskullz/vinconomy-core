@@ -1,9 +1,7 @@
 ﻿using System.IO;
-using Viconomy.BlockTypes;
-using Viconomy.Delegates;
 using Viconomy.GUI;
-using Viconomy.ItemTypes;
 using Viconomy.Registry;
+using Viconomy.BlockEntities.TextureSwappable;
 using Viconomy.src.GUI;
 using Viconomy.Util;
 using Vintagestory.API.Client;
@@ -12,13 +10,12 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.Client.NoObf;
-using Vintagestory.GameContent;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEVRegister : BlockEntityContainer
+    public class BEVinconRegister : BETextureSwappableBlockContainer
     {
-        private BlockVRegister block;
+
         private InventoryGeneric inventory;
         private GuiViconRegister invDialog;
         private GuiViconWaypoint waypointDialogue;
@@ -32,7 +29,7 @@ namespace Viconomy.BlockEntities
 
         public override string InventoryClassName => "ViconomyRegisteryInventory";
 
-        public BEVRegister()
+        public BEVinconRegister()
         {
             this.inventory = new InventoryGeneric(25, null, null);
         }
@@ -41,7 +38,7 @@ namespace Viconomy.BlockEntities
         {
             base.Initialize(api);
 
-            block = (BlockVRegister)api.World.BlockAccessor.GetBlock(this.Pos);
+            //block = (BlockVRegister)api.World.BlockAccessor.GetBlock(this.Pos);
             modSystem = Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
 
 

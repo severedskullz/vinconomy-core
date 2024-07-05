@@ -38,7 +38,7 @@ namespace Viconomy.BlockTypes
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
             //Console.WriteLine(api.Side + ": On interaction start was called!");
-            BEViconStallNew be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEViconStallNew;
+            BEVinconContainer be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVinconContainer;
             if (be != null)
             {
                 return be.OnPlayerRightClick(byPlayer, blockSel);
@@ -49,7 +49,7 @@ namespace Viconomy.BlockTypes
 
         public override WorldInteraction[] GetPlacedBlockInteractionHelp(IWorldAccessor world, BlockSelection selection, IPlayer forPlayer)
         {
-            BEViconStallNew be = world.BlockAccessor.GetBlockEntity(selection.Position) as BEViconStallNew;
+            BEVinconContainer be = world.BlockAccessor.GetBlockEntity(selection.Position) as BEVinconContainer;
             List<WorldInteraction> interactions = new List<WorldInteraction>();
             if (be != null)
             {
@@ -118,7 +118,7 @@ namespace Viconomy.BlockTypes
             if (byPlayer == null)
                 return;
 
-            BEViconStallNew vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEViconStallNew;
+            BEVinconContainer vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEVinconContainer;
             if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID)
             {
                 ViconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyCoreSystem>();

@@ -11,7 +11,7 @@ using Vintagestory.API.MathTools;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEViconWeaponRack : BEViconStallNew
+    public class BEVinconWeaponRack : BEVinconContainer
     {
         public override int StallSlotCount => 3;
 

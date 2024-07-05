@@ -11,12 +11,12 @@ using Viconomy.BlockTypes;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEViconArmorStand : BEViconStallNew
+    public class BEVinconArmorStand : BEVinconContainer
     {
         public override int StallSlotCount => 9;
         public override int BulkPurchaseAmount => 1;
         
-        public BEViconArmorStand() { 
+        public BEVinconArmorStand() { 
             bypassShelvableAttributes = true;
         }
 

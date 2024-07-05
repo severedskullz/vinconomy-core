@@ -1,26 +1,56 @@
 {
   "code": "producecrate",
-  "class": "ViconContainer",
-  "entityClass": "BEViconStall",
+  "class": "VinconContainer",
+  "entityClass": "BEVinconStall",
   "priorityInteract": true,
-  "creativeinventory": { "vinconomy": [ "*-east" ] },
-  "attributes": { "handbook": { "groupBy": [ "producecrate-*-east" ] } },
+  "creativeinventory": {},
+    "creativeinventoryStacksByType": {
+        "*-north": [
+            {
+                "tabs": [ "vinconomy" ],
+                "stacks": [
+                    { "type": "block", "code": "producecrate-east", "attributes": {"PrimaryMaterial": "acacia"}},
+                    { "type": "block", "code": "producecrate-east", "attributes": {"PrimaryMaterial": "baldcypress"}},
+                    { "type": "block", "code": "producecrate-east", "attributes": {"PrimaryMaterial": "birch"}},
+                    { "type": "block", "code": "producecrate-east", "attributes": {"PrimaryMaterial": "ebony"}},
+                    { "type": "block", "code": "producecrate-east", "attributes": {"PrimaryMaterial": "kapok"}},
+                    { "type": "block", "code": "producecrate-east", "attributes": {"PrimaryMaterial": "larch"}},
+                    { "type": "block", "code": "producecrate-east", "attributes": {"PrimaryMaterial": "maple"}},
+                    { "type": "block", "code": "producecrate-east", "attributes": {"PrimaryMaterial": "oak"}},
+                    { "type": "block", "code": "producecrate-east", "attributes": {"PrimaryMaterial": "pine"}},
+                    { "type": "block", "code": "producecrate-east", "attributes": {"PrimaryMaterial": "purpleheart"}},
+                    { "type": "block", "code": "producecrate-east", "attributes": {"PrimaryMaterial": "redwood"}},
+                    { "type": "block", "code": "producecrate-east", "attributes": {"PrimaryMaterial": "walnut"}}
+                ]
+            }
+        ]
+    },
+  "attributes": { "handbook": { "groupBy": [ "producecrate-east" ] } },
   "behaviors": [ { "name": "HorizontalOrientable" } ],
   "heldTpIdleAnimation": "holdbothhandslarge",
   "heldTpUseAnimation": "twohandplaceblock",
   "blockmaterial": "Wood",
   "variantgroups": [
     {
-      "code": "wood",
-      "loadFromProperties": "block/wood"
-    },
-    {
       "code": "side",
       "loadFromProperties": "abstract/horizontalorientation"
     }
   ],
   "textures": {
-    "all": { "base": "game:block/wood/planks/{wood}1" }
+    "default" : { "base": "game:block/wood/planks/oak1" },
+
+    "acacia": { "base": "game:block/wood/planks/acacia1" },
+    "baldcypress": { "base": "game:block/wood/planks/baldcypress1" },
+    "birch": { "base": "game:block/wood/planks/birch1" },
+    "ebony": { "base": "game:block/wood/planks/ebony1" },
+    "kapok": { "base": "game:block/wood/planks/kapok1" },
+    "larch": { "base": "game:block/wood/planks/larch1" },
+    "maple": { "base": "game:block/wood/planks/maple1" },
+    "oak": { "base": "game:block/wood/planks/oak1" },
+    "pine": { "base": "game:block/wood/planks/pine1" },
+    "purpleheart": { "base": "game:block/wood/planks/purpleheart1" },
+    "redwood": { "base": "game:block/wood/planks/redwood1" },
+    "walnut": { "base": "game:block/wood/planks/walnut1" }
   },
   "shapebytype": {
     "*-north": {

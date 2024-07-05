@@ -8,7 +8,7 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"oak1": "block/wood/planks/oak1"
+		"primary": "block/wood/planks/oak1"
 	},
 	"elements": [
 		{
@@ -18,12 +18,12 @@
 			"rotationOrigin": [ 8.0, 0.0, 0.0 ],
 			"rotationZ": 45.0,
 			"faces": {
-				"north": { "texture": "#oak1", "uv": [ 0.0, 0.0, 11.0, 11.0 ] },
-				"east": { "texture": "#oak1", "uv": [ 0.0, 0.0, 1.0, 11.0 ] },
-				"south": { "texture": "#oak1", "uv": [ 0.0, 0.0, 11.0, 11.0 ] },
-				"west": { "texture": "#oak1", "uv": [ 0.0, 0.0, 1.0, 11.0 ] },
-				"up": { "texture": "#oak1", "uv": [ 0.0, 0.0, 11.0, 1.0 ] },
-				"down": { "texture": "#oak1", "uv": [ 0.0, 0.0, 11.0, 1.0 ] }
+				"north": { "texture": "#primary", "uv": [ 0.0, 0.0, 11.0, 11.0 ] },
+				"east": { "texture": "#primary", "uv": [ 0.0, 0.0, 1.0, 11.0 ] },
+				"south": { "texture": "#primary", "uv": [ 0.0, 0.0, 11.0, 11.0 ] },
+				"west": { "texture": "#primary", "uv": [ 0.0, 0.0, 1.0, 11.0 ] },
+				"up": { "texture": "#primary", "uv": [ 0.0, 0.0, 11.0, 1.0 ] },
+				"down": { "texture": "#primary", "uv": [ 0.0, 0.0, 11.0, 1.0 ] }
 			}
 		},
 		{
@@ -32,12 +32,12 @@
 			"to": [ 13.0, 13.0, 1.0 ],
 			"rotationOrigin": [ 3.0, 3.0, 0.0 ],
 			"faces": {
-				"north": { "texture": "#oak1", "uv": [ 0.0, 0.0, 10.0, 10.0 ] },
-				"east": { "texture": "#oak1", "uv": [ 0.0, 0.0, 0.5, 10.0 ] },
-				"south": { "texture": "#oak1", "uv": [ 0.0, 0.0, 10.0, 10.0 ] },
-				"west": { "texture": "#oak1", "uv": [ 0.0, 0.0, 0.5, 10.0 ] },
-				"up": { "texture": "#oak1", "uv": [ 0.0, 0.0, 10.0, 0.5 ] },
-				"down": { "texture": "#oak1", "uv": [ 0.0, 0.0, 10.0, 0.5 ] }
+				"north": { "texture": "#primary", "uv": [ 0.0, 0.0, 10.0, 10.0 ] },
+				"east": { "texture": "#primary", "uv": [ 0.0, 0.0, 0.5, 10.0 ] },
+				"south": { "texture": "#primary", "uv": [ 0.0, 0.0, 10.0, 10.0 ] },
+				"west": { "texture": "#primary", "uv": [ 0.0, 0.0, 0.5, 10.0 ] },
+				"up": { "texture": "#primary", "uv": [ 0.0, 0.0, 10.0, 0.5 ] },
+				"down": { "texture": "#primary", "uv": [ 0.0, 0.0, 10.0, 0.5 ] }
 			}
 		}
 	]}

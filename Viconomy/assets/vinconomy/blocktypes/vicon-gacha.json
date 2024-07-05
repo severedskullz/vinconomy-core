@@ -1,7 +1,7 @@
 {
     "code": "gacha",
-    "class": "ViconGacha",
-    "entityClass": "BEViconGacha",
+    "class": "VinconGacha",
+    "entityClass": "BEVinconGacha",
     "priorityInteract": true,
     "creativeinventory": { "vinconomy": [ "*-north" ] },
     "attributes": { "handbook": { "groupBy": [ "gacha-north" ] } },

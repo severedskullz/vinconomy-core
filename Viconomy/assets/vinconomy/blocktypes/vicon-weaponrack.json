@@ -1,10 +1,31 @@
 {
   "code": "weaponrack",
-  "class": "ViconContainer",
-  "entityClass": "BEViconWeaponrack",
+  "class": "VinconContainer",
+  "entityClass": "BEVinconWeaponrack",
   "priorityInteract": true,
-  "creativeinventory": { "vinconomy": [ "*-north" ] },
-  "attributes": { "handbook": { "groupBy": [ "weaponrack-*-north" ] } },
+  "creativeinventory": {},
+    "creativeinventoryStacksByType": {
+        "*-north": [
+            {
+                "tabs": [ "vinconomy" ],
+                "stacks": [
+                    { "type": "block", "code": "weaponrack-north", "attributes": {"PrimaryMaterial": "acacia"}},
+                    { "type": "block", "code": "weaponrack-north", "attributes": {"PrimaryMaterial": "baldcypress"}},
+                    { "type": "block", "code": "weaponrack-north", "attributes": {"PrimaryMaterial": "birch"}},
+                    { "type": "block", "code": "weaponrack-north", "attributes": {"PrimaryMaterial": "ebony"}},
+                    { "type": "block", "code": "weaponrack-north", "attributes": {"PrimaryMaterial": "kapok"}},
+                    { "type": "block", "code": "weaponrack-north", "attributes": {"PrimaryMaterial": "larch"}},
+                    { "type": "block", "code": "weaponrack-north", "attributes": {"PrimaryMaterial": "maple"}},
+                    { "type": "block", "code": "weaponrack-north", "attributes": {"PrimaryMaterial": "oak"}},
+                    { "type": "block", "code": "weaponrack-north", "attributes": {"PrimaryMaterial": "pine"}},
+                    { "type": "block", "code": "weaponrack-north", "attributes": {"PrimaryMaterial": "purpleheart"}},
+                    { "type": "block", "code": "weaponrack-north", "attributes": {"PrimaryMaterial": "redwood"}},
+                    { "type": "block", "code": "weaponrack-north", "attributes": {"PrimaryMaterial": "walnut"}}
+                ]
+            }
+        ]
+    },
+  "attributes": { "handbook": { "groupBy": [ "weaponrack-north" ] } },
   "behaviors": [
     {
       "name": "HorizontalAttachable",
@@ -16,15 +37,26 @@
   "blockmaterial": "Wood",
   "variantgroups": [
     {
-      "code": "wood",
-      "states": [ "birch", "oak", "maple", "pine", "acacia", "kapok", "baldcypress", "larch", "redwood", "ebony", "walnut", "purpleheart" ]
-    },
-    {
       "code": "side",
       "loadFromProperties": "abstract/horizontalorientation"
     }
   ],
+    "textures": {
+    "default" : { "base": "game:block/wood/planks/oak1" },
 
+    "acacia": { "base": "game:block/wood/planks/acacia1" },
+    "baldcypress": { "base": "game:block/wood/planks/baldcypress1" },
+    "birch": { "base": "game:block/wood/planks/birch1" },
+    "ebony": { "base": "game:block/wood/planks/ebony1" },
+    "kapok": { "base": "game:block/wood/planks/kapok1" },
+    "larch": { "base": "game:block/wood/planks/larch1" },
+    "maple": { "base": "game:block/wood/planks/maple1" },
+    "oak": { "base": "game:block/wood/planks/oak1" },
+    "pine": { "base": "game:block/wood/planks/pine1" },
+    "purpleheart": { "base": "game:block/wood/planks/purpleheart1" },
+    "redwood": { "base": "game:block/wood/planks/redwood1" },
+    "walnut": { "base": "game:block/wood/planks/walnut1" }
+  },
   "selectionBoxes": [
     {
       "x1": 0.5,
@@ -86,9 +118,7 @@
       }
     }
   ],
-  "textures": {
-    "all": { "base": "game:block/wood/planks/{wood}1" }
-  },
+
   "shapeByType": {
     "*-north": {
       "base": "block/weaponrack",

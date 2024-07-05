@@ -19,7 +19,7 @@ namespace Viconomy.BlockTypes
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
-            BEViconJobboard be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEViconJobboard;
+            BEVinconJobboard be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVinconJobboard;
             if (be != null)
             {
                 return be.OnPlayerRightClick(byPlayer, blockSel);

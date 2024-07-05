@@ -1,32 +1,51 @@
 {
   "code": "helmetstand",
-  "class": "ViconContainer",
-  "entityClass": "BEViconHelmetStand",
+  "class": "VinconContainer",
+  "entityClass": "BEVinconHelmetStand",
   "priorityInteract": true,
   "creativeinventory": { "vinconomy": [ "*-oak-*-east" ] },
   "attributes": { "handbook": { "groupBy": [ "helmetstand-*-*-east" ] } },
   "behaviors": [ { "name": "HorizontalOrientable" } ],
   "heldTpIdleAnimation": "holdbothhandslarge",
   "heldTpUseAnimation": "twohandplaceblock",
-  "blockmaterial": "Wood",
+  "blockmaterial": "Metal",
   "variantgroups": [
-    {
-      "code": "stand",
-      "loadFromProperties": "block/wood"
-    },
-    {
-      "code": "base",
-      "states": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
-    },
     {
       "code": "side",
       "loadFromProperties": "abstract/horizontalorientation"
     }
   ],
-  "textures": {
-    "stand": { "base": "game:block/wood/planks/{stand}1" },
-    "base": { "base": "game:block/metal/plate/{base}" }
-  },
+    "textures": {
+        "default": { "base": "game:block/metal/plate/steel" },
+
+        "bismuth": { "base": "game:block/metal/plate/bismuth" },
+        "bismuthbronze": { "base": "game:block/metal/plate/bismuthbronze" },
+        "blackbronze": { "base": "game:block/metal/plate/blackbronze" },
+        "brass": { "base": "game:block/metal/plate/brass" },
+        "copper": { "base": "game:block/metal/plate/copper" },
+        "gold": { "base": "game:block/metal/plate/gold" },
+        "iron": { "base": "game:block/metal/plate/iron" },
+        "lead": { "base": "game:block/metal/plate/lead" },
+        "meteoriciron": { "base": "game:block/metal/plate/meteoriciron" },
+        "tinbronze": { "base": "game:block/metal/plate/tinbronze" },
+        "steel": { "base": "game:block/metal/plate/steel" },
+        "tin": { "base": "game:block/metal/plate/tin" },
+        "uranium": { "base": "game:block/metal/plate/uranium" },
+        "zinc": { "base": "game:block/metal/plate/zinc" },
+
+        "acacia": { "base": "game:block/wood/planks/acacia1" },
+        "baldcypress": { "base": "game:block/wood/planks/baldcypress1" },
+        "birch": { "base": "game:block/wood/planks/birch1" },
+        "ebony": { "base": "game:block/wood/planks/ebony1" },
+        "kapok": { "base": "game:block/wood/planks/kapok1" },
+        "larch": { "base": "game:block/wood/planks/larch1" },
+        "maple": { "base": "game:block/wood/planks/maple1" },
+        "oak": { "base": "game:block/wood/planks/oak1" },
+        "pine": { "base": "game:block/wood/planks/pine1" },
+        "purpleheart": { "base": "game:block/wood/planks/purpleheart1" },
+        "redwood": { "base": "game:block/wood/planks/redwood1" },
+        "walnut": { "base": "game:block/wood/planks/walnut1" }
+    },
   "shapebytype": {
     "*-north": {
       "base": "block/helmetstand",

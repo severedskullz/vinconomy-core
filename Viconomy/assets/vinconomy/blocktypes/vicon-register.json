@@ -1,13 +1,66 @@
 ﻿{
     "code": "register",
-    "class": "ViconRegister",
-    "entityClass": "BEVRegister",
+    "class": "VinconRegister",
+    "entityClass": "BEVinconRegister",
     "priorityInteract": true,
-    "creativeinventory": { "vinconomy": [ "*-north" ] },
+     "creativeinventory": {},
+    "creativeinventoryStacksByType": {
+        "*-north": [
+            {
+                "tabs": [ "vinconomy" ],
+                "stacks": [
+                    { "type": "block", "code": "register-north", "attributes": {"PrimaryMaterial": "bismuth","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "register-north", "attributes": {"PrimaryMaterial": "bismuthbronze","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "register-north", "attributes": {"PrimaryMaterial": "blackbronze","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "register-north", "attributes": {"PrimaryMaterial": "brass","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "register-north", "attributes": {"PrimaryMaterial": "copper","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "register-north", "attributes": {"PrimaryMaterial": "gold","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "register-north", "attributes": {"PrimaryMaterial": "iron","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "register-north", "attributes": {"PrimaryMaterial": "lead","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "register-north", "attributes": {"PrimaryMaterial": "meteoriciron","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "register-north", "attributes": {"PrimaryMaterial": "tinbronze","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "register-north", "attributes": {"PrimaryMaterial": "steel","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "register-north", "attributes": {"PrimaryMaterial": "tin","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "register-north", "attributes": {"PrimaryMaterial": "zinc","SecondaryMaterial": "oak"}}
+                ]
+            }
+        ]
+    },
+    "textures": {
+        "default": { "base": "game:block/metal/plate/steel" },
+
+        "bismuth": { "base": "game:block/metal/plate/bismuth" },
+        "bismuthbronze": { "base": "game:block/metal/plate/bismuthbronze" },
+        "blackbronze": { "base": "game:block/metal/plate/blackbronze" },
+        "brass": { "base": "game:block/metal/plate/brass" },
+        "copper": { "base": "game:block/metal/plate/copper" },
+        "gold": { "base": "game:block/metal/plate/gold" },
+        "iron": { "base": "game:block/metal/plate/iron" },
+        "lead": { "base": "game:block/metal/plate/lead" },
+        "meteoriciron": { "base": "game:block/metal/plate/meteoriciron" },
+        "tinbronze": { "base": "game:block/metal/plate/tinbronze" },
+        "steel": { "base": "game:block/metal/plate/steel" },
+        "tin": { "base": "game:block/metal/plate/tin" },
+        "uranium": { "base": "game:block/metal/plate/uranium" },
+        "zinc": { "base": "game:block/metal/plate/zinc" },
+
+        "acacia": { "base": "game:block/wood/planks/acacia1" },
+        "baldcypress": { "base": "game:block/wood/planks/baldcypress1" },
+        "birch": { "base": "game:block/wood/planks/birch1" },
+        "ebony": { "base": "game:block/wood/planks/ebony1" },
+        "kapok": { "base": "game:block/wood/planks/kapok1" },
+        "larch": { "base": "game:block/wood/planks/larch1" },
+        "maple": { "base": "game:block/wood/planks/maple1" },
+        "oak": { "base": "game:block/wood/planks/oak1" },
+        "pine": { "base": "game:block/wood/planks/pine1" },
+        "purpleheart": { "base": "game:block/wood/planks/purpleheart1" },
+        "redwood": { "base": "game:block/wood/planks/redwood1" },
+        "walnut": { "base": "game:block/wood/planks/walnut1" }
+    },
     "attributes": {
         "handbook": {
-            "groupBy": [ "register-*-*-north" ],
-            "groupedName": "register-oak-copper-north"
+            "groupBy": [ "register-north" ],
+            "groupedName": "register-north"
         }
     },
     "behaviors": [ { "name": "HorizontalOrientable" } ],
@@ -15,14 +68,7 @@
     "heldTpUseAnimation": "twohandplaceblock",
     "blockmaterial": "Metal",
     "variantgroups": [
-        {
-            "code": "wood",
-            "states": [ "birch", "oak", "maple", "pine", "acacia", "kapok", "baldcypress", "larch", "redwood", "ebony", "walnut", "purpleheart" ]
-        },
-        {
-            "code": "metal",
-            "states": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
-        },
+
         {
             "code": "side",
             "loadFromProperties": "abstract/horizontalorientation"
@@ -54,10 +100,7 @@
             "z": -76
         }
     },
-    "textures": {
-        "wood": { "base": "game:block/wood/planks/{wood}1" },
-        "metal": { "base": "game:block/metal/plate/{metal}" }
-    },
+
     "shapebytype": {
         "*-north": {
             "base": "block/register",
