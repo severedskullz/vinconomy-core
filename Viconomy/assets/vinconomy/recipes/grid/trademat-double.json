@@ -27,8 +27,7 @@
         "code": "matdouble-north",
         "attributes": {
             "PrimaryMaterial": "{cloth}",
-            "SecondaryMaterial": "{wood}",
-            "DecoMaterial" : "default"
+            "SecondaryMaterial": "{wood}"
         }
     }
 }

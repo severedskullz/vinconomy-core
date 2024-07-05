@@ -318,6 +318,86 @@ namespace Viconomy.BlockTypes
             };
         }
 
-        
+        // TODO: Figure out an easy/elegant way to populate all the Handbook entries.
+        // Basically, unless we do an entry for each possible combination inside creativeInventoryStacksByType, then there will not be a Handbook page that gets created.
+        /*
+        public override List<ItemStack> GetHandBookStacks(ICoreClientAPI capi)
+        {
+            if (this.Code == null)
+            {
+                return null;
+            }
+            bool inCreativeTab = this.CreativeInventoryTabs != null && this.CreativeInventoryTabs.Length != 0;
+            bool inCreativeTabStack = this.CreativeInventoryStacks != null && this.CreativeInventoryStacks.Length != 0;
+            JsonObject attributes = this.Attributes;
+            bool flag;
+            if (attributes == null)
+            {
+                flag = false;
+            }
+            else
+            {
+                JsonObject jsonObject = attributes["handbook"];
+                bool? flag2 = (jsonObject != null) ? new bool?(jsonObject["include"].AsBool(false)) : null;
+                bool flag3 = true;
+                flag = (flag2.GetValueOrDefault() == flag3 & flag2 != null);
+            }
+            bool explicitlyIncluded = flag;
+            JsonObject attributes2 = this.Attributes;
+            bool flag4;
+            if (attributes2 == null)
+            {
+                flag4 = false;
+            }
+            else
+            {
+                JsonObject jsonObject2 = attributes2["handbook"];
+                bool? flag2 = (jsonObject2 != null) ? new bool?(jsonObject2["exclude"].AsBool(false)) : null;
+                bool flag3 = true;
+                flag4 = (flag2.GetValueOrDefault() == flag3 & flag2 != null);
+            }
+            if (flag4)
+            {
+                return null;
+            }
+            if (!explicitlyIncluded && !inCreativeTab && !inCreativeTabStack)
+            {
+                return null;
+            }
+            List<ItemStack> stacks = new List<ItemStack>();
+            if (inCreativeTabStack)
+            {
+                for (int i = 0; i < this.CreativeInventoryStacks.Length; i++)
+                {
+                    for (int j = 0; j < this.CreativeInventoryStacks[i].Stacks.Length; j++)
+                    {
+                        ItemStack stack = this.CreativeInventoryStacks[i].Stacks[j].ResolvedItemstack;
+                        stack.ResolveBlockOrItem(capi.World);
+                        stack = stack.Clone();
+                        stack.StackSize = stack.Collectible.MaxStackSize;
+                        if (!stacks.Any((ItemStack stack1) => stack1.Equals(stack)))
+                        {
+                            stacks.Add(stack);
+                            ItemStack otherGlass = stack.Clone();
+                            otherGlass.Attributes.SetString("glass", "plain");
+                            stacks.Add(otherGlass);
+                            ItemStack otherLiningSilver = stack.Clone();
+                            ItemStack otherLiningGold = stack.Clone();
+                            otherLiningSilver.Attributes.SetString("lining", "silver");
+                            otherLiningGold.Attributes.SetString("lining", "gold");
+                            stacks.Add(otherLiningSilver);
+                            stacks.Add(otherLiningGold);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                stacks.Add(new ItemStack(this, 1));
+            }
+            return stacks;
+        }
+        */
+
     }
 }

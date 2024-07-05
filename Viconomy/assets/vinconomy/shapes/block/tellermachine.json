@@ -9,8 +9,8 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"primary": "block/metal/plate/steel",
-		"secondary": "block/wood/crate/oak-inside"
+		"primary": "game:block/metal/plate/steel",
+		"secondary": "game:block/wood/crate/oak-inside"
 	},
 	"elements": [
 		{

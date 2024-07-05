@@ -18,7 +18,9 @@
   "height": 3,
   "output": {
     "type": "block",
-    "code": "weaponrack-{wood}-north",
-    "quantity": 1
+    "code": "weaponrack-north",
+    "attributes": {
+            "PrimaryMaterial": "{wood}"
+        }
   }
 }

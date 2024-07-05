@@ -17,6 +17,9 @@
   "height": 2,
   "output": {
     "type": "block",
-    "code": "producecrate-{wood}-east"
+    "code": "producecrate-east",
+    "attributes": {
+        "PrimaryMaterial": "{wood}"
+    }
   }
 }

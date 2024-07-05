@@ -18,7 +18,9 @@
   "height": 3,
   "output": {
     "type": "block",
-    "code": "toolrack-{wood}-east",
-    "quantity": 1
+    "code": "toolrack-east",
+    "attributes": {
+            "PrimaryMaterial": "{wood}"
+        }
   }
 }

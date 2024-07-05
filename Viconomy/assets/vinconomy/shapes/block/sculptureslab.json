@@ -8,7 +8,7 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"primary": "block/wood/planks/oak3"
+		"primary": "game:block/wood/planks/oak3"
 	},
 	"elements": [
 		{

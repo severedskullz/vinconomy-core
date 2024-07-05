@@ -18,7 +18,9 @@
   "height": 2,
   "output": {
     "type": "block",
-    "code": "trademat-{cloth}-east",
-    "quantity": 1
+    "code": "mat-north",
+    "attributes": {
+            "PrimaryMaterial": "{cloth}"
+        }
   }
 }

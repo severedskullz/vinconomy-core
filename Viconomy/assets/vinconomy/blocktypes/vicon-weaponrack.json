@@ -158,6 +158,10 @@
     "burnDuration": 35
   },
   "materialDensity": 400,
+  	"guiTransform": {
+		"origin": { "x": 0.5, "y": 0.5, "z": 0 },
+		"scale": 1.5
+	},
   "tpHandTransform": {
     "translation": {
       "x": -0.8,

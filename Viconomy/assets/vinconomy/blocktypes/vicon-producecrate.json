@@ -1,7 +1,7 @@
 {
   "code": "producecrate",
   "class": "VinconContainer",
-  "entityClass": "BEVinconStall",
+  "entityClass": "BEVinconContainer",
   "priorityInteract": true,
   "creativeinventory": {},
     "creativeinventoryStacksByType": {
