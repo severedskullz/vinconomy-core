@@ -18,7 +18,7 @@ namespace Viconomy.Inventory
             CollectibleObject collectible = sourceSlot.Itemstack?.Collectible;
             if (collectible != null && !isDisabled)
             {
-                if (collectible.ItemClass == EnumItemClass.Block && (collectible is Block || collectible is BlockChisel))
+                if (collectible is Block)
                 {
                     return base.CanHold(sourceSlot);
                 }

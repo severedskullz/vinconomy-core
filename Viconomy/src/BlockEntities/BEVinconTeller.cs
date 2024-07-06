@@ -15,7 +15,7 @@ using Vintagestory.Client.NoObf;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEVinconTeller : BEViconBase
+    public class BEVinconTeller : BEVinconBase
     {
         private ViconomyTellerInventory inventory;
         private GuiViconTeller invDialog;
@@ -167,7 +167,7 @@ namespace Viconomy.BlockEntities
             }
 
             // Does the shop have a register ID set?
-            if (this.RegisterID == -1 && !this.isAdminShop)
+            if (this.RegisterID == -1 && !this.IsAdminShop)
             {
                 ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
@@ -176,7 +176,7 @@ namespace Viconomy.BlockEntities
 
             // Is there a shop with the given Register ID?
             BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
-            if (register == null && !this.isAdminShop)
+            if (register == null && !this.IsAdminShop)
             {
                 ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
@@ -197,7 +197,7 @@ namespace Viconomy.BlockEntities
 
             List<ItemSlot> productSlots = new List<ItemSlot>();
 
-            if (isAdminShop)
+            if (IsAdminShop)
             {
                 InventoryGeneric genInv = new InventoryGeneric(1, "purchase-inv" + Inventory.InventoryID, Api);
                 genInv[0].Itemstack = TradingUtil.GetItemStackClone(toCurrency);
@@ -223,7 +223,7 @@ namespace Viconomy.BlockEntities
             request.shopRegister = shopRegister;
             request.sellingEntity = this;
             request.coreApi = this.Api;
-            request.isAdminShop = this.isAdminShop;
+            request.isAdminShop = this.IsAdminShop;
 
             TradeResult result = TradingUtil.TryPurchaseItem(request);
             if (result.error != null)

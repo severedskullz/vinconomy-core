@@ -181,7 +181,7 @@ namespace Viconomy.GUI
                 sc.EndChildElements();
 
                 if (capi.World.Player.HasPrivilege("gamemode") && isOwner)
-                    sc.GetSwitch("admin").SetValue(teller.isAdminShop);
+                    sc.GetSwitch("admin").SetValue(teller.IsAdminShop);
 
                 //.AddHorizontalTabs(tabs, tabBounds, new Action<int>(this.OnTabClicked), tabFont, tabFont.Clone().WithColor(GuiStyle.ActiveButtonTextColor), "tabs")
                 sc.Compose();

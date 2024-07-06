@@ -24,7 +24,7 @@ namespace Viconomy.Trading
         public bool requiresContainer;
         public bool requiresTool;
         public ItemStack tool;
-        internal BEViconBase sellingEntity;
+        internal BEVinconBase sellingEntity;
     }
 
     public class TradeResult : TradeRequest

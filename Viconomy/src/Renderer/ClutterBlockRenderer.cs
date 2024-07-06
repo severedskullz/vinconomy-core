@@ -19,7 +19,7 @@ namespace Viconomy.Renderer
             return stack.Block is BlockClutter;
         }
 
-        public MeshData createMesh(BEViconBase stall, ItemStack stack, int index)
+        public MeshData createMesh(BEVinconBase stall, ItemStack stack, int index)
         {
             ICoreClientAPI coreClientAPI = (ICoreClientAPI)stall.Api;
 

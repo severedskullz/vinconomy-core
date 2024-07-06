@@ -23,7 +23,7 @@ namespace Viconomy.BlockTypes
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
             //Console.WriteLine(api.Side + ": On interaction start was called!");
-            BEViconBase be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEViconBase;
+            BEVinconBase be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVinconBase;
             if (be != null)
             {
                 return be.OnPlayerRightClick(byPlayer, blockSel);
@@ -35,7 +35,7 @@ namespace Viconomy.BlockTypes
 
         public override WorldInteraction[] GetPlacedBlockInteractionHelp(IWorldAccessor world, BlockSelection selection, IPlayer forPlayer)
         {
-            BEViconBase be = world.BlockAccessor.GetBlockEntity(selection.Position) as BEViconBase;
+            BEVinconBase be = world.BlockAccessor.GetBlockEntity(selection.Position) as BEVinconBase;
             List<WorldInteraction> interactions = new List<WorldInteraction>();
             if (be != null)
             {
@@ -165,7 +165,7 @@ namespace Viconomy.BlockTypes
             bool result = base.DoPlaceBlock(world, byPlayer, blockSel, byItemStack);
             if (result)
             {
-                BEViconBase viconBlock = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEViconBase;
+                BEVinconBase viconBlock = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVinconBase;
                 if (viconBlock != null)
                 {
                     viconBlock.SetOwner(byPlayer);
@@ -182,7 +182,7 @@ namespace Viconomy.BlockTypes
             if (byPlayer == null)
                 return;
 
-            BEViconBase vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEViconBase;
+            BEVinconBase vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEVinconBase;
             if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID || byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative)
             {
                 ViconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyCoreSystem>();

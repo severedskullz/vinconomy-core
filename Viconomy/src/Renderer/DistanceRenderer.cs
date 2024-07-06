@@ -6,10 +6,10 @@ namespace Viconomy.src.Renderer
 {
     public class DistanceRenderer : IRenderer, IDisposable
     {
-        BEViconBase viconBase;
+        BEVinconBase viconBase;
         ICoreClientAPI api;
         int range = 30;
-        public DistanceRenderer(BEViconBase viconBase)
+        public DistanceRenderer(BEVinconBase viconBase)
         {
             this.viconBase = viconBase;
             api = ((ICoreClientAPI)this.viconBase.Api);

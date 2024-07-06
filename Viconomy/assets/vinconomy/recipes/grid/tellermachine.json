@@ -1,34 +1,362 @@
 [
-  {
-    "ingredientPattern": "W__,COC,WWW",
-    "ingredients": {
-      "W": {
-        "type": "item",
-        "code": "game:plank-*",
-        "name": "wood",
-        "allowedVariants": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+    {
+      "ingredientPattern": "W__,COC,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-acacia"
+        },
+        "C": {
+          "type": "item",
+          "code": "game:metalplate-*",
+          "name": "metal",
+          "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:chest-east",
+          "attributes": { "type": "normal-generic" }
+        }
       },
-      "C": {
-        "type": "item",
-        "code": "game:metalplate-*",
-        "name": "metal",
-        "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
-      },
-      "O": {
+      "width": 3,
+      "height": 3,
+      "output": {
         "type": "block",
-        "code": "game:chest-east",
-        "attributes": { "type": "normal-generic" }
+        "code": "tellermachine-north",
+        "attributes": {
+              "PrimaryMaterial": "{metal}",
+              "SecondaryMaterial": "acacia"
+          }
       }
     },
-    "width": 3,
-    "height": 3,
-    "output": {
-      "type": "block",
-      "code": "tellermachine-north",
-      "attributes": {
-            "PrimaryMaterial": "{metal}",
-            "SecondaryMaterial": "{wood}"
+    {
+      "ingredientPattern": "W__,COC,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-baldcypress"
+        },
+        "C": {
+          "type": "item",
+          "code": "game:metalplate-*",
+          "name": "metal",
+          "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:chest-east",
+          "attributes": { "type": "normal-generic" }
         }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "tellermachine-north",
+        "attributes": {
+              "PrimaryMaterial": "{metal}",
+              "SecondaryMaterial": "baldcypress"
+          }
+      }
+    },
+    {
+      "ingredientPattern": "W__,COC,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-birch"
+        },
+        "C": {
+          "type": "item",
+          "code": "game:metalplate-*",
+          "name": "metal",
+          "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:chest-east",
+          "attributes": { "type": "normal-generic" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "tellermachine-north",
+        "attributes": {
+              "PrimaryMaterial": "{metal}",
+              "SecondaryMaterial": "birch"
+          }
+      }
+    },
+    {
+      "ingredientPattern": "W__,COC,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-ebony"
+        },
+        "C": {
+          "type": "item",
+          "code": "game:metalplate-*",
+          "name": "metal",
+          "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:chest-east",
+          "attributes": { "type": "normal-generic" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "tellermachine-north",
+        "attributes": {
+              "PrimaryMaterial": "{metal}",
+              "SecondaryMaterial": "ebony"
+          }
+      }
+    },
+    {
+      "ingredientPattern": "W__,COC,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-kapok"
+        },
+        "C": {
+          "type": "item",
+          "code": "game:metalplate-*",
+          "name": "metal",
+          "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:chest-east",
+          "attributes": { "type": "normal-generic" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "tellermachine-north",
+        "attributes": {
+              "PrimaryMaterial": "{metal}",
+              "SecondaryMaterial": "kapok"
+          }
+      }
+    },
+    {
+      "ingredientPattern": "W__,COC,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-larch"
+        },
+        "C": {
+          "type": "item",
+          "code": "game:metalplate-*",
+          "name": "metal",
+          "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:chest-east",
+          "attributes": { "type": "normal-generic" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "tellermachine-north",
+        "attributes": {
+              "PrimaryMaterial": "{metal}",
+              "SecondaryMaterial": "larch"
+          }
+      }
+    },
+    {
+      "ingredientPattern": "W__,COC,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-maple"
+        },
+        "C": {
+          "type": "item",
+          "code": "game:metalplate-*",
+          "name": "metal",
+          "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:chest-east",
+          "attributes": { "type": "normal-generic" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "tellermachine-north",
+        "attributes": {
+              "PrimaryMaterial": "{metal}",
+              "SecondaryMaterial": "maple"
+          }
+      }
+    },
+    {
+      "ingredientPattern": "W__,COC,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-oak"
+        },
+        "C": {
+          "type": "item",
+          "code": "game:metalplate-*",
+          "name": "metal",
+          "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:chest-east",
+          "attributes": { "type": "normal-generic" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "tellermachine-north",
+        "attributes": {
+              "PrimaryMaterial": "{metal}",
+              "SecondaryMaterial": "oak"
+          }
+      }
+    },
+    {
+      "ingredientPattern": "W__,COC,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-pine"
+        },
+        "C": {
+          "type": "item",
+          "code": "game:metalplate-*",
+          "name": "metal",
+          "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:chest-east",
+          "attributes": { "type": "normal-generic" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "tellermachine-north",
+        "attributes": {
+              "PrimaryMaterial": "{metal}",
+              "SecondaryMaterial": "pine"
+          }
+      }
+    },
+    {
+      "ingredientPattern": "W__,COC,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-purpleheart"
+        },
+        "C": {
+          "type": "item",
+          "code": "game:metalplate-*",
+          "name": "metal",
+          "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:chest-east",
+          "attributes": { "type": "normal-generic" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "tellermachine-north",
+        "attributes": {
+              "PrimaryMaterial": "{metal}",
+              "SecondaryMaterial": "purpleheart"
+          }
+      }
+    },
+    {
+      "ingredientPattern": "W__,COC,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-redwood"
+        },
+        "C": {
+          "type": "item",
+          "code": "game:metalplate-*",
+          "name": "metal",
+          "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:chest-east",
+          "attributes": { "type": "normal-generic" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "tellermachine-north",
+        "attributes": {
+              "PrimaryMaterial": "{metal}",
+              "SecondaryMaterial": "redwood"
+          }
+      }
+    },
+    {
+      "ingredientPattern": "W__,COC,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-walnut"
+        },
+        "C": {
+          "type": "item",
+          "code": "game:metalplate-*",
+          "name": "metal",
+          "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:chest-east",
+          "attributes": { "type": "normal-generic" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "tellermachine-north",
+        "attributes": {
+              "PrimaryMaterial": "{metal}",
+              "SecondaryMaterial": "walnut"
+          }
+      }
     }
-  }
 ]

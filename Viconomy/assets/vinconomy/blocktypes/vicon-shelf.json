@@ -1,205 +1,267 @@
 {
-  "code": "shelf",
-  "class": "VinconContainer",
-  "entityClass": "BEVinconShelf",
-  "priorityInteract": true,
-  "creativeinventory": {},
+    "code": "shelf",
+    "class": "VinconContainer",
+    "entityClass": "BEVinconShelf",
+    "priorityInteract": true,
+    "creativeinventory": {},
     "creativeinventoryStacksByType": {
         "*-north": [
             {
                 "tabs": [ "vinconomy" ],
                 "stacks": [
-                    { "type": "block", "code": "shelf-east", "attributes": {"PrimaryMaterial": "acacia"}},
-                    { "type": "block", "code": "shelf-east", "attributes": {"PrimaryMaterial": "baldcypress"}},
-                    { "type": "block", "code": "shelf-east", "attributes": {"PrimaryMaterial": "birch"}},
-                    { "type": "block", "code": "shelf-east", "attributes": {"PrimaryMaterial": "ebony"}},
-                    { "type": "block", "code": "shelf-east", "attributes": {"PrimaryMaterial": "kapok"}},
-                    { "type": "block", "code": "shelf-east", "attributes": {"PrimaryMaterial": "larch"}},
-                    { "type": "block", "code": "shelf-east", "attributes": {"PrimaryMaterial": "maple"}},
-                    { "type": "block", "code": "shelf-east", "attributes": {"PrimaryMaterial": "oak"}},
-                    { "type": "block", "code": "shelf-east", "attributes": {"PrimaryMaterial": "pine"}},
-                    { "type": "block", "code": "shelf-east", "attributes": {"PrimaryMaterial": "purpleheart"}},
-                    { "type": "block", "code": "shelf-east", "attributes": {"PrimaryMaterial": "redwood"}},
-                    { "type": "block", "code": "shelf-east", "attributes": {"PrimaryMaterial": "walnut"}}
+                    {
+                        "type": "block",
+                        "code": "shelf-east",
+                        "attributes": { "PrimaryMaterial": "acacia" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "shelf-east",
+                        "attributes": { "PrimaryMaterial": "baldcypress" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "shelf-east",
+                        "attributes": { "PrimaryMaterial": "birch" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "shelf-east",
+                        "attributes": { "PrimaryMaterial": "ebony" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "shelf-east",
+                        "attributes": { "PrimaryMaterial": "kapok" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "shelf-east",
+                        "attributes": { "PrimaryMaterial": "larch" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "shelf-east",
+                        "attributes": { "PrimaryMaterial": "maple" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "shelf-east",
+                        "attributes": { "PrimaryMaterial": "oak" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "shelf-east",
+                        "attributes": { "PrimaryMaterial": "pine" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "shelf-east",
+                        "attributes": { "PrimaryMaterial": "purpleheart" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "shelf-east",
+                        "attributes": { "PrimaryMaterial": "redwood" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "shelf-east",
+                        "attributes": { "PrimaryMaterial": "walnut" }
+                    }
                 ]
             }
         ]
     },
-  "attributes": { "handbook": { "groupBy": [ "shelf-east" ] } },
-  "behaviors": [
-    {
-      "name": "HorizontalAttachable",
-      "properties": { "dropBlockFace": "east" }
-    }
-  ],
-  "heldTpIdleAnimation": "holdbothhandslarge",
-  "heldTpUseAnimation": "twohandplaceblock",
-  "blockmaterial": "Wood",
-  "variantgroups": [
-    
-    {
-      "code": "side",
-      "loadFromProperties": "abstract/horizontalorientation"
-    }
-  ],
-  "textures": {
-    "default" : { "base": "game:block/wood/planks/oak1" },
+    "attributes": {
+        "handbook": {
+            "groupBy": [ "shelf-east" ],
+            "extraSections": [
+                {
+                    "title": "",
+                    "text": "vinconomy:handbooktext-stall"
+                }
+            ]
+        }
+    },
+    "behaviors": [
+        {
+            "name": "HorizontalAttachable",
+            "properties": { "dropBlockFace": "east" }
+        }
+    ],
+    "heldTpIdleAnimation": "holdbothhandslarge",
+    "heldTpUseAnimation": "twohandplaceblock",
+    "blockmaterial": "Wood",
+    "variantgroups": [
 
-    "acacia": { "base": "game:block/wood/planks/acacia1" },
-    "baldcypress": { "base": "game:block/wood/planks/baldcypress1" },
-    "birch": { "base": "game:block/wood/planks/birch1" },
-    "ebony": { "base": "game:block/wood/planks/ebony1" },
-    "kapok": { "base": "game:block/wood/planks/kapok1" },
-    "larch": { "base": "game:block/wood/planks/larch1" },
-    "maple": { "base": "game:block/wood/planks/maple1" },
-    "oak": { "base": "game:block/wood/planks/oak1" },
-    "pine": { "base": "game:block/wood/planks/pine1" },
-    "purpleheart": { "base": "game:block/wood/planks/purpleheart1" },
-    "redwood": { "base": "game:block/wood/planks/redwood1" },
-    "walnut": { "base": "game:block/wood/planks/walnut1" }
-  },
-  "selectionBoxes": [
-    {
-      "x1": 0.5,
-      "y1": 0.5,
-      "z1": 0,
-      "x2": 1,
-      "y2": 1,
-      "z2": 0.5,
-      "rotateYByType": {
-        "*-north": 90,
-        "*-east": 0,
-        "*-west": 180,
-        "*-south": 270
-      }
-    },
-    {
-      "x1": 0.5,
-      "y1": 0.5,
-      "z1": 0.5,
-      "x2": 1,
-      "y2": 1,
-      "z2": 1,
-      "rotateYByType": {
-        "*-north": 90,
-        "*-east": 0,
-        "*-west": 180,
-        "*-south": 270
-      }
-    },
-    {
-      "x1": 0.5,
-      "y1": 0,
-      "z1": 0,
-      "x2": 1,
-      "y2": 0.5,
-      "z2": 0.5,
-      "rotateYByType": {
-        "*-north": 90,
-        "*-east": 0,
-        "*-west": 180,
-        "*-south": 270
-      }
-    },
-    {
-      "x1": 0.5,
-      "y1": 0,
-      "z1": 0.5,
-      "x2": 1,
-      "y2": 0.5,
-      "z2": 1,
-      "rotateYByType": {
-        "*-north": 90,
-        "*-east": 0,
-        "*-west": 180,
-        "*-south": 270
-      }
-    }
-  ],
+        {
+            "code": "side",
+            "loadFromProperties": "abstract/horizontalorientation"
+        }
+    ],
+    "textures": {
+        "default": { "base": "game:block/wood/planks/oak1" },
 
-  "collisionBoxes": [
-    {
-      "x1": 0.5,
-      "y1": 0,
-      "z1": 0,
-      "x2": 1,
-      "y2": 1,
-      "z2": 1,
-      "rotateYByType": {
-        "*-north": 90,
-        "*-east": 0,
-        "*-west": 180,
-        "*-south": 270
-      }
-    }
-  ],
+        "acacia": { "base": "game:block/wood/planks/acacia1" },
+        "baldcypress": { "base": "game:block/wood/planks/baldcypress1" },
+        "birch": { "base": "game:block/wood/planks/birch1" },
+        "ebony": { "base": "game:block/wood/planks/ebony1" },
+        "kapok": { "base": "game:block/wood/planks/kapok1" },
+        "larch": { "base": "game:block/wood/planks/larch1" },
+        "maple": { "base": "game:block/wood/planks/maple1" },
+        "oak": { "base": "game:block/wood/planks/oak1" },
+        "pine": { "base": "game:block/wood/planks/pine1" },
+        "purpleheart": { "base": "game:block/wood/planks/purpleheart1" },
+        "redwood": { "base": "game:block/wood/planks/redwood1" },
+        "walnut": { "base": "game:block/wood/planks/walnut1" }
+    },
+    "selectionBoxes": [
+        {
+            "x1": 0.5,
+            "y1": 0.5,
+            "z1": 0,
+            "x2": 1,
+            "y2": 1,
+            "z2": 0.5,
+            "rotateYByType": {
+                "*-north": 90,
+                "*-east": 0,
+                "*-west": 180,
+                "*-south": 270
+            }
+        },
+        {
+            "x1": 0.5,
+            "y1": 0.5,
+            "z1": 0.5,
+            "x2": 1,
+            "y2": 1,
+            "z2": 1,
+            "rotateYByType": {
+                "*-north": 90,
+                "*-east": 0,
+                "*-west": 180,
+                "*-south": 270
+            }
+        },
+        {
+            "x1": 0.5,
+            "y1": 0,
+            "z1": 0,
+            "x2": 1,
+            "y2": 0.5,
+            "z2": 0.5,
+            "rotateYByType": {
+                "*-north": 90,
+                "*-east": 0,
+                "*-west": 180,
+                "*-south": 270
+            }
+        },
+        {
+            "x1": 0.5,
+            "y1": 0,
+            "z1": 0.5,
+            "x2": 1,
+            "y2": 0.5,
+            "z2": 1,
+            "rotateYByType": {
+                "*-north": 90,
+                "*-east": 0,
+                "*-west": 180,
+                "*-south": 270
+            }
+        }
+    ],
 
-  "shapeByType": {
-    "*-north": {
-      "base": "block/shelf",
-      "rotateY": 0
+    "collisionBoxes": [
+        {
+            "x1": 0.5,
+            "y1": 0,
+            "z1": 0,
+            "x2": 1,
+            "y2": 1,
+            "z2": 1,
+            "rotateYByType": {
+                "*-north": 90,
+                "*-east": 0,
+                "*-west": 180,
+                "*-south": 270
+            }
+        }
+    ],
+
+    "shapeByType": {
+        "*-north": {
+            "base": "block/shelf",
+            "rotateY": 0
+        },
+        "*-east": {
+            "base": "block/shelf",
+            "rotateY": 270
+        },
+        "*-west": {
+            "base": "block/shelf",
+            "rotateY": 90
+        },
+        "*-south": {
+            "base": "block/shelf",
+            "rotateY": 180
+        }
     },
-    "*-east": {
-      "base": "block/shelf",
-      "rotateY": 270
+    "replaceable": 900,
+    "resistance": 1.5,
+    "lightAbsorption": 1,
+    "emitSideAo": { "all": false },
+    "sidesolid": {
+        "all": false
     },
-    "*-west": {
-      "base": "block/shelf",
-      "rotateY": 90
+    "sideopaque": {
+        "all": false
     },
-    "*-south": {
-      "base": "block/shelf",
-      "rotateY": 180
+    "sounds": {
+        "hit": "game:block/planks",
+        "break": "game:block/planks",
+        "place": "game:block/planks",
+        "walk": "game:walk/wood"
+    },
+    "combustibleProps": {
+        "burnTemperature": 600,
+        "burnDuration": 35
+    },
+    "materialDensity": 400,
+    "guiTransform": {
+        "origin": {
+            "x": 0.75,
+            "y": 0.4,
+            "z": 0.5
+        },
+        "scale": 1.2
+    },
+    "tpHandTransform": {
+        "translation": {
+            "x": -0.8,
+            "y": -0.68,
+            "z": -0.41
+        },
+        "rotation": {
+            "x": 99,
+            "y": -10,
+            "z": -6
+        },
+        "scale": 0.5
+    },
+    "fpHandTransform": {
+        "translation": {
+            "x": 0.08,
+            "y": -0.2,
+            "z": 0.6
+        },
+        "rotation": {
+            "x": 33,
+            "y": 134,
+            "z": -102
+        }
     }
-  },
-  "replaceable": 900,
-  "resistance": 1.5,
-  "lightAbsorption": 1,
-  "emitSideAo": { "all": false },
-  "sidesolid": {
-    "all": false
-  },
-  "sideopaque": {
-    "all": false
-  },
-  "sounds": {
-    "hit": "game:block/planks",
-    "break": "game:block/planks",
-    "place": "game:block/planks",
-    "walk": "game:walk/wood"
-  },
-  "combustibleProps": {
-    "burnTemperature": 600,
-    "burnDuration": 35
-  },
-  "materialDensity": 400,
-  "guiTransform": {
-		"origin": { "x": 0.75, "y": 0.4, "z": 0.5 },
-		"scale": 1.2
-	},
-  "tpHandTransform": {
-    "translation": {
-      "x": -0.8,
-      "y": -0.68,
-      "z": -0.41
-    },
-    "rotation": {
-      "x": 99,
-      "y": -10,
-      "z": -6
-    },
-    "scale": 0.5
-  },
-  "fpHandTransform": {
-    "translation": {
-      "x": 0.08,
-      "y": -0.2,
-      "z": 0.6
-    },
-    "rotation": {
-      "x": 33,
-      "y": 134,
-      "z": -102
-    }
-  }
 }

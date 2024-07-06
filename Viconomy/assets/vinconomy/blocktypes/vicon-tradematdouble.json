@@ -185,7 +185,10 @@
 
     "attributes": {
         "handbook": {
-            "groupBy": [ "matdouble-north" ]
+            "groupBy": [ "matdouble-north" ],
+            "extraSections": [
+                { "title": "", "text": "vinconomy:handbooktext-stall" }
+            ]
         } 
     },
     "behaviors": [ { "name": "HorizontalOrientable" } ],

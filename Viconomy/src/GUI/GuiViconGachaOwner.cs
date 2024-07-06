@@ -229,7 +229,7 @@ namespace Viconomy.GUI
                 SingleComposer.EndChildElements();
 
                 if (capi.World.Player.HasPrivilege("gamemode")) 
-                   SingleComposer.GetSwitch("admin").SetValue(stall.isAdminShop);
+                   SingleComposer.GetSwitch("admin").SetValue(stall.IsAdminShop);
 
                 SingleComposer.GetSwitch("absolutePick").SetValue(useTotalRandomizer);
 

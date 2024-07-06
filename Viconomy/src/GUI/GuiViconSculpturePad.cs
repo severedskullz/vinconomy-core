@@ -299,7 +299,7 @@ namespace Viconomy.GUI
                     SingleComposer.GetButton("nextPage").Enabled = false;
 
                 if (capi.World.Player.HasPrivilege("gamemode")) 
-                    SingleComposer.GetSwitch("admin").SetValue(stall.isAdminShop);
+                    SingleComposer.GetSwitch("admin").SetValue(stall.IsAdminShop);
 
                 GuiElementTextInput sculptureInput = SingleComposer.GetTextInput("sculptureName");
                 sculptureInput.SetPlaceHolderText("Sculpture Name");

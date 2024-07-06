@@ -212,7 +212,7 @@ namespace Viconomy.GUI
                 SingleComposer.GetButton("nextPage").Enabled = false;
 
             if (capi.World.Player.HasPrivilege("gamemode")) 
-                SingleComposer.GetSwitch("admin").SetValue(stall.isAdminShop);
+                SingleComposer.GetSwitch("admin").SetValue(stall.IsAdminShop);
 
             SingleComposer.GetTextInput("quantity").SetValue(stallSlot.itemsPerPurchase);
 

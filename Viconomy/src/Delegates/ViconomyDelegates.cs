@@ -13,12 +13,12 @@ namespace Viconomy.Delegates
     /*
      *  Called whenever a player attempts to purchase from a stall, regardless if it is assoicated with a Register (Nullable). Return true to allow the purchase;
      */
-    public delegate bool CanPurchaseItemDelegate(IPlayer player, BEViconBase stall, BEVinconRegister register, int productSlot, int numPurchases);
+    public delegate bool CanPurchaseItemDelegate(IPlayer player, BEVinconBase stall, BEVinconRegister register, int productSlot, int numPurchases);
 
     /*
      * Called when a product is purchased and payment is sent to a register. Changes to Payment stack will be persisted. Can be used for things like subtracting Taxes or the like.
      */
-    public delegate void OnRecordPurchaseDelegate(IPlayer player, BEViconBase stall, ItemStack productClone, ItemStack payment);
+    public delegate void OnRecordPurchaseDelegate(IPlayer player, BEVinconBase stall, ItemStack productClone, ItemStack payment);
 
     public delegate bool TryPlaceBlockDelegate(IWorldAccessor world, IPlayer byPlayer, ItemStack itemstack, BlockSelection blockSel, bool multicastResult);
     public delegate bool OnBlockBrokenDelegate(AssetLocation code, IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier);

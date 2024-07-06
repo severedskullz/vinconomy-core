@@ -18,7 +18,7 @@ namespace Viconomy.Renderer
             return stack.Class == EnumItemClass.Item;
         }
 
-        public MeshData createMesh(BEViconBase stall, ItemStack stack, int index)
+        public MeshData createMesh(BEVinconBase stall, ItemStack stack, int index)
         {
             MeshData modeldata = null;
             ICoreClientAPI coreClientAPI = (ICoreClientAPI)stall.Api;

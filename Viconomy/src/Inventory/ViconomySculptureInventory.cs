@@ -10,7 +10,7 @@ namespace Viconomy.Inventory
 {
     public class ViconomySculptureInventory : InventoryBase, ISlotProvider
     {
-        BEViconBase stall;
+        BEVinconBase stall;
 
         private ItemSlot[] slots;
 
@@ -50,7 +50,7 @@ namespace Viconomy.Inventory
         public override float GetTransitionSpeedMul(EnumTransitionType transType, ItemStack stack)
         {
             ViconConfig config = modSystem.Config;
-            if ( (config != null && config.FoodDecaysInShops) && (stall != null && !stall.isAdminShop))
+            if ( (config != null && config.FoodDecaysInShops) && (stall != null && !stall.IsAdminShop))
             {
                 return base.GetDefaultTransitionSpeedMul(transType) * modSystem.Config.StallPerishRate; 
             } else

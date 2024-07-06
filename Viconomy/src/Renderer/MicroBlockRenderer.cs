@@ -18,7 +18,7 @@ namespace Viconomy.Renderer
             return stack.Block is BlockMicroBlock;
         }
 
-        public MeshData createMesh(BEViconBase stall, ItemStack stack, int index)
+        public MeshData createMesh(BEVinconBase stall, ItemStack stack, int index)
         {
             ICoreClientAPI coreClientAPI = stall.Api as ICoreClientAPI;
 

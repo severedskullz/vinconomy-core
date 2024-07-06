@@ -1,6 +1,6 @@
 [
     {
-        "ingredientPattern": "WWW,COC,WWW",
+        "ingredientPattern": "_OC,CCW",
         "ingredients": {
             "W": {
                 "type": "item",
@@ -8,9 +8,9 @@
             },
             "C": {
                 "type": "item",
-                "code": "game:metalplate-*",
-                "name": "metal",
-                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
             },
             "O": {
                 "type": "block",
@@ -18,19 +18,20 @@
                 "attributes": { "type": "normal-generic" }
             }
         },
+        "recipeGroup": 1,
         "width": 3,
-        "height": 3,
+        "height": 2,
         "output": {
             "type": "block",
-            "code": "register-north",
+            "code": "matdouble-north",
             "attributes": {
-                "PrimaryMaterial": "{metal}",
+                "PrimaryMaterial": "{cloth}",
                 "SecondaryMaterial": "acacia"
             }
         }
     },
     {
-        "ingredientPattern": "WWW,COC,WWW",
+        "ingredientPattern": "_OC,CCW",
         "ingredients": {
             "W": {
                 "type": "item",
@@ -38,9 +39,9 @@
             },
             "C": {
                 "type": "item",
-                "code": "game:metalplate-*",
-                "name": "metal",
-                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
             },
             "O": {
                 "type": "block",
@@ -48,19 +49,20 @@
                 "attributes": { "type": "normal-generic" }
             }
         },
+        "recipeGroup": 1,
         "width": 3,
-        "height": 3,
+        "height": 2,
         "output": {
             "type": "block",
-            "code": "register-north",
+            "code": "matdouble-north",
             "attributes": {
-                "PrimaryMaterial": "{metal}",
+                "PrimaryMaterial": "{cloth}",
                 "SecondaryMaterial": "baldcypress"
             }
         }
     },
     {
-        "ingredientPattern": "WWW,COC,WWW",
+        "ingredientPattern": "_OC,CCW",
         "ingredients": {
             "W": {
                 "type": "item",
@@ -68,9 +70,9 @@
             },
             "C": {
                 "type": "item",
-                "code": "game:metalplate-*",
-                "name": "metal",
-                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
             },
             "O": {
                 "type": "block",
@@ -78,19 +80,20 @@
                 "attributes": { "type": "normal-generic" }
             }
         },
+        "recipeGroup": 1,
         "width": 3,
-        "height": 3,
+        "height": 2,
         "output": {
             "type": "block",
-            "code": "register-north",
+            "code": "matdouble-north",
             "attributes": {
-                "PrimaryMaterial": "{metal}",
+                "PrimaryMaterial": "{cloth}",
                 "SecondaryMaterial": "birch"
             }
         }
     },
     {
-        "ingredientPattern": "WWW,COC,WWW",
+        "ingredientPattern": "_OC,CCW",
         "ingredients": {
             "W": {
                 "type": "item",
@@ -98,9 +101,9 @@
             },
             "C": {
                 "type": "item",
-                "code": "game:metalplate-*",
-                "name": "metal",
-                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
             },
             "O": {
                 "type": "block",
@@ -108,19 +111,20 @@
                 "attributes": { "type": "normal-generic" }
             }
         },
+        "recipeGroup": 1,
         "width": 3,
-        "height": 3,
+        "height": 2,
         "output": {
             "type": "block",
-            "code": "register-north",
+            "code": "matdouble-north",
             "attributes": {
-                "PrimaryMaterial": "{metal}",
+                "PrimaryMaterial": "{cloth}",
                 "SecondaryMaterial": "ebony"
             }
         }
     },
     {
-        "ingredientPattern": "WWW,COC,WWW",
+        "ingredientPattern": "_OC,CCW",
         "ingredients": {
             "W": {
                 "type": "item",
@@ -128,9 +132,9 @@
             },
             "C": {
                 "type": "item",
-                "code": "game:metalplate-*",
-                "name": "metal",
-                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
             },
             "O": {
                 "type": "block",
@@ -138,19 +142,20 @@
                 "attributes": { "type": "normal-generic" }
             }
         },
+        "recipeGroup": 1,
         "width": 3,
-        "height": 3,
+        "height": 2,
         "output": {
             "type": "block",
-            "code": "register-north",
+            "code": "matdouble-north",
             "attributes": {
-                "PrimaryMaterial": "{metal}",
+                "PrimaryMaterial": "{cloth}",
                 "SecondaryMaterial": "kapok"
             }
         }
     },
     {
-        "ingredientPattern": "WWW,COC,WWW",
+        "ingredientPattern": "_OC,CCW",
         "ingredients": {
             "W": {
                 "type": "item",
@@ -158,9 +163,9 @@
             },
             "C": {
                 "type": "item",
-                "code": "game:metalplate-*",
-                "name": "metal",
-                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
             },
             "O": {
                 "type": "block",
@@ -168,19 +173,20 @@
                 "attributes": { "type": "normal-generic" }
             }
         },
+        "recipeGroup": 1,
         "width": 3,
-        "height": 3,
+        "height": 2,
         "output": {
             "type": "block",
-            "code": "register-north",
+            "code": "matdouble-north",
             "attributes": {
-                "PrimaryMaterial": "{metal}",
+                "PrimaryMaterial": "{cloth}",
                 "SecondaryMaterial": "larch"
             }
         }
     },
     {
-        "ingredientPattern": "WWW,COC,WWW",
+        "ingredientPattern": "_OC,CCW",
         "ingredients": {
             "W": {
                 "type": "item",
@@ -188,9 +194,9 @@
             },
             "C": {
                 "type": "item",
-                "code": "game:metalplate-*",
-                "name": "metal",
-                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
             },
             "O": {
                 "type": "block",
@@ -198,19 +204,20 @@
                 "attributes": { "type": "normal-generic" }
             }
         },
+        "recipeGroup": 1,
         "width": 3,
-        "height": 3,
+        "height": 2,
         "output": {
             "type": "block",
-            "code": "register-north",
+            "code": "matdouble-north",
             "attributes": {
-                "PrimaryMaterial": "{metal}",
+                "PrimaryMaterial": "{cloth}",
                 "SecondaryMaterial": "maple"
             }
         }
     },
     {
-        "ingredientPattern": "WWW,COC,WWW",
+        "ingredientPattern": "_OC,CCW",
         "ingredients": {
             "W": {
                 "type": "item",
@@ -218,9 +225,9 @@
             },
             "C": {
                 "type": "item",
-                "code": "game:metalplate-*",
-                "name": "metal",
-                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
             },
             "O": {
                 "type": "block",
@@ -228,19 +235,20 @@
                 "attributes": { "type": "normal-generic" }
             }
         },
+        "recipeGroup": 1,
         "width": 3,
-        "height": 3,
+        "height": 2,
         "output": {
             "type": "block",
-            "code": "register-north",
+            "code": "matdouble-north",
             "attributes": {
-                "PrimaryMaterial": "{metal}",
+                "PrimaryMaterial": "{cloth}",
                 "SecondaryMaterial": "oak"
             }
         }
     },
     {
-        "ingredientPattern": "WWW,COC,WWW",
+        "ingredientPattern": "_OC,CCW",
         "ingredients": {
             "W": {
                 "type": "item",
@@ -248,9 +256,9 @@
             },
             "C": {
                 "type": "item",
-                "code": "game:metalplate-*",
-                "name": "metal",
-                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
             },
             "O": {
                 "type": "block",
@@ -258,19 +266,20 @@
                 "attributes": { "type": "normal-generic" }
             }
         },
+        "recipeGroup": 1,
         "width": 3,
-        "height": 3,
+        "height": 2,
         "output": {
             "type": "block",
-            "code": "register-north",
+            "code": "matdouble-north",
             "attributes": {
-                "PrimaryMaterial": "{metal}",
+                "PrimaryMaterial": "{cloth}",
                 "SecondaryMaterial": "pine"
             }
         }
     },
     {
-        "ingredientPattern": "WWW,COC,WWW",
+        "ingredientPattern": "_OC,CCW",
         "ingredients": {
             "W": {
                 "type": "item",
@@ -278,9 +287,9 @@
             },
             "C": {
                 "type": "item",
-                "code": "game:metalplate-*",
-                "name": "metal",
-                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
             },
             "O": {
                 "type": "block",
@@ -288,19 +297,20 @@
                 "attributes": { "type": "normal-generic" }
             }
         },
+        "recipeGroup": 1,
         "width": 3,
-        "height": 3,
+        "height": 2,
         "output": {
             "type": "block",
-            "code": "register-north",
+            "code": "matdouble-north",
             "attributes": {
-                "PrimaryMaterial": "{metal}",
+                "PrimaryMaterial": "{cloth}",
                 "SecondaryMaterial": "purpleheart"
             }
         }
     },
     {
-        "ingredientPattern": "WWW,COC,WWW",
+        "ingredientPattern": "_OC,CCW",
         "ingredients": {
             "W": {
                 "type": "item",
@@ -308,9 +318,9 @@
             },
             "C": {
                 "type": "item",
-                "code": "game:metalplate-*",
-                "name": "metal",
-                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
             },
             "O": {
                 "type": "block",
@@ -318,19 +328,20 @@
                 "attributes": { "type": "normal-generic" }
             }
         },
+        "recipeGroup": 1,
         "width": 3,
-        "height": 3,
+        "height": 2,
         "output": {
             "type": "block",
-            "code": "register-north",
+            "code": "matdouble-north",
             "attributes": {
-                "PrimaryMaterial": "{metal}",
+                "PrimaryMaterial": "{cloth}",
                 "SecondaryMaterial": "redwood"
             }
         }
     },
     {
-        "ingredientPattern": "WWW,COC,WWW",
+        "ingredientPattern": "_OC,CCW",
         "ingredients": {
             "W": {
                 "type": "item",
@@ -338,9 +349,9 @@
             },
             "C": {
                 "type": "item",
-                "code": "game:metalplate-*",
-                "name": "metal",
-                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
             },
             "O": {
                 "type": "block",
@@ -348,15 +359,17 @@
                 "attributes": { "type": "normal-generic" }
             }
         },
+        "recipeGroup": 1,
         "width": 3,
-        "height": 3,
+        "height": 2,
         "output": {
             "type": "block",
-            "code": "register-north",
+            "code": "matdouble-north",
             "attributes": {
-                "PrimaryMaterial": "{metal}",
+                "PrimaryMaterial": "{cloth}",
                 "SecondaryMaterial": "walnut"
             }
         }
-    },
+    }
+
 ]

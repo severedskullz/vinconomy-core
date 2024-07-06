@@ -183,7 +183,10 @@
     "attributes": {
         "handbook": {
             "groupBy": [ "tellermachine-north" ],
-            "groupedName": "tellermachine-north"
+            "groupedName": "tellermachine-north",
+            "extraSections": [
+                { "title": "", "text": "vinconomy:handbooktext-tellermachine" }
+			]
         }
     },
     "behaviors": [ { "name": "HorizontalOrientable" } ],

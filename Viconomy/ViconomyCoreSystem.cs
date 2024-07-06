@@ -296,8 +296,8 @@ namespace Viconomy
             }
 
             string playerUUID = playerData.PlayerUID;
-            if (entity is BEViconBase) {
-                ((BEViconBase)entity).SetOwner(playerUUID, playerData.LastKnownPlayername);
+            if (entity is BEVinconBase) {
+                ((BEVinconBase)entity).SetOwner(playerUUID, playerData.LastKnownPlayername);
             }
             else if (entity is BEVinconRegister) 
             {
@@ -586,7 +586,7 @@ namespace Viconomy
         /// </summary>
         /// 
         //TODO: Multicast support
-        public bool CanPurchaseItem(IPlayer player, BEViconBase stall, BEVinconRegister register, int stallSlot, int desiredAmount)
+        public bool CanPurchaseItem(IPlayer player, BEVinconBase stall, BEVinconRegister register, int stallSlot, int desiredAmount)
         {
             bool result = true;
             if (OnCanPurchaseItem != null)
@@ -605,7 +605,13 @@ namespace Viconomy
                 Delegate[] delegates = OnTryPlaceBlock.GetInvocationList();
                 foreach (Delegate delegator in delegates)
                 {
-                    result = ((TryPlaceBlockDelegate)delegator).Invoke(world, byPlayer, itemstack, blockSel, result);
+                    try
+                    {
+                        result = ((TryPlaceBlockDelegate)delegator).Invoke(world, byPlayer, itemstack, blockSel, result);
+                    } catch (Exception e)
+                    {
+                        this.Mod.Logger.Error(e);
+                    }
                 }
             }
             
@@ -618,7 +624,14 @@ namespace Viconomy
             bool result = true;
             if (OnTryPlaceBlock != null)
             {
-                result = OnBlockBroken.Invoke(code, world, pos, byPlayer, dropQuantityMultiplier);
+                try
+                {
+                    result = OnBlockBroken.Invoke(code, world, pos, byPlayer, dropQuantityMultiplier);
+                }
+                catch (Exception e)
+                {
+                    this.Mod.Logger.Error(e);
+                }
             }
             return result;
         }
@@ -638,8 +651,12 @@ namespace Viconomy
                 Delegate[] delegates = OnTestAccess.GetInvocationList();
                 foreach (Delegate delegator in delegates)
                 {
-                    multicastResult = ((OnTestAccessDelegate)delegator).Invoke(player, blockSelection, accessType, claimant, multicastResult);
-                }
+                    try { 
+                        multicastResult = ((OnTestAccessDelegate)delegator).Invoke(player, blockSelection, accessType, claimant, multicastResult);
+                    } catch (Exception e) {
+                        this.Mod.Logger.Error(e);
+                    }
+            }
                 return multicastResult;
             }
             else return response;

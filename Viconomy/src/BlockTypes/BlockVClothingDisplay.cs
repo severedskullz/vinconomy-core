@@ -22,7 +22,7 @@ namespace Viconomy.BlockTypes
             bool result = base.DoPlaceBlock(world, byPlayer, blockSel, byItemStack);
             if (result)
             {
-                BEViconBase viconBlock = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEViconBase;
+                BEVinconBase viconBlock = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVinconBase;
                 if (viconBlock != null)
                 {
                     viconBlock.SetOwner(byPlayer);

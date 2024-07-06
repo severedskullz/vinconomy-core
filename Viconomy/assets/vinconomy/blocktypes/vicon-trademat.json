@@ -1,43 +1,105 @@
 {
-  "code": "mat",
-  "class": "VinconContainer",
-  "entityClass": "BEVinconContainer",
-  "priorityInteract": true,
-  "creativeinventory": {},
+    "code": "mat",
+    "class": "VinconContainer",
+    "entityClass": "BEVinconContainer",
+    "priorityInteract": true,
+    "creativeinventory": {},
     "creativeinventoryStacksByType": {
         "*-north": [
             {
                 "tabs": [ "vinconomy" ],
                 "stacks": [
-                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "black"}},
-                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "blue"}},
-                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "brown"}},
-                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "gray"}},
-                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "green"}},
-                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "mordant"}},
-                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "orange"}},
-                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "pink"}},
-                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "plain"}},
-                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "purple"}},
-                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "red"}},
-                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "white"}},
-                    { "type": "block", "code": "mat-north", "attributes": {"PrimaryMaterial": "yellow"}}
+                    {
+                        "type": "block",
+                        "code": "mat-north",
+                        "attributes": { "PrimaryMaterial": "black" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "mat-north",
+                        "attributes": { "PrimaryMaterial": "blue" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "mat-north",
+                        "attributes": { "PrimaryMaterial": "brown" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "mat-north",
+                        "attributes": { "PrimaryMaterial": "gray" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "mat-north",
+                        "attributes": { "PrimaryMaterial": "green" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "mat-north",
+                        "attributes": { "PrimaryMaterial": "mordant" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "mat-north",
+                        "attributes": { "PrimaryMaterial": "orange" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "mat-north",
+                        "attributes": { "PrimaryMaterial": "pink" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "mat-north",
+                        "attributes": { "PrimaryMaterial": "plain" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "mat-north",
+                        "attributes": { "PrimaryMaterial": "purple" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "mat-north",
+                        "attributes": { "PrimaryMaterial": "red" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "mat-north",
+                        "attributes": { "PrimaryMaterial": "white" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "mat-north",
+                        "attributes": { "PrimaryMaterial": "yellow" }
+                    }
                 ]
             }
         ]
     },
-  "attributes": { "handbook": { "groupBy": [ "mat-north" ] } },
-  "behaviors": [ { "name": "HorizontalOrientable" } ],
-  "heldTpIdleAnimation": "holdbothhandslarge",
-  "heldTpUseAnimation": "twohandplaceblock",
-  "blockmaterial": "Cloth",
-  "variantgroups": [
-    {
-      "code": "side",
-      "loadFromProperties": "abstract/horizontalorientation"
-    }
-  ],
- "textures": {
+    "attributes": {
+        "handbook": {
+            "groupBy": [ "mat-north" ],
+            "extraSections": [
+                {
+                    "title": "",
+                    "text": "vinconomy:handbooktext-stall"
+                }
+            ]
+        }
+    },
+    "behaviors": [ { "name": "HorizontalOrientable" } ],
+    "heldTpIdleAnimation": "holdbothhandslarge",
+    "heldTpUseAnimation": "twohandplaceblock",
+    "blockmaterial": "Cloth",
+    "variantgroups": [
+        {
+            "code": "side",
+            "loadFromProperties": "abstract/horizontalorientation"
+        }
+    ],
+    "textures": {
         "default": { "base": "game:block/cloth/linen/plain" },
 
         "black": { "base": "game:block/cloth/linen/black" },
@@ -54,107 +116,107 @@
         "white": { "base": "game:block/cloth/linen/white" },
         "yellow": { "base": "game:block/cloth/linen/yellow" }
     },
-  "shapebytype": {
-    "*-north": {
-      "base": "block/trademat",
-      "rotateY": 0
+    "shapebytype": {
+        "*-north": {
+            "base": "block/trademat",
+            "rotateY": 0
+        },
+        "*-east": {
+            "base": "block/trademat",
+            "rotateY": 270
+        },
+        "*-south": {
+            "base": "block/trademat",
+            "rotateY": 180
+        },
+        "*-west": {
+            "base": "block/trademat",
+            "rotateY": 90
+        }
     },
-    "*-east": {
-      "base": "block/trademat",
-      "rotateY": 270
-    },
-    "*-south": {
-      "base": "block/trademat",
-      "rotateY": 180
-    },
-    "*-west": {
-      "base": "block/trademat",
-      "rotateY": 90
-    }
-  },
 
-  "collisionboxes": [
-    {
-      "x1": 0,
-      "y1": 0,
-      "z1": 0,
-      "x2": 1,
-      "y2": 0.06,
-      "z2": 1
-    }
-  ],
+    "collisionboxes": [
+        {
+            "x1": 0,
+            "y1": 0,
+            "z1": 0,
+            "x2": 1,
+            "y2": 0.06,
+            "z2": 1
+        }
+    ],
 
-  "selectionBoxes": [
-    {
-      "x1": 0,
-      "y1": 0,
-      "z1": 0,
-      "x2": 0.5,
-      "y2": 0.45,
-      "z2": 0.5,
-      "rotateYByType": {
-        "*-north": 0,
-        "*-east": 270,
-        "*-west": 90,
-        "*-south": 180
-      }
-    },
-    {
-      "x1": 0.5,
-      "y1": 0,
-      "z1": 0,
-      "x2": 1,
-      "y2": 0.45,
-      "z2": 0.5,
-      "rotateYByType": {
-        "*-north": 0,
-        "*-east": 270,
-        "*-west": 90,
-        "*-south": 180
-      }
-    },
-    {
-      "x1": 0,
-      "y1": 0,
-      "z1": 0.5,
-      "x2": 0.5,
-      "y2": 0.45,
-      "z2": 1,
-      "rotateYByType": {
-        "*-north": 0,
-        "*-east": 270,
-        "*-west": 90,
-        "*-south": 180
-      }
-    },
-    {
-      "x1": 0.5,
-      "y1": 0,
-      "z1": 0.5,
-      "x2": 1,
-      "y2": 0.45,
-      "z2": 1,
-      "rotateYByType": {
-        "*-north": 0,
-        "*-east": 270,
-        "*-west": 90,
-        "*-south": 180
-      }
-    }
+    "selectionBoxes": [
+        {
+            "x1": 0,
+            "y1": 0,
+            "z1": 0,
+            "x2": 0.5,
+            "y2": 0.45,
+            "z2": 0.5,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        },
+        {
+            "x1": 0.5,
+            "y1": 0,
+            "z1": 0,
+            "x2": 1,
+            "y2": 0.45,
+            "z2": 0.5,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        },
+        {
+            "x1": 0,
+            "y1": 0,
+            "z1": 0.5,
+            "x2": 0.5,
+            "y2": 0.45,
+            "z2": 1,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        },
+        {
+            "x1": 0.5,
+            "y1": 0,
+            "z1": 0.5,
+            "x2": 1,
+            "y2": 0.45,
+            "z2": 1,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        }
 
-  ],
-  "lightAbsorption": 0,
-  "sidesolid": {
-    "all": "false"
-  },
-  "sideopaque": {
-    "all": "false"
-  },
-  "resistance": 3.5,
-  "sounds": {
-    "hit": "game:block/planks",
-    "break": "game:block/planks",
-    "place": "game:block/planks",
-    "walk": "game:walk/wood"
-  }
+    ],
+    "lightAbsorption": 0,
+    "sidesolid": {
+        "all": "false"
+    },
+    "sideopaque": {
+        "all": "false"
+    },
+    "resistance": 3.5,
+    "sounds": {
+        "hit": "game:block/planks",
+        "break": "game:block/planks",
+        "place": "game:block/planks",
+        "walk": "game:walk/wood"
+    }
 }

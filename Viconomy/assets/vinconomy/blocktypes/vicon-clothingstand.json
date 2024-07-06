@@ -4,7 +4,10 @@
     "entityClass": "BEVinconArmorStand",
     "priorityInteract": true,
     "creativeinventory": { "vinconomy": [ "*-east" ] },
-    "attributes": { "handbook": { "groupBy": [ "clothingstand-east" ] } },
+    "attributes": { "handbook": { "groupBy": [ "clothingstand-east" ] },
+            "extraSections": [
+                { "title": "", "text": "vinconomy:handbooktext-clothingstand" }
+            ] },
     "behaviors": [ { "name": "HorizontalOrientable" } ],
     "heldTpIdleAnimation": "holdbothhandslarge",
     "heldTpUseAnimation": "twohandplaceblock",

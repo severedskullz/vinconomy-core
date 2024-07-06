@@ -138,18 +138,8 @@ namespace Viconomy.BlockTypes
             BETextureSwappableBlock be = world.BlockAccessor.GetBlockEntity(pos) as BETextureSwappableBlock;
             if (be != null)
             {
-                if (be.PrimaryMaterial != "default")
-                {
-                    stack.Attributes.SetString("PrimaryMaterial", be.PrimaryMaterial);
-                }
-                if (be.SecondaryMaterial != "default")
-                {
-                    stack.Attributes.SetString("SecondaryMaterial", be.SecondaryMaterial);
-                }
-                if (be.DecoMaterial != "default")
-                {
-                    stack.Attributes.SetString("DecoMaterial", be.DecoMaterial);
-                }
+                AddTextureAttributes(stack, be);
+               
             }
             return stack;
         }
@@ -252,7 +242,7 @@ namespace Viconomy.BlockTypes
                 BlockEntity entity = player.Entity.Api.World.BlockAccessor.GetBlockEntity(blockSel.Position);
                 if (entity != null)
                 {
-                    BEViconBase beVicon = (BEViconBase)entity;
+                    BETextureSwappableBlock beVicon = (BETextureSwappableBlock)entity;
                     if (beVicon != null)
                     {
                         //Small hack to update the texture before the block entity is removed and the particles are spaned.
@@ -316,6 +306,22 @@ namespace Viconomy.BlockTypes
             {
                 new BlockDropItemStack(handbookStack, 1f)
             };
+        }
+
+        public void AddTextureAttributes(ItemStack stack, BETextureSwappableBlock entity)
+        {
+            if (entity.PrimaryMaterial != null && entity.PrimaryMaterial != "default" )
+            {
+                stack.Attributes.SetString("PrimaryMaterial", entity.PrimaryMaterial);
+            }
+            if (entity.SecondaryMaterial != null && entity.SecondaryMaterial != "default")
+            {
+                stack.Attributes.SetString("SecondaryMaterial", entity.SecondaryMaterial);
+            }
+            if (entity.DecoMaterial != null && entity.DecoMaterial != "default")
+            {
+                stack.Attributes.SetString("DecoMaterial", entity.DecoMaterial);
+            }
         }
 
         // TODO: Figure out an easy/elegant way to populate all the Handbook entries.

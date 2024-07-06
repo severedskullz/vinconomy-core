@@ -10,7 +10,7 @@ namespace Viconomy.Inventory
 {
     public class ViconomyInventory : InventoryBase, ISlotProvider
     {
-        BEViconBase stall;
+        BEVinconBase stall;
 
         // the amount of items per item group
         private int itemsPerBin = 9;
@@ -29,7 +29,7 @@ namespace Viconomy.Inventory
 
         ViconomyCoreSystem modSystem;
 
-        public ViconomyInventory(BEViconBase stall, string inventoryID, ICoreAPI api, int binSize, int itemsPerBin) : base(inventoryID, api)
+        public ViconomyInventory(BEVinconBase stall, string inventoryID, ICoreAPI api, int binSize, int itemsPerBin) : base(inventoryID, api)
         {
             this.stall = stall;
             
@@ -160,7 +160,7 @@ namespace Viconomy.Inventory
         public override float GetTransitionSpeedMul(EnumTransitionType transType, ItemStack stack)
         {
             ViconConfig config = modSystem.Config;
-            if ( (config != null && config.FoodDecaysInShops) && (stall != null && !stall.isAdminShop))
+            if ( (config != null && config.FoodDecaysInShops) && (stall != null && !stall.IsAdminShop))
             {
                 return base.GetDefaultTransitionSpeedMul(transType) * modSystem.Config.StallPerishRate; 
             } else

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Numerics;
-using System.Reflection;
 using System.Text;
-using Viconomy.Filters;
 using Viconomy.GUI;
 using Viconomy.Inventory;
 using Viconomy.Renderer;
@@ -20,7 +17,7 @@ using Vintagestory.GameContent;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEVinconSculpturePad : BEViconBase
+    public class BEVinconSculpturePad : BEVinconBase
     {
         
         protected GuiDialogBlockEntity invDialog;
@@ -113,7 +110,7 @@ namespace Viconomy.BlockEntities
             } 
             
             // Does the shop have a register ID set?
-            if (this.RegisterID == -1 && !this.isAdminShop)
+            if (this.RegisterID == -1 && !this.IsAdminShop)
             {
                 ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
@@ -122,7 +119,7 @@ namespace Viconomy.BlockEntities
             
             // Is there a shop with the given Register ID?
             BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
-            if (register == null && !this.isAdminShop)
+            if (register == null && !this.IsAdminShop)
             {
                 ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
@@ -225,7 +222,7 @@ namespace Viconomy.BlockEntities
             request.numPurchases = desiredAmount;
             request.coreApi = this.Api;
             request.currencyNeeded = TradingUtil.GetItemStackClone(GetCurrencyForStall(stallSlot));
-            request.isAdminShop = this.isAdminShop;
+            request.isAdminShop = this.IsAdminShop;
 
 
             TradeResult result = TradingUtil.TryPurchaseItem(request);
@@ -237,7 +234,7 @@ namespace Viconomy.BlockEntities
             {
                 // TradingUtil did not remove the items since we manually set the productSourceSlots to a new inventory.
                 // Go back and remove an item
-                if (!isAdminShop)
+                if (!IsAdminShop)
                 {
                     //int i = 0;
                     for (int y = 0; y < sizeY; y++)

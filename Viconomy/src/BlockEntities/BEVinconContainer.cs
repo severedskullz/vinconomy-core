@@ -16,7 +16,7 @@ using Vintagestory.API.Server;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEVinconContainer : BEViconBase
+    public class BEVinconContainer : BEVinconBase
     {
 
         protected GuiDialogBlockEntity invDialog;
@@ -140,7 +140,7 @@ namespace Viconomy.BlockEntities
             }
 
             // Does the shop have a register ID set?
-            if (this.RegisterID == -1 && !this.isAdminShop)
+            if (this.RegisterID == -1 && !this.IsAdminShop)
             {
                 ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
@@ -149,7 +149,7 @@ namespace Viconomy.BlockEntities
 
             // Is there a shop with the given Register ID?
             BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
-            if (register == null && !this.isAdminShop)
+            if (register == null && !this.IsAdminShop)
             {
                 ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.COULDNT_GET_REGISTER);
                 return;
@@ -208,7 +208,7 @@ namespace Viconomy.BlockEntities
                 }
                 ((ICoreServerAPI)this.Api).Network.SendBlockEntityPacket((IServerPlayer)byPlayer, this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.OPEN_GUI, data);
 
-                if (byPlayer.PlayerUID == Owner)
+                if (byPlayer.PlayerUID == this.Owner)
                     byPlayer.InventoryManager.OpenInventory(this.inventory);
             }
         }

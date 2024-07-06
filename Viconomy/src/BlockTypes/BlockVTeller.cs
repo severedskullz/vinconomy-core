@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Viconomy.BlockEntities;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -60,13 +56,14 @@ namespace Viconomy.BlockTypes
                 return null;
             }
             ;
-            ItemStack stack = new ItemStack(world.GetBlock(new AssetLocation(Code.Domain, this.CodeWithoutParts(1) +"-east")));
+            ItemStack stack = new ItemStack(world.GetBlock(new AssetLocation(Code.Domain, this.CodeWithoutParts(1) +"-north")));
             BEVinconTeller vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEVinconTeller;
             if (vEntity != null)
             {
                 stack.Attributes.SetString("Owner", vEntity.Owner);
                 stack.Attributes.SetInt("ID", vEntity.RegisterID);
                 stack.Attributes.SetString("OwnerName", vEntity.OwnerName);
+                AddTextureAttributes(stack, vEntity);
             }
                 
             return new ItemStack[] { stack };
