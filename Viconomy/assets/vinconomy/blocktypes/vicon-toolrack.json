@@ -11,62 +11,62 @@
                 "stacks": [
                     {
                         "type": "block",
-                        "code": "toolrack-east",
+                        "code": "toolrack-north",
                         "attributes": { "PrimaryMaterial": "acacia" }
                     },
                     {
                         "type": "block",
-                        "code": "toolrack-east",
+                        "code": "toolrack-north",
                         "attributes": { "PrimaryMaterial": "baldcypress" }
                     },
                     {
                         "type": "block",
-                        "code": "toolrack-east",
+                        "code": "toolrack-north",
                         "attributes": { "PrimaryMaterial": "birch" }
                     },
                     {
                         "type": "block",
-                        "code": "toolrack-east",
+                        "code": "toolrack-north",
                         "attributes": { "PrimaryMaterial": "ebony" }
                     },
                     {
                         "type": "block",
-                        "code": "toolrack-east",
+                        "code": "toolrack-north",
                         "attributes": { "PrimaryMaterial": "kapok" }
                     },
                     {
                         "type": "block",
-                        "code": "toolrack-east",
+                        "code": "toolrack-north",
                         "attributes": { "PrimaryMaterial": "larch" }
                     },
                     {
                         "type": "block",
-                        "code": "toolrack-east",
+                        "code": "toolrack-north",
                         "attributes": { "PrimaryMaterial": "maple" }
                     },
                     {
                         "type": "block",
-                        "code": "toolrack-east",
+                        "code": "toolrack-north",
                         "attributes": { "PrimaryMaterial": "oak" }
                     },
                     {
                         "type": "block",
-                        "code": "toolrack-east",
+                        "code": "toolrack-north",
                         "attributes": { "PrimaryMaterial": "pine" }
                     },
                     {
                         "type": "block",
-                        "code": "toolrack-east",
+                        "code": "toolrack-north",
                         "attributes": { "PrimaryMaterial": "purpleheart" }
                     },
                     {
                         "type": "block",
-                        "code": "toolrack-east",
+                        "code": "toolrack-north",
                         "attributes": { "PrimaryMaterial": "redwood" }
                     },
                     {
                         "type": "block",
-                        "code": "toolrack-east",
+                        "code": "toolrack-north",
                         "attributes": { "PrimaryMaterial": "walnut" }
                     }
                 ]
@@ -75,7 +75,7 @@
     },
     "attributes": {
         "handbook": {
-            "groupBy": [ "toolrack-east" ],
+            "groupBy": [ "toolrack-north" ],
             "extraSections": [
                 {
                     "title": "",
@@ -87,7 +87,7 @@
     "behaviors": [
         {
             "name": "HorizontalAttachable",
-            "properties": { "dropBlockFace": "east" }
+            "properties": { "dropBlockFace": "north" }
         }
     ],
     "heldTpIdleAnimation": "holdbothhandslarge",
@@ -231,12 +231,17 @@
     },
     "materialDensity": 400,
     "guiTransform": {
+        "rotation": {
+            "x": -22.6,
+            "y": 135,
+            "z": 0
+        },
         "origin": {
-            "x": 1,
-            "y": 0.5,
+            "x": 0.75,
+            "y": 0.6,
             "z": 0.5
         },
-        "scale": 1.4
+        "scale": 1.2
     },
     "tpHandTransform": {
         "translation": {

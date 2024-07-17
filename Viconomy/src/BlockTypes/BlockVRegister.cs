@@ -59,7 +59,7 @@ namespace Viconomy.BlockTypes
                 return null;
             }
             ;
-            ItemStack stack = new ItemStack(world.GetBlock(new AssetLocation(Code.Domain, this.CodeWithoutParts(1) +"-east")));
+            ItemStack stack = new ItemStack(world.GetBlock(new AssetLocation(Code.Domain, this.CodeWithoutParts(1) +"-north")));
             BEVinconRegister vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEVinconRegister;
             if (vEntity != null)
             {
@@ -68,6 +68,7 @@ namespace Viconomy.BlockTypes
                 stack.Attributes.SetString("OwnerName", vEntity.OwnerName);
                 ViconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
                 stack.Attributes.SetString("ShopName", modSystem.GetRegistry().GetShopName(vEntity.ID));
+                AddTextureAttributes(stack, vEntity);
             }
                 
             return new ItemStack[] { stack };

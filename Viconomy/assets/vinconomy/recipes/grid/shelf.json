@@ -18,7 +18,7 @@
   "height": 3,
   "output": {
     "type": "block",
-    "code": "shelf-east",
+    "code": "shelf-north",
         "attributes": {
             "PrimaryMaterial": "{wood}"
         }

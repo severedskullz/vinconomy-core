@@ -3,10 +3,10 @@
     "class": "VinconGachaLoader",
     "entityClass": "BEVinconGachaLoader",
     "priorityInteract": true,
-    "creativeinventory": { "vinconomy": [ "*-north" ] },
+    "creativeinventory": { "vinconomy": [ "*-east" ] },
     "attributes": {
         "handbook": {
-            "groupBy": [ "gacha-north" ],
+            "groupBy": [ "gacha-east" ],
             "extraSections": [
                 {
                     "title": "",
@@ -18,7 +18,7 @@
     "behaviors": [
         {
             "name": "HorizontalOrientable",
-            "properties": { "dropBlockFace": "north" }
+            "properties": { "dropBlockFace": "east" }
         }
     ],
     "heldTpIdleAnimation": "holdbothhandslarge",

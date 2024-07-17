@@ -135,6 +135,7 @@ namespace Viconomy.BlockTypes
         public override ItemStack OnPickBlock(IWorldAccessor world, BlockPos pos)
         {
             ItemStack stack = new ItemStack(world.GetBlock(base.CodeWithParts("north")), 1);
+            //ItemStack stack = new ItemStack(world.GetBlock(base.Code), 1);
             BETextureSwappableBlock be = world.BlockAccessor.GetBlockEntity(pos) as BETextureSwappableBlock;
             if (be != null)
             {

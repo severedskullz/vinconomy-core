@@ -32,11 +32,11 @@
     "block-helmetstand-*": "Shop Helmet Stand",
     "block-producecrate-*": "Shop Crate",
     "block-register-*": "Shop Register",
-    "block-shelf-*-*": "Shop Shelf",
-    "block-trademat-*": "Shop Mat (Single)",
-    "block-tradematdouble-*": "Shop Mat (Double)",
-    "block-weaponrack-*": "Shop Weapon Rack",
-    "block-toolrack-*": "Shop Tool Rack",
+    "ablock-shelf-*-*": "Shop Shelf",
+    "ablock-trademat-*": "Shop Mat (Single)",
+    "ablock-tradematdouble-*": "Shop Mat (Double)",
+    "ablock-weaponrack-*": "Shop Weapon Rack",
+    "ablock-toolrack-*": "Shop Tool Rack",
     "block-clothingstand*": "Shop Clothing Stand",
     "block-tellermachine*": "Shop Teller Machine",
     "block-sculpturepad*": "Sculpture Stall",
@@ -108,5 +108,6 @@
 	"handbooktext-gachaloader" : "Allows you to fill <a href=\"handbook://item-vinconomy:gachaball\">gacha balls</a> with items to be used in a <a href=\"handbooksearch://gacha stall\">gacha stall</a>. Each ball can be filled with up to 6 different stacks of items.",
 	"handbooktext-clothingstand" : "Allows you to sell a number of clothing items to players for purchase. In order to function, it must be linked to a <a href=\"handbooksearch://shop register\">register</a> in order to function properly. Any goods sold by this stall will have its proceeds delievered straight to the <a href=\"handbooksearch://shop register\">register</a>'s inventory.",
 	"handbooktext-weaponrack" : "Allows you to sell a up to two types of weapons or tools and a shield to players for purchase. In order to function, it must be linked to a <a href=\"handbooksearch://shop register\">register</a> in order to function properly. Any goods sold by this stall will have its proceeds delievered straight to the <a href=\"handbooksearch://shop register\">register</a>'s inventory.",
-	"handbooktext-toolrack" : "Allows you to sell a number of tools to players for purchase. In order to function, it must be linked to a <a href=\"handbooksearch://shop register\">register</a> in order to function properly. Any goods sold by this stall will have its proceeds delievered straight to the <a href=\"handbooksearch://shop register\">register</a>'s inventory."
+	"handbooktext-toolrack" : "Allows you to sell a number of tools to players for purchase. In order to function, it must be linked to a <a href=\"handbooksearch://shop register\">register</a> in order to function properly. Any goods sold by this stall will have its proceeds delievered straight to the <a href=\"handbooksearch://shop register\">register</a>'s inventory.",
+	"handbooktext-tenretni" : "Allows you to read third-party data from the internet (Right now, just Pastebin.com) by providing its URL ID"
 }

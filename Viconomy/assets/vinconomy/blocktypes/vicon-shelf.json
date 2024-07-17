@@ -11,62 +11,62 @@
                 "stacks": [
                     {
                         "type": "block",
-                        "code": "shelf-east",
+                        "code": "shelf-north",
                         "attributes": { "PrimaryMaterial": "acacia" }
                     },
                     {
                         "type": "block",
-                        "code": "shelf-east",
+                        "code": "shelf-north",
                         "attributes": { "PrimaryMaterial": "baldcypress" }
                     },
                     {
                         "type": "block",
-                        "code": "shelf-east",
+                        "code": "shelf-north",
                         "attributes": { "PrimaryMaterial": "birch" }
                     },
                     {
                         "type": "block",
-                        "code": "shelf-east",
+                        "code": "shelf-north",
                         "attributes": { "PrimaryMaterial": "ebony" }
                     },
                     {
                         "type": "block",
-                        "code": "shelf-east",
+                        "code": "shelf-north",
                         "attributes": { "PrimaryMaterial": "kapok" }
                     },
                     {
                         "type": "block",
-                        "code": "shelf-east",
+                        "code": "shelf-north",
                         "attributes": { "PrimaryMaterial": "larch" }
                     },
                     {
                         "type": "block",
-                        "code": "shelf-east",
+                        "code": "shelf-north",
                         "attributes": { "PrimaryMaterial": "maple" }
                     },
                     {
                         "type": "block",
-                        "code": "shelf-east",
+                        "code": "shelf-north",
                         "attributes": { "PrimaryMaterial": "oak" }
                     },
                     {
                         "type": "block",
-                        "code": "shelf-east",
+                        "code": "shelf-north",
                         "attributes": { "PrimaryMaterial": "pine" }
                     },
                     {
                         "type": "block",
-                        "code": "shelf-east",
+                        "code": "shelf-north",
                         "attributes": { "PrimaryMaterial": "purpleheart" }
                     },
                     {
                         "type": "block",
-                        "code": "shelf-east",
+                        "code": "shelf-north",
                         "attributes": { "PrimaryMaterial": "redwood" }
                     },
                     {
                         "type": "block",
-                        "code": "shelf-east",
+                        "code": "shelf-north",
                         "attributes": { "PrimaryMaterial": "walnut" }
                     }
                 ]
@@ -75,7 +75,7 @@
     },
     "attributes": {
         "handbook": {
-            "groupBy": [ "shelf-east" ],
+            "groupBy": [ "shelf-north" ],
             "extraSections": [
                 {
                     "title": "",
@@ -232,10 +232,15 @@
     },
     "materialDensity": 400,
     "guiTransform": {
+        "rotation": {
+            x: -22.6,
+            y: 135,
+            z: 0
+        },
         "origin": {
-            "x": 0.75,
-            "y": 0.4,
-            "z": 0.5
+            x: 0.75,
+            y: 0.4,
+            z: 0.5
         },
         "scale": 1.2
     },
