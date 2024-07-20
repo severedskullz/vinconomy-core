@@ -111,12 +111,8 @@ namespace Viconomy.Trading
             }
           
             Block block = productStacks[0].Block;
-            AssetLocation assetLocation;
-            if (block == null)
-            {
-                assetLocation = null;
-            }
-            else
+            AssetLocation assetLocation = null;
+            if (block != null)
             {
                 BlockSounds sounds = block.Sounds;
                 assetLocation = ((sounds != null) ? sounds.Place : null);

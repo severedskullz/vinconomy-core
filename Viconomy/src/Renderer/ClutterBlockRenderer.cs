@@ -23,9 +23,7 @@ namespace Viconomy.Renderer
         {
             ICoreClientAPI coreClientAPI = (ICoreClientAPI)stall.Api;
 
-
-            //Dictionary<string, MultiTextureMeshRef> clutterMeshRefs = ObjectCacheUtil.GetOrCreate(coreClientAPI, (stack.Block as BlockShapeFromAttributes).ClassType + "MeshesInventory", () => new Dictionary<string, MultiTextureMeshRef>());
-            Dictionary<string, MultiTextureMeshRef> clutterMeshRefs = ObjectCacheUtil.GetOrCreate(coreClientAPI, "viconClutterMeshesInventory", () => new Dictionary<string, MultiTextureMeshRef>());
+            //Dictionary<string, MultiTextureMeshRef> clutterMeshRefs = ObjectCacheUtil.GetOrCreate(coreClientAPI, "viconClutterMeshesInventory", () => new Dictionary<string, MultiTextureMeshRef>());
 
             string type = stack.Attributes.GetString("type", "");
             IShapeTypeProps cprops = (stack.Block as BlockShapeFromAttributes).GetTypeProps(type, stack, null);

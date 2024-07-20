@@ -31,6 +31,14 @@ namespace Viconomy.Renderer
 
             }
 
+            if (stack.Block is BlockGenericTypedContainer)
+            {
+                BlockGenericTypedContainer container =  stack.Block as BlockGenericTypedContainer;
+                string type = stack.Attributes.GetAsString("type");
+                MeshData mesh =  container.GenMesh(coreClientAPI, type, stack.ItemAttributes["shape"][type].AsString());
+                return mesh;
+            }
+
             return coreClientAPI.TesselatorManager.GetDefaultBlockMesh(stack.Block).Clone();
         }
 

@@ -28,12 +28,20 @@ namespace Viconomy.BlockTypes
         public override bool DoPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ItemStack byItemStack)
         {
 
+            string Owner = byItemStack.Attributes.GetString("Owner");
+            if (Owner != null && byPlayer.PlayerUID != Owner)
+            {
+                if (api.Side == EnumAppSide.Server)
+                    ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("vinconomy:doesnt-own", new object[0]), EnumChatType.CommandError, null);
+
+                return false;
+            }
+
 
             bool result = base.DoPlaceBlock(world, byPlayer, blockSel, byItemStack);
             if (result)
             {
 
-                string Owner = byItemStack.Attributes.GetString("Owner");
                 BEVinconRegister vEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVinconRegister;
                 if (vEntity != null)
                 {

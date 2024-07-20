@@ -13,6 +13,7 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.GameContent;
 
 namespace Viconomy.BlockEntities
 {
@@ -322,6 +323,19 @@ namespace Viconomy.BlockEntities
                     SetAdminShop(player, isAdmin);
                     break;
 
+                case VinConstants.SET_ITEM_PRICE:
+                    int price = 0;
+                    int stall = 0;
+
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
+                        BinaryReader reader = new BinaryReader(ms);
+                        stall = reader.ReadInt32();
+                        price = reader.ReadInt32();
+                    }
+                    SetItemPrice(player, stall, price);
+                    break;
+
                 default:
                     if (packetid < 1000)
                     {
@@ -339,7 +353,25 @@ namespace Viconomy.BlockEntities
             }
         }
 
-        private void SetStallItemsPerPurchase(IPlayer byPlayer, byte[] data)
+
+        protected void SetItemPrice(IPlayer byPlayer, int stallSlot, int price)
+        {
+            if (byPlayer.PlayerUID != this.Owner)
+            {
+                ViconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
+                return;
+            }
+
+            ItemSlot slot = this.inventory.StallSlots[stallSlot].currency;
+            if (slot.Itemstack != null)
+            {
+                slot.Itemstack.StackSize = price;
+                slot.MarkDirty();
+            }
+            
+        }
+
+        protected void SetStallItemsPerPurchase(IPlayer byPlayer, byte[] data)
         {
             if (byPlayer.PlayerUID != this.Owner)
             {
@@ -428,6 +460,9 @@ namespace Viconomy.BlockEntities
 
         public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tesselator)
         {
+            if (mesher == null)
+                return false;
+
             if (shouldRenderInventory)
             {
                 for (int i = 0; i < StallSlotCount; i++)
@@ -441,9 +476,6 @@ namespace Viconomy.BlockEntities
                             if (mesh != null)
                             {
                                 mesher.AddMeshData(mesh, tfMatrices[i]);
-                            } else
-                            {
-
                             }
                         }
                     }
