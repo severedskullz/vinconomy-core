@@ -23,6 +23,8 @@ namespace Viconomy.BlockEntities.TextureSwappable
 
         public virtual int DisplayedItems => Inventory.Count;
 
+        protected bool ShouldRenderDisplayedItems;
+
         public Size2i AtlasSize => capi.BlockTextureAtlas.Size;
 
         public virtual string AttributeTransformCode => "onDisplayTransform";
@@ -228,12 +230,14 @@ namespace Viconomy.BlockEntities.TextureSwappable
 
         public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
         {
-            for (int i = 0; i < DisplayedItems; i++)
-            {
-                ItemSlot itemSlot = Inventory[i];
-                if (!itemSlot.Empty && tfMatrices != null)
+            if (ShouldRenderDisplayedItems) {
+                for (int i = 0; i < DisplayedItems; i++)
                 {
-                    mesher.AddMeshData(getMesh(itemSlot.Itemstack), tfMatrices[i]);
+                    ItemSlot itemSlot = Inventory[i];
+                    if (!itemSlot.Empty && tfMatrices != null)
+                    {
+                        mesher.AddMeshData(getMesh(itemSlot.Itemstack), tfMatrices[i]);
+                    }
                 }
             }
 

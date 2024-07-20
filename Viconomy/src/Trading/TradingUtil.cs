@@ -290,7 +290,7 @@ namespace Viconomy.Trading
             List<ItemSlot> validSlots = new List<ItemSlot>();
 
             ItemSlot handItem = customer.InventoryManager.ActiveHotbarSlot;
-            if (isMatchingCurrency(currency, handItem.Itemstack))
+            if (isMatchingItem(currency, handItem.Itemstack, customer.Entity.World))
             {
                 validSlots.Add(handItem);
             }
@@ -299,7 +299,7 @@ namespace Viconomy.Trading
             foreach (ItemSlot itemSlot in hotbarInv)
             {
                 if (handItem == itemSlot || itemSlot.Itemstack == null) { continue; }
-                if (isMatchingCurrency(currency, itemSlot.Itemstack))
+                if (isMatchingItem(currency, itemSlot.Itemstack, customer.Entity.World))
                 {
                     validSlots.Add(itemSlot);
                 }
@@ -309,7 +309,7 @@ namespace Viconomy.Trading
             foreach (ItemSlot itemSlot in characterInv)
             {
                 if (handItem == itemSlot) { continue; }
-                if (isMatchingCurrency(currency, itemSlot.Itemstack))
+                if (isMatchingItem(currency, itemSlot.Itemstack, customer.Entity.World))
                 {
                     validSlots.Add(itemSlot);
                 }
@@ -317,17 +317,17 @@ namespace Viconomy.Trading
             return validSlots;
         }
 
-        public static bool isMatchingCurrency(ItemStack source, ItemStack payment)
-        {
-            return source != null 
-                && payment != null 
-                && source.Satisfies(payment);
-        }
-        public static bool isMatchingCurrency(ItemSlot source, ItemSlot payment)
+        public static bool isMatchingItem(ItemStack source, ItemStack payment, IWorldAccessor world)
         {
             return source != null
                 && payment != null
-                && isMatchingCurrency(source.Itemstack, payment.Itemstack);
+                && source.Equals(world, payment, new string[] { "transitionstate" });
+        }
+        public static bool isMatchingCurrency(ItemSlot source, ItemSlot payment, IWorldAccessor world)
+        {
+            return source != null
+                && payment != null
+                && isMatchingItem(source.Itemstack, payment.Itemstack, world);
         }
 
         public static ItemStack GetItemStackClone(ItemSlot slot, int stackSize = 0)

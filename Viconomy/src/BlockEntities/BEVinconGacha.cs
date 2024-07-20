@@ -53,7 +53,7 @@ namespace Viconomy.BlockEntities
                     {
                         ItemSlot handSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
                         ItemSlot currency = this.inventory.GetCurrency();
-                        if (currency != null && TradingUtil.isMatchingCurrency(currency.Itemstack, handSlot.Itemstack))
+                        if (currency != null && TradingUtil.isMatchingItem(currency.Itemstack, handSlot.Itemstack, byPlayer.Entity.World))
                         {
                             RequestPurchaseItem();
                         }                      

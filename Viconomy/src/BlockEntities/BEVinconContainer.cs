@@ -29,6 +29,7 @@ namespace Viconomy.BlockEntities
 
         public BEVinconContainer() 
         {
+            ShouldRenderDisplayedItems = false;
             ConfigureInventory();
             this.inventory.SlotModified += Inventory_SlotModified;
         }
@@ -71,7 +72,7 @@ namespace Viconomy.BlockEntities
                     {
                         ItemSlot handSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
                         ItemSlot currency = this.inventory.GetCurrencyForSelection(slotIndex);
-                        if (currency != null && TradingUtil.isMatchingCurrency(currency.Itemstack, handSlot.Itemstack))
+                        if (currency != null && TradingUtil.isMatchingItem(currency.Itemstack, handSlot.Itemstack, byPlayer.Entity.World))
                         {
                             RequestPurchaseItem(slotIndex, ctrlMod ? BulkPurchaseAmount : 1);
                         }
@@ -436,7 +437,14 @@ namespace Viconomy.BlockEntities
                         ItemSlot slot = this.inventory.FindFirstNonEmptyStockSlot(i);
                         if (slot != null && !slot.Empty && tfMatrices != null)
                         {
-                            mesher.AddMeshData(getOrCreateMesh(slot.Itemstack, i), tfMatrices[i]);
+                            MeshData mesh = getOrCreateMesh(slot.Itemstack, i);
+                            if (mesh != null)
+                            {
+                                mesher.AddMeshData(mesh, tfMatrices[i]);
+                            } else
+                            {
+
+                            }
                         }
                     }
                     catch
