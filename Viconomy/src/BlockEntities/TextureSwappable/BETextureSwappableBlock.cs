@@ -14,22 +14,21 @@ namespace Viconomy.BlockEntities.TextureSwappable
         public string SecondaryMaterial { get; set; }
         public string DecoMaterial { get; set; }
 
+        protected bool OverrideBaseShape = true;
+        protected virtual bool HideBaseShape => true;
+
         public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tesselator)
         {
-
-            MeshData mesh = getMesh(tesselator);
-            if (mesh == null)
+            if (OverrideBaseShape)
             {
-                return false;
+                MeshData mesh = getMesh(tesselator);
+                if (mesh == null)
+                {
+                    return false;
+                }
+                mesher.AddMeshData(mesh, 1);
             }
-            string part = Block.LastCodePart(0);
-            float MeshAngle = 0;
-            mesh = mesh.Clone().Rotate(new Vec3f(0.5f, 0.5f, 0.5f), 0f, MeshAngle, 0f);
-
-            mesher.AddMeshData(mesh, 1);
-
-
-            return true;
+            return HideBaseShape;
         }
 
         protected MeshData getMesh(ITesselatorAPI tesselator)

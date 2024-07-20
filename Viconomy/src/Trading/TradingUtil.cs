@@ -196,7 +196,7 @@ namespace Viconomy.Trading
                     }
                     else
                     {
-                        if (itemSlot.Itemstack.Satisfies(request.currencyNeeded))
+                        if (isMatchingItem(itemSlot.Itemstack, request.currencyNeeded, request.coreApi.World))
                         {
                             qntyLeft -= maxStackSize - itemSlot.StackSize;
                         }

@@ -23,8 +23,6 @@ namespace Viconomy.BlockEntities.TextureSwappable
 
         public virtual int DisplayedItems => Inventory.Count;
 
-        protected bool ShouldRenderDisplayedItems;
-
         public Size2i AtlasSize => capi.BlockTextureAtlas.Size;
 
         public virtual string AttributeTransformCode => "onDisplayTransform";
@@ -228,19 +226,25 @@ namespace Viconomy.BlockEntities.TextureSwappable
 
         protected abstract float[][] genTransformationMatrices();
 
-        public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
+        /**
+         * Draws any items specific for the display of this block. If the method returns false, then the base OnTesslation will
+         * not be executed and the block's default mesh will be used.
+         */
+        protected virtual void TesselateDisplayedItems(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
         {
-            if (ShouldRenderDisplayedItems) {
-                for (int i = 0; i < DisplayedItems; i++)
+            for (int i = 0; i < DisplayedItems; i++)
+            {
+                ItemSlot itemSlot = Inventory[i];
+                if (!itemSlot.Empty && tfMatrices != null)
                 {
-                    ItemSlot itemSlot = Inventory[i];
-                    if (!itemSlot.Empty && tfMatrices != null)
-                    {
-                        mesher.AddMeshData(getMesh(itemSlot.Itemstack), tfMatrices[i]);
-                    }
+                    mesher.AddMeshData(getMesh(itemSlot.Itemstack), tfMatrices[i]);
                 }
             }
+        }
 
+        public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
+        {
+            TesselateDisplayedItems(mesher, tessThreadTesselator);
             return base.OnTesselation(mesher, tessThreadTesselator);
         }
     }

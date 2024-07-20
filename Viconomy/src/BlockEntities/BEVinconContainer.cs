@@ -30,7 +30,6 @@ namespace Viconomy.BlockEntities
 
         public BEVinconContainer() 
         {
-            ShouldRenderDisplayedItems = false;
             ConfigureInventory();
             this.inventory.SlotModified += Inventory_SlotModified;
         }
@@ -458,10 +457,10 @@ namespace Viconomy.BlockEntities
             }
         }
 
-        public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tesselator)
+        protected override void TesselateDisplayedItems(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
         {
             if (mesher == null)
-                return false;
+                return;
 
             if (shouldRenderInventory)
             {
@@ -486,11 +485,7 @@ namespace Viconomy.BlockEntities
 
                 }
             }
-
-
-            return base.OnTesselation(mesher, tesselator);
         }
-
 
         protected override float[][] genTransformationMatrices()
         {

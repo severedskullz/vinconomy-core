@@ -555,7 +555,7 @@ namespace Viconomy.BlockEntities
                 getOrCreateMesh(slot.Itemstack, index);
             }
         }
-        public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
+        protected override void TesselateDisplayedItems(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
         {
             int index = 0;
             for (int y = 0; y < sizeY; y++)
@@ -571,15 +571,6 @@ namespace Viconomy.BlockEntities
                     }
                 }
             }
-
-            /*
-            for (int index = 0; index < DisplayedItems; index++)
-            {
-                ViconSculptureBlockSlot slot = (ViconSculptureBlockSlot) this.inventory[index+1];
-                if (slot != null && !slot.Empty && tfMatrices != null)
-                    mesher.AddMeshData(getOrCreateMesh(slot.Itemstack, index), tfMatrices[index]);
-            }*/
-            return false;
         }
 
         protected override float[][] genTransformationMatrices()
