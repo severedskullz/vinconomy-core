@@ -1,20 +1,20 @@
 ﻿using System.IO;
+using Viconomy.BlockEntities.TextureSwappable;
 using Viconomy.src.Renderer;
 using Viconomy.Trading;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
-using Vintagestory.GameContent;
 
 namespace Viconomy.BlockEntities
 {
-    public abstract class BEViconBase : BlockEntityDisplay
+    public abstract class BEVinconBase : BETextureSwappableBlockDisplay, IOwnableStall
     {
         protected ViconomyCoreSystem modSystem;
         protected Block block;
         public string Owner { get; protected set; }
         public string OwnerName { get; protected set; }
         public int RegisterID { get; protected set; } = -1;
-        public bool isAdminShop { get; protected set; }
+        public bool IsAdminShop { get; protected set; }
 
         public override string InventoryClassName { get { return "VinconomyInventory"; } }
 
@@ -69,9 +69,19 @@ namespace Viconomy.BlockEntities
             OwnerName = playerName;
         }
 
+        public void SetRegisterID(int registerID)
+        {
+            RegisterID = registerID;
+        }
+
+        public void SetIsAdminShop(bool adminShop)
+        {
+            IsAdminShop = adminShop;
+        }
+
         public abstract bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel);
 
-        public virtual void PurchaseItem(IPlayer player, int stallSlot, int desiredAmount, BEVRegister shopRegister)
+        public virtual void PurchaseItem(IPlayer player, int stallSlot, int desiredAmount, BEVinconRegister shopRegister)
         {
             ItemSlot[] slots = GetSlotsForStall(stallSlot);
 
@@ -84,7 +94,7 @@ namespace Viconomy.BlockEntities
             request.numPurchases = desiredAmount;
             request.coreApi = this.Api;
             request.currencyNeeded = TradingUtil.GetItemStackClone(GetCurrencyForStall(stallSlot));
-            request.isAdminShop = this.isAdminShop;
+            request.isAdminShop = this.IsAdminShop;
 
             TradeResult result = TradingUtil.TryPurchaseItem(request);
             if (result.error != null)
@@ -127,7 +137,7 @@ namespace Viconomy.BlockEntities
                 return;
             }
 
-            this.isAdminShop = isAdmin;
+            this.IsAdminShop = isAdmin;
 
             //PrintClientMessage(byPlayer, "set Admin Shop to " + this.isAdminShip);
             this.MarkDirty();
@@ -139,8 +149,7 @@ namespace Viconomy.BlockEntities
             tree.SetString("Owner", this.Owner);
             tree.SetString("OwnerName", this.OwnerName);
             tree.SetInt("RegisterID", this.RegisterID);
-            tree.SetBool("isAdminShop", this.isAdminShop);
-
+            tree.SetBool("isAdminShop", this.IsAdminShop);
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor world)
@@ -149,7 +158,8 @@ namespace Viconomy.BlockEntities
             this.Owner = tree.GetString("Owner");
             this.OwnerName = tree.GetString("OwnerName");
             this.RegisterID = tree.GetInt("RegisterID");
-            this.isAdminShop = tree.GetBool("isAdminShop");
+            this.IsAdminShop = tree.GetBool("isAdminShop");
+
         }
 
         protected void SetStallRegisterID(IPlayer byPlayer, byte[] data)

@@ -1,117 +1,205 @@
 {
-  "code": "producecrate",
-  "class": "ViconContainer",
-  "entityClass": "BEViconStall",
-  "priorityInteract": true,
-  "creativeinventory": { "vinconomy": [ "*-east" ] },
-  "attributes": { "handbook": { "groupBy": [ "producecrate-*-east" ] } },
-  "behaviors": [ { "name": "HorizontalOrientable" } ],
-  "heldTpIdleAnimation": "holdbothhandslarge",
-  "heldTpUseAnimation": "twohandplaceblock",
-  "blockmaterial": "Wood",
-  "variantgroups": [
-    {
-      "code": "wood",
-      "loadFromProperties": "block/wood"
+    "code": "producecrate",
+    "class": "VinconContainer",
+    "entityClass": "BEVinconContainer",
+    "priorityInteract": true,
+    "creativeinventory": {},
+    "creativeinventoryStacksByType": {
+        "*-north": [
+            {
+                "tabs": [ "vinconomy" ],
+                "stacks": [
+                    {
+                        "type": "block",
+                        "code": "producecrate-east",
+                        "attributes": { "PrimaryMaterial": "acacia" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "producecrate-east",
+                        "attributes": { "PrimaryMaterial": "baldcypress" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "producecrate-east",
+                        "attributes": { "PrimaryMaterial": "birch" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "producecrate-east",
+                        "attributes": { "PrimaryMaterial": "ebony" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "producecrate-east",
+                        "attributes": { "PrimaryMaterial": "kapok" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "producecrate-east",
+                        "attributes": { "PrimaryMaterial": "larch" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "producecrate-east",
+                        "attributes": { "PrimaryMaterial": "maple" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "producecrate-east",
+                        "attributes": { "PrimaryMaterial": "oak" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "producecrate-east",
+                        "attributes": { "PrimaryMaterial": "pine" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "producecrate-east",
+                        "attributes": { "PrimaryMaterial": "purpleheart" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "producecrate-east",
+                        "attributes": { "PrimaryMaterial": "redwood" }
+                    },
+                    {
+                        "type": "block",
+                        "code": "producecrate-east",
+                        "attributes": { "PrimaryMaterial": "walnut" }
+                    }
+                ]
+            }
+        ]
     },
-    {
-      "code": "side",
-      "loadFromProperties": "abstract/horizontalorientation"
-    }
-  ],
-  "textures": {
-    "all": { "base": "game:block/wood/planks/{wood}1" }
-  },
-  "shapebytype": {
-    "*-north": {
-      "base": "block/producecrate",
-      "rotateY": 0
+    "attributes": {
+        "handbook": {
+            "groupBy": [ "producecrate-east" ],
+            "extraSections": [
+                {
+                    "title": "",
+                    "text": "vinconomy:handbooktext-stall"
+                }
+            ]
+        }
     },
-    "*-east": {
-      "base": "block/producecrate",
-      "rotateY": 270
-    },
-    "*-south": {
-      "base": "block/producecrate",
-      "rotateY": 180
-    },
-    "*-west": {
-      "base": "block/producecrate",
-      "rotateY": 90
-    }
-  },
+    "behaviors": [ { "name": "HorizontalOrientable" } ],
+    "heldTpIdleAnimation": "holdbothhandslarge",
+    "heldTpUseAnimation": "twohandplaceblock",
+    "blockmaterial": "Wood",
+    "variantgroups": [
+        {
+            "code": "side",
+            "loadFromProperties": "abstract/horizontalorientation"
+        }
+    ],
+    "textures": {
+        "default": { "base": "game:block/wood/planks/oak1" },
 
-  "collisionSelectionBoxes": [
-    {
-      "x1": 0,
-      "y1": 0,
-      "z1": 0,
-      "x2": 0.5,
-      "y2": 0.5,
-      "z2": 0.5,
-      "rotateYByType": {
-        "*-north": 0,
-        "*-east": 270,
-        "*-west": 90,
-        "*-south": 180
-      }
+        "acacia": { "base": "game:block/wood/planks/acacia1" },
+        "baldcypress": { "base": "game:block/wood/planks/baldcypress1" },
+        "birch": { "base": "game:block/wood/planks/birch1" },
+        "ebony": { "base": "game:block/wood/planks/ebony1" },
+        "kapok": { "base": "game:block/wood/planks/kapok1" },
+        "larch": { "base": "game:block/wood/planks/larch1" },
+        "maple": { "base": "game:block/wood/planks/maple1" },
+        "oak": { "base": "game:block/wood/planks/oak1" },
+        "pine": { "base": "game:block/wood/planks/pine1" },
+        "purpleheart": { "base": "game:block/wood/planks/purpleheart1" },
+        "redwood": { "base": "game:block/wood/planks/redwood1" },
+        "walnut": { "base": "game:block/wood/planks/walnut1" }
     },
-    {
-      "x1": 0.5,
-      "y1": 0,
-      "z1": 0,
-      "x2": 1,
-      "y2": 0.5,
-      "z2": 0.5,
-      "rotateYByType": {
-        "*-north": 0,
-        "*-east": 270,
-        "*-west": 90,
-        "*-south": 180
-      }
+    "shapebytype": {
+        "*-north": {
+            "base": "block/producecrate",
+            "rotateY": 0
+        },
+        "*-east": {
+            "base": "block/producecrate",
+            "rotateY": 270
+        },
+        "*-south": {
+            "base": "block/producecrate",
+            "rotateY": 180
+        },
+        "*-west": {
+            "base": "block/producecrate",
+            "rotateY": 90
+        }
     },
-    {
-      "x1": 0,
-      "y1": 0,
-      "z1": 0.5,
-      "x2": 0.5,
-      "y2": 0.4,
-      "z2": 1,
-      "rotateYByType": {
-        "*-north": 0,
-        "*-east": 270,
-        "*-west": 90,
-        "*-south": 180
-      }
-    },
-    {
-      "x1": 0.5,
-      "y1": 0,
-      "z1": 0.5,
-      "x2": 1,
-      "y2": 0.4,
-      "z2": 1,
-      "rotateYByType": {
-        "*-north": 0,
-        "*-east": 270,
-        "*-west": 90,
-        "*-south": 180
-      }
-    }
 
-  ],
-  "lightAbsorption": 0,
-  "sidesolid": {
-    "all": "false"
-  },
-  "sideopaque": {
-    "all": "false"
-  },
-  "resistance": 3.5,
-  "sounds": {
-    "hit": "game:block/planks",
-    "break": "game:block/planks",
-    "place": "game:block/planks",
-    "walk": "game:walk/wood"
-  }
+    "collisionSelectionBoxes": [
+        {
+            "x1": 0,
+            "y1": 0,
+            "z1": 0,
+            "x2": 0.5,
+            "y2": 0.5,
+            "z2": 0.5,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        },
+        {
+            "x1": 0.5,
+            "y1": 0,
+            "z1": 0,
+            "x2": 1,
+            "y2": 0.5,
+            "z2": 0.5,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        },
+        {
+            "x1": 0,
+            "y1": 0,
+            "z1": 0.5,
+            "x2": 0.5,
+            "y2": 0.4,
+            "z2": 1,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        },
+        {
+            "x1": 0.5,
+            "y1": 0,
+            "z1": 0.5,
+            "x2": 1,
+            "y2": 0.4,
+            "z2": 1,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        }
+
+    ],
+    "lightAbsorption": 0,
+    "sidesolid": {
+        "all": "false"
+    },
+    "sideopaque": {
+        "all": "false"
+    },
+    "resistance": 3.5,
+    "sounds": {
+        "hit": "game:block/planks",
+        "break": "game:block/planks",
+        "place": "game:block/planks",
+        "walk": "game:walk/wood"
+    }
 }

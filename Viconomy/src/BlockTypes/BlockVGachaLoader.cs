@@ -15,7 +15,7 @@ namespace Viconomy.BlockTypes
     {
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
-            BEViconGachaLoader be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEViconGachaLoader;
+            BEVinconGachaLoader be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVinconGachaLoader;
             if (be != null)
             {
                 return be.OnPlayerRightClick(byPlayer, blockSel);
@@ -35,7 +35,7 @@ namespace Viconomy.BlockTypes
             {
                 string Owner = byItemStack.Attributes.GetString("Owner");
                 
-                BEViconTeller vEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEViconTeller;
+                BEVinconTeller vEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVinconTeller;
                 if (vEntity != null)
                 {
                     if (Owner != null)
@@ -61,7 +61,7 @@ namespace Viconomy.BlockTypes
             }
             ;
             ItemStack stack = new ItemStack(world.GetBlock(new AssetLocation(Code.Domain, this.CodeWithoutParts(1) +"-east")));
-            BEViconTeller vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEViconTeller;
+            BEVinconTeller vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEVinconTeller;
             if (vEntity != null)
             {
                 stack.Attributes.SetString("Owner", vEntity.Owner);
@@ -70,26 +70,6 @@ namespace Viconomy.BlockTypes
             }
                 
             return new ItemStack[] { stack };
-        }
-
-        public override void OnBlockBroken(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
-        {
-            if (byPlayer == null)
-                return;
-
-            BEViconTeller vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEViconTeller;
-            if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID || byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative)
-            {
-                ViconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
-                if (modSystem != null && !modSystem.BlockBroken(this.Code, world, pos, byPlayer, dropQuantityMultiplier))
-                {
-                    return;
-                }
-                base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
-            }
-
-            else if (api.Side == EnumAppSide.Server)
-                ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("vinconomy:doesnt-own", new object[0]), EnumChatType.CommandError, null);
         }
 
         public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)

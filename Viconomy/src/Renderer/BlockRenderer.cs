@@ -16,7 +16,7 @@ namespace Viconomy.Renderer
             return stack.Class == EnumItemClass.Block;
         }
 
-        public MeshData createMesh(BEViconBase stall, ItemStack stack, int index)
+        public MeshData createMesh(BEVinconBase stall, ItemStack stack, int index)
         {
             ICoreClientAPI coreClientAPI = (ICoreClientAPI)stall.Api;
 
@@ -29,6 +29,14 @@ namespace Viconomy.Renderer
                     return modeldata;
                 }
 
+            }
+
+            if (stack.Block is BlockGenericTypedContainer)
+            {
+                BlockGenericTypedContainer container =  stack.Block as BlockGenericTypedContainer;
+                string type = stack.Attributes.GetAsString("type");
+                MeshData mesh =  container.GenMesh(coreClientAPI, type, stack.ItemAttributes["shape"][type].AsString());
+                return mesh;
             }
 
             return coreClientAPI.TesselatorManager.GetDefaultBlockMesh(stack.Block).Clone();

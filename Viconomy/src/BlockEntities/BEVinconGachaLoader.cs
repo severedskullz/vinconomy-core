@@ -14,7 +14,7 @@ using Vintagestory.GameContent;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEViconGachaLoader : BlockEntityContainer, IDisposable
+    public class BEVinconGachaLoader : BlockEntityContainer, IDisposable
     {
         
         protected GuiDialogBlockEntity invDialog;
@@ -26,7 +26,7 @@ namespace Viconomy.BlockEntities
 
         public override string InventoryClassName => "GachaLoaderInventory";
 
-        public BEViconGachaLoader()
+        public BEVinconGachaLoader()
         {
             this.inventory = new InventoryGeneric(8, null, Api, onNewSlot);
             this.ItemsPerSlot = new int[6];

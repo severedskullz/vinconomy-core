@@ -1,146 +1,314 @@
 {
-  "code": "tradematdouble",
-  "class": "ViconContainer",
-  "entityClass": "BEViconStall",
-  "priorityInteract": true,
-  "creativeinventory": { "vinconomy": [ "*-north" ] },
-  "attributes": { "handbook": { "groupBy": [ "tradematdouble-*-*-north" ] } },
-  "behaviors": [ { "name": "HorizontalOrientable" } ],
-  "heldTpIdleAnimation": "holdbothhandslarge",
-  "heldTpUseAnimation": "twohandplaceblock",
-  "blockmaterial": "Cloth",
-  "variantgroups": [
-    {
-      "code": "cloth",
-        "states": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
-    },
-    {
-      "code": "wood",
-      "states": [ "birch", "oak", "maple", "pine", "acacia", "kapok", "baldcypress", "larch", "redwood", "ebony", "walnut", "purpleheart" ]
-    },
-    {
-      "code": "side",
-      "loadFromProperties": "abstract/horizontalorientation"
-    }
-  ],
-  "textures": {
-    "cloth": { "base": "game:block/cloth/linen/{cloth}" },
-    "wood": { "base": "game:block/wood/planks/{wood}1" }
-  },
-  "shapebytype": {
-    "*-north": {
-      "base": "block/tradematdouble",
-      "rotateY": 0
-    },
-    "*-east": {
-      "base": "block/tradematdouble",
-      "rotateY": 270
-    },
-    "*-south": {
-      "base": "block/tradematdouble",
-      "rotateY": 180
-    },
-    "*-west": {
-      "base": "block/tradematdouble",
-      "rotateY": 90
-    }
-  },
-  "collisionboxes": [
-    {
-      "x1": 0,
-      "y1": 0,
-      "z1": 0,
-      "x2": 1,
-      "y2": 0.8125,
-      "z2": 0.5,
-      "rotateYByType": {
-        "*-north": 0,
-        "*-east": 270,
-        "*-west": 90,
-        "*-south": 180
-      }
-    },
-    {
-      "x1": 0,
-      "y1": 0,
-      "z1": 0,
-      "x2": 1,
-      "y2": 0.06,
-      "z2": 1
-    }
+    "code": "matdouble",
+    "class": "ViconContainer",
+    "entityClass": "BEVinconContainer",
+    "priorityInteract": true,
 
-  ],
-  "selectionBoxes": [
-    {
-      "x1": 0,
-      "y1": 0,
-      "z1": 0,
-      "x2": 0.5,
-      "y2": 0.8125,
-      "z2": 0.5,
-      "rotateYByType": {
-        "*-north": 0,
-        "*-east": 270,
-        "*-west": 90,
-        "*-south": 180
-      }
-    },
-    {
-      "x1": 0.5,
-      "y1": 0,
-      "z1": 0,
-      "x2": 1,
-      "y2": 0.8125,
-      "z2": 0.5,
-      "rotateYByType": {
-        "*-north": 0,
-        "*-east": 270,
-        "*-west": 90,
-        "*-south": 180
-      }
-    },
-    {
-      "x1": 0,
-      "y1": 0,
-      "z1": 0.5,
-      "x2": 0.5,
-      "y2": 0.45,
-      "z2": 1,
-      "rotateYByType": {
-        "*-north": 0,
-        "*-east": 270,
-        "*-west": 90,
-        "*-south": 180
-      }
-    },
-    {
-      "x1": 0.5,
-      "y1": 0,
-      "z1": 0.5,
-      "x2": 1,
-      "y2": 0.45,
-      "z2": 1,
-      "rotateYByType": {
-        "*-north": 0,
-        "*-east": 270,
-        "*-west": 90,
-        "*-south": 180
-      }
-    }
+    "creativeinventory": {},
+    "creativeinventoryStacksByType": {
+        "*-north": [
+            {
+                "tabs": [ "vinconomy" ],
+                "stacks": [
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "black","SecondaryMaterial": "acacia"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "blue","SecondaryMaterial": "acacia"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "brown","SecondaryMaterial": "acacia"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "gray","SecondaryMaterial": "acacia"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "green","SecondaryMaterial": "acacia"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "mordant","SecondaryMaterial": "acacia"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "orange","SecondaryMaterial": "acacia"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "pink","SecondaryMaterial": "acacia"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "plain","SecondaryMaterial": "acacia"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "purple","SecondaryMaterial": "acacia"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "red","SecondaryMaterial": "acacia"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "white","SecondaryMaterial": "acacia"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "yellow","SecondaryMaterial": "acacia"}},
 
-  ],
-  "lightAbsorption": 0,
-  "sidesolid": {
-    "all": "false"
-  },
-  "sideopaque": {
-    "all": "false"
-  },
-  "resistance": 3.5,
-  "sounds": {
-    "hit": "game:block/planks",
-    "break": "game:block/planks",
-    "place": "game:block/planks",
-    "walk": "game:walk/wood"
-  }
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "black","SecondaryMaterial": "baldcypress"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "blue","SecondaryMaterial": "baldcypress"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "brown","SecondaryMaterial": "baldcypress"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "gray","SecondaryMaterial": "baldcypress"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "green","SecondaryMaterial": "baldcypress"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "mordant","SecondaryMaterial": "baldcypress"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "orange","SecondaryMaterial": "baldcypress"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "pink","SecondaryMaterial": "baldcypress"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "plain","SecondaryMaterial": "baldcypress"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "purple","SecondaryMaterial": "baldcypress"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "red","SecondaryMaterial": "baldcypress"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "white","SecondaryMaterial": "baldcypress"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "yellow","SecondaryMaterial": "baldcypress"}},
+
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "black","SecondaryMaterial": "birch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "blue","SecondaryMaterial": "birch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "brown","SecondaryMaterial": "birch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "gray","SecondaryMaterial": "birch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "green","SecondaryMaterial": "birch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "mordant","SecondaryMaterial": "birch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "orange","SecondaryMaterial": "birch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "pink","SecondaryMaterial": "birch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "plain","SecondaryMaterial": "birch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "purple","SecondaryMaterial": "birch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "red","SecondaryMaterial": "birch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "white","SecondaryMaterial": "birch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "yellow","SecondaryMaterial": "birch"}},
+
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "black","SecondaryMaterial": "ebony"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "blue","SecondaryMaterial": "ebony"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "brown","SecondaryMaterial": "ebony"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "gray","SecondaryMaterial": "ebony"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "green","SecondaryMaterial": "ebony"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "mordant","SecondaryMaterial": "ebony"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "orange","SecondaryMaterial": "ebony"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "pink","SecondaryMaterial": "ebony"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "plain","SecondaryMaterial": "ebony"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "purple","SecondaryMaterial": "ebony"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "red","SecondaryMaterial": "ebony"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "white","SecondaryMaterial": "ebony"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "yellow","SecondaryMaterial": "ebony"}},
+
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "black","SecondaryMaterial": "kapok"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "blue","SecondaryMaterial": "kapok"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "brown","SecondaryMaterial": "kapok"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "gray","SecondaryMaterial": "kapok"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "green","SecondaryMaterial": "kapok"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "mordant","SecondaryMaterial": "kapok"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "orange","SecondaryMaterial": "kapok"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "pink","SecondaryMaterial": "kapok"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "plain","SecondaryMaterial": "kapok"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "purple","SecondaryMaterial": "kapok"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "red","SecondaryMaterial": "kapok"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "white","SecondaryMaterial": "kapok"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "yellow","SecondaryMaterial": "kapok"}},
+
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "black","SecondaryMaterial": "larch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "blue","SecondaryMaterial": "larch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "brown","SecondaryMaterial": "larch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "gray","SecondaryMaterial": "larch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "green","SecondaryMaterial": "larch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "mordant","SecondaryMaterial": "larch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "orange","SecondaryMaterial": "larch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "pink","SecondaryMaterial": "larch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "plain","SecondaryMaterial": "larch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "purple","SecondaryMaterial": "larch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "red","SecondaryMaterial": "larch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "white","SecondaryMaterial": "larch"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "yellow","SecondaryMaterial": "larch"}},
+
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "black","SecondaryMaterial": "maple"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "blue","SecondaryMaterial": "maple"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "brown","SecondaryMaterial": "maple"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "gray","SecondaryMaterial": "maple"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "green","SecondaryMaterial": "maple"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "mordant","SecondaryMaterial": "maple"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "orange","SecondaryMaterial": "maple"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "pink","SecondaryMaterial": "maple"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "plain","SecondaryMaterial": "maple"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "purple","SecondaryMaterial": "maple"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "red","SecondaryMaterial": "maple"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "white","SecondaryMaterial": "maple"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "yellow","SecondaryMaterial": "maple"}},
+
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "black","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "blue","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "brown","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "gray","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "green","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "mordant","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "orange","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "pink","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "plain","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "purple","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "red","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "white","SecondaryMaterial": "oak"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "yellow","SecondaryMaterial": "oak"}},
+
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "black","SecondaryMaterial": "pine"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "blue","SecondaryMaterial": "pine"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "brown","SecondaryMaterial": "pine"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "gray","SecondaryMaterial": "pine"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "green","SecondaryMaterial": "pine"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "mordant","SecondaryMaterial": "pine"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "orange","SecondaryMaterial": "pine"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "pink","SecondaryMaterial": "pine"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "plain","SecondaryMaterial": "pine"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "purple","SecondaryMaterial": "pine"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "red","SecondaryMaterial": "pine"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "white","SecondaryMaterial": "pine"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "yellow","SecondaryMaterial": "pine"}},
+
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "black","SecondaryMaterial": "purpleheart"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "blue","SecondaryMaterial": "purpleheart"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "brown","SecondaryMaterial": "purpleheart"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "gray","SecondaryMaterial": "purpleheart"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "green","SecondaryMaterial": "purpleheart"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "mordant","SecondaryMaterial": "purpleheart"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "orange","SecondaryMaterial": "purpleheart"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "pink","SecondaryMaterial": "purpleheart"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "plain","SecondaryMaterial": "purpleheart"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "purple","SecondaryMaterial": "purpleheart"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "red","SecondaryMaterial": "purpleheart"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "white","SecondaryMaterial": "purpleheart"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "yellow","SecondaryMaterial": "purpleheart"}},
+
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "black","SecondaryMaterial": "redwood"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "blue","SecondaryMaterial": "redwood"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "brown","SecondaryMaterial": "redwood"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "gray","SecondaryMaterial": "redwood"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "green","SecondaryMaterial": "redwood"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "mordant","SecondaryMaterial": "redwood"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "orange","SecondaryMaterial": "redwood"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "pink","SecondaryMaterial": "redwood"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "plain","SecondaryMaterial": "redwood"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "purple","SecondaryMaterial": "redwood"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "red","SecondaryMaterial": "redwood"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "white","SecondaryMaterial": "redwood"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "yellow","SecondaryMaterial": "redwood"}},
+
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "black","SecondaryMaterial": "walnut"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "blue","SecondaryMaterial": "walnut"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "brown","SecondaryMaterial": "walnut"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "gray","SecondaryMaterial": "walnut"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "green","SecondaryMaterial": "walnut"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "mordant","SecondaryMaterial": "walnut"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "orange","SecondaryMaterial": "walnut"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "pink","SecondaryMaterial": "walnut"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "plain","SecondaryMaterial": "walnut"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "purple","SecondaryMaterial": "walnut"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "red","SecondaryMaterial": "walnut"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "white","SecondaryMaterial": "walnut"}},
+                    { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "yellow","SecondaryMaterial": "walnut"}}
+
+                ]
+            }
+        ]
+    },
+
+    "attributes": {
+        "handbook": {
+            "groupBy": [ "matdouble-north" ],
+            "extraSections": [
+                { "title": "", "text": "vinconomy:handbooktext-stall" }
+            ]
+        } 
+    },
+    "behaviors": [ { "name": "HorizontalOrientable" } ],
+    "heldTpIdleAnimation": "holdbothhandslarge",
+    "heldTpUseAnimation": "twohandplaceblock",
+    "blockmaterial": "Cloth",
+    "variantgroups": [
+        {
+            "code": "side",
+            "loadFromProperties": "abstract/horizontalorientation"
+        }
+    ],
+    "textures": {
+        "default": { "base": "game:block/cloth/linen/plain" },
+
+        "black": { "base": "game:block/cloth/linen/black" },
+        "blue": { "base": "game:block/cloth/linen/blue" },
+        "brown": { "base": "game:block/cloth/linen/brown" },
+        "gray": { "base": "game:block/cloth/linen/gray" },
+        "green": { "base": "game:block/cloth/linen/green" },
+        "mordant": { "base": "game:block/cloth/linen/mordant" },
+        "orange": { "base": "game:block/cloth/linen/orange" },
+        "pink": { "base": "game:block/cloth/linen/pink" },
+        "plain": { "base": "game:block/cloth/linen/plain" },
+        "purple": { "base": "game:block/cloth/linen/purple" },
+        "red": { "base": "game:block/cloth/linen/red" },
+        "white": { "base": "game:block/cloth/linen/white" },
+        "yellow": { "base": "game:block/cloth/linen/yellow" },
+
+        "acacia": { "base": "game:block/wood/planks/acacia1" },
+        "baldcypress": { "base": "game:block/wood/planks/baldcypress1" },
+        "birch": { "base": "game:block/wood/planks/birch1" },
+        "ebony": { "base": "game:block/wood/planks/ebony1" },
+        "kapok": { "base": "game:block/wood/planks/kapok1" },
+        "larch": { "base": "game:block/wood/planks/larch1" },
+        "maple": { "base": "game:block/wood/planks/maple1" },
+        "oak": { "base": "game:block/wood/planks/oak1" },
+        "pine": { "base": "game:block/wood/planks/pine1" },
+        "purpleheart": { "base": "game:block/wood/planks/purpleheart1" },
+        "redwood": { "base": "game:block/wood/planks/redwood1" },
+        "walnut": { "base": "game:block/wood/planks/walnut1" }
+    },
+    "shapebytype": {
+        "*-north": { "base": "block/tradematdouble", "rotateY": 0},
+        "*-east": {"base": "block/tradematdouble", "rotateY": 270},
+        "*-south": {"base": "block/tradematdouble", "rotateY": 180},
+        "*-west": {"base": "block/tradematdouble", "rotateY": 90}
+    },
+    "collisionboxes": [
+        {
+            "x1": 0,"y1": 0,        "z1": 0,
+            "x2": 1,"y2": 0.8125,   "z2": 0.5,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        },
+        {
+            "x1": 0,    "y1": 0,    "z1": 0,
+            "x2": 1,    "y2": 0.06, "z2": 1
+        }
+
+    ],
+    "selectionBoxes": [
+        {
+            "x1": 0,    "y1": 0,        "z1": 0,
+            "x2": 0.5,  "y2": 0.8125,   "z2": 0.5,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        },
+        {
+            "x1": 0.5,  "y1": 0,        "z1": 0,
+            "x2": 1,    "y2": 0.8125,   "z2": 0.5,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        },
+        {
+            "x1": 0,    "y1": 0,    "z1": 0.5,
+            "x2": 0.5,  "y2": 0.45, "z2": 1,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        },
+        {
+            "x1": 0.5,  "y1": 0,    "z1": 0.5,
+            "x2": 1,    "y2": 0.45, "z2": 1,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        }
+
+    ],
+    "lightAbsorption": 0,
+    "sidesolid": {
+        "all": "false"
+    },
+    "sideopaque": {
+        "all": "false"
+    },
+    "resistance": 3.5,
+    "sounds": {
+        "hit": "game:block/planks",
+        "break": "game:block/planks",
+        "place": "game:block/planks",
+        "walk": "game:walk/wood"
+    }
 }

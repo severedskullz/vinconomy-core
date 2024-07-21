@@ -8,8 +8,8 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"base": "block/metal/plate/copper",
-		"stand": "block/wood/planks/oak3"
+		"primary": "game:block/metal/plate/copper",
+		"secondary": "game:block/wood/planks/oak3"
 	},
 	"elements": [
 		{
@@ -18,12 +18,12 @@
 			"to": [ 14.0, 1.0, 14.0 ],
 			"rotationOrigin": [ 8.0, 0.0, 8.0 ],
 			"faces": {
-				"north": { "texture": "#base", "uv": [ 0.0, 0.0, 12.0, 1.0 ] },
-				"east": { "texture": "#base", "uv": [ 0.0, 0.0, 12.0, 1.0 ] },
-				"south": { "texture": "#base", "uv": [ 0.0, 0.0, 12.0, 1.0 ] },
-				"west": { "texture": "#base", "uv": [ 0.0, 0.0, 12.0, 1.0 ] },
-				"up": { "texture": "#base", "uv": [ 0.0, 0.0, 12.0, 12.0 ] },
-				"down": { "texture": "#base", "uv": [ 0.0, 0.0, 12.0, 12.0 ] }
+				"north": { "texture": "#primary", "uv": [ 0.0, 0.0, 12.0, 1.0 ] },
+				"east": { "texture": "#primary", "uv": [ 0.0, 0.0, 12.0, 1.0 ] },
+				"south": { "texture": "#primary", "uv": [ 0.0, 0.0, 12.0, 1.0 ] },
+				"west": { "texture": "#primary", "uv": [ 0.0, 0.0, 12.0, 1.0 ] },
+				"up": { "texture": "#primary", "uv": [ 0.0, 0.0, 12.0, 12.0 ] },
+				"down": { "texture": "#primary", "uv": [ 0.0, 0.0, 12.0, 12.0 ] }
 			}
 		},
 		{
@@ -32,12 +32,12 @@
 			"to": [ 11.0, 2.0, 11.0 ],
 			"rotationOrigin": [ 8.0, 1.0, 8.0 ],
 			"faces": {
-				"north": { "texture": "#stand", "uv": [ 0.0, 0.0, 6.0, 1.0 ] },
-				"east": { "texture": "#stand", "uv": [ 0.0, 0.0, 6.0, 1.0 ] },
-				"south": { "texture": "#stand", "uv": [ 0.0, 0.0, 6.0, 1.0 ] },
-				"west": { "texture": "#stand", "uv": [ 0.0, 0.0, 6.0, 1.0 ] },
-				"up": { "texture": "#stand", "uv": [ 0.0, 0.0, 6.0, 6.0 ] },
-				"down": { "texture": "#stand", "uv": [ 0.0, 0.0, 6.0, 6.0 ] }
+				"north": { "texture": "#secondary", "uv": [ 0.0, 0.0, 6.0, 1.0 ] },
+				"east": { "texture": "#secondary", "uv": [ 0.0, 0.0, 6.0, 1.0 ] },
+				"south": { "texture": "#secondary", "uv": [ 0.0, 0.0, 6.0, 1.0 ] },
+				"west": { "texture": "#secondary", "uv": [ 0.0, 0.0, 6.0, 1.0 ] },
+				"up": { "texture": "#secondary", "uv": [ 0.0, 0.0, 6.0, 6.0 ] },
+				"down": { "texture": "#secondary", "uv": [ 0.0, 0.0, 6.0, 6.0 ] }
 			}
 		},
 		{
@@ -46,12 +46,12 @@
 			"to": [ 8.5, 11.0, 8.5 ],
 			"rotationOrigin": [ 8.0, 2.0, 8.0 ],
 			"faces": {
-				"north": { "texture": "#stand", "uv": [ 0.0, 0.0, 1.0, 9.0 ] },
-				"east": { "texture": "#stand", "uv": [ 0.0, 0.0, 1.0, 9.0 ] },
-				"south": { "texture": "#stand", "uv": [ 0.0, 0.0, 1.0, 9.0 ] },
-				"west": { "texture": "#stand", "uv": [ 0.0, 0.0, 1.0, 9.0 ] },
-				"up": { "texture": "#stand", "uv": [ 0.0, 0.5, 1.0, 1.5 ] },
-				"down": { "texture": "#stand", "uv": [ 0.0, 0.0, 1.0, 1.0 ] }
+				"north": { "texture": "#secondary", "uv": [ 0.0, 0.0, 1.0, 9.0 ] },
+				"east": { "texture": "#secondary", "uv": [ 0.0, 0.0, 1.0, 9.0 ] },
+				"south": { "texture": "#secondary", "uv": [ 0.0, 0.0, 1.0, 9.0 ] },
+				"west": { "texture": "#secondary", "uv": [ 0.0, 0.0, 1.0, 9.0 ] },
+				"up": { "texture": "#secondary", "uv": [ 0.0, 0.5, 1.0, 1.5 ] },
+				"down": { "texture": "#secondary", "uv": [ 0.0, 0.0, 1.0, 1.0 ] }
 			},
 			"children": [
 				{
@@ -60,12 +60,12 @@
 					"to": [ 2.0, 10.0, 2.0 ],
 					"rotationOrigin": [ 1.5, 9.0, 1.5 ],
 					"faces": {
-						"north": { "texture": "#stand", "uv": [ 0.0, 0.0, 3.0, 1.0 ] },
-						"east": { "texture": "#stand", "uv": [ 0.0, 0.0, 3.0, 1.0 ] },
-						"south": { "texture": "#stand", "uv": [ 0.0, 0.0, 3.0, 1.0 ] },
-						"west": { "texture": "#stand", "uv": [ 0.0, 0.0, 3.0, 1.0 ] },
-						"up": { "texture": "#stand", "uv": [ 0.0, 0.5, 3.0, 3.5 ] },
-						"down": { "texture": "#stand", "uv": [ 0.0, 0.0, 3.0, 3.0 ] }
+						"north": { "texture": "#secondary", "uv": [ 0.0, 0.0, 3.0, 1.0 ] },
+						"east": { "texture": "#secondary", "uv": [ 0.0, 0.0, 3.0, 1.0 ] },
+						"south": { "texture": "#secondary", "uv": [ 0.0, 0.0, 3.0, 1.0 ] },
+						"west": { "texture": "#secondary", "uv": [ 0.0, 0.0, 3.0, 1.0 ] },
+						"up": { "texture": "#secondary", "uv": [ 0.0, 0.5, 3.0, 3.5 ] },
+						"down": { "texture": "#secondary", "uv": [ 0.0, 0.0, 3.0, 3.0 ] }
 					}
 				}
 			],

@@ -1,0 +1,375 @@
+[
+    {
+        "ingredientPattern": "_OC,CCW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-acacia"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "recipeGroup": 1,
+        "width": 3,
+        "height": 2,
+        "output": {
+            "type": "block",
+            "code": "matdouble-north",
+            "attributes": {
+                "PrimaryMaterial": "{cloth}",
+                "SecondaryMaterial": "acacia"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "_OC,CCW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-baldcypress"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "recipeGroup": 1,
+        "width": 3,
+        "height": 2,
+        "output": {
+            "type": "block",
+            "code": "matdouble-north",
+            "attributes": {
+                "PrimaryMaterial": "{cloth}",
+                "SecondaryMaterial": "baldcypress"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "_OC,CCW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-birch"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "recipeGroup": 1,
+        "width": 3,
+        "height": 2,
+        "output": {
+            "type": "block",
+            "code": "matdouble-north",
+            "attributes": {
+                "PrimaryMaterial": "{cloth}",
+                "SecondaryMaterial": "birch"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "_OC,CCW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-ebony"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "recipeGroup": 1,
+        "width": 3,
+        "height": 2,
+        "output": {
+            "type": "block",
+            "code": "matdouble-north",
+            "attributes": {
+                "PrimaryMaterial": "{cloth}",
+                "SecondaryMaterial": "ebony"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "_OC,CCW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-kapok"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "recipeGroup": 1,
+        "width": 3,
+        "height": 2,
+        "output": {
+            "type": "block",
+            "code": "matdouble-north",
+            "attributes": {
+                "PrimaryMaterial": "{cloth}",
+                "SecondaryMaterial": "kapok"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "_OC,CCW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-larch"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "recipeGroup": 1,
+        "width": 3,
+        "height": 2,
+        "output": {
+            "type": "block",
+            "code": "matdouble-north",
+            "attributes": {
+                "PrimaryMaterial": "{cloth}",
+                "SecondaryMaterial": "larch"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "_OC,CCW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-maple"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "recipeGroup": 1,
+        "width": 3,
+        "height": 2,
+        "output": {
+            "type": "block",
+            "code": "matdouble-north",
+            "attributes": {
+                "PrimaryMaterial": "{cloth}",
+                "SecondaryMaterial": "maple"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "_OC,CCW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-oak"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "recipeGroup": 1,
+        "width": 3,
+        "height": 2,
+        "output": {
+            "type": "block",
+            "code": "matdouble-north",
+            "attributes": {
+                "PrimaryMaterial": "{cloth}",
+                "SecondaryMaterial": "oak"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "_OC,CCW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-pine"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "recipeGroup": 1,
+        "width": 3,
+        "height": 2,
+        "output": {
+            "type": "block",
+            "code": "matdouble-north",
+            "attributes": {
+                "PrimaryMaterial": "{cloth}",
+                "SecondaryMaterial": "pine"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "_OC,CCW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-purpleheart"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "recipeGroup": 1,
+        "width": 3,
+        "height": 2,
+        "output": {
+            "type": "block",
+            "code": "matdouble-north",
+            "attributes": {
+                "PrimaryMaterial": "{cloth}",
+                "SecondaryMaterial": "purpleheart"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "_OC,CCW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-redwood"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "recipeGroup": 1,
+        "width": 3,
+        "height": 2,
+        "output": {
+            "type": "block",
+            "code": "matdouble-north",
+            "attributes": {
+                "PrimaryMaterial": "{cloth}",
+                "SecondaryMaterial": "redwood"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "_OC,CCW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-walnut"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:cloth-*",
+                "name": "cloth",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "recipeGroup": 1,
+        "width": 3,
+        "height": 2,
+        "output": {
+            "type": "block",
+            "code": "matdouble-north",
+            "attributes": {
+                "PrimaryMaterial": "{cloth}",
+                "SecondaryMaterial": "walnut"
+            }
+        }
+    }
+
+]

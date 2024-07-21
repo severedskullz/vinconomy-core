@@ -1,9 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Numerics;
-using System.Reflection;
 using System.Text;
-using Viconomy.Filters;
 using Viconomy.GUI;
 using Viconomy.Inventory;
 using Viconomy.Renderer;
@@ -20,7 +17,7 @@ using Vintagestory.GameContent;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEViconSculpturePad : BEViconBase
+    public class BEVinconSculpturePad : BEVinconBase
     {
         
         protected GuiDialogBlockEntity invDialog;
@@ -34,7 +31,7 @@ namespace Viconomy.BlockEntities
 
         public override int DisplayedItems => maxSizeXZ * maxSizeXZ * maxSizeY;
 
-        public BEViconSculpturePad()
+        public BEVinconSculpturePad()
         {
             ConfigureInventory();
             this.inventory.SlotModified += Inventory_SlotModified;
@@ -113,7 +110,7 @@ namespace Viconomy.BlockEntities
             } 
             
             // Does the shop have a register ID set?
-            if (this.RegisterID == -1 && !this.isAdminShop)
+            if (this.RegisterID == -1 && !this.IsAdminShop)
             {
                 ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
@@ -121,8 +118,8 @@ namespace Viconomy.BlockEntities
 
             
             // Is there a shop with the given Register ID?
-            BEVRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
-            if (register == null && !this.isAdminShop)
+            BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
+            if (register == null && !this.IsAdminShop)
             {
                 ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
@@ -209,7 +206,7 @@ namespace Viconomy.BlockEntities
             return stack;
         }
 
-        public override void PurchaseItem(IPlayer player, int stallSlot, int desiredAmount, BEVRegister shopRegister)
+        public override void PurchaseItem(IPlayer player, int stallSlot, int desiredAmount, BEVinconRegister shopRegister)
         {
             InventoryGeneric genInv = new InventoryGeneric(1, "purchase-inv" + Inventory.InventoryID, Api);
             genInv[0].Itemstack = GenNewSculptureBundle();
@@ -225,7 +222,7 @@ namespace Viconomy.BlockEntities
             request.numPurchases = desiredAmount;
             request.coreApi = this.Api;
             request.currencyNeeded = TradingUtil.GetItemStackClone(GetCurrencyForStall(stallSlot));
-            request.isAdminShop = this.isAdminShop;
+            request.isAdminShop = this.IsAdminShop;
 
 
             TradeResult result = TradingUtil.TryPurchaseItem(request);
@@ -237,7 +234,7 @@ namespace Viconomy.BlockEntities
             {
                 // TradingUtil did not remove the items since we manually set the productSourceSlots to a new inventory.
                 // Go back and remove an item
-                if (!isAdminShop)
+                if (!IsAdminShop)
                 {
                     //int i = 0;
                     for (int y = 0; y < sizeY; y++)
@@ -374,6 +371,18 @@ namespace Viconomy.BlockEntities
                     SetStallRegisterID(player, data);
                     break;
 
+                case VinConstants.SET_ITEM_PRICE:
+                    int price = 0;
+                    int stall = 0;
+
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
+                        BinaryReader reader = new BinaryReader(ms);
+                        stall = reader.ReadInt32();
+                        price = reader.ReadInt32();
+                    }
+                    SetItemPrice(player, stall, price);
+                    break;
                 case VinConstants.SET_ADMIN_SHOP:
                     bool isAdmin = false;
                     using (MemoryStream ms = new MemoryStream(data))
@@ -444,6 +453,22 @@ namespace Viconomy.BlockEntities
             }
         }
 
+        protected void SetItemPrice(IPlayer byPlayer, int stallSlot, int price)
+        {
+            if (byPlayer.PlayerUID != this.Owner)
+            {
+                ViconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
+                return;
+            }
+
+            ItemSlot slot = this.inventory[0];
+            if (slot.Itemstack != null)
+            {
+                slot.Itemstack.StackSize = price;
+                slot.MarkDirty();
+            }
+
+        }
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.ToTreeAttributes(tree);
@@ -558,7 +583,7 @@ namespace Viconomy.BlockEntities
                 getOrCreateMesh(slot.Itemstack, index);
             }
         }
-        public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
+        protected override void TesselateDisplayedItems(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
         {
             int index = 0;
             for (int y = 0; y < sizeY; y++)
@@ -574,15 +599,6 @@ namespace Viconomy.BlockEntities
                     }
                 }
             }
-
-            /*
-            for (int index = 0; index < DisplayedItems; index++)
-            {
-                ViconSculptureBlockSlot slot = (ViconSculptureBlockSlot) this.inventory[index+1];
-                if (slot != null && !slot.Empty && tfMatrices != null)
-                    mesher.AddMeshData(getOrCreateMesh(slot.Itemstack, index), tfMatrices[index]);
-            }*/
-            return false;
         }
 
         protected override float[][] genTransformationMatrices()

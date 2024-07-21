@@ -1,0 +1,118 @@
+{
+  "code": "producecrate",
+  "class": "ViconContainer",
+  "entityClass": "BEViconStall",
+  "priorityInteract": true,
+  "creativeinventory": { "vinconomy-legacy": [ "*-east" ] },
+  "attributes": { "handbook": { "groupBy": [ "producecrate-*-east" ] } },
+  "behaviors": [ { "name": "HorizontalOrientable" } ],
+  "heldTpIdleAnimation": "holdbothhandslarge",
+  "heldTpUseAnimation": "twohandplaceblock",
+  "blockmaterial": "Wood",
+  "variantgroups": [
+    {
+      "code": "wood",
+      "loadFromProperties": "block/wood"
+    },
+    {
+      "code": "side",
+      "loadFromProperties": "abstract/horizontalorientation"
+    }
+  ],
+  "textures": {
+    "all": { "base": "block/obsolete" },
+    "default": { "base": "block/obsolete" }
+  },
+  "shapebytype": {
+    "*-north": {
+      "base": "block/producecrate",
+      "rotateY": 0
+    },
+    "*-east": {
+      "base": "block/producecrate",
+      "rotateY": 270
+    },
+    "*-south": {
+      "base": "block/producecrate",
+      "rotateY": 180
+    },
+    "*-west": {
+      "base": "block/producecrate",
+      "rotateY": 90
+    }
+  },
+
+  "collisionSelectionBoxes": [
+    {
+      "x1": 0,
+      "y1": 0,
+      "z1": 0,
+      "x2": 0.5,
+      "y2": 0.5,
+      "z2": 0.5,
+      "rotateYByType": {
+        "*-north": 0,
+        "*-east": 270,
+        "*-west": 90,
+        "*-south": 180
+      }
+    },
+    {
+      "x1": 0.5,
+      "y1": 0,
+      "z1": 0,
+      "x2": 1,
+      "y2": 0.5,
+      "z2": 0.5,
+      "rotateYByType": {
+        "*-north": 0,
+        "*-east": 270,
+        "*-west": 90,
+        "*-south": 180
+      }
+    },
+    {
+      "x1": 0,
+      "y1": 0,
+      "z1": 0.5,
+      "x2": 0.5,
+      "y2": 0.4,
+      "z2": 1,
+      "rotateYByType": {
+        "*-north": 0,
+        "*-east": 270,
+        "*-west": 90,
+        "*-south": 180
+      }
+    },
+    {
+      "x1": 0.5,
+      "y1": 0,
+      "z1": 0.5,
+      "x2": 1,
+      "y2": 0.4,
+      "z2": 1,
+      "rotateYByType": {
+        "*-north": 0,
+        "*-east": 270,
+        "*-west": 90,
+        "*-south": 180
+      }
+    }
+
+  ],
+  "lightAbsorption": 0,
+  "sidesolid": {
+    "all": "false"
+  },
+  "sideopaque": {
+    "all": "false"
+  },
+  "resistance": 3.5,
+  "sounds": {
+    "hit": "game:block/planks",
+    "break": "game:block/planks",
+    "place": "game:block/planks",
+    "walk": "game:walk/wood"
+  }
+}

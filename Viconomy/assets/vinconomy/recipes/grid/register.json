@@ -1,314 +1,362 @@
 [
-  {
-    "ingredientPattern": "WWW,COC,WWW",
-    "ingredients": {
-      "W": {
-        "type": "item",
-        "code": "game:plank-acacia"
-      },
-      "C": {
-        "type": "item",
-        "code": "game:metalplate-*",
-        "name": "metal",
-        "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
-      },
-      "O": {
-        "type": "block",
-        "code": "game:chest-east",
-        "attributes": { "type": "normal-generic" }
-      }
+    {
+        "ingredientPattern": "WWW,COC,WWW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-acacia"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:metalplate-*",
+                "name": "metal",
+                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "width": 3,
+        "height": 3,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "{metal}",
+                "SecondaryMaterial": "acacia"
+            }
+        }
     },
-    "width": 3,
-    "height": 3,
-    "output": {
-      "type": "block",
-      "code": "register-acacia-{metal}-north"
-    }
-  },
-  {
-    "ingredientPattern": "WWW,COC,WWW",
-    "ingredients": {
-      "W": {
-        "type": "item",
-        "code": "game:plank-baldcypress"
-      },
-      "C": {
-        "type": "item",
-        "code": "game:metalplate-*",
-        "name": "metal",
-        "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
-      },
-      "O": {
-        "type": "block",
-        "code": "game:chest-east",
-        "attributes": { "type": "normal-generic" }
-      }
+    {
+        "ingredientPattern": "WWW,COC,WWW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-baldcypress"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:metalplate-*",
+                "name": "metal",
+                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "width": 3,
+        "height": 3,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "{metal}",
+                "SecondaryMaterial": "baldcypress"
+            }
+        }
     },
-    "width": 3,
-    "height": 3,
-    "output": {
-      "type": "block",
-      "code": "register-baldcypress-{metal}-north"
-    }
-  },
-  {
-    "ingredientPattern": "WWW,COC,WWW",
-    "ingredients": {
-      "W": {
-        "type": "item",
-        "code": "game:plank-birch"
-      },
-      "C": {
-        "type": "item",
-        "code": "game:metalplate-*",
-        "name": "metal",
-        "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
-      },
-      "O": {
-        "type": "block",
-        "code": "game:chest-east",
-        "attributes": { "type": "normal-generic" }
-      }
+    {
+        "ingredientPattern": "WWW,COC,WWW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-birch"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:metalplate-*",
+                "name": "metal",
+                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "width": 3,
+        "height": 3,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "{metal}",
+                "SecondaryMaterial": "birch"
+            }
+        }
     },
-    "width": 3,
-    "height": 3,
-    "output": {
-      "type": "block",
-      "code": "register-birch-{metal}-north"
-    }
-  },
-  {
-    "ingredientPattern": "WWW,COC,WWW",
-    "ingredients": {
-      "W": {
-        "type": "item",
-        "code": "game:plank-ebony"
-      },
-      "C": {
-        "type": "item",
-        "code": "game:metalplate-*",
-        "name": "metal",
-        "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
-      },
-      "O": {
-        "type": "block",
-        "code": "game:chest-east",
-        "attributes": { "type": "normal-generic" }
-      }
+    {
+        "ingredientPattern": "WWW,COC,WWW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-ebony"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:metalplate-*",
+                "name": "metal",
+                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "width": 3,
+        "height": 3,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "{metal}",
+                "SecondaryMaterial": "ebony"
+            }
+        }
     },
-    "width": 3,
-    "height": 3,
-    "output": {
-      "type": "block",
-      "code": "register-ebony-{metal}-north"
-    }
-  },
-  {
-    "ingredientPattern": "WWW,COC,WWW",
-    "ingredients": {
-      "W": {
-        "type": "item",
-        "code": "game:plank-kapok"
-      },
-      "C": {
-        "type": "item",
-        "code": "game:metalplate-*",
-        "name": "metal",
-        "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
-      },
-      "O": {
-        "type": "block",
-        "code": "game:chest-east",
-        "attributes": { "type": "normal-generic" }
-      }
+    {
+        "ingredientPattern": "WWW,COC,WWW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-kapok"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:metalplate-*",
+                "name": "metal",
+                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "width": 3,
+        "height": 3,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "{metal}",
+                "SecondaryMaterial": "kapok"
+            }
+        }
     },
-    "width": 3,
-    "height": 3,
-    "output": {
-      "type": "block",
-      "code": "register-kapok-{metal}-north"
-    }
-  },
-  {
-    "ingredientPattern": "WWW,COC,WWW",
-    "ingredients": {
-      "W": {
-        "type": "item",
-        "code": "game:plank-larch"
-      },
-      "C": {
-        "type": "item",
-        "code": "game:metalplate-*",
-        "name": "metal",
-        "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
-      },
-      "O": {
-        "type": "block",
-        "code": "game:chest-east",
-        "attributes": { "type": "normal-generic" }
-      }
+    {
+        "ingredientPattern": "WWW,COC,WWW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-larch"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:metalplate-*",
+                "name": "metal",
+                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "width": 3,
+        "height": 3,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "{metal}",
+                "SecondaryMaterial": "larch"
+            }
+        }
     },
-    "width": 3,
-    "height": 3,
-    "output": {
-      "type": "block",
-      "code": "register-larch-{metal}-north"
-    }
-  },
-  {
-    "ingredientPattern": "WWW,COC,WWW",
-    "ingredients": {
-      "W": {
-        "type": "item",
-        "code": "game:plank-maple"
-      },
-      "C": {
-        "type": "item",
-        "code": "game:metalplate-*",
-        "name": "metal",
-        "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
-      },
-      "O": {
-        "type": "block",
-        "code": "game:chest-east",
-        "attributes": { "type": "normal-generic" }
-      }
+    {
+        "ingredientPattern": "WWW,COC,WWW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-maple"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:metalplate-*",
+                "name": "metal",
+                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "width": 3,
+        "height": 3,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "{metal}",
+                "SecondaryMaterial": "maple"
+            }
+        }
     },
-    "width": 3,
-    "height": 3,
-    "output": {
-      "type": "block",
-      "code": "register-maple-{metal}-north"
-    }
-  },
-  {
-    "ingredientPattern": "WWW,COC,WWW",
-    "ingredients": {
-      "W": {
-        "type": "item",
-        "code": "game:plank-oak"
-      },
-      "C": {
-        "type": "item",
-        "code": "game:metalplate-*",
-        "name": "metal",
-        "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
-      },
-      "O": {
-        "type": "block",
-        "code": "game:chest-east",
-        "attributes": { "type": "normal-generic" }
-      }
+    {
+        "ingredientPattern": "WWW,COC,WWW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-oak"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:metalplate-*",
+                "name": "metal",
+                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "width": 3,
+        "height": 3,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "{metal}",
+                "SecondaryMaterial": "oak"
+            }
+        }
     },
-    "width": 3,
-    "height": 3,
-    "output": {
-      "type": "block",
-      "code": "register-oak-{metal}-north"
-    }
-  },
-  {
-    "ingredientPattern": "WWW,COC,WWW",
-    "ingredients": {
-      "W": {
-        "type": "item",
-        "code": "game:plank-pine"
-      },
-      "C": {
-        "type": "item",
-        "code": "game:metalplate-*",
-        "name": "metal",
-        "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
-      },
-      "O": {
-        "type": "block",
-        "code": "game:chest-east",
-        "attributes": { "type": "normal-generic" }
-      }
+    {
+        "ingredientPattern": "WWW,COC,WWW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-pine"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:metalplate-*",
+                "name": "metal",
+                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "width": 3,
+        "height": 3,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "{metal}",
+                "SecondaryMaterial": "pine"
+            }
+        }
     },
-    "width": 3,
-    "height": 3,
-    "output": {
-      "type": "block",
-      "code": "register-pine-{metal}-north"
-    }
-  },
-  {
-    "ingredientPattern": "WWW,COC,WWW",
-    "ingredients": {
-      "W": {
-        "type": "item",
-        "code": "game:plank-purpleheart"
-      },
-      "C": {
-        "type": "item",
-        "code": "game:metalplate-*",
-        "name": "metal",
-        "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
-      },
-      "O": {
-        "type": "block",
-        "code": "game:chest-east",
-        "attributes": { "type": "normal-generic" }
-      }
+    {
+        "ingredientPattern": "WWW,COC,WWW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-purpleheart"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:metalplate-*",
+                "name": "metal",
+                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "width": 3,
+        "height": 3,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "{metal}",
+                "SecondaryMaterial": "purpleheart"
+            }
+        }
     },
-    "width": 3,
-    "height": 3,
-    "output": {
-      "type": "block",
-      "code": "register-purpleheart-{metal}-north"
-    }
-  },
-  {
-    "ingredientPattern": "WWW,COC,WWW",
-    "ingredients": {
-      "W": {
-        "type": "item",
-        "code": "game:plank-redwood"
-      },
-      "C": {
-        "type": "item",
-        "code": "game:metalplate-*",
-        "name": "metal",
-        "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
-      },
-      "O": {
-        "type": "block",
-        "code": "game:chest-east",
-        "attributes": { "type": "normal-generic" }
-      }
+    {
+        "ingredientPattern": "WWW,COC,WWW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-redwood"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:metalplate-*",
+                "name": "metal",
+                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "width": 3,
+        "height": 3,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "{metal}",
+                "SecondaryMaterial": "redwood"
+            }
+        }
     },
-    "width": 3,
-    "height": 3,
-    "output": {
-      "type": "block",
-      "code": "register-redwood-{metal}-north"
-    }
-  },
-  {
-    "ingredientPattern": "WWW,COC,WWW",
-    "ingredients": {
-      "W": {
-        "type": "item",
-        "code": "game:plank-walnut"
-      },
-      "C": {
-        "type": "item",
-        "code": "game:metalplate-*",
-        "name": "metal",
-        "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
-      },
-      "O": {
-        "type": "block",
-        "code": "game:chest-east",
-        "attributes": { "type": "normal-generic" }
-      }
+    {
+        "ingredientPattern": "WWW,COC,WWW",
+        "ingredients": {
+            "W": {
+                "type": "item",
+                "code": "game:plank-walnut"
+            },
+            "C": {
+                "type": "item",
+                "code": "game:metalplate-*",
+                "name": "metal",
+                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "width": 3,
+        "height": 3,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "{metal}",
+                "SecondaryMaterial": "walnut"
+            }
+        }
     },
-    "width": 3,
-    "height": 3,
-    "output": {
-      "type": "block",
-      "code": "register-walnut-{metal}-north"
-    }
-  }
 ]

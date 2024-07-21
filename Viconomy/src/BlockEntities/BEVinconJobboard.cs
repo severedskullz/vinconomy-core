@@ -9,7 +9,7 @@ using Vintagestory.API.Common;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEViconJobboard : BlockEntity
+    public class BEVinconJobboard : BlockEntity
     {
         //private GuiViconJobboard gui;
         public bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)

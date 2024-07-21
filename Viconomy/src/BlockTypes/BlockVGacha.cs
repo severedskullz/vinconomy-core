@@ -10,7 +10,7 @@ namespace Viconomy.BlockTypes
     {
         public override WorldInteraction[] GetPlacedBlockInteractionHelp(IWorldAccessor world, BlockSelection selection, IPlayer forPlayer)
         {
-            BEViconBase be = world.BlockAccessor.GetBlockEntity(selection.Position) as BEViconBase;
+            BEVinconBase be = world.BlockAccessor.GetBlockEntity(selection.Position) as BEVinconBase;
             List<WorldInteraction> interactions = new List<WorldInteraction>();
             if (be != null)
             {

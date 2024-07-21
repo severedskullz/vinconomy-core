@@ -18,7 +18,9 @@
   "height": 2,
   "output": {
     "type": "block",
-    "code": "sculpturepad-{wood}-east",
-    "quantity": 1
+    "code": "sculpturepad-east",
+        "attributes": {
+            "PrimaryMaterial": "{wood}"
+        }
   }
 }

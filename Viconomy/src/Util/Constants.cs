@@ -23,12 +23,12 @@ namespace Viconomy.Util
         public const int SET_SCULPTURE_NAME = 2008;
         public const int SET_WAYPOINT = 2009;
         public const int SET_TOTAL_RANDOMIZER = 2010;
+        public const int SET_ITEM_PRICE = 2011;
 
         // Customer Packets
         public const int PURCHASE_ITEMS = 3002;
         public const int CURRENCY_CONVERSION = 3003;
 
         public const int TOGGLE_GUI = 5000;
-
     }
 }

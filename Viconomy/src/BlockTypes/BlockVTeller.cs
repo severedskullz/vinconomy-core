@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Viconomy.BlockEntities;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -11,11 +7,11 @@ using Vintagestory.API.Server;
 
 namespace Viconomy.BlockTypes
 {
-    public class BlockVTeller : Block
+    public class BlockVTeller : TextureSwappableBlock
     {
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
-            BEViconTeller be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEViconTeller;
+            BEVinconTeller be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVinconTeller;
             if (be != null)
             {
                 return be.OnPlayerRightClick(byPlayer, blockSel);
@@ -35,7 +31,7 @@ namespace Viconomy.BlockTypes
             {
                 string Owner = byItemStack.Attributes.GetString("Owner");
                 
-                BEViconTeller vEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEViconTeller;
+                BEVinconTeller vEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVinconTeller;
                 if (vEntity != null)
                 {
                     if (Owner != null)
@@ -60,13 +56,14 @@ namespace Viconomy.BlockTypes
                 return null;
             }
             ;
-            ItemStack stack = new ItemStack(world.GetBlock(new AssetLocation(Code.Domain, this.CodeWithoutParts(1) +"-east")));
-            BEViconTeller vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEViconTeller;
+            ItemStack stack = new ItemStack(world.GetBlock(new AssetLocation(Code.Domain, this.CodeWithoutParts(1) +"-north")));
+            BEVinconTeller vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEVinconTeller;
             if (vEntity != null)
             {
                 stack.Attributes.SetString("Owner", vEntity.Owner);
                 stack.Attributes.SetInt("ID", vEntity.RegisterID);
                 stack.Attributes.SetString("OwnerName", vEntity.OwnerName);
+                AddTextureAttributes(stack, vEntity);
             }
                 
             return new ItemStack[] { stack };
@@ -77,7 +74,7 @@ namespace Viconomy.BlockTypes
             if (byPlayer == null)
                 return;
 
-            BEViconTeller vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEViconTeller;
+            BEVinconTeller vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEVinconTeller;
             if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID || byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative)
             {
                 ViconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyCoreSystem>();

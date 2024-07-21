@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 using Viconomy.BlockEntities;
-using Viconomy.Inventory;
-using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -12,7 +10,6 @@ namespace Viconomy.GUI
 {
     public class GuiViconRegister : GuiDialogBlockEntity
     {
-        private BEVRegister stall;
         private string name;
 
         public GuiViconRegister(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi)
@@ -21,7 +18,7 @@ namespace Viconomy.GUI
             name = DialogTitle;
 
             ViconomyCoreSystem modSystem = capi.ModLoader.GetModSystem<ViconomyCoreSystem>();
-            stall = capi.World.BlockAccessor.GetBlockEntity<BEVRegister>(BlockEntityPosition); 
+            //stall = capi.World.BlockAccessor.GetBlockEntity<BEVRegister>(BlockEntityPosition); 
             if (base.IsDuplicate)
             {
                 return;

@@ -12,7 +12,7 @@ namespace Viconomy.GUI
 {
     public class GuiDialogViconGachaCustomer : GuiDialogBlockEntity
     {
-        BEViconGacha stall;
+        BEVinconGacha stall;
         ViconomyGachaInventory vinInv;
         DummyInventory inv;
 
@@ -20,7 +20,7 @@ namespace Viconomy.GUI
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
 
-            stall = capi.World.BlockAccessor.GetBlockEntity<BEViconGacha>(BlockEntityPosition);
+            stall = capi.World.BlockAccessor.GetBlockEntity<BEVinconGacha>(BlockEntityPosition);
             vinInv = Inventory;
             vinInv.SlotModified += VinInv_SlotModified;
 

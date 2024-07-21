@@ -11,7 +11,7 @@ namespace Viconomy.Inventory
 {
     public class ViconomyGachaInventory : InventoryBase, ISlotProvider
     {
-        BEViconGacha stall;
+        BEVinconGacha stall;
 
         private ItemSlot[] slots;
 

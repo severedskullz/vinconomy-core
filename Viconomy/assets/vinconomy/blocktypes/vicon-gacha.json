@@ -1,10 +1,13 @@
 {
     "code": "gacha",
-    "class": "ViconGacha",
-    "entityClass": "BEViconGacha",
+    "class": "VinconGacha",
+    "entityClass": "BEVinconGacha",
     "priorityInteract": true,
     "creativeinventory": { "vinconomy": [ "*-north" ] },
-    "attributes": { "handbook": { "groupBy": [ "gacha-north" ] } },
+    "attributes": { "handbook": { "groupBy": [ "gacha-north" ] },
+            "extraSections": [
+                { "title": "", "text": "vinconomy:handbooktext-gacha" }
+            ] },
     "behaviors": [
         {
             "name": "HorizontalOrientable",

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Viconomy.BlockEntities;
 using Viconomy.GUI;
 using Viconomy.Inventory;
 using Viconomy.Trading;
@@ -16,7 +15,7 @@ using Vintagestory.API.Server;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEViconGacha : BEViconBase
+    public class BEVinconGacha : BEVinconBase
     {
         
         protected GuiDialogBlockEntity invDialog;
@@ -28,7 +27,7 @@ namespace Viconomy.BlockEntities
 
         public override int DisplayedItems => StallSlotCount;
 
-        public BEViconGacha()
+        public BEVinconGacha()
         {
             this.inventory = new ViconomyGachaInventory(10, null, Api);
             this.inventory.SlotModified += Inventory_SlotModified;
@@ -54,7 +53,7 @@ namespace Viconomy.BlockEntities
                     {
                         ItemSlot handSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
                         ItemSlot currency = this.inventory.GetCurrency();
-                        if (currency != null && TradingUtil.isMatchingCurrency(currency.Itemstack, handSlot.Itemstack))
+                        if (currency != null && TradingUtil.isMatchingItem(currency.Itemstack, handSlot.Itemstack, byPlayer.Entity.World))
                         {
                             RequestPurchaseItem();
                         }                      
@@ -96,7 +95,7 @@ namespace Viconomy.BlockEntities
             } 
             
             // Does the shop have a register ID set?
-            if (this.RegisterID == -1 && !this.isAdminShop)
+            if (this.RegisterID == -1 && !this.IsAdminShop)
             {
                 ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
@@ -104,8 +103,8 @@ namespace Viconomy.BlockEntities
 
             
             // Is there a shop with the given Register ID?
-            BEVRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
-            if (register == null && !this.isAdminShop)
+            BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
+            if (register == null && !this.IsAdminShop)
             {
                 ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.COULDNT_GET_REGISTER);
                 return;

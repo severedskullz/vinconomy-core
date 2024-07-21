@@ -14,7 +14,7 @@ namespace Viconomy.GUI
 {
     public class GuiViconSculpturePadOwner : GuiDialogBlockEntity
     {
-        BEViconSculpturePad stall;
+        BEVinconSculpturePad stall;
         ViconomySculptureInventory vinInv;
         ShopRegistration[] registers;
         ICoreClientAPI api;
@@ -27,7 +27,7 @@ namespace Viconomy.GUI
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
             api = capi;
-            stall = capi.World.BlockAccessor.GetBlockEntity<BEViconSculpturePad>(BlockEntityPosition);
+            stall = capi.World.BlockAccessor.GetBlockEntity<BEVinconSculpturePad>(BlockEntityPosition);
             ViconomyCoreSystem modSystem = capi.ModLoader.GetModSystem<ViconomyCoreSystem>();
             ShopRegistration[] allRegisters = modSystem.GetRegistry().GetShopsForOwner(stall.Owner);
             List<ShopRegistration> filteredRegisters = new List<ShopRegistration>();
@@ -150,7 +150,8 @@ namespace Viconomy.GUI
                 ElementBounds currencyLabel = ElementBounds.FixedSize(100, 20).FixedUnder(nameBounds, 15);
                 ElementBounds currencySlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).FixedUnder(currencyLabel);
 
-          
+                //TODO: Add number input for price
+
                 ElementBounds adminShopLabel = ElementBounds.FixedSize(100, 25).FixedUnder(currencySlotBounds).WithFixedOffset(0, 15);
                 ElementBounds adminShopBounds = ElementBounds.FixedSize(40, 40).FixedUnder(currencySlotBounds).FixedRightOf(adminShopLabel).WithFixedOffset(0, 10);
 
@@ -299,7 +300,7 @@ namespace Viconomy.GUI
                     SingleComposer.GetButton("nextPage").Enabled = false;
 
                 if (capi.World.Player.HasPrivilege("gamemode")) 
-                    SingleComposer.GetSwitch("admin").SetValue(stall.isAdminShop);
+                    SingleComposer.GetSwitch("admin").SetValue(stall.IsAdminShop);
 
                 GuiElementTextInput sculptureInput = SingleComposer.GetTextInput("sculptureName");
                 sculptureInput.SetPlaceHolderText("Sculpture Name");

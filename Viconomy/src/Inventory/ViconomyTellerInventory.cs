@@ -10,7 +10,7 @@ namespace Viconomy.Inventory
 {
     public class ViconomyTellerInventory : InventoryBase, ISlotProvider
     {
-        BEViconTeller stall;
+        BEVinconTeller stall;
         ViconomyCoreSystem modSystem;
         private ItemSlot[] slots;
 
@@ -25,7 +25,7 @@ namespace Viconomy.Inventory
         }
 
 
-        public ViconomyTellerInventory(BEViconTeller stall, string inventoryID, ICoreAPI api) : base(inventoryID, api)
+        public ViconomyTellerInventory(BEVinconTeller stall, string inventoryID, ICoreAPI api) : base(inventoryID, api)
         {
             this.stall = stall;
             int numSlots = 5;

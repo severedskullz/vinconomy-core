@@ -11,7 +11,7 @@ namespace Viconomy.GUI
 {
     public class GuiViconGachaPress : GuiDialogBlockEntity
     {
-        BEViconGachaLoader stall;
+        BEVinconGachaLoader stall;
         InventoryBase vinInv;
         ShopRegistration[] registers;
         ICoreClientAPI api;
@@ -21,7 +21,7 @@ namespace Viconomy.GUI
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
             api = capi;
-            stall = capi.World.BlockAccessor.GetBlockEntity<BEViconGachaLoader>(BlockEntityPosition);
+            stall = capi.World.BlockAccessor.GetBlockEntity<BEVinconGachaLoader>(BlockEntityPosition);
             vinInv = Inventory;
            
             

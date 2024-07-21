@@ -1,4 +1,5 @@
-﻿using Vintagestory.API.Common;
+﻿using Viconomy.Trading;
+using Vintagestory.API.Common;
 
 namespace Viconomy.Inventory
 {
@@ -30,7 +31,7 @@ namespace Viconomy.Inventory
                 } else if (slot.Itemstack == null) {
                     //Console.WriteLine("Stall Slot " + stallSlot + ":First Non-Empty Slot Item Stack was null, so we called Base");
                     return base.CanHold(sourceSlot);
-                } else if (slot.Itemstack.Satisfies(sourceSlot.Itemstack)) {
+                } else if (TradingUtil.isMatchingItem(slot.Itemstack, sourceSlot.Itemstack, this.inventory.Api.World)) {
                     //Console.WriteLine("Stall Slot " + stallSlot + ":First Non-Empty Slot satisfied, so we called Base");
                     return base.CanHold(sourceSlot);
                 } else

@@ -1,14 +1,24 @@
 {
     "code": "gachaloader",
-    "class": "ViconGachaLoader",
-    "entityClass": "BEViconGachaLoader",
+    "class": "VinconGachaLoader",
+    "entityClass": "BEVinconGachaLoader",
     "priorityInteract": true,
-    "creativeinventory": { "vinconomy": [ "*-north" ] },
-    "attributes": { "handbook": { "groupBy": [ "gacha-north" ] } },
+    "creativeinventory": { "vinconomy": [ "*-east" ] },
+    "attributes": {
+        "handbook": {
+            "groupBy": [ "gacha-east" ],
+            "extraSections": [
+                {
+                    "title": "",
+                    "text": "vinconomy:handbooktext-gachaloader"
+                }
+            ]
+        }
+    },
     "behaviors": [
         {
             "name": "HorizontalOrientable",
-            "properties": { "dropBlockFace": "north" }
+            "properties": { "dropBlockFace": "east" }
         }
     ],
     "heldTpIdleAnimation": "holdbothhandslarge",

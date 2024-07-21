@@ -1,13 +1,1318 @@
 ﻿{
     "code": "register",
-    "class": "ViconRegister",
-    "entityClass": "BEVRegister",
+    "class": "VinconRegister",
+    "entityClass": "BEVinconRegister",
     "priorityInteract": true,
-    "creativeinventory": { "vinconomy": [ "*-north" ] },
+    "creativeinventory": {},
+    "creativeinventoryStacksByType": {
+        "*-north": [
+            {
+                "tabs": [ "vinconomy" ],
+                "stacks": [
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuth",
+                            "SecondaryMaterial": "acacia"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuthbronze",
+                            "SecondaryMaterial": "acacia"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "blackbronze",
+                            "SecondaryMaterial": "acacia"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "brass",
+                            "SecondaryMaterial": "acacia"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "copper",
+                            "SecondaryMaterial": "acacia"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "acacia"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "iron",
+                            "SecondaryMaterial": "acacia"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "lead",
+                            "SecondaryMaterial": "acacia"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "meteoriciron",
+                            "SecondaryMaterial": "acacia"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tinbronze",
+                            "SecondaryMaterial": "acacia"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tin",
+                            "SecondaryMaterial": "acacia"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "uranium",
+                            "SecondaryMaterial": "acacia"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "zinc",
+                            "SecondaryMaterial": "acacia"
+                        }
+                    },
+
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuth",
+                            "SecondaryMaterial": "baldcypress"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuthbronze",
+                            "SecondaryMaterial": "baldcypress"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "blackbronze",
+                            "SecondaryMaterial": "baldcypress"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "brass",
+                            "SecondaryMaterial": "baldcypress"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "copper",
+                            "SecondaryMaterial": "baldcypress"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "baldcypress"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "iron",
+                            "SecondaryMaterial": "baldcypress"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "lead",
+                            "SecondaryMaterial": "baldcypress"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "meteoriciron",
+                            "SecondaryMaterial": "baldcypress"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tinbronze",
+                            "SecondaryMaterial": "baldcypress"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tin",
+                            "SecondaryMaterial": "baldcypress"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "uranium",
+                            "SecondaryMaterial": "baldcypress"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "zinc",
+                            "SecondaryMaterial": "baldcypress"
+                        }
+                    },
+
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuth",
+                            "SecondaryMaterial": "birch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuthbronze",
+                            "SecondaryMaterial": "birch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "blackbronze",
+                            "SecondaryMaterial": "birch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "brass",
+                            "SecondaryMaterial": "birch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "copper",
+                            "SecondaryMaterial": "birch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "birch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "iron",
+                            "SecondaryMaterial": "birch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "lead",
+                            "SecondaryMaterial": "birch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "meteoriciron",
+                            "SecondaryMaterial": "birch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tinbronze",
+                            "SecondaryMaterial": "birch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tin",
+                            "SecondaryMaterial": "birch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "uranium",
+                            "SecondaryMaterial": "birch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "zinc",
+                            "SecondaryMaterial": "birch"
+                        }
+                    },
+
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuth",
+                            "SecondaryMaterial": "ebony"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuthbronze",
+                            "SecondaryMaterial": "ebony"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "blackbronze",
+                            "SecondaryMaterial": "ebony"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "brass",
+                            "SecondaryMaterial": "ebony"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "copper",
+                            "SecondaryMaterial": "ebony"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "ebony"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "iron",
+                            "SecondaryMaterial": "ebony"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "lead",
+                            "SecondaryMaterial": "ebony"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "meteoriciron",
+                            "SecondaryMaterial": "ebony"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tinbronze",
+                            "SecondaryMaterial": "ebony"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tin",
+                            "SecondaryMaterial": "ebony"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "uranium",
+                            "SecondaryMaterial": "ebony"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "zinc",
+                            "SecondaryMaterial": "ebony"
+                        }
+                    },
+
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuth",
+                            "SecondaryMaterial": "kapok"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuthbronze",
+                            "SecondaryMaterial": "kapok"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "blackbronze",
+                            "SecondaryMaterial": "kapok"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "brass",
+                            "SecondaryMaterial": "kapok"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "copper",
+                            "SecondaryMaterial": "kapok"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "kapok"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "iron",
+                            "SecondaryMaterial": "kapok"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "lead",
+                            "SecondaryMaterial": "kapok"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "meteoriciron",
+                            "SecondaryMaterial": "kapok"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tinbronze",
+                            "SecondaryMaterial": "kapok"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tin",
+                            "SecondaryMaterial": "kapok"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "uranium",
+                            "SecondaryMaterial": "kapok"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "zinc",
+                            "SecondaryMaterial": "kapok"
+                        }
+                    },
+
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuth",
+                            "SecondaryMaterial": "larch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuthbronze",
+                            "SecondaryMaterial": "larch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "blackbronze",
+                            "SecondaryMaterial": "larch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "brass",
+                            "SecondaryMaterial": "larch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "copper",
+                            "SecondaryMaterial": "larch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "larch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "iron",
+                            "SecondaryMaterial": "larch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "lead",
+                            "SecondaryMaterial": "larch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "meteoriciron",
+                            "SecondaryMaterial": "larch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tinbronze",
+                            "SecondaryMaterial": "larch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tin",
+                            "SecondaryMaterial": "larch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "uranium",
+                            "SecondaryMaterial": "larch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "zinc",
+                            "SecondaryMaterial": "larch"
+                        }
+                    },
+
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuth",
+                            "SecondaryMaterial": "maple"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuthbronze",
+                            "SecondaryMaterial": "maple"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "blackbronze",
+                            "SecondaryMaterial": "maple"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "brass",
+                            "SecondaryMaterial": "maple"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "copper",
+                            "SecondaryMaterial": "maple"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "maple"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "iron",
+                            "SecondaryMaterial": "maple"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "lead",
+                            "SecondaryMaterial": "maple"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "meteoriciron",
+                            "SecondaryMaterial": "maple"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tinbronze",
+                            "SecondaryMaterial": "maple"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tin",
+                            "SecondaryMaterial": "maple"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "uranium",
+                            "SecondaryMaterial": "maple"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "zinc",
+                            "SecondaryMaterial": "maple"
+                        }
+                    },
+
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuth",
+                            "SecondaryMaterial": "oak"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuthbronze",
+                            "SecondaryMaterial": "oak"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "blackbronze",
+                            "SecondaryMaterial": "oak"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "brass",
+                            "SecondaryMaterial": "oak"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "copper",
+                            "SecondaryMaterial": "oak"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "oak"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "iron",
+                            "SecondaryMaterial": "oak"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "lead",
+                            "SecondaryMaterial": "oak"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "meteoriciron",
+                            "SecondaryMaterial": "oak"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tinbronze",
+                            "SecondaryMaterial": "oak"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tin",
+                            "SecondaryMaterial": "oak"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "uranium",
+                            "SecondaryMaterial": "oak"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "zinc",
+                            "SecondaryMaterial": "oak"
+                        }
+                    },
+
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuth",
+                            "SecondaryMaterial": "pine"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuthbronze",
+                            "SecondaryMaterial": "pine"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "blackbronze",
+                            "SecondaryMaterial": "pine"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "brass",
+                            "SecondaryMaterial": "pine"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "copper",
+                            "SecondaryMaterial": "pine"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "pine"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "iron",
+                            "SecondaryMaterial": "pine"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "lead",
+                            "SecondaryMaterial": "pine"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "meteoriciron",
+                            "SecondaryMaterial": "pine"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tinbronze",
+                            "SecondaryMaterial": "pine"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tin",
+                            "SecondaryMaterial": "pine"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "uranium",
+                            "SecondaryMaterial": "pine"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "zinc",
+                            "SecondaryMaterial": "pine"
+                        }
+                    },
+
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuth",
+                            "SecondaryMaterial": "purpleheart"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuthbronze",
+                            "SecondaryMaterial": "purpleheart"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "blackbronze",
+                            "SecondaryMaterial": "purpleheart"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "brass",
+                            "SecondaryMaterial": "purpleheart"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "copper",
+                            "SecondaryMaterial": "purpleheart"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "purpleheart"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "iron",
+                            "SecondaryMaterial": "purpleheart"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "lead",
+                            "SecondaryMaterial": "purpleheart"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "meteoriciron",
+                            "SecondaryMaterial": "purpleheart"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tinbronze",
+                            "SecondaryMaterial": "purpleheart"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tin",
+                            "SecondaryMaterial": "purpleheart"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "uranium",
+                            "SecondaryMaterial": "purpleheart"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "zinc",
+                            "SecondaryMaterial": "purpleheart"
+                        }
+                    },
+
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuth",
+                            "SecondaryMaterial": "redwood"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuthbronze",
+                            "SecondaryMaterial": "redwood"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "blackbronze",
+                            "SecondaryMaterial": "redwood"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "brass",
+                            "SecondaryMaterial": "redwood"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "copper",
+                            "SecondaryMaterial": "redwood"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "redwood"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "iron",
+                            "SecondaryMaterial": "redwood"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "lead",
+                            "SecondaryMaterial": "redwood"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "meteoriciron",
+                            "SecondaryMaterial": "redwood"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tinbronze",
+                            "SecondaryMaterial": "redwood"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tin",
+                            "SecondaryMaterial": "redwood"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "uranium",
+                            "SecondaryMaterial": "redwood"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "zinc",
+                            "SecondaryMaterial": "redwood"
+                        }
+                    },
+
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuth",
+                            "SecondaryMaterial": "walnut"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "bismuthbronze",
+                            "SecondaryMaterial": "walnut"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "blackbronze",
+                            "SecondaryMaterial": "walnut"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "brass",
+                            "SecondaryMaterial": "walnut"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "copper",
+                            "SecondaryMaterial": "walnut"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "walnut"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "iron",
+                            "SecondaryMaterial": "walnut"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "lead",
+                            "SecondaryMaterial": "walnut"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "meteoriciron",
+                            "SecondaryMaterial": "walnut"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tinbronze",
+                            "SecondaryMaterial": "walnut"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "tin",
+                            "SecondaryMaterial": "walnut"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "uranium",
+                            "SecondaryMaterial": "walnut"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "zinc",
+                            "SecondaryMaterial": "walnut"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "textures": {
+        "default": { "base": "game:block/metal/plate/steel" },
+
+        "bismuth": { "base": "game:block/metal/plate/bismuth" },
+        "bismuthbronze": { "base": "game:block/metal/plate/bismuthbronze" },
+        "blackbronze": { "base": "game:block/metal/plate/blackbronze" },
+        "brass": { "base": "game:block/metal/plate/brass" },
+        "copper": { "base": "game:block/metal/plate/copper" },
+        "gold": { "base": "game:block/metal/plate/gold" },
+        "iron": { "base": "game:block/metal/plate/iron" },
+        "lead": { "base": "game:block/metal/plate/lead" },
+        "meteoriciron": { "base": "game:block/metal/plate/meteoriciron" },
+        "tinbronze": { "base": "game:block/metal/plate/tinbronze" },
+        "steel": { "base": "game:block/metal/plate/steel" },
+        "tin": { "base": "game:block/metal/plate/tin" },
+        "uranium": { "base": "game:block/metal/plate/uranium" },
+        "zinc": { "base": "game:block/metal/plate/zinc" },
+
+        "acacia": { "base": "game:block/wood/planks/acacia1" },
+        "baldcypress": { "base": "game:block/wood/planks/baldcypress1" },
+        "birch": { "base": "game:block/wood/planks/birch1" },
+        "ebony": { "base": "game:block/wood/planks/ebony1" },
+        "kapok": { "base": "game:block/wood/planks/kapok1" },
+        "larch": { "base": "game:block/wood/planks/larch1" },
+        "maple": { "base": "game:block/wood/planks/maple1" },
+        "oak": { "base": "game:block/wood/planks/oak1" },
+        "pine": { "base": "game:block/wood/planks/pine1" },
+        "purpleheart": { "base": "game:block/wood/planks/purpleheart1" },
+        "redwood": { "base": "game:block/wood/planks/redwood1" },
+        "walnut": { "base": "game:block/wood/planks/walnut1" }
+    },
     "attributes": {
         "handbook": {
-            "groupBy": [ "register-*-*-north" ],
-            "groupedName": "register-oak-copper-north"
+            "groupBy": [ "register-north" ],
+            "groupedName": "register-north",
+            "extraSections": [
+                {
+                    "title": "",
+                    "text": "vinconomy:handbooktext-register"
+                }
+            ]
         }
     },
     "behaviors": [ { "name": "HorizontalOrientable" } ],
@@ -15,14 +1320,7 @@
     "heldTpUseAnimation": "twohandplaceblock",
     "blockmaterial": "Metal",
     "variantgroups": [
-        {
-            "code": "wood",
-            "states": [ "birch", "oak", "maple", "pine", "acacia", "kapok", "baldcypress", "larch", "redwood", "ebony", "walnut", "purpleheart" ]
-        },
-        {
-            "code": "metal",
-            "states": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
-        },
+
         {
             "code": "side",
             "loadFromProperties": "abstract/horizontalorientation"
@@ -54,10 +1352,7 @@
             "z": -76
         }
     },
-    "textures": {
-        "wood": { "base": "game:block/wood/planks/{wood}1" },
-        "metal": { "base": "game:block/metal/plate/{metal}" }
-    },
+
     "shapebytype": {
         "*-north": {
             "base": "block/register",

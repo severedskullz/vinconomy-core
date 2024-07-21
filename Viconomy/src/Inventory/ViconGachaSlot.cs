@@ -1,6 +1,4 @@
-﻿using System;
-using Vintagestory.API.Common;
-using Vintagestory.GameContent;
+﻿using Vintagestory.API.Common;
 
 namespace Viconomy.Inventory
 {
@@ -21,7 +19,7 @@ namespace Viconomy.Inventory
             CollectibleObject collectible = sourceSlot.Itemstack?.Collectible;
             if (collectible != null && !isDisabled)
             {
-                if (collectible.ItemClass == EnumItemClass.Block && (collectible is Block || collectible is BlockChisel))
+                if (collectible is Block)
                 {
                     return base.CanHold(sourceSlot);
                 }

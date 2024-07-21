@@ -1,6 +1,7 @@
 ﻿
 using System;
 using Vintagestory.API.Common;
+using Vintagestory.GameContent;
 
 namespace Viconomy.Filters
 {
@@ -128,6 +129,11 @@ namespace Viconomy.Filters
         public static bool IsFilledGachaSlot(ItemSlot slot)
         {
             return slot.Itemstack.Item?.Code.Path == "gachaball" && slot.Itemstack.Attributes.GetTreeAttribute("Contents") != null;
+        }
+
+        public static bool IsMicroblock(ItemSlot slot)
+        {
+            return slot.Itemstack?.Block is BlockMicroBlock;
         }
     }
 }

@@ -1,0 +1,5 @@
+Gacha balls
+	Currently they spoil and dont take into account the perish speed multiplier
+
+Clothing Stand:
+	Add dedicated "Shoulder" slot to stand

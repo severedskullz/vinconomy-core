@@ -1,0 +1,311 @@
+[
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "tellermachine-*-bismuth-north",
+                "name": "variant"
+            }
+        },
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "tellermachine-north",
+            "attributes": {
+                "PrimaryMaterial": "bismuth",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "tellermachine-*-bismuthbronze-north",
+                "name": "variant"
+            }
+        },
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "tellermachine-north",
+            "attributes": {
+                "PrimaryMaterial": "bismuthbronze",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "tellermachine-*-blackbronze-north",
+                "name": "variant"
+            }
+        },
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "tellermachine-north",
+            "attributes": {
+                "PrimaryMaterial": "blackbronze",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "tellermachine-*-brass-north",
+                "name": "variant"
+            }
+        },
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "tellermachine-north",
+            "attributes": {
+                "PrimaryMaterial": "brass",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "tellermachine-*-copper-north",
+                "name": "variant"
+            }
+        },
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "tellermachine-north",
+            "attributes": {
+                "PrimaryMaterial": "copper",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "tellermachine-*-gold-north",
+                "name": "variant"
+            }
+        },
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "tellermachine-north",
+            "attributes": {
+                "PrimaryMaterial": "gold",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "tellermachine-*-iron-north",
+                "name": "variant"
+            }
+        },
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "tellermachine-north",
+            "attributes": {
+                "PrimaryMaterial": "iron",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "tellermachine-*-lead-north",
+                "name": "variant"
+            }
+        },
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "tellermachine-north",
+            "attributes": {
+                "PrimaryMaterial": "lead",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "tellermachine-*-meteoriciron-north",
+                "name": "variant"
+            }
+        },
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "tellermachine-north",
+            "attributes": {
+                "PrimaryMaterial": "meteoriciron",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "tellermachine-*-tinbronze-north",
+                "name": "variant"
+            }
+        },
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "tellermachine-north",
+            "attributes": {
+                "PrimaryMaterial": "tinbronze",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "tellermachine-*-steel-north",
+                "name": "variant"
+            }
+        },
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "tellermachine-north",
+            "attributes": {
+                "PrimaryMaterial": "steel",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "tellermachine-*-tin-north",
+                "name": "variant"
+            }
+        },
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "tellermachine-north",
+            "attributes": {
+                "PrimaryMaterial": "tin",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "tellermachine-*-uranium-north",
+                "name": "variant"
+            }
+        },
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "tellermachine-north",
+            "attributes": {
+                "PrimaryMaterial": "uranium",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "tellermachine-*-zinc-north",
+                "name": "variant"
+            }
+        },
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "tellermachine-north",
+            "attributes": {
+                "PrimaryMaterial": "uranium",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    }
+
+]

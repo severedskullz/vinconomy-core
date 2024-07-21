@@ -8,7 +8,7 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"wood": "block/wood/planks/oak3"
+		"primary": "game:block/wood/planks/oak3"
 	},
 	"elements": [
 		{
@@ -16,12 +16,12 @@
 			"from": [ 0.0, 0.0, 0.0 ],
 			"to": [ 16.0, 1.0, 16.0 ],
 			"faces": {
-				"north": { "texture": "#wood", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
-				"east": { "texture": "#wood", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
-				"south": { "texture": "#wood", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
-				"west": { "texture": "#wood", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
-				"up": { "texture": "#wood", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
-				"down": { "texture": "#wood", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+				"north": { "texture": "#primary", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
+				"east": { "texture": "#primary", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
+				"south": { "texture": "#primary", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
+				"west": { "texture": "#primary", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
+				"up": { "texture": "#primary", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"down": { "texture": "#primary", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
 			}
 		}
 	]}
