@@ -33,6 +33,8 @@
     "block-producecrate-*": "Витрина для продуктов",
     "block-register-*": "Касса",
     "block-shelf-*-*": "Витрина настенная полка",
+    "block-mat-*": "Витрина коврик",
+    "block-matdouble-*": "Витрина двойной коврик",
     "block-trademat-*": "Витрина коврик",
     "block-tradematdouble-*": "Витрина двойной коврик",
     "block-weaponrack-*": "Витрина для оружия",
@@ -47,6 +49,7 @@
     "item-ledger": "Shop Ledger",
 
     "game:tabname-vinconomy": "Vinconomy",
+    "game:tabname-vinconomy-legacy": "Vinconomy (LEGACY)",
     "game:maplayer-VinconomyShops": "Player Shops",
 
     "stall-purchase-armor0": "Приобрести обувь",
@@ -97,5 +100,29 @@
     "wp-shopStorage": "Misc. Shop",
     "wp-shopTavern": "Tavern",
     "wp-shopTools": "Tool Shop",
-    "wp-shopTrade": "Misc. Shop"
+    "wp-shopTrade": "Misc. Shop",
+
+    "handbooktext-register" : "Allows you to set up your own personal shop. Any proceeds from a given <a href=\"handbooksearch://shop mat\">mat</a>, <a href=\"handbooksearch://shop crate\">crate</a>, <a href=\"handbooksearch://shop clothing stand\">clothing stall</a>, or <a href=\"handbooksearch://shop sculpture stall\">sculpture stall</a> linked to this shop will go directly to this register's inventory. Be sure to empty out the register from time to time, as you will not be able to make any sales if it is full. If you want to keep track of all sales for your shop, you can craft a <a href=\"handbook://item-vinconomy:ledger\">ledger</a> and link it to this stall in order to view the sales on a Year/Month basis. The Register can also create a global, publicly visible waypoint by enabling the tick box in the Register's menu. If enabled, your register's location will be broadcasted so other  players can find your shop easier.",
+	"handbooktext-tellermachine" : "Allows your customers to exchange currency between two types. The currency conversion is done directly from your register's inventory, so it may only happen if you have enough items to support the trade. Note that these trades are bidirectional, so do not set up conversions which you do not consider equivalent. As an example 10 Copper Currency might be worth 1 Silver Currency. Such a trade would allow players to exchange either 10 Copper for 1 Silver, or 1 Silver for 10 Copper.",
+	"handbooktext-stall" : "Allows you to sell a number of items to players for purchase. In order to function, it must be linked to a <a href=\"handbooksearch://shop register\">register</a> in order to function properly. Any goods sold by this stall will have its proceeds delievered straight to the <a href=\"handbooksearch://shop register\">register</a>'s inventory.",
+	"handbooktext-gacha" : "Allows you to sell chance-based goods to players for purchase. The gacha machine must be filled with <a href=\"handbook://item-vinconomy:gachaball\">gacha balls</a> which can be filled in a <a href=\"handbooksearch://gacha loader\">gacha loader</a>. In order to function, it must be linked to a <a href=\"handbooksearch://shop register\">register</a> in order to function properly. Any goods sold by this stall will have its proceeds delievered straight to the <a href=\"handbooksearch://shop register\">register</a>'s inventory.",
+	"handbooktext-gachaloader" : "Allows you to fill <a href=\"handbook://item-vinconomy:gachaball\">gacha balls</a> with items to be used in a <a href=\"handbooksearch://gacha stall\">gacha stall</a>. Each ball can be filled with up to 6 different stacks of items.",
+	"handbooktext-clothingstand" : "Allows you to sell a number of clothing items to players for purchase. In order to function, it must be linked to a <a href=\"handbooksearch://shop register\">register</a> in order to function properly. Any goods sold by this stall will have its proceeds delievered straight to the <a href=\"handbooksearch://shop register\">register</a>'s inventory.",
+	"handbooktext-weaponrack" : "Allows you to sell a up to two types of weapons or tools and a shield to players for purchase. In order to function, it must be linked to a <a href=\"handbooksearch://shop register\">register</a> in order to function properly. Any goods sold by this stall will have its proceeds delievered straight to the <a href=\"handbooksearch://shop register\">register</a>'s inventory.",
+	"handbooktext-toolrack" : "Allows you to sell a number of tools to players for purchase. In order to function, it must be linked to a <a href=\"handbooksearch://shop register\">register</a> in order to function properly. Any goods sold by this stall will have its proceeds delievered straight to the <a href=\"handbooksearch://shop register\">register</a>'s inventory.",
+	"handbooktext-tenretni" : "Allows you to read third-party data from the internet (Right now, just Pastebin.com) by providing its URL ID",
+
+    "game:material-black" : "Black",
+    "game:material-blue" : "Blue",
+    "game:material-brown" : "Brown",
+    "game:material-gray" : "Gray",
+    "game:material-green" : "Green",
+    "game:material-mordant" : "Mordant",
+    "game:material-orange" : "Orange",
+    "game:material-pink" : "Pink",
+    "game:material-plain" : "Plain",
+    "game:material-purple" : "Purple",
+    "game:material-red" : "Red",
+    "game:material-white" : "White",
+    "game:material-yellow" : "Yellow"
 }

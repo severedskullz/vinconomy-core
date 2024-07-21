@@ -4,7 +4,7 @@
         "ingredients": {
             "S": {
                 "type": "block",
-                "code": "sculpturepad-*-north",
+                "code": "sculpturepad-*-east",
                 "name": "variant"
             }
         },
@@ -14,7 +14,7 @@
         "height": 1,
         "output": {
             "type": "block",
-            "code": "sculpturepad-north",
+            "code": "sculpturepad-east",
             "attributes": {
                 "PrimaryMaterial": "{variant}"
             }

@@ -4,7 +4,7 @@
         "ingredients": {
             "S": {
                 "type": "block",
-                "code": "toolrack-*-north",
+                "code": "toolrack-*-east",
                 "name": "variant"
             }
         },
