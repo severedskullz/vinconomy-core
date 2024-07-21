@@ -317,7 +317,7 @@ namespace Viconomy.Trading
         {
             return source != null
                 && payment != null
-                && source.Equals(world, payment, new string[] { "transitionstate" });
+                && source.Equals(world, payment, new string[] { "transitionstate", "temperature" });
         }
         public static bool isMatchingCurrency(ItemSlot source, ItemSlot payment, IWorldAccessor world)
         {

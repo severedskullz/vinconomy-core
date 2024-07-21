@@ -14,7 +14,7 @@ namespace Viconomy.BlockEntities.TextureSwappable
         public string SecondaryMaterial { get; set; }
         public string DecoMaterial { get; set; }
 
-        protected bool OverrideBaseShape = true;
+        protected virtual bool OverrideBaseShape => true;
         protected virtual bool HideBaseShape => true;
 
         public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tesselator)

@@ -82,7 +82,7 @@ namespace Viconomy.GUI
 
                 ViconomyInventory vinInv = Inventory as ViconomyInventory;
                 int[] uiSlots = new int[stacksPerSlot];
-                int offset = curTab * (stacksPerSlot + 1);
+                int offset = curTab * (stacksPerSlot + 1) + 1;
                 if (vinInv != null)
                 {
                     for (int i = 0; i < stacksPerSlot; i++)
@@ -134,9 +134,12 @@ namespace Viconomy.GUI
                 ElementBounds quantitySelectionLabel = ElementBounds.FixedSize(150, 30).FixedUnder(costSelectionLabel).WithFixedOffset(0, 15);
                 ElementBounds quantitySelectionBounds = ElementBounds.FixedSize(75, 30).FixedUnder(costSelectionLabel).FixedRightOf(quantitySelectionLabel).WithFixedOffset(25, 10);
 
+                ElementBounds chiselLabel = ElementBounds.FixedSize(200, 25).FixedUnder(quantitySelectionLabel).WithFixedOffset(0, 15);
+                ElementBounds chiselSlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).FixedUnder(chiselLabel);
 
-                ElementBounds adminShopLabel = ElementBounds.FixedSize(100, 25).FixedUnder(quantitySelectionBounds).WithFixedOffset(0, 15);
-                ElementBounds adminShopBounds = ElementBounds.FixedSize(40, 40).FixedUnder(quantitySelectionBounds).FixedRightOf(adminShopLabel).WithFixedOffset(120, 10);
+
+                ElementBounds adminShopLabel = ElementBounds.FixedSize(100, 25).FixedUnder(chiselSlotBounds).WithFixedOffset(0, 15);
+                ElementBounds adminShopBounds = ElementBounds.FixedSize(40, 40).FixedUnder(chiselSlotBounds).FixedRightOf(adminShopLabel).WithFixedOffset(120, 10);
 
                 settingBounds.WithChildren(shopSelectBounds, shopSelectionLabel, quantitySelectionBounds, quantitySelectionLabel, currencyLabel, currencySlotBounds, purchaseSlotBounds, adminShopBounds, adminShopLabel);
                 settingBounds.verticalSizing = ElementSizing.FitToChildren;
@@ -144,7 +147,7 @@ namespace Viconomy.GUI
                 // Background boundaries. Again, just make it fit it's child elements, then add the text as a child element
                 //ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.ElementToDialogPadding);
 
-                ElementBounds itemPage = ElementBounds.FixedSize(200, 10).FixedRightOf(settingBounds).WithFixedOffset(10, GuiStyle.TitleBarHeight);
+                ElementBounds itemPage = ElementBounds.FixedSize(200, 10).FixedRightOf(settingBounds).WithFixedOffset(25, GuiStyle.TitleBarHeight);
                 itemPage.BothSizing = ElementSizing.FitToChildren;
 
 
@@ -188,8 +191,13 @@ namespace Viconomy.GUI
                     //.AddButton("Save", new ActionConsumable(this.onSave),saveButtonBounds, EnumButtonStyle.Small, "save")
                     .AddStaticText("Price:", CairoFont.WhiteSmallText(), currencyLabel)
                     .AddItemSlotGrid(vinInv, new Action<object>(this.SetCurrencySlot), 1, new int[] { offset + stacksPerSlot }, currencySlotBounds, "currency")
+
                     .AddStaticText("Product:", CairoFont.WhiteSmallText(), purchaseLabel)
                     .AddPassiveItemSlot(purchaseSlotBounds, inv, purchaseSlot, true)
+
+                    .AddStaticText("Decoration Block:", CairoFont.WhiteSmallText(), chiselLabel )
+                    .AddItemSlotGrid(vinInv, new Action<object>(this.SetCurrencySlot), 1, new int[] { 0 }, chiselSlotBounds, "chisel")
+
                 //.AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlotBounds, "purchase")
                 //.AddPassiveItemSlot(outputSlotBounds, Inventory, )
                 .EndChildElements();

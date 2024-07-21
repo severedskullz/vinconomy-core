@@ -371,6 +371,18 @@ namespace Viconomy.BlockEntities
                     SetStallRegisterID(player, data);
                     break;
 
+                case VinConstants.SET_ITEM_PRICE:
+                    int price = 0;
+                    int stall = 0;
+
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
+                        BinaryReader reader = new BinaryReader(ms);
+                        stall = reader.ReadInt32();
+                        price = reader.ReadInt32();
+                    }
+                    SetItemPrice(player, stall, price);
+                    break;
                 case VinConstants.SET_ADMIN_SHOP:
                     bool isAdmin = false;
                     using (MemoryStream ms = new MemoryStream(data))
@@ -441,6 +453,22 @@ namespace Viconomy.BlockEntities
             }
         }
 
+        protected void SetItemPrice(IPlayer byPlayer, int stallSlot, int price)
+        {
+            if (byPlayer.PlayerUID != this.Owner)
+            {
+                ViconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
+                return;
+            }
+
+            ItemSlot slot = this.inventory[0];
+            if (slot.Itemstack != null)
+            {
+                slot.Itemstack.StackSize = price;
+                slot.MarkDirty();
+            }
+
+        }
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.ToTreeAttributes(tree);

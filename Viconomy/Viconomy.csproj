@@ -77,6 +77,15 @@
   <None Remove="assets\vinconomy\recipes\grid\gachaloader.json" />
   <None Remove="assets\vinconomy\recipes\grid\gachamachine.json" />
   <None Remove="assets\vinconomy\recipes\grid\ledger.json" />
+  <None Remove="assets\vinconomy\recipes\grid\Legacy\mat.json" />
+  <None Remove="assets\vinconomy\recipes\grid\Legacy\matdouble.json" />
+  <None Remove="assets\vinconomy\recipes\grid\Legacy\producecrate.json" />
+  <None Remove="assets\vinconomy\recipes\grid\Legacy\register.json" />
+  <None Remove="assets\vinconomy\recipes\grid\Legacy\sculpturepad.json" />
+  <None Remove="assets\vinconomy\recipes\grid\Legacy\shelf.json" />
+  <None Remove="assets\vinconomy\recipes\grid\Legacy\tellermachine.json" />
+  <None Remove="assets\vinconomy\recipes\grid\Legacy\toolrack.json" />
+  <None Remove="assets\vinconomy\recipes\grid\Legacy\weaponrack.json" />
   <None Remove="assets\vinconomy\recipes\grid\sculpturepad.json" />
   <None Remove="assets\vinconomy\recipes\grid\tellermachine.json" />
   <None Remove="assets\vinconomy\recipes\grid\tenretni.json" />

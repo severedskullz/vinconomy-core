@@ -1,0 +1,325 @@
+[
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "register-*-bismuth-north",
+                "name": "variant"
+            }
+        },
+        "copyAttributesFrom": "S",
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "bismuth",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "register-*-bismuthbronze-north",
+                "name": "variant"
+            }
+        },
+        "copyAttributesFrom": "S",
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "bismuthbronze",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "register-*-blackbronze-north",
+                "name": "variant"
+            }
+        },
+        "copyAttributesFrom": "S",
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "blackbronze",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "register-*-brass-north",
+                "name": "variant"
+            }
+        },
+        "copyAttributesFrom": "S",
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "brass",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "register-*-copper-north",
+                "name": "variant"
+            }
+        },
+        "copyAttributesFrom": "S",
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "copper",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "register-*-gold-north",
+                "name": "variant"
+            }
+        },
+        "copyAttributesFrom": "S",
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "gold",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "register-*-iron-north",
+                "name": "variant"
+            }
+        },
+        "copyAttributesFrom": "S",
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "iron",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "register-*-lead-north",
+                "name": "variant"
+            }
+        },
+        "copyAttributesFrom": "S",
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "lead",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "register-*-meteoriciron-north",
+                "name": "variant"
+            }
+        },
+        "copyAttributesFrom": "S",
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "meteoriciron",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "register-*-tinbronze-north",
+                "name": "variant"
+            }
+        },
+        "copyAttributesFrom": "S",
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "tinbronze",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "register-*-steel-north",
+                "name": "variant"
+            }
+        },
+        "copyAttributesFrom": "S",
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "steel",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "register-*-tin-north",
+                "name": "variant"
+            }
+        },
+        "copyAttributesFrom": "S",
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "tin",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "register-*-uranium-north",
+                "name": "variant"
+            }
+        },
+        "copyAttributesFrom": "S",
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "uranium",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    },
+    {
+        "ingredientPattern": "S",
+        "ingredients": {
+            "S": {
+                "type": "block",
+                "code": "register-*-zinc-north",
+                "name": "variant"
+            }
+        },
+        "copyAttributesFrom": "S",
+        "shapeless": true,
+        "recipeGroup": 2,
+        "width": 1,
+        "height": 1,
+        "output": {
+            "type": "block",
+            "code": "register-north",
+            "attributes": {
+                "PrimaryMaterial": "uranium",
+                "SecondaryMaterial": "{variant}"
+            }
+        }
+    }
+
+]

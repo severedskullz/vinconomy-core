@@ -150,7 +150,8 @@ namespace Viconomy.GUI
                 ElementBounds currencyLabel = ElementBounds.FixedSize(100, 20).FixedUnder(nameBounds, 15);
                 ElementBounds currencySlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).FixedUnder(currencyLabel);
 
-          
+                //TODO: Add number input for price
+
                 ElementBounds adminShopLabel = ElementBounds.FixedSize(100, 25).FixedUnder(currencySlotBounds).WithFixedOffset(0, 15);
                 ElementBounds adminShopBounds = ElementBounds.FixedSize(40, 40).FixedUnder(currencySlotBounds).FixedRightOf(adminShopLabel).WithFixedOffset(0, 10);
 

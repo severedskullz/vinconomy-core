@@ -13,7 +13,6 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
-using Vintagestory.GameContent;
 
 namespace Viconomy.BlockEntities
 {
@@ -22,12 +21,13 @@ namespace Viconomy.BlockEntities
 
         protected GuiDialogBlockEntity invDialog;
         protected ViconomyInventory inventory;
+        protected DummyInventory decorationInventory;
         protected bool bypassShelvableAttributes;
 
         public override InventoryBase Inventory { get { return this.inventory; } }
 
         public override int DisplayedItems => StallSlotCount;
-
+        protected override bool OverrideBaseShape => inventory.ChiselDecoSlot.Itemstack == null;
         public BEVinconContainer() 
         {
             ConfigureInventory();
@@ -484,6 +484,14 @@ namespace Viconomy.BlockEntities
                     }
 
                 }
+            }
+
+            if (inventory.ChiselDecoSlot.Itemstack != null)
+            {
+                ItemStack stack = inventory.ChiselDecoSlot.Itemstack;
+                MeshData mesh = modSystem.GetRenderer(stack).createMesh(this, stack, 0);
+                mesh = mesh.Clone().Rotate(new Vec3f(0.5f, 0.5f, 0.5f), 0, (float)((this.block.Shape.rotateY * Math.PI) / 180), 0);
+                mesher.AddMeshData(mesh);
             }
         }
 

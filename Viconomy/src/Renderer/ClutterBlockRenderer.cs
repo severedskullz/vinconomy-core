@@ -21,7 +21,7 @@ namespace Viconomy.Renderer
 
         public MeshData createMesh(BEVinconBase stall, ItemStack stack, int index)
         {
-            ICoreClientAPI coreClientAPI = (ICoreClientAPI)stall.Api;
+            //ICoreClientAPI coreClientAPI = (ICoreClientAPI)stall.Api;
 
             //Dictionary<string, MultiTextureMeshRef> clutterMeshRefs = ObjectCacheUtil.GetOrCreate(coreClientAPI, "viconClutterMeshesInventory", () => new Dictionary<string, MultiTextureMeshRef>());
 

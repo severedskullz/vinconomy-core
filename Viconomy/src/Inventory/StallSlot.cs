@@ -8,13 +8,24 @@ namespace Viconomy.Inventory
         public ViconItemSlot[] slots;
         public ViconCurrencySlot currency;
         public int itemsPerPurchase = 1;
-        private ViconomyInventory inventory;
+        //private ViconomyInventory inventory;
         private int numSlots;
         private int stallSlot;
 
+        public StallSlot(InventoryBase inventory, int stallSlot, int numSlots)
+        {
+            this.currency = new ViconCurrencySlot(inventory);
+            this.slots = new ViconItemSlot[numSlots];
+            for (int i = 0; i < numSlots; i++)
+            {
+                slots[i] = new ViconItemSlot(inventory, stallSlot, i);
+               
+            }
+        }
+
         public StallSlot(ViconomyInventory inventory, int stallSlot, int numSlots, ItemSlot[] rawSlots)
         {
-            this.inventory = inventory;
+            //this.inventory = inventory;
             this.numSlots = numSlots;
             this.stallSlot = stallSlot;
 
