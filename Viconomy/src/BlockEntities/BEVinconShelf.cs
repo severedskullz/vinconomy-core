@@ -12,6 +12,13 @@ namespace Viconomy.BlockEntities
             float[][] tfMatrices = new float[StallSlotCount][];
             for (int index = 0; index < StallSlotCount; index++)
             {
+                if (index >= block.SelectionBoxes.Length)
+                {
+                    modSystem.Mod.Logger.Warning($"Tried to render display for stall slot {index}  outside of selection box bounds {block.SelectionBoxes.Length} at {this.Pos}");
+                    tfMatrices[index] = new Matrixf().Values;
+                    continue;
+                }
+
                 float scale = 0.35f;
                 ItemSlot slot = this.inventory.FindFirstNonEmptyStockSlot(index);
                 if (slot != null)

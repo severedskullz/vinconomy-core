@@ -32,7 +32,7 @@
     "block-helmetstand-*": "Shop Helmet Stand",
     "block-producecrate-*": "Shop Crate",
     "block-register-*": "Shop Register",
-    "block-shelf-*-*": "Shop Shelf",
+    "block-shelf-*": "Shop Shelf",
     "block-mat-*": "Shop Mat (Single)",
     "block-matdouble-*": "Shop Mat (Double)",
     "block-trademat*": "Shop Mat (Legacy)",
@@ -50,7 +50,6 @@
     "itemdesc-book-tenretni*": "<font color=\"#99c9f9\"><i>This book seems to magically transcribe texts from something called the Tenretni Archive, a complex network of machines and databanks</i></font>",
 
     "game:tabname-vinconomy": "Vinconomy",
-    "game:tabname-vinconomy-legacy": "Vinconomy (LEGACY)",
     "game:maplayer-VinconomyShops": "Player Shops",
 
     "stall-purchase-armor0": "Purchase Boots",

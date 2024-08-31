@@ -10,7 +10,7 @@ namespace Viconomy.BlockEntities
     public abstract class BEVinconBase : BETextureSwappableBlockDisplay, IOwnableStall
     {
         protected ViconomyCoreSystem modSystem;
-        protected Block block;
+        
         public string Owner { get; protected set; }
         public string OwnerName { get; protected set; }
         public int RegisterID { get; protected set; } = -1;
@@ -25,17 +25,17 @@ namespace Viconomy.BlockEntities
         public bool shouldRenderInventory;
         protected DistanceRenderer distanceRenderer;
 
-        protected AssetLocation OpenSound;
-        protected AssetLocation CloseSound;
+        protected Block block;
+        //protected AssetLocation OpenSound;
+        //protected AssetLocation CloseSound;
 
         public override void Initialize(ICoreAPI api)
         {
             modSystem = api.ModLoader.GetModSystem<ViconomyCoreSystem>();
-
             this.block = api.World.BlockAccessor.GetBlock(this.Pos);
-
             base.Initialize(api);
 
+            /*
             JsonObject attributes = block.Attributes;
             string openSound = null;
             if (attributes != null && attributes["openSound"] != null)
@@ -51,7 +51,7 @@ namespace Viconomy.BlockEntities
 
             this.OpenSound = (openSound == null) ? null : AssetLocation.Create(openSound, block.Code.Domain);
             this.CloseSound = (closeSound == null) ? null : AssetLocation.Create(closeSound, block.Code.Domain);
-
+            */
             if (api.Side == EnumAppSide.Client)
             {
                 this.distanceRenderer = new DistanceRenderer(this);

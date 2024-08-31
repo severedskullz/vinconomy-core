@@ -101,6 +101,7 @@
     ],
     "textures": {
         "default": { "base": "game:block/wood/planks/oak1" },
+        "rusty-iron": { "base":"game:block/metal/tarnished/rusty-iron"},
 
         "acacia": { "base": "game:block/wood/planks/acacia1" },
         "baldcypress": { "base": "game:block/wood/planks/baldcypress1" },
@@ -193,19 +194,19 @@
 
     "shapeByType": {
         "*-north": {
-            "base": "game:block/wood/toolrack",
+            "base": "block/toolrack",
             "rotateY": 180
         },
         "*-east": {
-            "base": "game:block/wood/toolrack",
+            "base": "block/toolrack",
             "rotateY": 90
         },
         "*-west": {
-            "base": "game:block/wood/toolrack",
+            "base": "block/toolrack",
             "rotateY": 270
         },
         "*-south": {
-            "base": "game:block/wood/toolrack",
+            "base": "block/toolrack",
             "rotateY": 0
         }
     },

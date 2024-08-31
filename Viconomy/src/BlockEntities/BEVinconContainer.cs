@@ -239,8 +239,8 @@ namespace Viconomy.BlockEntities
                 this.invDialog = new GuiViconStallOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
             else
                 this.invDialog = new GuiDialogViconStallCustomer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
-            this.invDialog.OpenSound = this.OpenSound;
-            this.invDialog.CloseSound = this.CloseSound;
+            //this.invDialog.OpenSound = this.OpenSound;
+            //this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();
             this.invDialog.OnClosed += delegate ()
             {

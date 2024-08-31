@@ -304,8 +304,8 @@ namespace Viconomy.BlockEntities
                 this.invDialog = new GuiViconSculpturePadOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
             else
                 this.invDialog = new GuiViconSculpturePadOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
-            this.invDialog.OpenSound = this.OpenSound;
-            this.invDialog.CloseSound = this.CloseSound;
+            //this.invDialog.OpenSound = this.OpenSound;
+            //this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();
             this.invDialog.OnClosed += delegate ()
             {

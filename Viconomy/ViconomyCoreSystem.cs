@@ -19,7 +19,6 @@ using Viconomy.Trading;
 using Vintagestory.GameContent;
 using Viconomy.Map;
 using Vintagestory.API.Datastructures;
-using Viconomy.BlockEntities.Legacy;
 
 namespace Viconomy
 {
@@ -76,6 +75,7 @@ namespace Viconomy
             api.RegisterBlockEntityClass("BEVinconGachaLoader", typeof(BEVinconGachaLoader));
             api.RegisterBlockEntityClass("BEVinconJobboard", typeof(BEVinconJobboard));
 
+            
             //2.10 Legacy Block Entity
             api.RegisterBlockClass("ViconContainer", typeof(BlockVContainer));
             api.RegisterBlockClass("ViconRegister", typeof(BlockVRegister));
@@ -87,7 +87,6 @@ namespace Viconomy
             api.RegisterBlockClass("ViconGachaLoader", typeof(BlockVGachaLoader));
 
             // 2.10 Legacy Block Entity Mappings
-            api.RegisterBlockEntityClass("BEViconStall", typeof(BEViconStallLegacy));
             api.RegisterBlockEntityClass("BEViconShelf", typeof(BEVinconShelf));
             api.RegisterBlockEntityClass("BEViconHelmetStand", typeof(BEVinconHelmetStand));
             api.RegisterBlockEntityClass("BEViconArmorStand", typeof(BEVinconArmorStand));
@@ -100,6 +99,7 @@ namespace Viconomy
             api.RegisterBlockEntityClass("BEViconGacha", typeof(BEVinconGacha));
             api.RegisterBlockEntityClass("BEViconGachaLoader", typeof(BEVinconGachaLoader));
             api.RegisterBlockEntityClass("BEViconJobboard", typeof(BEVinconJobboard));
+            
 
             //Item Types
             api.RegisterItemClass("ViconLedger", typeof(ItemLedger));
@@ -313,7 +313,7 @@ namespace Viconomy
             return TextCommandResult.Success("Set owner to " + playerData.LastKnownPlayername + " for " +pos.ToString());
         }
 
-        private void RegisterCustomIcon(String key)
+        private void RegisterCustomIcon(string key)
         {
             _coreClientAPI.Gui.Icons.CustomIcons["vicon-"+key] = delegate (Context ctx, int x, int y, float w, float h, double[] rgba)
            {
@@ -690,5 +690,6 @@ namespace Viconomy
 
         #endregion
 
+        // qi3XDOL0KEE7YFKUN5VTH+Mm
     }
 }

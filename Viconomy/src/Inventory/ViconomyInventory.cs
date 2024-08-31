@@ -164,25 +164,8 @@ namespace Viconomy.Inventory
             return StallSlots[stallSlot].slots;
         }
 
-        private void LegacyFromTreeAttributes(ITreeAttribute tree)
-        {
-            ItemSlot[] slots = this.SlotsFromTreeAttributes(tree);
-            for (int i = 0; i < slots.Length; i++)
-            {
-                if (slots[i].Itemstack != null)
-                this[i + 1].Itemstack = slots[i].Itemstack;
-            }
-        }
-
         public override void FromTreeAttributes(ITreeAttribute tree)
         {
-            if (tree.HasAttribute("qslots"))
-            {
-                LegacyFromTreeAttributes(tree);
-                return;
-            } 
-
-
             for (int i = 0; i < NumStalls; i++)
             {
                 StallSlot stall = StallSlots[i];

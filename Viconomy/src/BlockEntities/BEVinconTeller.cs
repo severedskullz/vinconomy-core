@@ -32,10 +32,7 @@ namespace Viconomy.BlockEntities
 
         public override void Initialize(ICoreAPI api)
         {
-            this.block = (BlockVTeller) api.World.BlockAccessor.GetBlock(this.Pos);
-
-            base.Initialize(api);          
-                       
+            base.Initialize(api);
         }
 
         public void UpdateTeller(string Owner, string OwnerName)

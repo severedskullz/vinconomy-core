@@ -1,4 +1,5 @@
-﻿using Viconomy.BlockEntities;
+﻿using System;
+using Viconomy.BlockEntities;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
@@ -19,24 +20,30 @@ namespace Viconomy.Renderer
         public MeshData createMesh(BEVinconBase stall, ItemStack stack, int index)
         {
             ICoreClientAPI coreClientAPI = (ICoreClientAPI)stall.Api;
-
-            IContainedMeshSource containedMeshSource = stack.Collectible as IContainedMeshSource;
-            if (containedMeshSource != null)
+            try
             {
-                MeshData modeldata = containedMeshSource.GenMesh(stack, coreClientAPI.BlockTextureAtlas, stall.Pos);
-                if (modeldata != null)
+                IContainedMeshSource containedMeshSource = stack.Collectible as IContainedMeshSource;
+                if (containedMeshSource != null)
                 {
-                    return modeldata;
+                    MeshData modeldata = containedMeshSource.GenMesh(stack, coreClientAPI.BlockTextureAtlas, stall.Pos);
+                    if (modeldata != null)
+                    {
+                        return modeldata;
+                    }
+
                 }
 
+                if (stack.Block is BlockGenericTypedContainer)
+                {
+                    BlockGenericTypedContainer container =  stack.Block as BlockGenericTypedContainer;
+                    string type = stack.Attributes.GetAsString("type");
+                    MeshData mesh =  container.GenMesh(coreClientAPI, type, stack.ItemAttributes["shape"][type].AsString());
+                    return mesh;
+                }
             }
-
-            if (stack.Block is BlockGenericTypedContainer)
+            catch (Exception e)
             {
-                BlockGenericTypedContainer container =  stack.Block as BlockGenericTypedContainer;
-                string type = stack.Attributes.GetAsString("type");
-                MeshData mesh =  container.GenMesh(coreClientAPI, type, stack.ItemAttributes["shape"][type].AsString());
-                return mesh;
+                Console.WriteLine(e.ToString());
             }
 
             return coreClientAPI.TesselatorManager.GetDefaultBlockMesh(stack.Block).Clone();
