@@ -105,14 +105,14 @@ namespace Viconomy.BlockEntities
 
             if (currency.Itemstack == null) {
                 //PrintClientMessage(player, "vinconomy:item-cost", new Object[] { currency.Itemstack.StackSize, currency.Itemstack.GetName() });
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRICE);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRICE);
                 return;
             } 
             
             // Does the shop have a register ID set?
             if (this.RegisterID == -1 && !this.IsAdminShop)
             {
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
             }
 
@@ -121,7 +121,7 @@ namespace Viconomy.BlockEntities
             BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
             if (register == null && !this.IsAdminShop)
             {
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
             }
 
@@ -129,7 +129,7 @@ namespace Viconomy.BlockEntities
 
             if (!CanSell())
             {
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRODUCT);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRODUCT);
                 return;
             }
 
@@ -228,7 +228,7 @@ namespace Viconomy.BlockEntities
             TradeResult result = TradingUtil.TryPurchaseItem(request);
             if (result.error != null)
             {
-                ViconomyCoreSystem.PrintClientMessage(player, result.error);
+                VinconomyCoreSystem.PrintClientMessage(player, result.error);
             }
             else
             {
@@ -457,7 +457,7 @@ namespace Viconomy.BlockEntities
         {
             if (byPlayer.PlayerUID != this.Owner)
             {
-                ViconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
+                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
                 return;
             }
 
@@ -737,7 +737,7 @@ namespace Viconomy.BlockEntities
         {
             if (player.PlayerUID != this.Owner)
             {
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.DOESNT_OWN, new object[] { });
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.DOESNT_OWN, new object[] { });
                 return;
             }
             GetSlotForGrid(x, y, z).isDisabled = disabled;
@@ -748,7 +748,7 @@ namespace Viconomy.BlockEntities
         {
             if (player.PlayerUID != this.Owner)
             {
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.DOESNT_OWN, new object[] { });
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.DOESNT_OWN, new object[] { });
                 return;
             }
             sculptureName = name;

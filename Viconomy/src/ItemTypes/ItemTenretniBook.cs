@@ -21,7 +21,7 @@ namespace Viconomy.ItemTypes
                ITreeAttribute attrs = slot.Itemstack.Attributes;
                 if (attrs.GetString("Archive") != null)
                 {
-                    ViconomyCoreSystem modSystem = api.ModLoader.GetModSystem<ViconomyCoreSystem>();
+                    VinconomyCoreSystem modSystem = api.ModLoader.GetModSystem<VinconomyCoreSystem>();
 
                     string baseUrl = attrs.GetString("BaseURL");
                     string ID = attrs.GetString("ID");

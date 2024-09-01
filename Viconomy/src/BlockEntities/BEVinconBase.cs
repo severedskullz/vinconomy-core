@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Viconomy.BlockEntities.TextureSwappable;
+using Viconomy.Inventory;
 using Viconomy.src.Renderer;
 using Viconomy.Trading;
 using Vintagestory.API.Common;
@@ -9,7 +10,7 @@ namespace Viconomy.BlockEntities
 {
     public abstract class BEVinconBase : BETextureSwappableBlockDisplay, IOwnableStall
     {
-        protected ViconomyCoreSystem modSystem;
+        protected VinconomyCoreSystem modSystem;
         
         public string Owner { get; protected set; }
         public string OwnerName { get; protected set; }
@@ -31,9 +32,14 @@ namespace Viconomy.BlockEntities
 
         public override void Initialize(ICoreAPI api)
         {
-            modSystem = api.ModLoader.GetModSystem<ViconomyCoreSystem>();
+            modSystem = api.ModLoader.GetModSystem<VinconomyCoreSystem>();
             this.block = api.World.BlockAccessor.GetBlock(this.Pos);
             base.Initialize(api);
+
+            if (Inventory is IStallSlotUpdater && api.Side == EnumAppSide.Server)
+            {
+                Inventory.SlotModified += UpdateStallForSlot;
+            }
 
             /*
             JsonObject attributes = block.Attributes;
@@ -58,6 +64,39 @@ namespace Viconomy.BlockEntities
             }
         }
 
+        protected virtual void UpdateStallForSlot(int index)
+        {
+            IStallSlotUpdater inv = (Inventory as  IStallSlotUpdater);
+            if (inv != null)
+            {
+                modSystem.Mod.Logger.Debug("Got a product slot update for slot: " + index);
+                int stallSlot = inv.GetStallForSlot(index);
+                ItemSlot[] slots = inv.GetSlotsForStallSlot(stallSlot);
+
+                ItemStack product = null;
+                foreach (var item in slots)
+                {
+                    if (item.Itemstack != null)
+                    {
+                        if (product == null)
+                        {
+                            product = item.Itemstack.Clone();
+                        } else
+                        {
+                            product.StackSize += item.StackSize;
+                        }
+
+                    }
+                }
+
+                ItemStack currency = inv.GetCurrencyForStallSlot(stallSlot).Itemstack;
+                modSystem.UpdateStallProductForStall(this.RegisterID, this.Pos, stallSlot,  product, GetNumItemsPerPurchaseForStall(stallSlot), currency);
+
+            }
+           
+
+        }
+
         public void SetOwner(IPlayer player)
         {
             Owner = player.PlayerUID;
@@ -72,6 +111,20 @@ namespace Viconomy.BlockEntities
         public void SetRegisterID(int registerID)
         {
             RegisterID = registerID;
+
+            IStallSlotUpdater inv = Inventory as IStallSlotUpdater;
+            if (inv != null && Api.Side == EnumAppSide.Server)
+            {
+                int slots = inv.GetStallSlotCount();
+                for (int i = 0; i < slots; i++)
+                {
+                    int index = Inventory.GetSlotId(inv.GetCurrencyForStallSlot(i));
+                    if (index >= 0)
+                    {
+                        UpdateStallForSlot(index);
+                    }
+                }
+            }
         }
 
         public void SetIsAdminShop(bool adminShop)
@@ -99,7 +152,7 @@ namespace Viconomy.BlockEntities
             TradeResult result = TradingUtil.TryPurchaseItem(request);
             if (result.error != null)
             {
-                ViconomyCoreSystem.PrintClientMessage(player, result.error);
+                VinconomyCoreSystem.PrintClientMessage(player, result.error);
             }
             else
             {
@@ -127,13 +180,13 @@ namespace Viconomy.BlockEntities
         {
             if (byPlayer.PlayerUID != this.Owner)
             {
-                ViconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
+                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
                 return;
             }
 
             if (!byPlayer.HasPrivilege("gamemode"))
             {
-                ViconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.NO_PRIVLEGE, new object[] { });
+                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.NO_PRIVLEGE, new object[] { });
                 return;
             }
 
@@ -166,7 +219,7 @@ namespace Viconomy.BlockEntities
         {
             if (byPlayer.PlayerUID != this.Owner)
             {
-                ViconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
+                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
                 return;
             }
 
@@ -174,7 +227,7 @@ namespace Viconomy.BlockEntities
             {
                 BinaryReader reader = new BinaryReader(ms);
                 int ID = reader.ReadInt32();
-                RegisterID = ID;
+                SetRegisterID(ID);
             }
 
             //PrintClientMessage(byPlayer, "set ID to " + this.RegisterID);

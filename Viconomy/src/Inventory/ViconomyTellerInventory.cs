@@ -11,7 +11,7 @@ namespace Viconomy.Inventory
     public class ViconomyTellerInventory : InventoryBase, ISlotProvider
     {
         BEVinconTeller stall;
-        ViconomyCoreSystem modSystem;
+        VinconomyCoreSystem modSystem;
         private ItemSlot[] slots;
 
         public override int Count { get { return this.slots.Length; } }
@@ -40,7 +40,7 @@ namespace Viconomy.Inventory
         public override void LateInitialize(string inventoryID, ICoreAPI api)
         {
             base.LateInitialize(inventoryID, api);
-            modSystem = Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
+            modSystem = Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
             
         }
 

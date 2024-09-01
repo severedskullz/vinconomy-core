@@ -198,7 +198,7 @@ namespace Viconomy.BlockEntities
         {
 
             if (Inventory[GACHA_SLOT].StackSize <= 0) {
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_GACHA_BALL, null);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_GACHA_BALL, null);
                 return;
             }
 
@@ -222,7 +222,7 @@ namespace Viconomy.BlockEntities
                 //Stack size MUST be 0 if we want to ignore. This is to prevent players from using up all stock in 1 click, and miss inserting items in the next.
                 if (stackSize < this.ItemsPerSlot[i])
                 {
-                    ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_ENOUGH_STOCK, null);
+                    VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_ENOUGH_STOCK, null);
                     return;
                 }
 
@@ -240,14 +240,14 @@ namespace Viconomy.BlockEntities
 
             if (!bundlesAlteastOneItem)
             {
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.GACHA_ATLEAST_ONE, null);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.GACHA_ATLEAST_ONE, null);
                 return;
             }
 
 
             if (Inventory[GACHA_SLOT].StackSize <= 0)
             {
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.GACHA_BUNDLED_ZERO, null);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.GACHA_BUNDLED_ZERO, null);
                 return;
             }
 

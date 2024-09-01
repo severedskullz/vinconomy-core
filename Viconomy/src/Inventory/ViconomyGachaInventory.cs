@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Viconomy.BlockEntities;
 using Viconomy.Filters;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -9,10 +8,8 @@ using Vintagestory.API.Util;
 
 namespace Viconomy.Inventory
 {
-    public class ViconomyGachaInventory : InventoryBase, ISlotProvider
+    public class ViconomyGachaInventory : InventoryBase, ISlotProvider, IStallSlotUpdater
     {
-        BEVinconGacha stall;
-
         private ItemSlot[] slots;
 
         public ItemSlot[] Slots => slots;
@@ -193,6 +190,31 @@ namespace Viconomy.Inventory
                 total += slots[i].StackSize;
             }
             return total;
+        }
+
+        public int GetStallForSlot(int index)
+        {
+            return index - 1;
+        }
+
+        public int GetItemSlotForStall(int index)
+        {
+            return index - 1;
+        }
+
+        public int GetStallSlotCount()
+        {
+            return slots.Length - 1;
+        }
+
+        public ItemSlot GetCurrencyForStallSlot(int stallSlot)
+        {
+            return slots[0]; // Always return the currency slot for all "Stalls"
+        }
+
+        public ItemSlot[] GetSlotsForStallSlot(int stallSlot)
+        {
+            return new ItemSlot[] { slots[stallSlot + 1] }; // Skip currency slot, so add 1.
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Viconomy.GUI
 {
     public class GuiViconLedger : GuiDialogGeneric
     {
-        ViconomyLedgerSystem modSystem;
+        VinconomyLedgerSystem modSystem;
         private GuiElementRichtext textElem;
         private GuiElementNumberInput monthElem;
         private GuiElementNumberInput yearElem;
@@ -27,7 +27,7 @@ namespace Viconomy.GUI
             : base(DialogTitle, capi)
         {
             shopId = shopID;
-            modSystem = capi.ModLoader.GetModSystem<ViconomyLedgerSystem>();
+            modSystem = capi.ModLoader.GetModSystem<VinconomyLedgerSystem>();
             modSystem.OnLedgerData += ModSystem_OnLedgerData;
             this.OnClosed += GuiViconLedger_OnClosed;
             Compose();

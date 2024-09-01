@@ -16,7 +16,7 @@ namespace Viconomy.Map
 {
     public class ShopMapLayer : MapLayer
     {
-        private ViconomyCoreSystem core;
+        private VinconomyCoreSystem core;
         private List<MapComponent> wayPointComponents = new List<MapComponent>();
         public MeshRef quadModel;
         public Dictionary<string, LoadedTexture> texturesByIcon;
@@ -65,7 +65,7 @@ namespace Viconomy.Map
 
         public ShopMapLayer(ICoreAPI api, IWorldMapManager mapSink) : base(api, mapSink)
         {
-            core = api.ModLoader.GetModSystem<ViconomyCoreSystem>();
+            core = api.ModLoader.GetModSystem<VinconomyCoreSystem>();
             if (api.Side == EnumAppSide.Client)
             {
                 core.ShopMapLayer = this;

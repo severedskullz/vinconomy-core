@@ -8,7 +8,7 @@ using Vintagestory.API.MathTools;
 
 namespace Viconomy.Inventory
 {
-    public class ViconomySculptureInventory : InventoryBase, ISlotProvider
+    public class ViconomySculptureInventory : InventoryBase, ISlotProvider, IStallSlotUpdater
     {
         BEVinconBase stall;
 
@@ -20,7 +20,7 @@ namespace Viconomy.Inventory
 
         public override ItemSlot this[int slotId] { get => slots[slotId]; set => slots[slotId] = value; }
 
-        ViconomyCoreSystem modSystem;
+        VinconomyCoreSystem modSystem;
 
         public ViconomySculptureInventory(int numSlots, string inventoryID, ICoreAPI api) : base(inventoryID, api)
         {
@@ -36,7 +36,7 @@ namespace Viconomy.Inventory
         public override void LateInitialize(string inventoryID, ICoreAPI api)
         {
             base.LateInitialize(inventoryID, api);
-            modSystem = Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
+            modSystem = Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
         }
 
         protected override ItemSlot NewSlot(int id)
@@ -97,6 +97,31 @@ namespace Viconomy.Inventory
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.SlotsToTreeAttributes(this.slots, tree);
+        }
+
+        public int GetStallForSlot(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetItemSlotForStall(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetStallSlotCount()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ItemSlot GetCurrencyForStallSlot(int stallSlot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ItemSlot[] GetSlotsForStallSlot(int stallSlot)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Viconomy
 {
     using RayTraceResults = Tuple<BlockSelection, EntitySelection>;
 
-    public class ViconomyCoreSystem : ModSystem
+    public class VinconomyCoreSystem : ModSystem
     {
         //Client Variables
         private ICoreClientAPI _coreClientAPI;
@@ -570,7 +570,22 @@ namespace Viconomy
         /// </summary>
         public void PurchasedItem(TradeResult result, ItemStack product, ItemStack payment)
         {
-            OnPurchasedItem?.Invoke(result, product, payment);
+            if (OnPurchasedItem != null)
+            {
+                Delegate[] delegates = OnPurchasedItem.GetInvocationList();
+                foreach (Delegate delegator in delegates)
+                {
+                    try
+                    {
+                        ((OnPurchasedItemDelegate)delegator).Invoke(result, product, payment);
+                    }
+                    catch (Exception e)
+                    {
+                        this.Mod.Logger.Error(e);
+                    }
+                }
+            }
+
             DB.SavePurchase(result);
         }
         public event OnPurchasedItemDelegate OnPurchasedItem;
@@ -619,6 +634,7 @@ namespace Viconomy
         }
         public event TryPlaceBlockDelegate OnTryPlaceBlock;
 
+        //TODO: Multicast support
         public bool BlockBroken(AssetLocation code, IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier)
         {
             bool result = true;
@@ -637,6 +653,7 @@ namespace Viconomy
         }
         public event OnBlockBrokenDelegate OnBlockBroken;
 
+        //TODO: Multicast support
         public void BlockPlaced(AssetLocation code, IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack)
         {
             OnBlockPlaced?.Invoke(code, world, blockPos, byItemStack);
@@ -686,6 +703,16 @@ namespace Viconomy
                     return EnumWorldAccessResponse.Granted;
             }
             return response;
+        }
+
+        internal void UpdateStallProductForStall(int shopId, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
+        {
+            if (shopId <= 0 || product == null || currency == null) {
+                DB.DeleteShopProduct(pos,stallSlot);
+            } else
+            {
+                DB.UpdateShopProduct(shopId,pos,stallSlot,product,numItemsPerPurchase,currency);
+            }
         }
 
         #endregion

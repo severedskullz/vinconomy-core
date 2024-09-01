@@ -40,7 +40,7 @@ namespace Viconomy.ItemTypes
                         ledgerGUI = null;
                     }
                     */
-                    ViconomyLedgerSystem modSys = api.ModLoader.GetModSystem<ViconomyLedgerSystem>();
+                    VinconomyLedgerSystem modSys = api.ModLoader.GetModSystem<VinconomyLedgerSystem>();
                     modSys.RequestToReadLedgerData(shopID);
                 } else {
                     ((ICoreClientAPI)this.api).ShowChatMessage(Lang.Get("vinconomy:ledger-not-set"));

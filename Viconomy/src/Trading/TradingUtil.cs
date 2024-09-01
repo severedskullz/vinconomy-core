@@ -80,14 +80,14 @@ namespace Viconomy.Trading
             purchaseResult.purchasedItems = productStackClone;
             purchaseResult.purchasedCurrencyUsed = paymentStackClone;
 
-            ViconomyCoreSystem core = purchaseResult.coreApi.ModLoader.GetModSystem<ViconomyCoreSystem>();
-            core.PurchasedItem(purchaseResult, productStackClone, paymentStack);
+            VinconomyCoreSystem core = purchaseResult.coreApi.ModLoader.GetModSystem<VinconomyCoreSystem>();
+            core.PurchasedItem(purchaseResult, productStackClone, paymentStackClone);
 
             // Give the product to the player
             GivePlayerProduct(purchaseResult, soldItems);
 
             //Tell the player they purchased items
-            ViconomyCoreSystem.PrintClientMessage(purchaseResult.customer, TradingConstants.PURCHASED_ITEMS, new object[] { 
+            VinconomyCoreSystem.PrintClientMessage(purchaseResult.customer, TradingConstants.PURCHASED_ITEMS, new object[] { 
                 productStackClone.StackSize, 
                 productStackClone.GetName(),
                 paymentStackClone.StackSize,

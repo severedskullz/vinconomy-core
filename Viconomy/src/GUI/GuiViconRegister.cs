@@ -17,7 +17,7 @@ namespace Viconomy.GUI
         {
             name = DialogTitle;
 
-            ViconomyCoreSystem modSystem = capi.ModLoader.GetModSystem<ViconomyCoreSystem>();
+            VinconomyCoreSystem modSystem = capi.ModLoader.GetModSystem<VinconomyCoreSystem>();
             //stall = capi.World.BlockAccessor.GetBlockEntity<BEVRegister>(BlockEntityPosition); 
             if (base.IsDuplicate)
             {

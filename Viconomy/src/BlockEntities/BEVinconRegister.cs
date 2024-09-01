@@ -19,7 +19,7 @@ namespace Viconomy.BlockEntities
         private InventoryGeneric inventory;
         private GuiViconRegister invDialog;
         private GuiViconWaypoint waypointDialogue;
-        private ViconomyCoreSystem modSystem;
+        private VinconomyCoreSystem modSystem;
 
         public int ID { get; internal set; } = -1;
         public string Owner { get; internal set; }
@@ -39,7 +39,7 @@ namespace Viconomy.BlockEntities
             base.Initialize(api);
 
             //block = (BlockVRegister)api.World.BlockAccessor.GetBlock(this.Pos);
-            modSystem = Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
+            modSystem = Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
 
 
         }
@@ -159,7 +159,7 @@ namespace Viconomy.BlockEntities
                             handSlot.Itemstack.Attributes.SetInt("ShopId", ID);
                             handSlot.Itemstack.Attributes.SetString("Owner", Owner);
                             handSlot.MarkDirty();
-                            ViconomyCoreSystem modSystem = Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
+                            VinconomyCoreSystem modSystem = Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
                             ShopRegistration shop = modSystem.GetRegistry().GetShop(ID);
                             player.SendMessage(0, Lang.Get("vinconomy:ledger-set", new object[] { shop.Name }), EnumChatType.OwnMessage);
                         }
@@ -285,7 +285,7 @@ namespace Viconomy.BlockEntities
                         {
                             if (!((ICoreServerAPI)Api).Server.IsDedicated)
                             {
-                                ViconomyCoreSystem.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
+                                VinconomyCoreSystem.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
                             }
                             else
                             {

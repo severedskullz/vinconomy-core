@@ -11,7 +11,7 @@ namespace Viconomy
 {
 
 
-    public class ViconomyLedgerSystem : ModSystem
+    public class VinconomyLedgerSystem : ModSystem
     {
         private ICoreClientAPI capi;
 
@@ -22,7 +22,7 @@ namespace Viconomy
         private IServerNetworkChannel _serverChannel;
 
         //Shared Variables
-        private ViconomyCoreSystem core;
+        private VinconomyCoreSystem core;
         private GuiViconLedger ledgerGUI;
 
         public override double ExecuteOrder() => 1.1;
@@ -31,7 +31,7 @@ namespace Viconomy
         // Useful for registering block/entity classes on both sides
         public override void Start(ICoreAPI api)
         {
-            core = api.ModLoader.GetModSystem<ViconomyCoreSystem>();
+            core = api.ModLoader.GetModSystem<VinconomyCoreSystem>();
         }
 
 

@@ -29,7 +29,7 @@ namespace Viconomy.GUI
             api = capi;
             teller = capi.World.BlockAccessor.GetBlockEntity<BEVinconTeller>(BlockEntityPosition);
             this.isOwner = isOwner;
-            ViconomyCoreSystem modSystem = capi.ModLoader.GetModSystem<ViconomyCoreSystem>();
+            VinconomyCoreSystem modSystem = capi.ModLoader.GetModSystem<VinconomyCoreSystem>();
             ShopRegistration[] allRegisters = modSystem.GetRegistry().GetShopsForOwner(teller.Owner);
             List<ShopRegistration> filteredRegisters = new List<ShopRegistration>();
             foreach (ShopRegistration register in allRegisters)

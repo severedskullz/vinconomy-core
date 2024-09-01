@@ -33,7 +33,7 @@ namespace Viconomy.GUI
             api = capi;
             stall = capi.World.BlockAccessor.GetBlockEntity<BEVinconContainer>(BlockEntityPosition);
             curTab = stallSelection;
-            ViconomyCoreSystem modSystem = capi.ModLoader.GetModSystem<ViconomyCoreSystem>();
+            VinconomyCoreSystem modSystem = capi.ModLoader.GetModSystem<VinconomyCoreSystem>();
             ShopRegistration[] allRegisters = modSystem.GetRegistry().GetShopsForOwner(stall.Owner);
             List<ShopRegistration> filteredRegisters = new List<ShopRegistration>();
             foreach (ShopRegistration register in allRegisters)

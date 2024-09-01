@@ -8,6 +8,8 @@ using Viconomy.Trading;
 using Viconomy.Network;
 using System.Collections.Generic;
 using Microsoft.Win32;
+using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
 
 namespace Viconomy.Database
 {
@@ -39,12 +41,8 @@ namespace Viconomy.Database
                 cmd.CommandText = "CREATE TABLE IF NOT EXISTS Sales (ShopId INTEGER, Customer TEXT, Month INTEGER, Year INTEGER, ProductCode TEXT, ProductQuantity INTEGER, ProductAttributes TEXT, CurrencyCode TEXT, CurrencyQuantity INTEGER, CurrencyAttributes TEXT);";
                 cmd.ExecuteNonQuery();
 
-                cmd.CommandText = "CREATE TABLE IF NOT EXISTS Stalls (ShopId INTEGER, X INTEGER, Y INTEGER, Z INTEGER, StallSlot INTEGER, ProductCode TEXT, ProductQuantity INTEGER, ProductAttributes TEXT, CurrencyCode TEXT, CurrencyQuantity INTEGER, CurrencyAttributes TEXT);";
+                cmd.CommandText = "CREATE TABLE IF NOT EXISTS Products ( X INTEGER, Y INTEGER, Z INTEGER, StallSlot INTEGER, ShopId INTEGER, ProductName TEXT, ProductCode TEXT, ProductQuantity INTEGER, ProductAttributes TEXT, TotalStock INTEGER, CurrencyName TEXT, CurrencyCode TEXT, CurrencyQuantity INTEGER, CurrencyAttributes TEXT, PRIMARY KEY (X,Y,Z, StallSlot));";
                 cmd.ExecuteNonQuery();
-
-                //Introduced in 0.2.9
-                //cmd.CommandText = "ALTER TABLE Sales ADD COLUMN IF NOT EXISTS ProductName TEXT; ALTER TABLE Sales ADD COLUMN IF NOT EXISTS CurrencyName TEXT;";
-                //cmd.ExecuteNonQuery();
 
                 connection.Close();
             }
@@ -185,7 +183,7 @@ namespace Viconomy.Database
                     cmd.ExecuteNonQuery();
                 } else
                 {
-                    //throw new ArgumentOutOfRangeException("Somehow have more than 1 sale record for purchase");
+                    throw new ArgumentOutOfRangeException("Somehow have more than 1 sale record for purchase");
                 }
 
                 connection.Close();
@@ -317,6 +315,7 @@ namespace Viconomy.Database
             {
                 connection.Open();
                 SqliteCommand cmd = connection.CreateCommand();
+                cmd.Parameters.Add("@ID", SqliteType.Integer).Value = ID;
                 cmd.CommandText = "SELECT * FROM Shops WHERE ID = @ID";
 
                 SqliteDataReader reader = cmd.ExecuteReader();
@@ -345,6 +344,148 @@ namespace Viconomy.Database
                 }
             }
             return null;
+        }
+
+        public void UpdateShopProduct(int registerID, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
+        {
+            using (SqliteConnection connection = GetConnection())
+            { 
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+                
+                cmd.Parameters.Add("@ShopId", SqliteType.Integer).Value = registerID;
+                cmd.Parameters.Add("@ProductName", SqliteType.Text).Value = product.GetName();
+                cmd.Parameters.Add("@ProductCode", SqliteType.Text).Value = product.Collectible.Code.ToString();
+                cmd.Parameters.Add("@ProductQuantity", SqliteType.Integer).Value = numItemsPerPurchase;
+                cmd.Parameters.Add("@ProductAttributes", SqliteType.Text).Value = product.Attributes.ToJsonToken();
+                cmd.Parameters.Add("@TotalStock", SqliteType.Integer).Value = product.StackSize;
+                cmd.Parameters.Add("@CurrencyName", SqliteType.Text).Value = currency.GetName();
+                cmd.Parameters.Add("@CurrencyCode", SqliteType.Text).Value = currency.Collectible.Code.ToString();
+                cmd.Parameters.Add("@CurrencyQuantity", SqliteType.Integer).Value = currency.StackSize;
+                cmd.Parameters.Add("@CurrencyAttributes", SqliteType.Text).Value = currency.Attributes.ToJsonToken();
+
+                cmd.Parameters.Add("@StallSlot", SqliteType.Integer).Value = stallSlot;
+                cmd.Parameters.Add("@X", SqliteType.Integer).Value = pos.X;
+                cmd.Parameters.Add("@Y", SqliteType.Integer).Value = pos.Y;
+                cmd.Parameters.Add("@Z", SqliteType.Integer).Value = pos.Z;
+
+
+
+
+
+                cmd.CommandText = @"SELECT Count(*) FROM Products 
+                                    WHERE  X = @X
+                                        AND Y = @Y
+                                        AND Z = @Z
+                                        AND StallSlot = @StallSlot;";
+
+                int numRows = Convert.ToInt32(cmd.ExecuteScalar());
+                if (numRows == 1)
+                {
+                    cmd.CommandText = @"UPDATE Products SET 
+                            ShopId = @ShopId,
+                            ProductName = @ProductName,
+                            ProductCode = @ProductCode,
+                            ProductQuantity = @ProductQuantity,
+                            ProductAttributes = @ProductAttributes,
+                            TotalStock = @TotalStock,
+                            CurrencyName = @CurrencyName,
+                            CurrencyCode = @CurrencyCode,
+                            CurrencyQuantity = @CurrencyQuantity,
+                            CurrencyAttributes = @CurrencyAttributes
+                        WHERE 
+                            X = @X
+                            AND Y = @Y
+                            AND Z = @Z
+                            AND StallSlot = @StallSlot;";
+                    cmd.ExecuteNonQuery();
+                } else
+                {
+                    cmd.CommandText = @"INSERT INTO Products VALUES( 
+                            @X, @Y, @Z, @StallSlot, @ShopId, 
+                            @ProductName, @ProductCode, @ProductQuantity, @ProductAttributes, @TotalStock,
+                            @CurrencyName, @CurrencyCode, @CurrencyQuantity, @CurrencyAttributes)";
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteShopProduct(BlockPos pos, int stallSlot)
+        {
+            using (SqliteConnection connection = GetConnection())
+            {
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+
+                cmd.Parameters.Add("@StallSlot", SqliteType.Integer).Value = stallSlot;
+                cmd.Parameters.Add("@X", SqliteType.Integer).Value = pos.X;
+                cmd.Parameters.Add("@Y", SqliteType.Integer).Value = pos.Y;
+                cmd.Parameters.Add("@Z", SqliteType.Integer).Value = pos.Z;
+
+                cmd.CommandText = @"DELETE FROM Products WHERE StallSlot = @StallSlot AND X = @X AND Y = @Y AND Z = @Z";
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        Dictionary<int, ShopProductList> productListCache = new Dictionary<int, ShopProductList>();
+        private long EXPIRE_TIME_MILLIS = 1000 * 60 * 10;
+
+        //ShopId INTEGER,  -0
+        //X INTEGER,  -1
+        //Y INTEGER,  -2
+        //Z INTEGER,  -3
+        //StallSlot INTEGER,  -4
+        //ProductName TEXT,  -5
+        //ProductCode TEXT,  -6
+        //ProductQuantity INTEGER,  -7
+        //ProductAttributes TEXT,  -8
+        //TotalStock INTEGER,  -9
+        //CurrencyName TEXT,  -10
+        //CurrencyCode TEXT,  -11
+        //CurrencyQuantity INTEGER,  -12
+        //CurrencyAttributes TEXT  -13
+
+        public ShopProductList GetShopProducts(int ID)
+        {
+            if (productListCache.ContainsKey(ID))
+            {
+                ShopProductList listing =  productListCache[ID];
+                // If the expiration timer is in the fiture, then simply return the cached copy.
+                if (listing.ExpiresAt >= DateTime.UtcNow.Ticks)
+                {
+                    return listing;
+                }
+            }
+
+            ShopProductList products = new ShopProductList();
+            products.ExpiresAt = DateTime.UtcNow.Ticks + EXPIRE_TIME_MILLIS;
+            using (SqliteConnection connection = GetConnection())
+            {
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+                cmd.CommandText = "SELECT * FROM Stalls WHERE ID = @ID";
+
+                SqliteDataReader reader = cmd.ExecuteReader();
+
+                
+                while (reader.Read())
+                {
+                    ShopProduct product = new ShopProduct();
+                    product.ProductName = reader.GetString(5);
+                    product.ProductCode = reader.GetString(6);
+                    product.ProductQuantity = reader.GetInt32(7);
+                    product.ProductAttributes = reader.GetString(8);
+                    product.TotalStock = reader.GetInt32(9);
+                    product.CurrencyName = reader.GetString(10);
+                    product.CurrencyCode = reader.GetString(11);
+                    product.CurrencyAmount = reader.GetInt32(12);
+                    product.CurrencyAttributes = reader.GetString(13);
+                    products.Products.Add(product);
+                }
+                
+            }
+            productListCache.Add(ID, products);
+            return products;
         }
     }
 }

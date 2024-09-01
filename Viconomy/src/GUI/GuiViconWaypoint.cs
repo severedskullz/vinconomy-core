@@ -11,7 +11,7 @@ namespace Viconomy.src.GUI
 {
     public class GuiViconWaypoint : GuiDialogBlockEntity
     {
-        private ViconomyCoreSystem modsystem;
+        private VinconomyCoreSystem modsystem;
         private string[] icons;
         private int[] colors;
         private int ID;
@@ -22,7 +22,7 @@ namespace Viconomy.src.GUI
 
         public GuiViconWaypoint(string dialogTitle, BlockPos blockEntityPos, int id, ICoreClientAPI capi) : base(dialogTitle, blockEntityPos, capi)
         {
-            modsystem = capi.ModLoader.GetModSystem<ViconomyCoreSystem>();
+            modsystem = capi.ModLoader.GetModSystem<VinconomyCoreSystem>();
             icons = modsystem.ShopMapLayer.WaypointIcons.Keys.ToArray<string>();
             colors = modsystem.ShopMapLayer.WaypointColors.ToArray();
             ID = id;

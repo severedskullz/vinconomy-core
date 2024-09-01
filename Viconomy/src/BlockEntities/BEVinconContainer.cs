@@ -71,7 +71,7 @@ namespace Viconomy.BlockEntities
                     if (item != null)
                     {
                         ItemSlot handSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
-                        ItemSlot currency = this.inventory.GetCurrencyForSelection(slotIndex);
+                        ItemSlot currency = this.inventory.GetCurrencyForStallSlot(slotIndex);
                         if (currency != null && TradingUtil.isMatchingItem(currency.Itemstack, handSlot.Itemstack, byPlayer.Entity.World))
                         {
                             RequestPurchaseItem(slotIndex, ctrlMod ? BulkPurchaseAmount : 1);
@@ -123,27 +123,27 @@ namespace Viconomy.BlockEntities
 
             if (desiredAmount <= 0)
             {
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.PURCHASED_ZERO, null);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.PURCHASED_ZERO, null);
                 return;
             }
 
             //Console.WriteLine(Api.Side + ": We tried to purchase item!");
             //PrintClientMessage(player, Api.Side + ": We tried to purchase item!");
 
-            ItemSlot currency = this.inventory.GetCurrencyForSelection(stallSlot);
+            ItemSlot currency = this.inventory.GetCurrencyForStallSlot(stallSlot);
 
 
             if (currency.Itemstack == null)
             {
                 //PrintClientMessage(player, "vinconomy:item-cost", new Object[] { currency.Itemstack.StackSize, currency.Itemstack.GetName() });
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRICE, null);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRICE, null);
                 return;
             }
 
             // Does the shop have a register ID set?
             if (this.RegisterID == -1 && !this.IsAdminShop)
             {
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
             }
 
@@ -152,11 +152,11 @@ namespace Viconomy.BlockEntities
             BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
             if (register == null && !this.IsAdminShop)
             {
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.COULDNT_GET_REGISTER);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.COULDNT_GET_REGISTER);
                 return;
             }
 
-            ItemSlot[] stockSlots = this.inventory.GetSlotsForSelection(stallSlot);
+            ItemSlot[] stockSlots = this.inventory.GetSlotsForStallSlot(stallSlot);
             ItemSlot purchaseSlot = null;
 
             //Find the first slot available that we can purchase from
@@ -171,7 +171,7 @@ namespace Viconomy.BlockEntities
             if (purchaseSlot == null)
             {
                 //Console.WriteLine(Api.Side + ": Not enough stock to purchase item");
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRODUCT);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRODUCT);
                 return;
             }
 
@@ -357,7 +357,7 @@ namespace Viconomy.BlockEntities
         {
             if (byPlayer.PlayerUID != this.Owner)
             {
-                ViconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
+                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
                 return;
             }
 
@@ -374,7 +374,7 @@ namespace Viconomy.BlockEntities
         {
             if (byPlayer.PlayerUID != this.Owner)
             {
-                ViconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
+                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
                 return;
             }
 
@@ -538,7 +538,7 @@ namespace Viconomy.BlockEntities
             }
 
             int stallSlot = blockSel.SelectionBoxIndex;
-            ItemSlot[] slots = this.inventory.GetSlotsForSelection(stallSlot);
+            ItemSlot[] slots = this.inventory.GetSlotsForStallSlot(stallSlot);
             int amountItem = bulk ? slot.Itemstack.StackSize : 1;
             bool movedItems = false;
 

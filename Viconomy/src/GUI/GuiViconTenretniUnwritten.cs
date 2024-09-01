@@ -15,7 +15,7 @@ namespace Viconomy.GUI
         private ElementBounds clipBounds;
         private GuiElementRichtext textElem;
         CairoFont font;
-        private ViconomyCoreSystem modSystem;
+        private VinconomyCoreSystem modSystem;
         private string BookText;
         private int endpointSelectionIndex;
         private Task task;
@@ -23,7 +23,7 @@ namespace Viconomy.GUI
 
         public GuiViconTenretniUnwritten(string DialogTitle, ICoreClientAPI capi) : base(DialogTitle, capi)
         {
-            modSystem = capi.ModLoader.GetModSystem<ViconomyCoreSystem>();
+            modSystem = capi.ModLoader.GetModSystem<VinconomyCoreSystem>();
             //this.OnClosed += GuiViconLedger_OnClosed;
             BookText = string.Empty;
             Compose();

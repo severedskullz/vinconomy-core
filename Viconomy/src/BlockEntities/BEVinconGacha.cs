@@ -90,14 +90,14 @@ namespace Viconomy.BlockEntities
             ItemSlot currency = this.inventory.GetCurrency();
             if (currency.Itemstack == null) {
                 //PrintClientMessage(player, "vinconomy:item-cost", new Object[] { currency.Itemstack.StackSize, currency.Itemstack.GetName() });
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRICE, null);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRICE, null);
                 return;
             } 
             
             // Does the shop have a register ID set?
             if (this.RegisterID == -1 && !this.IsAdminShop)
             {
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
             }
 
@@ -106,7 +106,7 @@ namespace Viconomy.BlockEntities
             BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
             if (register == null && !this.IsAdminShop)
             {
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.COULDNT_GET_REGISTER);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.COULDNT_GET_REGISTER);
                 return;
             }
 
@@ -114,7 +114,7 @@ namespace Viconomy.BlockEntities
             if (stockSlot == null)
             {
                 //Console.WriteLine(Api.Side + ": Not enough stock to purchase item");
-                ViconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRODUCT);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRODUCT);
                 return;
             }
 

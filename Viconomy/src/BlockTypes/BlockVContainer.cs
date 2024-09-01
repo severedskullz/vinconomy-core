@@ -141,7 +141,7 @@ namespace Viconomy.BlockTypes
 
         public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)
         {
-            ViconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
+            VinconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
             if (modSystem != null)
             {
                 modSystem.BlockPlaced(this.Code, world, blockPos, byItemStack);
@@ -151,7 +151,7 @@ namespace Viconomy.BlockTypes
 
         public override bool TryPlaceBlock(IWorldAccessor world, IPlayer byPlayer, ItemStack itemstack, BlockSelection blockSel, ref string failureCode)
         {
-            ViconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
+            VinconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
             if (modSystem != null && !modSystem.TryPlaceBlock(world, byPlayer, itemstack, blockSel))
             {
                 failureCode = "__ignore__";
@@ -185,7 +185,7 @@ namespace Viconomy.BlockTypes
             BEVinconBase vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEVinconBase;
             if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID || byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative)
             {
-                ViconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<ViconomyCoreSystem>();
+                VinconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
                 if (modSystem != null && !modSystem.BlockBroken(this.Code, world, pos, byPlayer, dropQuantityMultiplier))
                 {
                     return;

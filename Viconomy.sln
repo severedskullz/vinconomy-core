@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CakeBuild", "CakeBuild\Cake
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Viconomy", "Viconomy\Viconomy.csproj", "{79CEF1A0-09EF-4F08-8AD9-1ABD1C5B8A42}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACulinaryArtillery", "..\..\ACA\ACulinaryArtillery---.NET7\ACulinaryArtillery.csproj", "{E48C4234-2CBB-4056-85F8-8571F39DBA7A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{79CEF1A0-09EF-4F08-8AD9-1ABD1C5B8A42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79CEF1A0-09EF-4F08-8AD9-1ABD1C5B8A42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79CEF1A0-09EF-4F08-8AD9-1ABD1C5B8A42}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E48C4234-2CBB-4056-85F8-8571F39DBA7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E48C4234-2CBB-4056-85F8-8571F39DBA7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E48C4234-2CBB-4056-85F8-8571F39DBA7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E48C4234-2CBB-4056-85F8-8571F39DBA7A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
