@@ -7,5 +7,7 @@ namespace Viconomy.Network
     {
         [ProtoMember(1)]
         public int ShopId { get; set; }
+        [ProtoMember(2)]
+        public bool IncludeShopList { get; set; }
     }
 }

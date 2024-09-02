@@ -490,7 +490,7 @@ namespace Viconomy.BlockEntities
             {
                 ItemStack stack = inventory.ChiselDecoSlot.Itemstack;
                 MeshData mesh = modSystem.GetRenderer(stack).createMesh(this, stack, 0);
-                mesh = mesh.Clone().Rotate(new Vec3f(0.5f, 0.5f, 0.5f), 0, (float)((this.block.Shape.rotateY * Math.PI) / 180), 0);
+                mesh = mesh.Clone().Rotate(new Vec3f(0.5f, 0.5f, 0.5f), 0, (float)((Block.Shape.rotateY * Math.PI) / 180), 0);
                 mesher.AddMeshData(mesh);
             }
         }
@@ -513,14 +513,14 @@ namespace Viconomy.BlockEntities
                         scale = .85f;
                     }
                 }
-                Cuboidf sb = block.SelectionBoxes[index];
+                Cuboidf sb = Block.SelectionBoxes[index];
                 float left = .25f - (scale / 2);
                 float right = left + .5f;
 
                 float x = (index % 2 == 0) ? left : right;
                 float y = sb.YSize <= .45f ? sb.MaxY - 0.37f + (.45f - sb.YSize) : sb.MaxY - 0.37f;
                 float z = (index / 2 == 0) ? left : right;
-                Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(this.block.Shape.rotateY).Translate(x, y, z).Translate(-0.5f, 0f, -0.5f).Scale(scale, scale, scale);
+                Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(Block.Shape.rotateY).Translate(x, y, z).Translate(-0.5f, 0f, -0.5f).Scale(scale, scale, scale);
                 tfMatrices[index] = matrix.Values;
             }
             return tfMatrices;

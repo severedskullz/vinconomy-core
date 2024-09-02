@@ -43,7 +43,7 @@ namespace Viconomy.BlockEntities
 
                 Matrixf wepLeft = new Matrixf()
                     .Translate(0.5f, 0.5f, 0.5f)
-                    .RotateYDeg(this.block.Shape.rotateY)
+                    .RotateYDeg(Block.Shape.rotateY)
                     .RotateXDeg(270)
                     .RotateYDeg(-45)
                     .Translate(0,0.35f-stupidOffset,0)
@@ -57,7 +57,7 @@ namespace Viconomy.BlockEntities
             if (shieldItem != null && shieldItem.Itemstack.ItemAttributes.KeyExists("toolrackTransform") || true)
             {
                 Matrixf shield = new Matrixf().Translate(0.5f, 0f, 0.5f)
-                    .RotateYDeg(this.block.Shape.rotateY)
+                    .RotateYDeg(Block.Shape.rotateY)
                     .Translate(0.325f, 0.45f,-0.10)
                     .Scale(0.8f, 0.8f, 0.8f)
                     .Translate(-0.5f, 0, -0.5f);
@@ -77,7 +77,7 @@ namespace Viconomy.BlockEntities
 
                 Matrixf wepRight = new Matrixf()
                     .Translate(0.5f, 0.5f, 0.5f)
-                    .RotateYDeg(this.block.Shape.rotateY)
+                    .RotateYDeg(Block.Shape.rotateY)
                     .RotateXDeg(-270)
                     .RotateYDeg(135)
                     .Translate(0, -0.425f- stupidOffset, 0)

@@ -19,7 +19,6 @@ using Viconomy.Trading;
 using Vintagestory.GameContent;
 using Viconomy.Map;
 using Vintagestory.API.Datastructures;
-using System.Numerics;
 using Viconomy.Util;
 using Viconomy.GUI;
 
@@ -248,6 +247,8 @@ namespace Viconomy
             OnTestAccess += AllowStallUse;
 
             api.ModLoader.GetModSystem<WorldMapManager>().RegisterMapLayer<ShopMapLayer>("vinconomyShop", 20);
+
+            api.RegisterLinkProtocol("viewmap", OnMapLinkClicked);
 
 
             // Ensure Pastebin is on the client whitelist for now, untill I get an actual client-sided whitelist implemented.
@@ -735,9 +736,12 @@ namespace Viconomy
 
             if (shop.IsWaypointBroadcasted)
             {
-                catalog.X = shop.X;
+                catalog.IsWaypointBroadcasted = true;
+                catalog.X = shop.X - _coreServerAPI.WorldManager.MapSizeX/2;
                 catalog.Y = shop.Y;
-                catalog.Z = shop.Z;
+                catalog.Z = shop.Z - _coreServerAPI.WorldManager.MapSizeZ/2;
+                catalog.WorldX = shop.X;
+                catalog.WorldZ = shop.Z;
             }
 
             catalog.Description = "I am a basic description!";
@@ -763,7 +767,9 @@ namespace Viconomy
                 {
                     response.ShopCatalog = RequestShopCatalog(reg, true);
                 }
-            } else
+            } 
+
+            if (shopId <= 0 || request.IncludeShopList)
             {
                 List<ShopRegistration> regs = ShopRegistry.GetAllShops();
                 response.ShopList = new List<ShopCatalog>();
@@ -780,16 +786,33 @@ namespace Viconomy
         {
             if (response.ShopCatalog != null)
             {
-                GuiVinconShopCatalog gui = new GuiVinconShopCatalog("TEST", response.ShopCatalog, _coreClientAPI);
+                GuiVinconShopCatalog gui = new GuiVinconShopCatalog("TEST", response.ShopCatalog, response.ShopList, _coreClientAPI);
                 gui.TryOpen();
             } else if (response.ShopList != null)
             {
-                GuiVinconShopCatalog gui = new GuiVinconShopCatalog("TEST", null, _coreClientAPI);
+                GuiVinconCatalog gui = new GuiVinconCatalog("TEST", response.ShopList, _coreClientAPI);
                 gui.TryOpen();
             } else
             {
 
             }
+        }
+
+        private void OnMapLinkClicked(LinkTextComponent component)
+        {
+
+            string[] array = component.Href.Substring("viewmap://".Length).Split('=');
+            int x = int.Parse(array[0]);
+            int y = int.Parse(array[1]);
+            int z = int.Parse(array[2]);
+            WorldMapManager mapMan = _coreClientAPI.ModLoader.GetModSystem<WorldMapManager>();
+            if (!mapMan.worldMapDlg.IsOpened())
+            {
+                mapMan.ToggleMap(EnumDialogType.Dialog);
+            }
+            mapMan.ToggleMap(EnumDialogType.Dialog);
+            // mapMan.worldMapDlg.TranslateWorldPosToViewPos();
+            (mapMan.worldMapDlg.SingleComposer.GetElement("mapElem") as GuiElementMap).CenterMapTo(new BlockPos(x, y, z, 1));
         }
     }
 }

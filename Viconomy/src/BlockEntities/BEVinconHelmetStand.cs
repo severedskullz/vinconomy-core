@@ -24,7 +24,7 @@ namespace Viconomy.BlockEntities
         protected override float[][] genTransformationMatrices()
         {
             float[][] tfMatrices = new float[1][];
-            Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(this.block.Shape.rotateY + 90).Translate(0, -1.1f, 0).Translate(-0.5f, 0f, -0.5f);
+            Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(Block.Shape.rotateY + 90).Translate(0, -1.1f, 0).Translate(-0.5f, 0f, -0.5f);
             tfMatrices[0] = matrix.Values;
             return tfMatrices;
         }

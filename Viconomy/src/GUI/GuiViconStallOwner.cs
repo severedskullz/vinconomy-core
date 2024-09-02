@@ -59,6 +59,8 @@ namespace Viconomy.GUI
 
             this.inv = new DummyInventory(capi);
             purchaseSlot = new ViconPurchaseSlot(inv, 0);
+            this.inv.TakeLocked = true;
+            this.inv.PutLocked = true;
             this.inv[0] = purchaseSlot;
 
             this.Compose();
@@ -193,7 +195,8 @@ namespace Viconomy.GUI
                     .AddItemSlotGrid(vinInv, new Action<object>(this.SetCurrencySlot), 1, new int[] { offset + stacksPerSlot }, currencySlotBounds, "currency")
 
                     .AddStaticText("Product:", CairoFont.WhiteSmallText(), purchaseLabel)
-                    .AddPassiveItemSlot(purchaseSlotBounds, inv, purchaseSlot, true)
+                    .AddItemSlotGrid(inv,null,1,purchaseSlotBounds)
+                    //.AddPassiveItemSlot(purchaseSlotBounds, inv, purchaseSlot, true)
 
                     .AddStaticText("Decoration Block:", CairoFont.WhiteSmallText(), chiselLabel )
                     .AddItemSlotGrid(vinInv, new Action<object>(this.SetCurrencySlot), 1, new int[] { 0 }, chiselSlotBounds, "chisel")

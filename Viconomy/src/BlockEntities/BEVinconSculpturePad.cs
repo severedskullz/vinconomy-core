@@ -638,7 +638,7 @@ namespace Viconomy.BlockEntities
                         Matrixf matrix = new Matrixf()
                             .Scale(scale, scale, scale)
                             .Translate(0.5/scale,0,0.5/scale)
-                            .RotateYDeg(this.block.Shape.rotateY)
+                            .RotateYDeg(Block.Shape.rotateY)
                             
                             .Translate(x+ offsetXZ, y+(0.0625f/ scale), z + offsetXZ)
                             .Translate(-0.5 / scale, 0, -0.5 / scale);

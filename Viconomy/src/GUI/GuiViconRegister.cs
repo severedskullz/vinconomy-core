@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using Viconomy.BlockEntities;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -12,8 +11,7 @@ namespace Viconomy.GUI
     {
         private string name;
 
-        public GuiViconRegister(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi)
-            : base(DialogTitle, Inventory, BlockEntityPosition, capi)
+        public GuiViconRegister(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi) : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
             name = DialogTitle;
 

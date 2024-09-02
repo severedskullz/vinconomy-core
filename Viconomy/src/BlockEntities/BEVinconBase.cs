@@ -26,14 +26,13 @@ namespace Viconomy.BlockEntities
         public bool shouldRenderInventory;
         protected DistanceRenderer distanceRenderer;
 
-        protected Block block;
         //protected AssetLocation OpenSound;
         //protected AssetLocation CloseSound;
 
         public override void Initialize(ICoreAPI api)
         {
             modSystem = api.ModLoader.GetModSystem<VinconomyCoreSystem>();
-            this.block = api.World.BlockAccessor.GetBlock(this.Pos);
+            //this.block = api.World.BlockAccessor.GetBlock(this.Pos);
             base.Initialize(api);
 
             if (Inventory is IStallSlotUpdater && api.Side == EnumAppSide.Server)

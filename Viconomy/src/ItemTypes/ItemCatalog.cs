@@ -24,7 +24,9 @@ namespace Viconomy.ItemTypes
                     packet.ShopId = shopID;
                     clientAPI.Network.GetChannel(VinConstants.VINCONOMY_CHANNEL).SendPacket(packet);
                 } else {
-                    clientAPI.ShowChatMessage(Lang.Get("vinconomy:ledger-not-set"));
+                    //clientAPI.ShowChatMessage(Lang.Get("vinconomy:ledger-not-set"));
+                    ShopCatalogRequestPacket packet = new ShopCatalogRequestPacket();
+                    clientAPI.Network.GetChannel(VinConstants.VINCONOMY_CHANNEL).SendPacket(packet);
                 }
                
             }

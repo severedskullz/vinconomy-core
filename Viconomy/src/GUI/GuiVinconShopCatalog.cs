@@ -16,132 +16,25 @@ namespace Viconomy.GUI
     public class GuiVinconShopCatalog : GuiDialogGeneric
     {
         ShopCatalog Catalog { get; set; }
-
+        List<ShopCatalog> ShopList;
         DummyInventory ProductInventory;
         DummyInventory CurrencyInventory;
 
-        public static T[] ToPrimitiveArray<T>(JArray array)
-        {
-            T[] array2 = new T[array.Count];
-            for (int i = 0; i < array2.Length; i++)
-            {
-                _ = array[i];
-                array2[i] = array[i].ToObject<T>();
-            }
+       
 
-            return array2;
-        }
-
-        private static IAttribute ToAttribute(JToken token)
-        {
-            if (token is JValue jValue)
-            {
-                if (jValue.Value is int)
-                {
-                    return new IntAttribute((int)jValue.Value);
-                }
-
-                if (jValue.Value is long)
-                {
-                    return new LongAttribute((long)jValue.Value);
-                }
-
-                if (jValue.Value is float)
-                {
-                    return new FloatAttribute((float)jValue.Value);
-                }
-
-                if (jValue.Value is double)
-                {
-                    return new DoubleAttribute((double)jValue.Value);
-                }
-
-                if (jValue.Value is bool)
-                {
-                    return new BoolAttribute((bool)jValue.Value);
-                }
-
-                if (jValue.Value is string)
-                {
-                    return new StringAttribute((string)jValue.Value);
-                }
-            }
-
-            if (token is JObject jObject)
-            {
-                TreeAttribute treeAttribute = new TreeAttribute();
-                {
-                    foreach (KeyValuePair<string, JToken> item in jObject)
-                    {
-                        treeAttribute[item.Key] = ToAttribute(item.Value);
-                    }
-
-                    return treeAttribute;
-                }
-            }
-
-            if (token is JArray jArray)
-            {
-                if (!jArray.HasValues)
-                {
-                    return new TreeArrayAttribute(new TreeAttribute[0]);
-                }
-
-                if (jArray[0] is JValue jValue2)
-                {
-                    if (jValue2.Value is int)
-                    {
-                        return new IntArrayAttribute(ToPrimitiveArray<int>(jArray));
-                    }
-
-                    if (jValue2.Value is long)
-                    {
-                        return new LongArrayAttribute(ToPrimitiveArray<long>(jArray));
-                    }
-
-                    if (jValue2.Value is float)
-                    {
-                        return new FloatArrayAttribute(ToPrimitiveArray<float>(jArray));
-                    }
-
-                    if (jValue2.Value is double)
-                    {
-                        return new DoubleArrayAttribute(ToPrimitiveArray<double>(jArray));
-                    }
-
-                    if (jValue2.Value is bool)
-                    {
-                        return new BoolArrayAttribute(ToPrimitiveArray<bool>(jArray));
-                    }
-
-                    if (jValue2.Value is string)
-                    {
-                        return new StringArrayAttribute(ToPrimitiveArray<string>(jArray));
-                    }
-
-                    return null;
-                }
-
-                TreeAttribute[] array = new TreeAttribute[jArray.Count];
-                for (int i = 0; i < array.Length; i++)
-                {
-                    array[i] = (TreeAttribute)ToAttribute(jArray[i]);
-                }
-
-                return new TreeArrayAttribute(array);
-            }
-
-            return null;
-        }
-
-        public GuiVinconShopCatalog(string DialogTitle, ShopCatalog catalog, ICoreClientAPI capi): base(DialogTitle, capi)
+        public GuiVinconShopCatalog(string DialogTitle, ShopCatalog catalog, List<ShopCatalog> shopList, ICoreClientAPI capi): base(DialogTitle, capi)
         {
             this.Catalog = catalog;
             this.DialogTitle = catalog.Name;
+            this.ShopList = shopList;
 
             List<ShopProduct> products = catalog.Products.Products;
             ProductInventory = new DummyInventory(capi, products.Count);
+            ProductInventory.TakeLocked = true;
+            ProductInventory.PutLocked = true;
             CurrencyInventory = new DummyInventory(capi, products.Count);
+            CurrencyInventory.TakeLocked = true;
+            CurrencyInventory.PutLocked = true;
             int index = 0;
 
             //Add our Product and Currency to each inventory. Catch JSON errors on attributes, cuz Quotes in descriptions got me once already
@@ -218,30 +111,40 @@ namespace Viconomy.GUI
             //IconUtil.DrawArrowRight
             try
             {
-               //GuiComposer sc = SingleComposer;
-               // sc.AddShadedDialogBG(bgBounds)
-               //     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);
+                //GuiComposer sc = SingleComposer;
+                // sc.AddShadedDialogBG(bgBounds)
+                //     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);
 
-                ElementBounds descInsetBounds = ElementBounds.Fixed(0, GuiStyle.TitleBarHeight, insetWidth, insetHeight);
+                ElementBounds descLabelBounds = ElementBounds.Fixed(0, GuiStyle.TitleBarHeight, 300, 20).WithFixedMargin(5, 0).WithFixedPadding(10,5);
+                ElementBounds descInsetBounds = descLabelBounds.BelowCopy().WithFixedSize(insetWidth, insetHeight);
                 ElementBounds descScrollbarBounds = descInsetBounds.RightCopy().WithFixedWidth(20);
 
-                ElementBounds descClipBounds = descInsetBounds.ForkContainingChild(GuiStyle.HalfPadding, GuiStyle.HalfPadding, GuiStyle.HalfPadding, GuiStyle.HalfPadding);
+                ElementBounds descClipBounds = descInsetBounds.ForkContainingChild(GuiStyle.HalfPadding, GuiStyle.HalfPadding, GuiStyle.HalfPadding, GuiStyle.HalfPadding).FixedGrow(20,0); // I dont know why "Grow" is needed here. It leaves me with 20px of missing space even if padding is 0.
                 ElementBounds descContainerBounds = descInsetBounds.ForkContainingChild(GuiStyle.HalfPadding, GuiStyle.HalfPadding, GuiStyle.HalfPadding, GuiStyle.HalfPadding);
 
-                ElementBounds itemInsetBounds = descInsetBounds.BelowCopy().WithFixedSize(insetWidth, insetHeight); // ElementBounds.Fixed(0, GuiStyle.TitleBarHeight, insetWidth, insetHeight);
+                ElementBounds productLabelBounds = descInsetBounds.BelowCopy().WithFixedSize(300,20).WithFixedMargin(5,0).WithFixedPadding(10,5).WithFixedOffset(0,15);
+                ElementBounds itemInsetBounds = productLabelBounds.BelowCopy().WithFixedSize(insetWidth, insetHeight); // ElementBounds.Fixed(0, GuiStyle.TitleBarHeight, insetWidth, insetHeight);
                 ElementBounds itemScrollbarBounds = itemInsetBounds.RightCopy().WithFixedWidth(20);
 
-                ElementBounds itemClipBounds = itemInsetBounds.ForkContainingChild(GuiStyle.HalfPadding, GuiStyle.HalfPadding, GuiStyle.HalfPadding, GuiStyle.HalfPadding);
+                ElementBounds itemClipBounds = itemInsetBounds.ForkContainingChild().FixedGrow(20, 0); // I dont know why "Grow" is needed here. It leaves me with 20px of missing space even if padding is 0.;
                 ElementBounds itemContainerBounds = itemInsetBounds.ForkContainingChild(GuiStyle.HalfPadding, GuiStyle.HalfPadding, GuiStyle.HalfPadding, GuiStyle.HalfPadding);
 
                 ElementBounds containerRowBounds = ElementBounds.Fixed(0, 0, insetWidth, rowHeight);
 
-                ElementBounds itemSlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, insetWidth, insetHeight, 10, 5).WithFixedPosition(0,0);
+                ElementBounds itemSlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, insetWidth, insetHeight, 15, (int)Math.Ceiling(Catalog.Products.Products.Count / 15.0f)).WithFixedPosition(15,0).WithParent(itemContainerBounds);
                 bgBounds.WithChildren(descInsetBounds, descScrollbarBounds, itemInsetBounds, itemScrollbarBounds);
+
+                ElementBounds backButtonBounds = null;
+                if (ShopList != null)
+                {
+                    backButtonBounds = itemInsetBounds.BelowCopy().WithFixedSize(100, 60);
+                    bgBounds.WithChild(backButtonBounds);
+                }
 
                 SingleComposer = capi.Gui.CreateCompo("GuiVinconShopCatalog", dialogBounds)
                .AddShadedDialogBG(bgBounds)
                .AddDialogTitleBar(this.DialogTitle, OnTitleBarCloseClicked)
+               .AddStaticText($"Owner: {Catalog.OwnerName}",CairoFont.WhiteSmallishText(),descLabelBounds)
                .BeginChildElements()
                    .AddInset(descInsetBounds, insetDepth)
                    .BeginClip(descClipBounds)
@@ -251,16 +154,20 @@ namespace Viconomy.GUI
                    .AddVerticalScrollbar(OnNewDescriptionScrollbarValue, descScrollbarBounds, "description-scrollbar")
                .EndChildElements()
 
-               
-                .BeginChildElements()
+               .AddStaticText($"Available Products for sale:", CairoFont.WhiteSmallishText(), productLabelBounds)
+               .BeginChildElements()
                    .AddInset(itemInsetBounds, insetDepth)
                    .BeginClip(itemClipBounds)
                         .AddContainer(itemContainerBounds, "products")
-                        .AddItemSlotGrid(ProductInventory, PacketHandler, 10, itemSlotBounds, "item-grid")
+                        .AddItemSlotGrid(ProductInventory, PacketHandler, 15, itemSlotBounds, "item-grid")
                    .EndClip()
                    .AddVerticalScrollbar(OnNewItemScrollbarValue, itemScrollbarBounds, "item-scrollbar")
                .EndChildElements();
                
+                if (ShopList != null)
+                {
+                    SingleComposer.AddButton("Back", ReturnToShopList, backButtonBounds, EnumButtonStyle.Normal);
+                }
                 
                 GuiElementContainer scrollArea = SingleComposer.GetContainer("products");
                 scrollArea.Add(SingleComposer.GetSlotGrid("item-grid"));
@@ -291,6 +198,14 @@ namespace Viconomy.GUI
 
             
 
+        }
+
+        private bool ReturnToShopList()
+        {
+            GuiVinconCatalog catalog = new GuiVinconCatalog(DialogTitle, ShopList, capi);
+            catalog.TryOpen();
+            this.TryClose();
+            return true;
         }
 
         private void PacketHandler(object obj)

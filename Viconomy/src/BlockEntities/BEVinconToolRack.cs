@@ -44,7 +44,7 @@ namespace Viconomy.BlockEntities
                     Matrixf wepRight = new Matrixf()
                     .Translate(.5f, .5f, .5f)
                     .Translate(.0f, 0, 0)
-                    .RotateYDeg(this.block.Shape.rotateY-90)
+                    .RotateYDeg(Block.Shape.rotateY-90)
                     .RotateZDeg(90)
                     .Translate(x, y- stupidOffset, z)
                     .Translate(-.5f, -.5f, -.5f)

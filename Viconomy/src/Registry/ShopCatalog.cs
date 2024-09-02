@@ -7,18 +7,20 @@ using System.Threading.Tasks;
 
 namespace Viconomy.Registry
 {
-    [ProtoContract]
+    [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
     public class ShopCatalog
     {
-        [ProtoMember(1)] public int ID { get; set; } = -1;
-        [ProtoMember(2)] public string Name { get; set; }
-        [ProtoMember(3)] public string OwnerName { get; set; }
-        [ProtoMember(4)] public string Description { get; set; }
-        [ProtoMember(5)] public string ImageURL { get; set; }
-        [ProtoMember(6)] public int X { get; internal set; }
-        [ProtoMember(7)] public int Y { get; internal set; }
-        [ProtoMember(8)] public int Z { get; internal set; }
-        [ProtoMember(9)] public bool IsWaypointBroadcasted { get; set; }
-        [ProtoMember(10)] public ShopProductList Products { get; internal set; }
+       public int ID { get; set; } = -1;
+        public string Name { get; set; }
+        public string OwnerName { get; set; }
+        public string Description { get; set; }
+        public string ImageURL { get; set; }
+        public int X { get; internal set; }
+        public int Y { get; internal set; }
+        public int Z { get; internal set; }
+        public int WorldX { get; internal set; }
+        public int WorldZ { get; internal set; }
+        public bool IsWaypointBroadcasted { get; set; }
+        public ShopProductList Products { get; internal set; }
     }
 }
