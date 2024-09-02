@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using Microsoft.Win32;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
+using Viconomy.Inventory;
+using System.Data;
 
 namespace Viconomy.Database
 {
@@ -41,7 +43,7 @@ namespace Viconomy.Database
                 cmd.CommandText = "CREATE TABLE IF NOT EXISTS Sales (ShopId INTEGER, Customer TEXT, Month INTEGER, Year INTEGER, ProductCode TEXT, ProductQuantity INTEGER, ProductAttributes TEXT, CurrencyCode TEXT, CurrencyQuantity INTEGER, CurrencyAttributes TEXT);";
                 cmd.ExecuteNonQuery();
 
-                cmd.CommandText = "CREATE TABLE IF NOT EXISTS Products ( X INTEGER, Y INTEGER, Z INTEGER, StallSlot INTEGER, ShopId INTEGER, ProductName TEXT, ProductCode TEXT, ProductQuantity INTEGER, ProductAttributes TEXT, TotalStock INTEGER, CurrencyName TEXT, CurrencyCode TEXT, CurrencyQuantity INTEGER, CurrencyAttributes TEXT, PRIMARY KEY (X,Y,Z, StallSlot));";
+                cmd.CommandText = "CREATE TABLE IF NOT EXISTS Products ( X INTEGER, Y INTEGER, Z INTEGER, StallSlot INTEGER, ShopId INTEGER, ProductName TEXT, ProductCode TEXT, ProductQuantity INTEGER, ProductAttributes BLOB, TotalStock INTEGER, CurrencyName TEXT, CurrencyCode TEXT, CurrencyQuantity INTEGER, CurrencyAttributes BLOB, PRIMARY KEY (X,Y,Z, StallSlot));";
                 cmd.ExecuteNonQuery();
 
                 connection.Close();
@@ -352,17 +354,26 @@ namespace Viconomy.Database
             { 
                 connection.Open();
                 SqliteCommand cmd = connection.CreateCommand();
-                
+                MemoryStream productStream = new MemoryStream();
+                BinaryWriter productWriter = new BinaryWriter(productStream);
+                product.Attributes.ToBytes(productWriter);
+                byte[] productData = productStream.ToArray();
+
+                MemoryStream currencyStream = new MemoryStream();
+                BinaryWriter currencyWriter = new BinaryWriter(currencyStream);
+                currency.Attributes.ToBytes(currencyWriter);
+                byte[] currencyData = currencyStream.ToArray();
+
                 cmd.Parameters.Add("@ShopId", SqliteType.Integer).Value = registerID;
                 cmd.Parameters.Add("@ProductName", SqliteType.Text).Value = product.GetName();
                 cmd.Parameters.Add("@ProductCode", SqliteType.Text).Value = product.Collectible.Code.ToString();
                 cmd.Parameters.Add("@ProductQuantity", SqliteType.Integer).Value = numItemsPerPurchase;
-                cmd.Parameters.Add("@ProductAttributes", SqliteType.Text).Value = product.Attributes.ToJsonToken();
+                cmd.Parameters.Add("@ProductAttributes", SqliteType.Blob).Value = productData;
                 cmd.Parameters.Add("@TotalStock", SqliteType.Integer).Value = product.StackSize;
                 cmd.Parameters.Add("@CurrencyName", SqliteType.Text).Value = currency.GetName();
                 cmd.Parameters.Add("@CurrencyCode", SqliteType.Text).Value = currency.Collectible.Code.ToString();
                 cmd.Parameters.Add("@CurrencyQuantity", SqliteType.Integer).Value = currency.StackSize;
-                cmd.Parameters.Add("@CurrencyAttributes", SqliteType.Text).Value = currency.Attributes.ToJsonToken();
+                cmd.Parameters.Add("@CurrencyAttributes", SqliteType.Blob).Value = currencyData;
 
                 cmd.Parameters.Add("@StallSlot", SqliteType.Integer).Value = stallSlot;
                 cmd.Parameters.Add("@X", SqliteType.Integer).Value = pos.X;
@@ -430,21 +441,6 @@ namespace Viconomy.Database
         Dictionary<int, ShopProductList> productListCache = new Dictionary<int, ShopProductList>();
         private long EXPIRE_TIME_MILLIS = 1000 * 60 * 10;
 
-        //ShopId INTEGER,  -0
-        //X INTEGER,  -1
-        //Y INTEGER,  -2
-        //Z INTEGER,  -3
-        //StallSlot INTEGER,  -4
-        //ProductName TEXT,  -5
-        //ProductCode TEXT,  -6
-        //ProductQuantity INTEGER,  -7
-        //ProductAttributes TEXT,  -8
-        //TotalStock INTEGER,  -9
-        //CurrencyName TEXT,  -10
-        //CurrencyCode TEXT,  -11
-        //CurrencyQuantity INTEGER,  -12
-        //CurrencyAttributes TEXT  -13
-
         public ShopProductList GetShopProducts(int ID)
         {
             if (productListCache.ContainsKey(ID))
@@ -463,8 +459,8 @@ namespace Viconomy.Database
             {
                 connection.Open();
                 SqliteCommand cmd = connection.CreateCommand();
-                cmd.CommandText = "SELECT * FROM Stalls WHERE ID = @ID";
-
+                cmd.CommandText = "SELECT * FROM Products WHERE ShopID = @ShopId";
+                cmd.Parameters.Add("@ShopId", SqliteType.Integer).Value = ID;
                 SqliteDataReader reader = cmd.ExecuteReader();
 
                 
@@ -474,17 +470,18 @@ namespace Viconomy.Database
                     product.ProductName = reader.GetString(5);
                     product.ProductCode = reader.GetString(6);
                     product.ProductQuantity = reader.GetInt32(7);
-                    product.ProductAttributes = reader.GetString(8);
+                    product.ProductAttributes = (byte[])reader.GetValue(8);
                     product.TotalStock = reader.GetInt32(9);
                     product.CurrencyName = reader.GetString(10);
                     product.CurrencyCode = reader.GetString(11);
                     product.CurrencyAmount = reader.GetInt32(12);
-                    product.CurrencyAttributes = reader.GetString(13);
+                    product.CurrencyAttributes = (byte[])reader.GetValue(13);
                     products.Products.Add(product);
                 }
                 
             }
-            productListCache.Add(ID, products);
+
+            productListCache[ID] = products;
             return products;
         }
     }

@@ -64,11 +64,12 @@
   <None Remove="assets\vinconomy\blocktypes\vicon-tellermachine.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-trademat.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-tradematdouble.json" />
-  <None Remove="assets\vinconomy\itemtypes\vicon-gacha.json" />
-  <None Remove="assets\vinconomy\itemtypes\vicon-ledger.json" />
-  <None Remove="assets\vinconomy\itemtypes\vicon-playerfilter.json" />
-  <None Remove="assets\vinconomy\itemtypes\vicon-sculpturebundle.json" />
-  <None Remove="assets\vinconomy\itemtypes\vicon-tenretnibook.json" />
+  <None Remove="assets\vinconomy\itemtypes\catalog.json" />
+  <None Remove="assets\vinconomy\itemtypes\gacha.json" />
+  <None Remove="assets\vinconomy\itemtypes\ledger.json" />
+  <None Remove="assets\vinconomy\itemtypes\playerfilter.json" />
+  <None Remove="assets\vinconomy\itemtypes\sculpturebundle.json" />
+  <None Remove="assets\vinconomy\itemtypes\tenretnibook.json" />
   <None Remove="assets\vinconomy\lang\ru.json" />
   <None Remove="assets\vinconomy\recipes\grid\armorstand.json" />
   <None Remove="assets\vinconomy\recipes\grid\gachaball.json" />
@@ -93,7 +94,7 @@
 </ItemGroup>
 
 <ItemGroup>
-  <Content Update="assets\vinconomy\itemtypes\vicon-playerfilter.json">
+  <Content Update="assets\vinconomy\itemtypes\playerfilter.json">
     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>
 </ItemGroup>

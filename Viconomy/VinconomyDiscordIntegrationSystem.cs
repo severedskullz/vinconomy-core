@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -11,7 +10,6 @@ using Viconomy.Trading;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
-using static Viconomy.VinconomyDiscordIntegrationSystem;
 
 namespace Viconomy
 {
@@ -52,7 +50,6 @@ namespace Viconomy
             {
                 Config = ResetModConfig();
                 this.Mod.Logger.Error("Could not load Mod Integration Config for Vinconomy. Loading defaults instead. Check your config and ensure there are no errors.");
-                //api.StoreModConfig<ViconConfig>(new ViconConfig(), filename);
             }
 
             base.StartPre(api);
@@ -74,7 +71,6 @@ namespace Viconomy
         {
             _coreServerAPI = api;
             _coreSystem = api.ModLoader.GetModSystem<VinconomyCoreSystem>();
-            this.Mod.Logger.Event("Start Serverside Called");
             httpClient = new HttpClient();
             //httpClient.BaseAddress = new Uri("https://discord.com");
             PostAsync();

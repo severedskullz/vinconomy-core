@@ -19,6 +19,9 @@ using Viconomy.Trading;
 using Vintagestory.GameContent;
 using Viconomy.Map;
 using Vintagestory.API.Datastructures;
+using System.Numerics;
+using Viconomy.Util;
+using Viconomy.GUI;
 
 namespace Viconomy
 {
@@ -103,14 +106,17 @@ namespace Viconomy
 
             //Item Types
             api.RegisterItemClass("ViconLedger", typeof(ItemLedger));
+            api.RegisterItemClass("VinconCatalog", typeof(ItemCatalog));
             api.RegisterItemClass("ViconSculptureBundle", typeof(ItemSculptureBundle));
             api.RegisterItemClass("ViconGachaBall", typeof(ItemGachaBall));
-            api.RegisterItemClass("ViconTenretni", typeof(ItemTenretniBook));          
+            api.RegisterItemClass("ViconTenretni", typeof(ItemTenretniBook));
 
-            api.Network.RegisterChannel("Vinconomy")
+            api.Network.RegisterChannel(VinConstants.VINCONOMY_CHANNEL)
                 .RegisterMessageType(typeof(RegistryUpdatePacket))
                 .RegisterMessageType(typeof(ShopUpdatePacket))
-                .RegisterMessageType(typeof(TenretniPacket));
+                .RegisterMessageType(typeof(TenretniPacket))
+                .RegisterMessageType(typeof(ShopCatalogRequestPacket))
+                .RegisterMessageType(typeof(ShopCatalogResponsePacket));
 
         }
 
@@ -151,8 +157,9 @@ namespace Viconomy
         public override void StartServerSide(ICoreServerAPI api)
         {
             _coreServerAPI = api;
-            _serverChannel = api.Network.GetChannel("Vinconomy");
+            _serverChannel = api.Network.GetChannel(VinConstants.VINCONOMY_CHANNEL);
             _serverChannel.SetMessageHandler(new NetworkClientMessageHandler<TenretniPacket>(this.OnRecieveTenretniInfo));
+            _serverChannel.SetMessageHandler(new NetworkClientMessageHandler<ShopCatalogRequestPacket>(this.OnRecieveShopCatalogRequest));
 
             api.Event.SaveGameLoaded += OnSaveGameLoading;
             api.Event.PlayerJoin += SendAllPublicRegisters;
@@ -198,9 +205,10 @@ namespace Viconomy
         public override void StartClientSide(ICoreClientAPI api)
         {
             _coreClientAPI = api;
-            _clientChannel = api.Network.GetChannel("Vinconomy");
+            _clientChannel = api.Network.GetChannel(VinConstants.VINCONOMY_CHANNEL);
             _clientChannel.SetMessageHandler(new NetworkServerMessageHandler<RegistryUpdatePacket>(this.OnRecieveRegistry));
             _clientChannel.SetMessageHandler(new NetworkServerMessageHandler<ShopUpdatePacket>(this.OnRecieveRegistryUpdate));
+            _clientChannel.SetMessageHandler(new NetworkServerMessageHandler<ShopCatalogResponsePacket>(this.OnRecieveShopCatalogResponse));
 
             ShopRegistry = new ShopRegistry(DB);
 
@@ -250,6 +258,8 @@ namespace Viconomy
 
             }
         }
+
+
 
         public void BeginRendererRegistration()
         {
@@ -715,8 +725,71 @@ namespace Viconomy
             }
         }
 
+        public ShopCatalog RequestShopCatalog(ShopRegistration shop, bool includeProductList)
+        {
+            ShopCatalog catalog = new ShopCatalog
+            {
+                Name = shop.Name,
+                OwnerName = shop.OwnerName
+            };
+
+            if (shop.IsWaypointBroadcasted)
+            {
+                catalog.X = shop.X;
+                catalog.Y = shop.Y;
+                catalog.Z = shop.Z;
+            }
+
+            catalog.Description = "I am a basic description!";
+
+            if (includeProductList)
+            {
+                ShopProductList products = DB.GetShopProducts(shop.ID);
+                catalog.Products = products;
+            }
+            return catalog;
+
+        }
+
         #endregion
 
-        // qi3XDOL0KEE7YFKUN5VTH+Mm
+        private void OnRecieveShopCatalogRequest(IServerPlayer fromPlayer, ShopCatalogRequestPacket request)
+        {
+            ShopCatalogResponsePacket response = new ShopCatalogResponsePacket();
+            int shopId = request.ShopId; 
+            if (shopId > 0) {
+                ShopRegistration reg = ShopRegistry.GetShop(shopId);
+                if (reg != null)
+                {
+                    response.ShopCatalog = RequestShopCatalog(reg, true);
+                }
+            } else
+            {
+                List<ShopRegistration> regs = ShopRegistry.GetAllShops();
+                response.ShopList = new List<ShopCatalog>();
+                foreach (ShopRegistration reg in regs)
+                {
+                    response.ShopList.Add(RequestShopCatalog(reg, false));
+                }
+            }
+
+            _serverChannel.SendPacket(response, fromPlayer);
+        }
+
+        private void OnRecieveShopCatalogResponse(ShopCatalogResponsePacket response)
+        {
+            if (response.ShopCatalog != null)
+            {
+                GuiVinconShopCatalog gui = new GuiVinconShopCatalog("TEST", response.ShopCatalog, _coreClientAPI);
+                gui.TryOpen();
+            } else if (response.ShopList != null)
+            {
+                GuiVinconShopCatalog gui = new GuiVinconShopCatalog("TEST", null, _coreClientAPI);
+                gui.TryOpen();
+            } else
+            {
+
+            }
+        }
     }
 }

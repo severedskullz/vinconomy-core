@@ -8,6 +8,8 @@ namespace Viconomy.Util
 {
     public static class VinConstants
     {
+        public const string VINCONOMY_CHANNEL = "Vinconomy";
+
         //Shared Packets
         public const int OPEN_GUI = 1000;
         public const int CLOSE_GUI = 1001;

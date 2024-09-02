@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Viconomy.GUI;
 using Vintagestory.API.Config;
 using Viconomy.Registry;
+using Viconomy.Util;
 
 namespace Viconomy
 {
@@ -37,7 +38,7 @@ namespace Viconomy
 
         public override void StartServerSide(ICoreServerAPI api)
         {
-            _serverChannel = api.Network.GetChannel("Vinconomy");
+            _serverChannel = api.Network.GetChannel(VinConstants.VINCONOMY_CHANNEL);
             _serverChannel.RegisterMessageType(typeof(LedgerEntryRequestPacket))
                 .RegisterMessageType(typeof(LedgerEntryResponsePacket))
                 .RegisterMessageType(typeof(LedgerReadRequestPacket))
@@ -51,7 +52,7 @@ namespace Viconomy
         public override void StartClientSide(ICoreClientAPI api)
         {
             capi = api;
-            _clientChannel = api.Network.GetChannel("Vinconomy");
+            _clientChannel = api.Network.GetChannel(VinConstants.VINCONOMY_CHANNEL);
             _clientChannel.RegisterMessageType(typeof(LedgerEntryRequestPacket))
                 .RegisterMessageType(typeof(LedgerEntryResponsePacket))
                 .RegisterMessageType(typeof(LedgerReadRequestPacket))

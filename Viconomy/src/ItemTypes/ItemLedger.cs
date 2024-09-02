@@ -1,5 +1,7 @@
 ﻿using Viconomy.GUI;
+using Viconomy.Network;
 using Viconomy.Registry;
+using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -14,7 +16,7 @@ namespace Viconomy.ItemTypes
            
             if (this.api.Side == EnumAppSide.Client)
             {
-
+                ICoreClientAPI clientAPI = ((ICoreClientAPI)api);
                 int shopID = slot.Itemstack.Attributes.GetInt("ShopId", -1);
                 if (shopID > 0)
                 {
@@ -40,10 +42,11 @@ namespace Viconomy.ItemTypes
                         ledgerGUI = null;
                     }
                     */
-                    VinconomyLedgerSystem modSys = api.ModLoader.GetModSystem<VinconomyLedgerSystem>();
-                    modSys.RequestToReadLedgerData(shopID);
+                    clientAPI.Network.GetChannel(VinConstants.VINCONOMY_CHANNEL).SendPacket(new LedgerReadRequestPacket() { shopId = shopID });
+                    //VinconomyLedgerSystem modSys = api.ModLoader.GetModSystem<VinconomyLedgerSystem>();
+                    //modSys.RequestToReadLedgerData(shopID);
                 } else {
-                    ((ICoreClientAPI)this.api).ShowChatMessage(Lang.Get("vinconomy:ledger-not-set"));
+                    clientAPI.ShowChatMessage(Lang.Get("vinconomy:ledger-not-set"));
                 }
                
             }

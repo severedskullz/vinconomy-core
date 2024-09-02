@@ -147,7 +147,7 @@ namespace Viconomy.BlockEntities
             bool shiftMod = byPlayer.Entity.Controls.Sneak;
 
             ItemSlot handSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
-            if (shiftMod && handSlot.Itemstack?.Item?.Code.ToString() == "vinconomy:ledger")
+            if (shiftMod && (handSlot.Itemstack?.Item?.Code.ToString() == "vinconomy:ledger" || handSlot.Itemstack?.Item?.Code.ToString() == "vinconomy:catalog"))
             {
                 if (Api.Side == EnumAppSide.Server)
                 {

@@ -14,9 +14,9 @@ namespace Viconomy.Registry
         [ProtoMember(2)] public string Name { get;  set; }
         [ProtoMember(3)] public string Owner { get; internal set; }
         [ProtoMember(4)] public string OwnerName { get; internal set; }
-        [ProtoMember(5)] internal int X { get; set; }
-        [ProtoMember(6)] internal int Y { get; set; }
-        [ProtoMember(7)] internal int Z { get; set; }
+        [ProtoMember(5)] public int X { get; set; }
+        [ProtoMember(6)] public int Y { get; set; }
+        [ProtoMember(7)] public int Z { get; set; }
         [ProtoMember(8)] public string WaypointIcon { get; set; }
         [ProtoMember(9)] public int WaypointColor { get; set; }
         [ProtoMember(10)] public bool IsWaypointBroadcasted { get; set; }
