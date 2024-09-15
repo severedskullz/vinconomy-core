@@ -33,7 +33,7 @@ namespace Viconomy
 
         public override void StartPre(ICoreAPI api)
         {
-            this.Mod.Logger.Event("Start Pre Called");
+            //this.Mod.Logger.Event("Start Pre Called");
             string filename = "vinconomy-integration.json";
             try
             {
@@ -164,7 +164,7 @@ namespace Viconomy
 
             //Console.WriteLine(data);
             //HttpResponseMessage result = 
-            httpClient.PostAsync(Config.GlobalWebhook, jsonContent);//.Result;
+            httpClient.PostAsync(Config.PurchasesWebhook, jsonContent);//.Result;
             //Console.WriteLine(result.Content);
         }
 

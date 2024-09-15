@@ -39,6 +39,7 @@ namespace Viconomy
         private ICoreServerAPI _coreServerAPI;
         private IServerNetworkChannel _serverChannel;
         public ViconDatabase DB;
+        private GuiDialogGeneric ShopCatalogGui;
 
         //Shared Variables
         public ViconConfig Config { get; internal set; }
@@ -486,17 +487,7 @@ namespace Viconomy
             ShopRegistration reg = ShopRegistry.UpdateShop(iD, name, pos);
             if (_coreServerAPI != null)
             {
-                if (reg.IsWaypointBroadcasted)
-                {
-                    BroadcastShopUpdate(iD);
-                } else
-                {
-                    IServerPlayer player = (IServerPlayer)_coreServerAPI.World.PlayerByUid(owner);
-                    if (player.ConnectionState == EnumClientState.Playing)
-                    {
-                        SendShopOwnerUpdate(reg, player);
-                    }
-                }                
+                BroadcastShopUpdate(iD);
             }
             return reg;
         }
@@ -549,8 +540,18 @@ namespace Viconomy
             ShopRegistration shop = ShopRegistry.GetShop(shopId);
             if (shop != null)
             {
-                ShopUpdatePacket update = new ShopUpdatePacket(shop, false);
-                _serverChannel.BroadcastPacket(update);
+
+                IServerPlayer owner = (IServerPlayer)_coreServerAPI.World.PlayerByUid(shop.Owner);
+                if (owner.ConnectionState == EnumClientState.Playing)
+                {
+                    SendShopOwnerUpdate(shop, owner);
+                }
+
+                if (shop.IsWaypointBroadcasted)
+                {
+                    ShopUpdatePacket update = new ShopUpdatePacket(shop, false);
+                    _serverChannel.BroadcastPacket(update, new IServerPlayer[] { owner });
+                }
             }
         }
 
@@ -716,7 +717,7 @@ namespace Viconomy
             return response;
         }
 
-        internal void UpdateStallProductForStall(int shopId, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
+        public void UpdateStallProductForStall(int shopId, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
         {
             if (shopId <= 0 || product == null || currency == null) {
                 DB.DeleteShopProduct(pos,stallSlot);
@@ -731,7 +732,8 @@ namespace Viconomy
             ShopCatalog catalog = new ShopCatalog
             {
                 Name = shop.Name,
-                OwnerName = shop.OwnerName
+                OwnerName = shop.OwnerName,
+                ID = shop.ID,
             };
 
             if (shop.IsWaypointBroadcasted)
@@ -744,7 +746,8 @@ namespace Viconomy
                 catalog.WorldZ = shop.Z;
             }
 
-            catalog.Description = "I am a basic description!";
+            catalog.Description = shop.Description;
+            catalog.ShortDescription = shop.ShortDescription;
 
             if (includeProductList)
             {
@@ -786,16 +789,15 @@ namespace Viconomy
         {
             if (response.ShopCatalog != null)
             {
-                GuiVinconShopCatalog gui = new GuiVinconShopCatalog("TEST", response.ShopCatalog, response.ShopList, _coreClientAPI);
-                gui.TryOpen();
-            } else if (response.ShopList != null)
+                ShopCatalogGui = new GuiVinconShopCatalog("Shop Catalog", response.ShopCatalog, response.ShopList, _coreClientAPI);
+                
+            } else 
             {
-                GuiVinconCatalog gui = new GuiVinconCatalog("TEST", response.ShopList, _coreClientAPI);
-                gui.TryOpen();
-            } else
-            {
-
+                ShopCatalogGui = new GuiVinconCatalog("Shop Catalog", response.ShopList, _coreClientAPI);
             }
+
+
+            ShopCatalogGui.TryOpen();
         }
 
         private void OnMapLinkClicked(LinkTextComponent component)
@@ -806,13 +808,26 @@ namespace Viconomy
             int y = int.Parse(array[1]);
             int z = int.Parse(array[2]);
             WorldMapManager mapMan = _coreClientAPI.ModLoader.GetModSystem<WorldMapManager>();
-            if (!mapMan.worldMapDlg.IsOpened())
+            if (!mapMan.worldMapDlg.IsOpened() || mapMan.worldMapDlg.DialogType != EnumDialogType.Dialog)
             {
+                
                 mapMan.ToggleMap(EnumDialogType.Dialog);
+                //mapMan.worldMapDlg.TryOpen();
             }
-            mapMan.ToggleMap(EnumDialogType.Dialog);
-            // mapMan.worldMapDlg.TranslateWorldPosToViewPos();
+            if (ShopCatalogGui != null && ShopCatalogGui.IsOpened())
+            {
+                ShopCatalogGui.TryClose();
+            }
             (mapMan.worldMapDlg.SingleComposer.GetElement("mapElem") as GuiElementMap).CenterMapTo(new BlockPos(x, y, z, 1));
+        }
+
+        public void UpdateShopConfig(int iD, string desc, string shortDesc, string webHook)
+        {
+            ShopRegistration reg = ShopRegistry.UpdateShopConfig(iD, desc, shortDesc, webHook);
+            if (_coreServerAPI != null)
+            {
+                BroadcastShopUpdate(iD);
+            }
         }
     }
 }

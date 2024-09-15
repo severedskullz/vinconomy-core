@@ -4,22 +4,26 @@ using Vintagestory.API.MathTools;
 
 namespace Viconomy.Registry
 {
-    [ProtoContract]
+    [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
     public class ShopRegistration
     {
 
 
 
-        [ProtoMember(1)] public int ID { get; internal set; } = -1;
-        [ProtoMember(2)] public string Name { get;  set; }
-        [ProtoMember(3)] public string Owner { get; internal set; }
-        [ProtoMember(4)] public string OwnerName { get; internal set; }
-        [ProtoMember(5)] public int X { get; set; }
-        [ProtoMember(6)] public int Y { get; set; }
-        [ProtoMember(7)] public int Z { get; set; }
-        [ProtoMember(8)] public string WaypointIcon { get; set; }
-        [ProtoMember(9)] public int WaypointColor { get; set; }
-        [ProtoMember(10)] public bool IsWaypointBroadcasted { get; set; }
+        public int ID { get; internal set; } = -1;
+        public string Name { get;  set; }
+        public string Owner { get; internal set; }
+        public string OwnerName { get; internal set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Z { get; set; }
+        public string WaypointIcon { get; set; }
+        public int WaypointColor { get; set; }
+        public bool IsWaypointBroadcasted { get; set; }
+        public string ShortDescription { get; set; }
+        public string Description { get; set; }
+        public string WebHook {  get; set; }
+
 
         public ShopRegistration() { }
         public ShopRegistration(ShopUpdatePacket item)
@@ -34,6 +38,10 @@ namespace Viconomy.Registry
             this.WaypointIcon = item.WaypointIcon;
             this.WaypointColor = item.WaypointColor;
             this.IsWaypointBroadcasted = item.IsWaypointBroadcasted;
+            this.ShortDescription = item.ShortDescription;
+            this.Description = item.Description;
+            this.WebHook = item.WebHook;
+
         }
 
 

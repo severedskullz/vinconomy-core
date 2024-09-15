@@ -41,6 +41,16 @@ namespace Viconomy.Inventory
             ChiselDecoSlot = new ViconDecoBlockSlot(this, 0);
         }
 
+        /*
+         * TODO: Figure out a way to determine if stock was ADDED and not removed. extractedStack == null if we added items, but if we add items then take it out, we would still get a notification if that was the only criteria.
+         * Need to save the state of the inventory somehow. Dont want to poll the DB before we update it to figure that out - plus can lead to sync issues.
+        public override void DidModifyItemSlot(ItemSlot slot, ItemStack extractedStack = null)
+        {
+            modSystem.Mod.Logger.Debug("A slot was modified. extracted stack is " + (extractedStack == null));
+            base.DidModifyItemSlot(slot, extractedStack);
+        }
+        */
+
         public override void LateInitialize(string inventoryID, ICoreAPI api)
         {
             base.LateInitialize(inventoryID, api);

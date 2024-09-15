@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using Viconomy.Database;
 using Viconomy.Network;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.Server;
 
@@ -119,6 +121,25 @@ namespace Viconomy.Registry
             return i;
         }
 
+        public ShopRegistration UpdateShopConfig(int id, string description, string shortDescription, string webHook)
+        {
+            ShopRegistration register = GetShop(id);
+            if (register != null)
+            {
+                Console.WriteLine("Updating configuration for existing Register with ID " + id);
+                register.Description = description;
+                register.ShortDescription = shortDescription;
+                register.WebHook = webHook;
+
+                if (db != null) db.UpdateShopConfig(register);
+            }
+            else
+            {
+                throw new ArgumentException("Tried to update a non-existant shop with ID " + id);
+            }
+            return register;
+        }
+
         public ShopRegistration UpdateShop(int id, string name, BlockPos pos)
         {
             ShopRegistration register = GetShop(id);
@@ -180,6 +201,11 @@ namespace Viconomy.Registry
                 reg.WaypointIcon = packet.WaypointIcon;
                 reg.WaypointColor = packet.WaypointColor;
             }
+            
+            reg.ShortDescription = packet.ShortDescription;
+            reg.Description = packet.Description;
+            reg.WebHook = packet.WebHook;
+            
            
             
         }

@@ -2,7 +2,6 @@
 using Viconomy.GUI;
 using Viconomy.Registry;
 using Viconomy.BlockEntities.TextureSwappable;
-using Viconomy.src.GUI;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -10,6 +9,7 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.Client.NoObf;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Viconomy.BlockEntities
 {
@@ -18,7 +18,6 @@ namespace Viconomy.BlockEntities
 
         private InventoryGeneric inventory;
         private GuiViconRegister invDialog;
-        private GuiViconWaypoint waypointDialogue;
         private VinconomyCoreSystem modSystem;
 
         public int ID { get; internal set; } = -1;
@@ -31,7 +30,7 @@ namespace Viconomy.BlockEntities
 
         public BEVinconRegister()
         {
-            this.inventory = new InventoryGeneric(25, null, null);
+            this.inventory = new InventoryGeneric(40, null, null);
         }
 
         public override void Initialize(ICoreAPI api)
@@ -75,6 +74,11 @@ namespace Viconomy.BlockEntities
             this.Owner = Owner;
             this.OwnerName = OwnerName;
             
+        }
+
+        public void UpdateShopConfiguration(string desc, string shortDesc, string webHook)
+        {
+            modSystem.UpdateShopConfig(ID, desc, shortDesc, webHook);  
         }
 
         public override void OnBlockBroken(IPlayer byPlayer = null)
@@ -251,8 +255,15 @@ namespace Viconomy.BlockEntities
                         if (player.PlayerUID == Owner)
                         {
                             BinaryReader reader = new BinaryReader(ms);
-                            string Name = reader.ReadString();
-                            UpdateShop(Owner, OwnerName, ID, Name);
+                            string name = reader.ReadString();
+                            string description = reader.ReadString();
+                            string shortDescription = reader.ReadString();
+                            string webhook = reader.ReadString();
+
+                            shortDescription = shortDescription.Replace("\r\n", "\n").Replace('\n', ' ');
+                            //description = description.Replace("\r\n", "\n").Replace('\n', ' ');
+                            UpdateShop(Owner, OwnerName, ID, name);
+                            modSystem.UpdateShopConfig(ID, description, shortDescription, webhook);
                         }
                         else
                         {
@@ -345,8 +356,8 @@ namespace Viconomy.BlockEntities
             }
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
-            this.invDialog = new GuiViconRegister(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
-            this.waypointDialogue = new GuiViconWaypoint("Waypoint", this.Pos, this.ID, this.Api as ICoreClientAPI);
+            ShopRegistration shopRegistry = modSystem.GetRegistry().GetShop(ID);
+            this.invDialog = new GuiViconRegister(shopRegistry, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
             //this.invDialog.OpenSound = this.OpenSound;
             //this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();
@@ -356,8 +367,7 @@ namespace Viconomy.BlockEntities
 
                 ((ClientCoreAPI) Api).Network.SendBlockEntityPacket(this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.CLOSE_GUI, null);
             };
-            this.waypointDialogue.TryOpen();
-            //Console.WriteLine(Api.Side + ": Attempted to open Shop GUI");
+
         }
 
         private void CloseGui(IClientWorldAccessor clientWorld)

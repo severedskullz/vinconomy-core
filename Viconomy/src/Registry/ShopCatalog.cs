@@ -14,6 +14,7 @@ namespace Viconomy.Registry
         public string Name { get; set; }
         public string OwnerName { get; set; }
         public string Description { get; set; }
+        public string ShortDescription { get; internal set; }
         public string ImageURL { get; set; }
         public int X { get; internal set; }
         public int Y { get; internal set; }

@@ -262,6 +262,7 @@ namespace Viconomy.BlockEntities
                     ItemStack stack = Inventory[i + 2].TakeOut(maxAmount * ItemsPerSlot[i]);
                     stack.StackSize = ItemsPerSlot[i];
                     attr.SetItemstack("Item" + i, stack);
+                    attr.SetInt("ItemAmount" + i, stack.StackSize);
                 }
             }
 

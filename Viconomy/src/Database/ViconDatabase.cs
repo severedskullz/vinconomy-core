@@ -37,7 +37,7 @@ namespace Viconomy.Database
             {
                 connection.Open();
                 SqliteCommand cmd = connection.CreateCommand();
-                cmd.CommandText = "CREATE TABLE IF NOT EXISTS Shops (Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Owner TEXT, OwnerName TEXT, X INTEGER, Y INTEGER, Z INTEGER, BroadcastWaypoint INTEGER, WaypointIcon TEXT, WaypointColor INTEGER);";
+                cmd.CommandText = "CREATE TABLE IF NOT EXISTS Shops (Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Owner TEXT, OwnerName TEXT, X INTEGER, Y INTEGER, Z INTEGER, BroadcastWaypoint INTEGER, WaypointIcon TEXT, WaypointColor INTEGER, Description TEXT, ShortDescription TEXT, WebHook TEXT);";
                 cmd.ExecuteNonQuery();
 
                 cmd.CommandText = "CREATE TABLE IF NOT EXISTS Sales (ShopId INTEGER, Customer TEXT, Month INTEGER, Year INTEGER, ProductCode TEXT, ProductQuantity INTEGER, ProductAttributes TEXT, CurrencyCode TEXT, CurrencyQuantity INTEGER, CurrencyAttributes TEXT);";
@@ -45,6 +45,17 @@ namespace Viconomy.Database
 
                 cmd.CommandText = "CREATE TABLE IF NOT EXISTS Products ( X INTEGER, Y INTEGER, Z INTEGER, StallSlot INTEGER, ShopId INTEGER, ProductName TEXT, ProductCode TEXT, ProductQuantity INTEGER, ProductAttributes BLOB, TotalStock INTEGER, CurrencyName TEXT, CurrencyCode TEXT, CurrencyQuantity INTEGER, CurrencyAttributes BLOB, PRIMARY KEY (X,Y,Z, StallSlot));";
                 cmd.ExecuteNonQuery();
+
+
+                try
+                {
+                    // For backwards compatability.
+                    cmd.CommandText = "ALTER TABLE Shops ADD COLUMN Description TEXT; ALTER TABLE Shops ADD COLUMN ShortDescription TEXT; ALTER TABLE Shops ADD COLUMN WebHook TEXT;";
+                    cmd.ExecuteNonQuery();
+                } catch
+                {
+
+                }
 
                 connection.Close();
             }
@@ -66,7 +77,7 @@ namespace Viconomy.Database
             {
                 connection.Open();
                 SqliteCommand cmd = connection.CreateCommand();
-                cmd.CommandText = "UPDATE Shops SET Name = @Name, Owner = @Owner, OwnerName = @OwnerName, X = @X, Y = @Y, Z = @Z, BroadcastWaypoint = @BroadcastWaypoint, WaypointIcon = @WaypointIcon, WaypointColor = @WaypointColor  WHERE ID = @ID;";
+                cmd.CommandText = @"UPDATE Shops SET Name = @Name, Owner = @Owner, OwnerName = @OwnerName, X = @X, Y = @Y, Z = @Z, BroadcastWaypoint = @BroadcastWaypoint, WaypointIcon = @WaypointIcon, WaypointColor = @WaypointColor  WHERE ID = @ID;";
                 cmd.Parameters.Add("@ID", SqliteType.Integer).Value = shop.ID;
                 cmd.Parameters.Add("@Name", SqliteType.Text).Value = shop.Name;
                 cmd.Parameters.Add("@Owner", SqliteType.Text).Value = shop.Owner;
@@ -258,28 +269,35 @@ namespace Viconomy.Database
                 while (reader.Read())
                 {
                     ShopRegistration reg = new ShopRegistration();
-                    reg.ID = reader.GetInt32(0);
-                    reg.Name = reader.GetString(1);
-                    reg.Owner = reader.GetString(2);
-                    reg.OwnerName = reader.GetString(3);
+                    reg.ID = reader.GetInt32("Id");
+                    reg.Name = reader.GetString("Name");
+                    reg.Owner = reader.GetString("Owner");
+                    reg.OwnerName = reader.GetString("OwnerName");
                    
-                    if (reader.IsDBNull(4))
+                    if (reader.IsDBNull("X"))
                     {
                         reg.Position = null;
                     } else
                     {
-                        reg.X = reader.GetInt32(4);
-                        reg.Y = reader.GetInt32(5);
-                        reg.Z = reader.GetInt32(6);
+                        reg.X = reader.GetInt32("X");
+                        reg.Y = reader.GetInt32("Y");
+                        reg.Z = reader.GetInt32("Z");
                     }
 
-                    reg.IsWaypointBroadcasted = reader.GetBoolean(7);
+                    reg.IsWaypointBroadcasted = reader.GetBoolean("BroadcastWaypoint");
                     if (reg.IsWaypointBroadcasted)
                     {
-                        reg.WaypointIcon = reader.GetString(8);
-                        reg.WaypointColor = reader.GetInt32(9);
+                        reg.WaypointIcon = reader.GetString("WaypointIcon");
+                        reg.WaypointColor = reader.GetInt32("WaypointColor");
                     }
-                    
+
+                    if (!reader.IsDBNull("Description"))
+                        reg.Description = reader.GetString("Description");
+                    if (!reader.IsDBNull("ShortDescription"))
+                        reg.ShortDescription = reader.GetString("ShortDescription");
+                    if (!reader.IsDBNull("WebHook"))
+                        reg.WebHook = reader.GetString("WebHook");
+
 
                     registry.AddShop(reg);
                 }
@@ -483,6 +501,23 @@ namespace Viconomy.Database
 
             productListCache[ID] = products;
             return products;
+        }
+
+        public void UpdateShopConfig(ShopRegistration shop)
+        {
+            using (SqliteConnection connection = GetConnection())
+            {
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+                cmd.CommandText = @"UPDATE Shops SET Description = @Description, ShortDescription = @ShortDescription, WebHook = @WebHook WHERE ID = @ID;";
+                cmd.Parameters.Add("@ID", SqliteType.Integer).Value = shop.ID;
+                cmd.Parameters.Add("@Description", SqliteType.Text).Value = shop.Description;
+                cmd.Parameters.Add("@ShortDescription", SqliteType.Text).Value = shop.ShortDescription;
+                cmd.Parameters.Add("@WebHook", SqliteType.Text).Value = shop.WebHook;
+
+                cmd.ExecuteNonQuery();
+            }
+
         }
     }
 }

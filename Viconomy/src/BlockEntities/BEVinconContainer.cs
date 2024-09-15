@@ -588,7 +588,7 @@ namespace Viconomy.BlockEntities
                     this.invDialog.TryClose();
                 }
 
-                this.invDialog.Dispose();
+                this.invDialog?.Dispose();
                 this.invDialog = null;
             }
 
@@ -607,11 +607,7 @@ namespace Viconomy.BlockEntities
 
             }
 
-            if (this.invDialog != null)
-            {
-                this.invDialog.Dispose();
-            }
-
+            this.invDialog?.Dispose();
             this.invDialog = null;
         }
 

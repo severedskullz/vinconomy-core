@@ -1,15 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using Viconomy.BlockEntities;
-using Viconomy.Inventory;
 using Viconomy.Registry;
-using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
-using Vintagestory.API.MathTools;
 
 namespace Viconomy.GUI
 {
@@ -32,9 +27,11 @@ namespace Viconomy.GUI
             ProductInventory = new DummyInventory(capi, products.Count);
             ProductInventory.TakeLocked = true;
             ProductInventory.PutLocked = true;
+            ProductInventory.OnAcquireTransitionSpeed = NoDecay;
             CurrencyInventory = new DummyInventory(capi, products.Count);
             CurrencyInventory.TakeLocked = true;
             CurrencyInventory.PutLocked = true;
+            CurrencyInventory.OnAcquireTransitionSpeed = NoDecay;
             int index = 0;
 
             //Add our Product and Currency to each inventory. Catch JSON errors on attributes, cuz Quotes in descriptions got me once already
@@ -48,8 +45,13 @@ namespace Viconomy.GUI
                     {
                         TreeAttribute attr = new TreeAttribute();
                         attr.FromBytes(product.ProductAttributes);
+
+                        // Remove transition state from any food items. SQL entries are the last time it was inserted and isnt updated
+                        attr.RemoveAttribute("transitionstate");
+                        
                         //JsonObject productAttr = JsonObject.FromJson(product.ProductAttributes);
                         productStack.Attributes = attr;//(ITreeAttribute)ToAttribute(productAttr.Token);
+
                     }
                 } catch (Exception ex) { }
                 ProductInventory[index].Itemstack = productStack;
@@ -58,6 +60,10 @@ namespace Viconomy.GUI
                 if (product.CurrencyAttributes != null)
                 {
                     TreeAttribute attr = new TreeAttribute();
+
+                    // Remove transition state from any food items. SQL entries are the last time it was inserted and isnt updated
+                    attr.RemoveAttribute("transitionstate");
+
                     attr.FromBytes(product.CurrencyAttributes);
                     //JsonObject currencyAttr = JsonObject.FromJson(product.CurrencyAttributes);
                     currencyStack.Attributes = attr; // (ITreeAttribute)currencyAttr.ToAttribute();
@@ -72,6 +78,10 @@ namespace Viconomy.GUI
             this.Compose();
         }
 
+        private float NoDecay(EnumTransitionType transType, ItemStack stack, float mulByConfig)
+        {
+            return 0;
+        }
 
         private ItemStack ResolveBlockOrItem(string code, int size)
         {
@@ -96,8 +106,6 @@ namespace Viconomy.GUI
             int insetWidth = 800;
             int insetHeight = 300;
             int insetDepth = 3;
-            int rowHeight = 35;
-            int rowCount = 40;
 
             ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
 
@@ -129,28 +137,32 @@ namespace Viconomy.GUI
                 ElementBounds itemClipBounds = itemInsetBounds.ForkContainingChild().FixedGrow(20, 0); // I dont know why "Grow" is needed here. It leaves me with 20px of missing space even if padding is 0.;
                 ElementBounds itemContainerBounds = itemInsetBounds.ForkContainingChild(GuiStyle.HalfPadding, GuiStyle.HalfPadding, GuiStyle.HalfPadding, GuiStyle.HalfPadding);
 
-                ElementBounds containerRowBounds = ElementBounds.Fixed(0, 0, insetWidth, rowHeight);
-
                 ElementBounds itemSlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, insetWidth, insetHeight, 15, (int)Math.Ceiling(Catalog.Products.Products.Count / 15.0f)).WithFixedPosition(15,0).WithParent(itemContainerBounds);
                 bgBounds.WithChildren(descInsetBounds, descScrollbarBounds, itemInsetBounds, itemScrollbarBounds);
 
                 ElementBounds backButtonBounds = null;
                 if (ShopList != null)
                 {
-                    backButtonBounds = itemInsetBounds.BelowCopy().WithFixedSize(100, 60);
+                    backButtonBounds = itemInsetBounds.BelowCopy().WithFixedOffset(0,10).WithFixedSize(100, 30);
                     bgBounds.WithChild(backButtonBounds);
                 }
 
                 SingleComposer = capi.Gui.CreateCompo("GuiVinconShopCatalog", dialogBounds)
                .AddShadedDialogBG(bgBounds)
                .AddDialogTitleBar(this.DialogTitle, OnTitleBarCloseClicked)
-               .AddStaticText($"Owner: {Catalog.OwnerName}",CairoFont.WhiteSmallishText(),descLabelBounds)
+               .AddStaticText($"Owner: {Catalog.OwnerName}", CairoFont.WhiteSmallishText(), descLabelBounds)
                .BeginChildElements()
                    .AddInset(descInsetBounds, insetDepth)
-                   .BeginClip(descClipBounds)
+                   .BeginClip(descClipBounds);
                         //.AddContainer(containerBounds, "scroll-content")
-                        .AddRichtext(Catalog.Description != null ? Catalog.Description : "", CairoFont.WhiteDetailText(), descContainerBounds, "description")
-                   .EndClip()
+                        try
+                        {
+                            SingleComposer.AddRichtext(Catalog.Description != null ? Catalog.Description : "", CairoFont.WhiteDetailText(), descContainerBounds, "description");
+                        } catch (Exception ex)
+                        {
+                            SingleComposer.AddRichtext("There was an error in the store's description. Exception " + ex.Message, CairoFont.WhiteDetailText(), descContainerBounds, "description");
+                        }
+                SingleComposer.EndClip()
                    .AddVerticalScrollbar(OnNewDescriptionScrollbarValue, descScrollbarBounds, "description-scrollbar")
                .EndChildElements()
 
