@@ -108,7 +108,13 @@ namespace Viconomy
         public void PostAsync()
         {
             this.Mod.Logger.Chat("Update HTTP Called with " + queuedSales.Count + " entries");
-            if (queuedSales.Count == 0 || !Config.IsEnabled)
+            if (!Config.IsEnabled)
+            {
+                queuedSales.Clear();
+                return;
+            }
+
+            if (queuedSales.Count == 0)
             {
                 return;
             }
@@ -154,24 +160,40 @@ namespace Viconomy
                 }
                 embed.description = sb.ToString();
                 embeds.Add(embed);
+
+                ShopRegistration shop = _coreSystem.GetRegistry().GetShop(update.shopId);
+                //TODO: For now Ill just hardcode it for Discord to prevent abuse. Without some custom JSON format, itll be pointless to have all webhooks have the same discord limitations.
+                if (shop != null && shop.WebHook != null && shop.WebHook.StartsWith("https://discord.com"))
+                {
+                    DiscordMessage shopMessage = new DiscordMessage();
+                    //message.content = "## :coin: The following shops have had sales recently:";
+                    shopMessage.embeds = new Embed[] { embed };
+                    string shopData = JsonSerializer.Serialize(shopMessage);
+                    StringContent shopJsonContent = new(shopData, Encoding.UTF8, "application/json");
+
+                    httpClient.PostAsync(shop.WebHook, shopJsonContent);
+                }
             }
+            if (Config.PurchasesWebhook != null )
+            {
+                DiscordMessage message = new DiscordMessage();
+                //message.content = "## :coin: The following shops have had sales recently:";
+                message.embeds = embeds.Take(10).ToArray();
+                string data = JsonSerializer.Serialize(message);
+                StringContent jsonContent = new(data, Encoding.UTF8, "application/json");
 
-            DiscordMessage message = new DiscordMessage();
-            //message.content = "## :coin: The following shops have had sales recently:";
-            message.embeds = embeds.Take(10).ToArray();
-            string data = JsonSerializer.Serialize(message);
-            StringContent jsonContent = new(data,Encoding.UTF8, "application/json");
+                httpClient.PostAsync(Config.PurchasesWebhook, jsonContent);
+            }
+            sales.Clear();
 
-            //Console.WriteLine(data);
-            //HttpResponseMessage result = 
-            httpClient.PostAsync(Config.PurchasesWebhook, jsonContent);//.Result;
-            //Console.WriteLine(result.Content);
         }
 
+        /*
         public override void StartClientSide(ICoreClientAPI api)
         {
             this.Mod.Logger.Event("Start Clientside Called");
         }
+        */
 
         private class DiscordUpdate
         {

@@ -120,7 +120,7 @@ namespace Viconomy.Database
             {
                 connection.Open();
                 SqliteCommand cmd = connection.CreateCommand();
-                cmd.CommandText = "INSERT INTO Shops VALUES (@ID, @Name, @Owner, @OwnerName, @X, @Y, @Z, false, NULL, NULL); SELECT last_insert_rowid();";
+                cmd.CommandText = "INSERT INTO Shops VALUES (@ID, @Name, @Owner, @OwnerName, @X, @Y, @Z, false, NULL, NULL, NULL, NULL, NULL); SELECT last_insert_rowid();";
                 cmd.Parameters.Add("@Name", SqliteType.Text).Value = shop.Name;
                 cmd.Parameters.Add("@Owner", SqliteType.Text).Value = shop.Owner;
                 cmd.Parameters.Add("@OwnerName", SqliteType.Text).Value = shop.OwnerName;

@@ -8,13 +8,11 @@ namespace Viconomy.Config
 {
     public class VinconIntegrationConfig
     {
-        public bool IsEnabled { get; set; }
-        public int MessageIntervalMinutes { get; set; }
+        public bool IsEnabled { get; set; } = true;
+        public int MessageIntervalMinutes { get; set; } = 10;
         //public string GlobalWebhook { get; set; }
         public string PurchasesWebhook { get; set; }
         //public string RestockWebhook { get; set; }
-
-
     }
 
 }
