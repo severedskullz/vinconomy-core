@@ -88,7 +88,7 @@ namespace Viconomy.GUI
                 // Create the dialog
                 SingleComposer = capi.Gui.CreateCompo("demoScrollGui", dialogBounds)
                     .AddShadedDialogBG(bgBounds)
-                    .AddDialogTitleBar("Scroll Me!", OnTitleBarCloseClicked)
+                    .AddDialogTitleBar("Shop Catalog", OnTitleBarCloseClicked)
                     .BeginChildElements()
                         .AddInset(insetBounds, insetDepth)
                         .BeginClip(clipBounds);

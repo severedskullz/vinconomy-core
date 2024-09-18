@@ -1,4 +1,5 @@
-﻿using Viconomy.GUI;
+﻿using System.Text;
+using Viconomy.GUI;
 using Viconomy.Network;
 using Viconomy.Registry;
 using Viconomy.Util;
@@ -11,6 +12,10 @@ namespace Viconomy.ItemTypes
     public class ItemCatalog : Item
     {
         //GuiDialogGeneric ledgerGUI;
+        VinconomyCoreSystem modSystem;
+
+
+
         public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handling)
         {
            
@@ -30,6 +35,26 @@ namespace Viconomy.ItemTypes
                 }
                
             }
+        }
+
+        public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
+        {
+            int shopID = inSlot.Itemstack.Attributes.GetInt("ShopId", -1);
+            if (shopID > 0)
+            {
+                if (modSystem == null)
+                {
+                    modSystem = api.ModLoader.GetModSystem<VinconomyCoreSystem>();
+                }
+
+                ShopRegistration shop = modSystem.GetRegistry().GetShop(inSlot.Itemstack.Attributes.GetInt("ShopId"));
+                dsc.AppendLine("Bound to shop: " + shop.Name);
+            }
+            
+
+            base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
+
+            
         }
     }
 }

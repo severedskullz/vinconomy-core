@@ -72,6 +72,7 @@
   <None Remove="assets\vinconomy\itemtypes\tenretnibook.json" />
   <None Remove="assets\vinconomy\lang\ru.json" />
   <None Remove="assets\vinconomy\recipes\grid\armorstand.json" />
+  <None Remove="assets\vinconomy\recipes\grid\catalog.json" />
   <None Remove="assets\vinconomy\recipes\grid\gachaball.json" />
   <None Remove="assets\vinconomy\recipes\grid\gachaloader.json" />
   <None Remove="assets\vinconomy\recipes\grid\gachamachine.json" />

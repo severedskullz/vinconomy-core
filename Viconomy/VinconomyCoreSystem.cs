@@ -308,15 +308,15 @@ namespace Viconomy
             }
 
             string playerUUID = playerData.PlayerUID;
-            if (entity is BEVinconBase) {
-                ((BEVinconBase)entity).SetOwner(playerUUID, playerData.LastKnownPlayername);
+            if (entity is IOwnableStall) {
+                ((IOwnableStall)entity).SetOwner(playerUUID, playerData.LastKnownPlayername);
             }
             else if (entity is BEVinconRegister) 
             {
                 BEVinconRegister register = ((BEVinconRegister)entity);
                 ShopRegistry.ClearShop(register.ID);
                 register.Owner = playerUUID;
-                UpdateShop(playerUUID, register.ID, playerData.LastKnownPlayername + "'s Shop", register.Pos);
+                AddShop(playerUUID, playerData.LastKnownPlayername, playerData.LastKnownPlayername + "'s Shop", register.Pos, register.ID);
             } else
             {
                 return TextCommandResult.Error("Please target a Viconomy Stall or Register. (Wrong Class)");
