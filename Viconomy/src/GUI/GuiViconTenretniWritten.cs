@@ -1,5 +1,6 @@
 ﻿using System;
 using Vintagestory.API.Client;
+using Vintagestory.API.Config;
 
 namespace Viconomy.GUI
 {
@@ -96,11 +97,8 @@ namespace Viconomy.GUI
         {
             try {
                 textElem.SetNewText(BookText, CairoFont.WhiteSmallText());
-                //textElem.RecomposeText();
-                Console.WriteLine("It worked?");
             } catch {
-                textElem.SetNewText("There was a problem loading RichText. Perhaps there is a problem with the source document", CairoFont.WhiteSmallText());
-                Console.WriteLine("It didnt work");
+                textElem.SetNewText(Lang.Get("vinconomy:gui-error-parsing"), CairoFont.WhiteSmallText());
             }
             return true;
         }

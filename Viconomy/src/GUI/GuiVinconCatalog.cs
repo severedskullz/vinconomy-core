@@ -134,7 +134,7 @@ namespace Viconomy.GUI
 
                 // After composing dialog, need to set the scrolling area heights to enable scroll behavior
                 float scrollVisibleHeight = (float)clipBounds.fixedHeight;
-                float scrollTotalHeight = 70 * (shopList == null ? 1 : shopList.Count);
+                float scrollTotalHeight = 175 * (shopList == null ? 1 : shopList.Count);
                 SingleComposer.GetScrollbar("scrollbar").SetHeights(scrollVisibleHeight, scrollTotalHeight);
             } catch (Exception ex) { 
                 Console.WriteLine(ex.ToString());

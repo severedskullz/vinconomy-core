@@ -5,6 +5,7 @@ using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 
 namespace Viconomy.GUI
@@ -149,21 +150,21 @@ namespace Viconomy.GUI
 
 
                         //.AddButton("Save", new ActionConsumable(this.onSave),saveButtonBounds, EnumButtonStyle.Small, "save")
-                        .AddStaticText("Name:", CairoFont.WhiteSmallText(), nameSelectionLabel)
+                        .AddStaticText(Lang.Get("vinconomy:gui-name"), CairoFont.WhiteSmallText(), nameSelectionLabel)
                         .AddTextInput(nameSelectionBounds, OnTextChanged, CairoFont.WhiteSmallText(), "bundleName")
-                        .AddStaticText("Gacha:", CairoFont.WhiteSmallText(), inputLabel)
+                        .AddStaticText(Lang.Get("vinconomy:gui-gacha"), CairoFont.WhiteSmallText(), inputLabel)
                         .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { 1 }, inputSlotBounds, "input")
-                        .AddStaticText("Output:", CairoFont.WhiteSmallText(), outputLabel)
+                        .AddStaticText(Lang.Get("vinconomy:gui-output"), CairoFont.WhiteSmallText(), outputLabel)
                         .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { 0 }, outputSlotBounds, "output")
-                        .AddButton("Bundle", new ActionConsumable(this.BundleItems), bundleBounds, EnumButtonStyle.Small, "bundle")
-                        .AddButton("Bundle All", new ActionConsumable(this.BundleAllItems), bundleAllBounds, EnumButtonStyle.Small, "bundleAll")
+                        .AddButton(Lang.Get("vinconomy:gui-bundle"), new ActionConsumable(this.BundleItems), bundleBounds, EnumButtonStyle.Small, "bundle")
+                        .AddButton(Lang.Get("vinconomy:gui-bundle-all"), new ActionConsumable(this.BundleAllItems), bundleAllBounds, EnumButtonStyle.Small, "bundleAll")
                     //.AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlotBounds, "purchase")
                     //.AddPassiveItemSlot(outputSlotBounds, Inventory, )
                     .EndChildElements();
 
                 CairoFont font = CairoFont.WhiteSmallText().WithOrientation(EnumTextOrientation.Center);
                 SingleComposer.BeginChildElements(gachaBounds)
-                .AddStaticText("Items Per Gacha:", font, itemsPerLabel);
+                .AddStaticText(Lang.Get("vinconomy:gui-items-per-gacha"), font, itemsPerLabel);
 
                 
                

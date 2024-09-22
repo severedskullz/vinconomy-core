@@ -6,6 +6,7 @@ using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 
 namespace Viconomy.GUI
@@ -179,7 +180,7 @@ namespace Viconomy.GUI
 
 
                 SingleComposer.BeginChildElements(gachaBounds)
-                   .AddStaticText("Chances of Winning:", CairoFont.WhiteSmallText(), chanceLabel);
+                   .AddStaticText(Lang.Get("vinconomy:gui-deal"), CairoFont.WhiteSmallText(), chanceLabel);
 
                 CairoFont font = CairoFont.WhiteSmallText().WithOrientation(EnumTextOrientation.Center);
 
@@ -195,8 +196,8 @@ namespace Viconomy.GUI
 
                 SingleComposer.BeginChildElements(settingBounds)
                    
-                        .AddButton("Deal", new ActionConsumable(this.OnPurchase),purchaseButtonBounds, EnumButtonStyle.Small, "save")
-                        .AddStaticText("Price:", CairoFont.WhiteSmallText(), currencyLabel)
+                        .AddButton(Lang.Get("vinconomy:gui-deal"), new ActionConsumable(this.OnPurchase),purchaseButtonBounds, EnumButtonStyle.Small, "save")
+                        .AddStaticText(Lang.Get("vinconomy:gui-price"), CairoFont.WhiteSmallText(), currencyLabel)
                         .AddPassiveItemSlot(currencySlotBounds, inv, inv[0], true)
 
                     .EndChildElements();

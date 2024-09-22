@@ -6,6 +6,7 @@ using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 
 namespace Viconomy.GUI
@@ -84,7 +85,7 @@ namespace Viconomy.GUI
             ElementBounds pagePrev = ElementBounds.FixedSize(30, 30).WithAlignment(EnumDialogArea.LeftTop);
             ElementBounds pageLabel = ElementBounds.FixedSize(50, 25).WithFixedAlignmentOffset(0, 10).WithAlignment(EnumDialogArea.CenterTop);
             CairoFont labelTextFont = CairoFont.WhiteSmallText().WithOrientation(EnumTextOrientation.Center);
-            string labelText = "Slot " + (curTab + 1) + " of " + stall.StallSlotCount;
+            string labelText = Lang.Get("vinconomy:gui-slot", new object[] { curTab + 1, stall.StallSlotCount });
             labelTextFont.AutoBoxSize(labelText, pageLabel, true);
             ElementBounds pageNext = ElementBounds.FixedSize(30, 30).WithAlignment(EnumDialogArea.RightTop);
 
@@ -117,13 +118,13 @@ namespace Viconomy.GUI
                     .AddDynamicText(labelText, labelTextFont, pageLabel, "pageLabel")
                     .AddButton(">", new ActionConsumable(this.NextPage), pageNext, EnumButtonStyle.Small, "nextPage")
   
-                    .AddStaticText("Quantity:", CairoFont.WhiteSmallText(), quantitySelectionLabel)
+                    .AddStaticText(Lang.Get("vinconomy:gui-quantity"), CairoFont.WhiteSmallText(), quantitySelectionLabel)
                     .AddNumberInput(quantitySelectionBounds, null, CairoFont.WhiteSmallText(), "quantity")
-                    .AddButton("Deal", new ActionConsumable(this.OnPurchase),purchaseButtonBounds, EnumButtonStyle.Small, "save")
-                    .AddStaticText("Price:", CairoFont.WhiteSmallText(), currencyLabel)
+                    .AddButton(Lang.Get("vinconomy:gui-deal"), new ActionConsumable(this.OnPurchase),purchaseButtonBounds, EnumButtonStyle.Small, "save")
+                    .AddStaticText(Lang.Get("vinconomy:gui-price"), CairoFont.WhiteSmallText(), currencyLabel)
                     .AddPassiveItemSlot(currencySlotBounds, inv, currancySlot, true)
                     
-                    .AddStaticText("Product:", CairoFont.WhiteSmallText(), purchaseLabel)
+                    .AddStaticText(Lang.Get("vinconomy:gui-product"), CairoFont.WhiteSmallText(), purchaseLabel)
                     .AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlotBounds)
 
                 .EndChildElements();

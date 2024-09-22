@@ -77,7 +77,7 @@ namespace Viconomy
             //Task.Run(PostAsync);
 
             _coreSystem.OnPurchasedItem += EnquePurchase;
-            _coreServerAPI.Event.Timer(PostAsync, 10);
+            _coreServerAPI.Event.Timer(PostAsync, Config.MessageIntervalMinutes * 60);
 
         }
 
@@ -107,7 +107,7 @@ namespace Viconomy
 
         public void PostAsync()
         {
-            this.Mod.Logger.Chat("Update HTTP Called with " + queuedSales.Count + " entries");
+            //this.Mod.Logger.VerboseDebug("Update HTTP Called with " + queuedSales.Count + " entries");
             if (!Config.IsEnabled)
             {
                 queuedSales.Clear();

@@ -7,6 +7,7 @@ using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
@@ -74,7 +75,7 @@ namespace Viconomy.GUI
                 string[] shopsNames = new string[shopLength];
                 string[] shopsKeys = new string[shopLength];
 
-                shopsNames[0] = "None";
+                shopsNames[0] = Lang.Get("vinconomy:gui-none");
                 shopsKeys[0] = "None";
                 for (int i = 0; i < registers.Length; i++)
                 {
@@ -198,24 +199,24 @@ namespace Viconomy.GUI
 
                 
                     SingleComposer.BeginChildElements(settingBounds)
-                        .AddStaticText("Shop:", CairoFont.WhiteSmallText(), shopSelectionLabel)
+                        .AddStaticText(Lang.Get("vinconomy:gui-shop"), CairoFont.WhiteSmallText(), shopSelectionLabel)
                         .AddDropDown(shopsKeys, shopsNames, selectedIndex, new SelectionChangedDelegate(this.onSelectionChanged), shopSelectBounds)
                         .AddIf(api.World.Player.HasPrivilege("gamemode"))
-                            .AddStaticText("Admin Shop:", CairoFont.WhiteSmallText(), adminShopLabel)
+                            .AddStaticText(Lang.Get("vinconomy:gui-admin-shop"), CairoFont.WhiteSmallText(), adminShopLabel)
                             .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
                         .EndIf()
 
                         //.AddButton("Save", new ActionConsumable(this.onSave),saveButtonBounds, EnumButtonStyle.Small, "save")
-                        .AddStaticText("Price:", CairoFont.WhiteSmallText(), currencyLabel)
+                        .AddStaticText(Lang.Get("vinconomy:gui-price"), CairoFont.WhiteSmallText(), currencyLabel)
                         .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { 0 }, currencySlotBounds, "currency")
-                        .AddStaticText("Use Total Count Randomizer:", CairoFont.WhiteSmallText(), absoluteLabel)
+                        .AddStaticText(Lang.Get("vinconomy:gui-use-total-randomizer"), CairoFont.WhiteSmallText(), absoluteLabel)
                         .AddSwitch(new Action<bool>(this.OnToggleAbsolutePick), absoluteBounds, "absolutePick")
                         //.AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlotBounds, "purchase")
                     //.AddPassiveItemSlot(outputSlotBounds, Inventory, )
                     .EndChildElements();
 
                 SingleComposer.BeginChildElements(gachaBounds)
-                .AddStaticText("Chances of Winning:", CairoFont.WhiteSmallText(), chanceLabel);
+                .AddStaticText(Lang.Get("vinconomy:gui-winning-chance"), CairoFont.WhiteSmallText(), chanceLabel);
 
                 CairoFont font = CairoFont.WhiteSmallText().WithOrientation(EnumTextOrientation.Center);
                

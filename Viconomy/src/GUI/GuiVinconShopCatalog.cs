@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Viconomy.Registry;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 
 namespace Viconomy.GUI
@@ -150,7 +151,7 @@ namespace Viconomy.GUI
                 SingleComposer = capi.Gui.CreateCompo("GuiVinconShopCatalog", dialogBounds)
                .AddShadedDialogBG(bgBounds)
                .AddDialogTitleBar(this.DialogTitle, OnTitleBarCloseClicked)
-               .AddStaticText($"Owner: {Catalog.OwnerName}", CairoFont.WhiteSmallishText(), descLabelBounds)
+               .AddStaticText(Lang.Get("vinconomy:gui-owner") + Catalog.OwnerName, CairoFont.WhiteSmallishText(), descLabelBounds)
                .BeginChildElements()
                    .AddInset(descInsetBounds, insetDepth)
                    .BeginClip(descClipBounds);
@@ -160,13 +161,13 @@ namespace Viconomy.GUI
                             SingleComposer.AddRichtext(Catalog.Description != null ? Catalog.Description : "", CairoFont.WhiteDetailText(), descContainerBounds, "description");
                         } catch (Exception ex)
                         {
-                            SingleComposer.AddRichtext("There was an error in the store's description. Exception " + ex.Message, CairoFont.WhiteDetailText(), descContainerBounds, "description");
+                            SingleComposer.AddRichtext(Lang.Get("vinconomy:gui-error-tell-the-devl") + ex.Message, CairoFont.WhiteDetailText(), descContainerBounds, "description");
                         }
                 SingleComposer.EndClip()
                    .AddVerticalScrollbar(OnNewDescriptionScrollbarValue, descScrollbarBounds, "description-scrollbar")
                .EndChildElements()
 
-               .AddStaticText($"Available Products for sale:", CairoFont.WhiteSmallishText(), productLabelBounds)
+               .AddStaticText(Lang.Get("vinconomy:gui-available-products"), CairoFont.WhiteSmallishText(), productLabelBounds)
                .BeginChildElements()
                    .AddInset(itemInsetBounds, insetDepth)
                    .BeginClip(itemClipBounds)
@@ -178,7 +179,7 @@ namespace Viconomy.GUI
                
                 if (ShopList != null)
                 {
-                    SingleComposer.AddButton("Back", ReturnToShopList, backButtonBounds, EnumButtonStyle.Normal);
+                    SingleComposer.AddButton(Lang.Get("vinconomy:gui-back"), ReturnToShopList, backButtonBounds, EnumButtonStyle.Normal);
                 }
                 
                 GuiElementContainer scrollArea = SingleComposer.GetContainer("products");

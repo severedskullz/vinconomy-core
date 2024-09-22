@@ -8,6 +8,7 @@ using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
@@ -53,9 +54,9 @@ namespace Viconomy.GUI
         public GuiTab[] GetTabs()
         {
             List<GuiTab> tabs = new List<GuiTab>();
-            tabs.Add(new GuiTab() { Name = "Inventory", Active = false});
-            tabs.Add(new GuiTab() { Name = "Configuration", Active = false });
-            tabs.Add(new GuiTab() { Name = "Waypoint", Active = false });
+            tabs.Add(new GuiTab() { Name = Lang.Get("vinconomy:tabname-inventory"), Active = false});
+            tabs.Add(new GuiTab() { Name = Lang.Get("vinconomy:tabname-configuration"), Active = false });
+            tabs.Add(new GuiTab() { Name = Lang.Get("vinconomy:tabname-waypoint"), Active = false });
             tabs[tabIndex].Active = true;
             return tabs.ToArray();
         }
@@ -168,10 +169,10 @@ namespace Viconomy.GUI
                     .AddShadedDialogBG(bgBounds)
                     .AddVerticalTabs(tabs, tabBounds, onTabChanged)
                     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked)
-                    .AddStaticText("Shop Name:", CairoFont.WhiteSmallText(), shopNameLabelBounds)
+                    .AddStaticText(Lang.Get("vinconomy:gui-name"), CairoFont.WhiteSmallText(), shopNameLabelBounds)
                     .AddTextInput(shopNameInputBounds, null, CairoFont.TextInput(), "shopName")
 
-                    .AddStaticText("Short Description:", CairoFont.WhiteSmallText(), shortDescriptionLabelBounds)
+                    .AddStaticText(Lang.Get("vinconomy:gui-short-description"), CairoFont.WhiteSmallText(), shortDescriptionLabelBounds)
                     .AddInset(shortDescInsetBounds, 3)
                     .BeginClip(shortDescClipBounds);
                     try
@@ -180,13 +181,13 @@ namespace Viconomy.GUI
                     }
                     catch (Exception ex)
                     {
-                        SingleComposer.AddRichtext("There was an error in the store's short description. Exception " + ex.Message, CairoFont.WhiteDetailText(), shortDescContainerBounds, "description");
+                        SingleComposer.AddRichtext(Lang.Get("vinconomy:gui-error-tell-the-dev") + ex.Message, CairoFont.WhiteDetailText(), shortDescContainerBounds, "description");
                     }
                     SingleComposer.EndClip()
                     .AddVerticalScrollbar(OnNewShortDescScrollbarValue, shortDescScrollbarBounds, "shortdescription-scrollbar")
                     .AddDynamicText("0 / 250", CairoFont.WhiteSmallishText(), shortDescriptionSizeLabelBounds, "shortDescriptionLength")
 
-                    .AddStaticText("Description:", CairoFont.WhiteSmallText(), descriptionLabelBounds)
+                    .AddStaticText(Lang.Get("vinconomy:gui-description"), CairoFont.WhiteSmallText(), descriptionLabelBounds)
                     //.AddTextArea(descriptionBounds, UpdateLongCount, CairoFont.TextInput(), "description")
                     .AddInset(descriptionInsetBounds, 3)
                     .BeginClip(descClipBounds);
@@ -202,10 +203,10 @@ namespace Viconomy.GUI
                     .AddVerticalScrollbar(OnNewDescriptionScrollbarValue, descriptionScrollbarBounds, "description-scrollbar")
                     .AddDynamicText("0 / 2500", CairoFont.WhiteSmallishText(), descriptionSizeLabelBounds, "descriptionLength")
 
-                    .AddStaticText("Webhook:", CairoFont.WhiteSmallText(), webhookLabelBounds)
+                    .AddStaticText(Lang.Get("vinconomy:gui-webhook"), CairoFont.WhiteSmallText(), webhookLabelBounds)
                     .AddTextInput(webhookBounds, null, CairoFont.TextInput(), "webhook")
 
-                    .AddButton("Save", OnSaveShopConfigPressed, saveButtonBounds, EnumButtonStyle.Small, "save");
+                    .AddButton(Lang.Get("vinconomy:gui-save"), OnSaveShopConfigPressed, saveButtonBounds, EnumButtonStyle.Small, "save");
 
 
                 SingleComposer.Compose();
@@ -376,11 +377,11 @@ namespace Viconomy.GUI
                 SingleComposer.AddShadedDialogBG(bgBounds)
                     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked)
                     .AddVerticalTabs(tabs, tabBounds, onTabChanged)
-                    .AddStaticText("Waypoint Visible To Players:", CairoFont.WhiteSmallText(), waypointLabel)
+                    .AddStaticText(Lang.Get("vinconomy:gui-waypoint-visible"), CairoFont.WhiteSmallText(), waypointLabel)
                     .AddSwitch(new Action<bool>(OnToggleWaypointVisible), waypointVisible, "isvisible")
-                    .AddStaticText("Color:", CairoFont.WhiteSmallText(), colorLabelBounds)
+                    .AddStaticText(Lang.Get("vinconomy:gui-color"), CairoFont.WhiteSmallText(), colorLabelBounds)
                     .AddColorListPicker(colors, onToggleColor, colorRow, 500, "colorpicker")
-                    .AddStaticText("Icon:", CairoFont.WhiteSmallText(), iconLabelBounds)
+                    .AddStaticText(Lang.Get("vinconomy:gui-icon"), CairoFont.WhiteSmallText(), iconLabelBounds)
                     .AddIconListPicker(icons, onToggleIcon, iconRow, 500, "iconpicker")
                 .Compose();
 

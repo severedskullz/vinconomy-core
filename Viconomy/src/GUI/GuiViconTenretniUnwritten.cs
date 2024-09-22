@@ -6,6 +6,7 @@ using Viconomy.Network;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.Common;
 
 namespace Viconomy.GUI
@@ -51,7 +52,7 @@ namespace Viconomy.GUI
                 } else
                 {
                     baseURLs.Add("");
-                    names.Add("No Configured Archives");
+                    names.Add(Lang.Get("vinconomy:gui-no-archive"));
                 }
 
 
@@ -106,13 +107,13 @@ namespace Viconomy.GUI
                     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);
 
                 SingleComposer.BeginChildElements(settingBounds)
-                    .AddStaticText("Name:", defaultFont, nameLabelBounds)
+                    .AddStaticText(Lang.Get("vinconomy:gui-name"), defaultFont, nameLabelBounds)
                     .AddTextInput(nameBounds, new Action<string>(onInputChanged), defaultFont, "name")
 
-                    .AddButton("Test", RefreshText, buttonBounds,EnumButtonStyle.Normal, "testHTTP")
-                    .AddStaticText("Archive:", defaultFont, baseURLLabelBounds)
+                    .AddButton(Lang.Get("vinconomy:gui-test"), RefreshText, buttonBounds,EnumButtonStyle.Normal, "testHTTP")
+                    .AddStaticText(Lang.Get("vinconomy:gui-archive"), defaultFont, baseURLLabelBounds)
                     .AddDropDown(endpointKeys, endpointNames, endpointSelectionIndex, new SelectionChangedDelegate(this.onEndpointSelectionChanged), baseURLSelectBounds, "archive")
-                    .AddStaticText("ID:", defaultFont, idLabelBounds)
+                    .AddStaticText(Lang.Get("vinconomy:gui-id"), defaultFont, idLabelBounds)
                     .AddTextInput(idSelectionBounds, new Action<string>(onInputChanged), defaultFont, "id")
                     
                     .BeginClip(clipBounds)
@@ -120,7 +121,7 @@ namespace Viconomy.GUI
                         .AddRichtext(BookText, CairoFont.WhiteSmallText(), textBounds.WithFixedPadding(5.0).WithFixedSize(w - 10,h - 10), "tenretni")
                     .EndClip()
                     .AddVerticalScrollbar(onScrollbarValueChanged, scrollbarBounds, "scrollbar")
-                    .AddButton("Save", SaveText, saveButtonBounds)
+                    .AddButton(Lang.Get("vinconomy:gui-save"), SaveText, saveButtonBounds)
                 .EndChildElements();
 
 
@@ -186,7 +187,7 @@ namespace Viconomy.GUI
                 SingleComposer.GetButton("testHTTP").Enabled = true;
 
                 if (args.StatusCode == 404 || args.ErrorMessage != "OK") {
-                    BookText = "The requested Archive Address could not be read.";
+                    BookText = Lang.Get("vinconomy:gui-couldnt-read-response");
                 } else
                 {
                     BookText = args.Response;
@@ -205,7 +206,7 @@ namespace Viconomy.GUI
                 //textElem.RecomposeText();
                 //Console.WriteLine("It worked?");
             } catch {
-                textElem.SetNewText("There was a problem loading RichText. Perhaps there is a problem with the source document", CairoFont.WhiteSmallText());
+                textElem.SetNewText(Lang.Get("vinconomy:gui-error-parsing"), CairoFont.WhiteSmallText());
                 //Console.WriteLine("It didnt work");
             }
             updateScrollbarBounds();

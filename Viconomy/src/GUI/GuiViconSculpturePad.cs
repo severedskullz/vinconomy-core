@@ -7,6 +7,7 @@ using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
@@ -82,7 +83,7 @@ namespace Viconomy.GUI
                 string[] shopsNames = new string[shopLength];
                 string[] shopsKeys = new string[shopLength];
 
-                shopsNames[0] = "None";
+                shopsNames[0] = Lang.Get("vinconomy:gui-none");
                 shopsKeys[0] = "None";
                 for (int iregister = 0; iregister < registers.Length; iregister++)
                 {
@@ -181,7 +182,7 @@ namespace Viconomy.GUI
                 ElementBounds pageLabel = ElementBounds.FixedSize(itemPageTotalWidth-60, 26).WithFixedAlignmentOffset(0, 10).FixedRightOf(pagePrev);
                 //ElementBounds pageNext = ElementBounds.FixedSize(50, 50).WithAlignment(EnumDialogArea.RightTop);
                 CairoFont labelTextFont = CairoFont.WhiteSmallText().WithOrientation(EnumTextOrientation.Center);
-                string labelText = "Layer " + (curTab + 1) + " of " + sizeY;
+                string labelText = Lang.Get("vinconomy:gui-layer", new object[] { curTab + 1, sizeY });
                 labelTextFont.AutoBoxSize(labelText, pageLabel, true);
 
                 ElementBounds pageNext = ElementBounds.FixedSize(30, 30).WithFixedOffset(itemPageTotalWidth - 30, 0);//.FixedRightOf(pageLabel, 10);
@@ -235,21 +236,21 @@ namespace Viconomy.GUI
                     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);
 
                     SingleComposer.BeginChildElements(settingBounds)
-                        .AddStaticText("Shop:", CairoFont.WhiteSmallText(), shopSelectionLabel)
+                        .AddStaticText(Lang.Get("vinconomy:gui-shop"), CairoFont.WhiteSmallText(), shopSelectionLabel)
                         .AddDropDown(shopsKeys, shopsNames, selectedIndex, new SelectionChangedDelegate(this.onSelectionChanged), shopSelectBounds)
-                        .AddStaticText("Sculpture Width / Length:", CairoFont.WhiteSmallText(), sizeSelectionLabel)
+                        .AddStaticText(Lang.Get("vinconomy:gui-sculpture-width"), CairoFont.WhiteSmallText(), sizeSelectionLabel)
                         .AddDropDown(sculptureSizeKeys, sculptureSizeNames, sculptureSelectionIndex, new SelectionChangedDelegate(this.onXZSelectionChanged), sizeSelectBounds)
-                        .AddStaticText("Sculpture Height:", CairoFont.WhiteSmallText(), sizeSelectionHLabel)
+                        .AddStaticText(Lang.Get("vinconomy:gui-sculpture-height"), CairoFont.WhiteSmallText(), sizeSelectionHLabel)
                         .AddDropDown(sculptureSizeHKeys, sculptureSizeHNames, sculptureHSelectionIndex, new SelectionChangedDelegate(this.onYSelectionChanged), sizeSelectHBounds)
-                        .AddStaticText("Sculpture Name:", CairoFont.WhiteSmallText(), nameLabel)
+                        .AddStaticText(Lang.Get("vinconomy:gui-sculpture-name"), CairoFont.WhiteSmallText(), nameLabel)
                         .AddTextInput(nameBounds, OnTextChanged, CairoFont.WhiteSmallText(), "sculptureName")
                         .AddIf(api.World.Player.HasPrivilege("gamemode"))
-                            .AddStaticText("Admin Shop:", CairoFont.WhiteSmallText(), adminShopLabel)
+                            .AddStaticText(Lang.Get("vinconomy:gui-admin-shop"), CairoFont.WhiteSmallText(), adminShopLabel)
                             .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
                         .EndIf()
                    
                         //.AddButton("Save", new ActionConsumable(this.onSave),saveButtonBounds, EnumButtonStyle.Small, "save")
-                        .AddStaticText("Price:", CairoFont.WhiteSmallText(), currencyLabel)
+                        .AddStaticText(Lang.Get("vinconomy:gui-price"), CairoFont.WhiteSmallText(), currencyLabel)
                         .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { 0 }, currencySlotBounds, "currency")
                    
                         //.AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlotBounds, "purchase")
@@ -280,7 +281,7 @@ namespace Viconomy.GUI
 
                 
                 SingleComposer.BeginChildElements(disabledSlotsPage)
-                    .AddStaticText("Disabled Slots:", CairoFont.WhiteSmallishText(), disabledSlotsLabel);
+                    .AddStaticText(Lang.Get("vinconomy:gui-disabled-slots"), CairoFont.WhiteSmallishText(), disabledSlotsLabel);
                     for (int z = 0; z < sizeX; z++)
                     {
                         for (int x = 0; x < sizeX; x++)
@@ -303,7 +304,7 @@ namespace Viconomy.GUI
                     SingleComposer.GetSwitch("admin").SetValue(stall.IsAdminShop);
 
                 GuiElementTextInput sculptureInput = SingleComposer.GetTextInput("sculptureName");
-                sculptureInput.SetPlaceHolderText("Sculpture Name");
+                sculptureInput.SetPlaceHolderText(Lang.Get("vinconomy:gui-sculpture-name-placeholder"));
                 if (stall.getSculptureName() != null && stall.getSculptureName().Length > 0)
                     sculptureInput.SetValue(stall.getSculptureName());
 

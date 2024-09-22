@@ -7,6 +7,7 @@ using Viconomy.Network;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 
 namespace Viconomy.GUI
@@ -78,7 +79,7 @@ namespace Viconomy.GUI
                                 JsonObject currencyAttr = JsonObject.FromJson(sale.CurrencyAttributes);
                                 currency.Attributes = (ITreeAttribute)currencyAttr.ToAttribute();
                             }
-                            list.Add(new RichTextComponent(capi, "\t" + product.GetName() + " x" + product.StackSize + " sold for " + currency.GetName() + " x" + currency.StackSize + "\r\n", font));
+                            list.Add(new RichTextComponent(capi, "\t" + Lang.Get("vinconomy:gui-sale-entry", new object[] { product.StackSize, product.GetName(), currency.StackSize, currency.GetName() }) + "\r\n", font));
                         }
                         list.Add(new RichTextComponent(capi, "\r\n", font));
                     }
@@ -86,10 +87,10 @@ namespace Viconomy.GUI
                 }
                 else
                 {
-                    list.Add(new RichTextComponent(capi, "There are no sales this month.", font));
+                    list.Add(new RichTextComponent(capi, Lang.Get("vinconomy:gui-no-sales"), font));
                 }
             } catch(Exception e) {
-                list.Add(new RichTextComponent(capi, "There was a problem loading the ledger info - Please forward this to the developer, so he can fix it: " + e.Message, font));
+                list.Add(new RichTextComponent(capi, Lang.Get("vinconomy:gui-error-tell-the-dev") + e.Message, font));
             }
            
             textElem.SetNewText(list.ToArray());
@@ -152,11 +153,11 @@ namespace Viconomy.GUI
                     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);
 
                 SingleComposer.BeginChildElements(settingBounds)
-                    .AddStaticText("Month:", font, monthLabelBounds)
+                    .AddStaticText(Lang.Get("vinconomy:gui-month"), font, monthLabelBounds)
                     .AddNumberInput(monthSelectBounds, new Action<string>(onMonthChanged), CairoFont.WhiteSmallText(), "month")
-                    .AddStaticText("Year:", font, yearLabelBounds)
+                    .AddStaticText(Lang.Get("vinconomy:gui-year"), font, yearLabelBounds)
                     .AddNumberInput(yearSelectionBounds, new Action<string>(onYearChanged), CairoFont.WhiteSmallText(), "year")
-                    .AddButton("View", ViewLedger, buttonBounds)
+                    .AddButton(Lang.Get("vinconomy:gui-view"), ViewLedger, buttonBounds)
                     .BeginClip(clipBounds)
                     .AddInset(insetBounds)
                     .AddRichtext("", CairoFont.WhiteSmallText(), textBounds.WithFixedPadding(5.0).WithFixedSize((double)(w - 10), (double)(h - 10)), "ledgerText")
@@ -189,7 +190,7 @@ namespace Viconomy.GUI
 
         private bool ViewLedger()
         {
-            textElem.SetNewText("Loading...", CairoFont.WhiteSmallText());
+            textElem.SetNewText(Lang.Get("vinconomy:gui-loading"), CairoFont.WhiteSmallText());
             modSystem.RequestLedgerData(shopId, month, year);
             return true;
         }

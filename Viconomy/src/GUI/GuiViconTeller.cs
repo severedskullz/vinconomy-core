@@ -7,6 +7,7 @@ using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 
 namespace Viconomy.GUI
@@ -67,7 +68,7 @@ namespace Viconomy.GUI
             string[] shopsNames = new string[shopLength];
             string[] shopsKeys = new string[shopLength];
 
-            shopsNames[0] = "None";
+            shopsNames[0] = Lang.Get("vinconomy:gui-none");
             shopsKeys[0] = "None";
             for (int i = 0; i < registers.Length; i++)
             {
@@ -144,18 +145,18 @@ namespace Viconomy.GUI
 
                 if (isOwner)
                 {
-                    sc.AddStaticText("Shop:", CairoFont.WhiteSmallText(), shopSelectionLabel)
+                    sc.AddStaticText(Lang.Get("vinconomy:gui-shop"), CairoFont.WhiteSmallText(), shopSelectionLabel)
                      .AddDropDown(shopsKeys, shopsNames, selectedIndex, new SelectionChangedDelegate(this.onSelectionChanged), shopSelectBounds)
                      .AddIf(api.World.Player.HasPrivilege("gamemode"))
-                         .AddStaticText("Admin Shop:", CairoFont.WhiteSmallText(), adminShopLabel)
+                         .AddStaticText(Lang.Get("vinconomy:gui-admin-shop"), CairoFont.WhiteSmallText(), adminShopLabel)
                          .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
                      .EndIf();
                 }
 
-                sc.AddStaticText("Reverse Trade?", labelTextFont, reverseLabelBounds);
+                sc.AddStaticText(Lang.Get("vinconomy:gui-reverse-trade"), labelTextFont, reverseLabelBounds);
                 for (int i = 0; i < length; i++)
                 {
-                    sc.AddButton("Deal", MakeConsumableFor((i * 2)), currencyBounds[i, 0], EnumButtonStyle.Small, "currency" + i + "-1");
+                    sc.AddButton(Lang.Get("vinconomy:gui-deal"), MakeConsumableFor((i * 2)), currencyBounds[i, 0], EnumButtonStyle.Small, "currency" + i + "-1");
                     sc.GetButton("currency" + i + "-1").Enabled = reverseTrade[i];
                     if (isOwner) { 
                         sc.AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { i * 2 }, currencyBounds[i, 1]);
@@ -172,7 +173,7 @@ namespace Viconomy.GUI
                         sc.AddPassiveItemSlot(currencyBounds[i, 3], vinInv, vinInv[(i * 2) + 1], true);
                     }
                     //sc.AddStaticText("Converts To", labelTextFont, currencyBounds[i, 2]);
-                    sc.AddButton("Deal", MakeConsumableFor((i * 2)+1), currencyBounds[i, 4], EnumButtonStyle.Small, "currency" + i + "-2");
+                    sc.AddButton(Lang.Get("vinconomy:gui-deal"), MakeConsumableFor((i * 2)+1), currencyBounds[i, 4], EnumButtonStyle.Small, "currency" + i + "-2");
                     sc.GetButton("currency" + i + "-2").Enabled = !reverseTrade[i];
 
                 }
