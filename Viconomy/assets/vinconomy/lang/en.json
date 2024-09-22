@@ -73,6 +73,11 @@
 	"gui-winning-chance": "Chances of Winning:",
 	"gui-year": "Year:",
 
+    "gui-shop-catalog" :  "Shop Catalog",
+    "gui-location" :  "Location: ",
+    "gui-no-location" :  "Not Broadcasted",
+    "gui-no-shops":  "There are currently no shops available to view in the catalog",
+
     "no-gacha-ball": "No gacha ball provided in input slot",
     "gacha-atleast-one": "You need to bundle a gacha ball with atleast one item",
     "gacha-bundled-zero": "You must bundle atleast one gacha ball",

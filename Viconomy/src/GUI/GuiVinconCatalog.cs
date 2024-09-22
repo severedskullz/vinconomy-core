@@ -5,6 +5,7 @@ using Viconomy.Network;
 using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
+using Vintagestory.API.Config;
 
 namespace Viconomy.GUI
 {
@@ -88,7 +89,7 @@ namespace Viconomy.GUI
                 // Create the dialog
                 SingleComposer = capi.Gui.CreateCompo("demoScrollGui", dialogBounds)
                     .AddShadedDialogBG(bgBounds)
-                    .AddDialogTitleBar("Shop Catalog", OnTitleBarCloseClicked)
+                    .AddDialogTitleBar(Lang.Get("vinconomy:gui-shop-catalog"), OnTitleBarCloseClicked)
                     .BeginChildElements()
                         .AddInset(insetBounds, insetDepth)
                         .BeginClip(clipBounds);
@@ -106,18 +107,18 @@ namespace Viconomy.GUI
 
 
                         SingleComposer.AddRichtext(catalog.Name, CairoFont.WhiteSmallText(), shop["shopNameLabel"]);
-                        SingleComposer.AddRichtext($"Owner: {catalog.OwnerName}", CairoFont.WhiteSmallText(), shop["ownerLabel"]);
+                        SingleComposer.AddRichtext(Lang.Get("vinconomy:gui-owner") + catalog.OwnerName, CairoFont.WhiteSmallText(), shop["ownerLabel"]);
 
-                        string location = catalog.IsWaypointBroadcasted ? $"Location: <a href=\"viewmap://{catalog.WorldX}={catalog.Y}={catalog.WorldZ}\">({catalog.X}, {catalog.Y}, {catalog.Z})</a>" : "Location: Not Broadcasted";
+                        string location = Lang.Get("vinconomy:gui-location")  + (catalog.IsWaypointBroadcasted ? $"<a href=\"viewmap://{catalog.WorldX}={catalog.Y}={catalog.WorldZ}\">({catalog.X}, {catalog.Y}, {catalog.Z})</a>" : Lang.Get("vinconomy:gui-no-location"));
 
                         SingleComposer.AddRichtext(location, CairoFont.WhiteSmallText(), shop["locationLabel"]);
                         SingleComposer.AddRichtext(catalog.ShortDescription == null ? "" : catalog.ShortDescription, CairoFont.WhiteSmallText(), shop["shortDescLabel"]);
                         int index = i;
-                        SingleComposer.AddButton("View", () => { return OpenShop(index); }, shop["openButton"]);
+                        SingleComposer.AddButton(Lang.Get("vinconomy:gui-view"), () => { return OpenShop(index); }, shop["openButton"]);
                     }
                 } else
                 {
-                    SingleComposer.AddRichtext("There are currently no shops available to view in the catalog", CairoFont.WhiteSmallText(), lastEntry);
+                    SingleComposer.AddRichtext(Lang.Get("vinconomy:gui-no-shops"), CairoFont.WhiteSmallText(), lastEntry);
                 }
 
 
