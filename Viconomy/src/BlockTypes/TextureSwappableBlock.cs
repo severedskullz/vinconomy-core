@@ -243,7 +243,7 @@ namespace Viconomy.BlockTypes
                 BlockEntity entity = player.Entity.Api.World.BlockAccessor.GetBlockEntity(blockSel.Position);
                 if (entity != null)
                 {
-                    BETextureSwappableBlock beVicon = (BETextureSwappableBlock)entity;
+                    BETextureSwappableBlock beVicon = entity as BETextureSwappableBlock;
                     if (beVicon != null)
                     {
                         //Small hack to update the texture before the block entity is removed and the particles are spaned.
