@@ -9,7 +9,6 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.Client.NoObf;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Viconomy.BlockEntities
 {
@@ -205,15 +204,15 @@ namespace Viconomy.BlockEntities
                 using (MemoryStream ms = new MemoryStream())
                 {
                     BinaryWriter writer = new BinaryWriter(ms);
-                    writer.Write("VinconomyInventory");
                     if (register != null && register.Name != null)
                     {
                         writer.Write(register.Name);
-                    } else
-                    {
-                        writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Shop");
+                    } else if (OwnerName != null) {
+                         writer.Write(Lang.Get("vinconomy:gui-shop-owner", new string[] { OwnerName }));
+                    } else {
+                        writer.Write(Lang.Get("vinconomy:gui-shop-unowned"));    
                     }
-                    
+
                     TreeAttribute tree = new TreeAttribute();
                     this.inventory.ToTreeAttributes(tree);
                     tree.ToBytes(writer);
@@ -350,7 +349,6 @@ namespace Viconomy.BlockEntities
             using (MemoryStream ms = new MemoryStream(data))
             {
                 BinaryReader reader = new BinaryReader(ms);
-                reader.ReadString();
                 dialogTitle = reader.ReadString();
                 tree.FromBytes(reader);
             }

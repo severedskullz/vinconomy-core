@@ -168,11 +168,11 @@ namespace Viconomy.BlockEntities
             return hasAtleastOneForSale;
         }
 
-        private ItemStack GenNewSculptureBundle()
+        public ItemStack GenNewSculptureBundle()
         {
             ItemStack stack = new ItemStack(Api.World.GetItem(new AssetLocation("vinconomy:sculpturebundle")), 1);
             TreeAttribute treeAttr = new TreeAttribute();
-            treeAttr.SetString("SculptureName", getSculptureName());
+            treeAttr.SetString("SculptureName", GetSculptureName());
             treeAttr.SetInt("SizeX", sizeXZ);
             treeAttr.SetInt("SizeY", sizeY);
             treeAttr.SetInt("SizeZ", sizeXZ);
@@ -204,6 +204,11 @@ namespace Viconomy.BlockEntities
 
             stack.Attributes = treeAttr;
             return stack;
+        }
+
+        protected override void UpdateStallForSlot(int slot)
+        {
+            //TODO: Make a Sculpture Bundle of the sculpture items from GenNewSculptureBundle
         }
 
         public override void PurchaseItem(IPlayer player, int stallSlot, int desiredAmount, BEVinconRegister shopRegister)
@@ -270,8 +275,7 @@ namespace Viconomy.BlockEntities
                 using (MemoryStream ms = new MemoryStream())
                 {
                     BinaryWriter writer = new BinaryWriter(ms);
-                    writer.Write("VinconomyInventory");
-                    writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Stall");
+                    writer.Write(OwnerName == null ? "" : OwnerName);
                     writer.Write(byPlayer.PlayerUID == Owner);
                     TreeAttribute tree = new TreeAttribute();
                     this.inventory.ToTreeAttributes(tree);
@@ -293,8 +297,14 @@ namespace Viconomy.BlockEntities
             using (MemoryStream ms = new MemoryStream(data))
             {
                 BinaryReader reader = new BinaryReader(ms);
-                reader.ReadString();
-                dialogTitle = reader.ReadString();
+                string name = reader.ReadString();
+                if (name.Length > 0)
+                {
+                    dialogTitle = Lang.Get("vinconomy:gui-stall-owner", new string[] {name});
+                } else
+                {
+                    dialogTitle = Lang.Get("vinconomy:gui-stall-unowned");
+                }
                 isOwner = reader.ReadBoolean();
                 tree.FromBytes(reader);
             }
@@ -303,7 +313,7 @@ namespace Viconomy.BlockEntities
             if (isOwner)
                 this.invDialog = new GuiViconSculpturePadOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
             else
-                this.invDialog = new GuiViconSculpturePadOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
+                this.invDialog = new GuiDialogViconSculpturePadCustomer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
             //this.invDialog.OpenSound = this.OpenSound;
             //this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();
@@ -526,12 +536,12 @@ namespace Viconomy.BlockEntities
             {
                 if (this.invDialog != null)
                 {
-                    Console.WriteLine(Api.Side + ": Toggling GUI OFF");
+                    //Console.WriteLine(Api.Side + ": Toggling GUI OFF");
                     CloseGui(clientWorld);
                 }
                 else
                 {
-                    Console.WriteLine(Api.Side + ": Toggling GUI ON");
+                    //Console.WriteLine(Api.Side + ": Toggling GUI ON");
                     OpenShopGui(data);
                 }
 
@@ -758,21 +768,15 @@ namespace Viconomy.BlockEntities
         public override void OnBlockUnloaded()
         {
             base.OnBlockUnloaded();
-            GuiDialogBlockEntity guiDialogBlockEntity = this.invDialog;
-            if (guiDialogBlockEntity != null && guiDialogBlockEntity.IsOpened())
+            if (this.invDialog != null && this.invDialog.IsOpened())
             {
-                GuiDialogBlockEntity guiDialogBlockEntity2 = this.invDialog;
-                if (guiDialogBlockEntity2 != null)
-                {
-                    guiDialogBlockEntity2.TryClose();
-                }
+                this.invDialog.TryClose();
             }
-            GuiDialogBlockEntity guiDialogBlockEntity3 = this.invDialog;
-            if (guiDialogBlockEntity3 == null)
+            if (this.invDialog != null)
             {
-                return;
+                this.invDialog.Dispose(); 
             }
-            guiDialogBlockEntity3.Dispose();
+            
         }
 
         public override void OnBlockRemoved()
@@ -803,7 +807,7 @@ namespace Viconomy.BlockEntities
                 ItemSlot currency = inventory[0];
                 if (currency.Itemstack != null && CanSell())
                 {
-                    dsc.AppendLine(Lang.Get("vinconomy:for-sale", new Object[] { 1, 1, getSculptureName(), currency.Itemstack.StackSize, currency.Itemstack.GetName() }));
+                    dsc.AppendLine(Lang.Get("vinconomy:for-sale", new Object[] { 1, 1, GetSculptureName(), currency.Itemstack.StackSize, currency.Itemstack.GetName() }));
                 }
                 else
                 {
@@ -871,10 +875,11 @@ namespace Viconomy.BlockEntities
             return (ViconSculptureBlockSlot)this.Inventory[layerOffset + zOffset + x + 1];
         }
 
-        public string getSculptureName()
+        public string GetSculptureName()
         {
             return sculptureName;
         }
+
     }
 
 }

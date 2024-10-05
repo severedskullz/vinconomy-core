@@ -23,10 +23,10 @@ namespace Viconomy.BlockEntities
                 ItemSlot slot = this.inventory.FindFirstNonEmptyStockSlot(index);
                 if (slot != null)
                 {
-                    if (slot.Itemstack.Collectible.Code.Path == "crock-burned-east" 
-                        || slot.Itemstack.Collectible.Code.Path == "bowl-meal" 
-                        || slot.Itemstack.Collectible.Code.Path == "claypot-cooked" 
-                        ||slot.Itemstack.Class != EnumItemClass.Block)
+                    if (slot.Itemstack.Collectible.Code.Path.StartsWith("crock")
+                        || slot.Itemstack.Collectible.Code.Path.StartsWith("bowl")
+                        || slot.Itemstack.Collectible.Code.Path.StartsWith("claypot")
+                        || slot.Itemstack.Class != EnumItemClass.Block)
                     {
                         scale = .85f;
                     }

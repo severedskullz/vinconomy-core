@@ -8,6 +8,7 @@ using Viconomy.Trading;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
@@ -30,7 +31,7 @@ namespace Viconomy.BlockEntities
         {
             this.inventory = new InventoryGeneric(8, null, Api, onNewSlot);
             this.ItemsPerSlot = new int[6];
-            this.GachaName = "Gacha Ball";
+            this.GachaName = Lang.Get("vinconomy:gui-gacha-ball");
         }
 
         private ItemSlot onNewSlot(int slotId, InventoryGeneric self)
@@ -61,8 +62,6 @@ namespace Viconomy.BlockEntities
                 using (MemoryStream ms = new MemoryStream())
                 {
                     BinaryWriter writer = new BinaryWriter(ms);
-                    writer.Write("GachaLoaderInventory");
-
                     TreeAttribute tree = new TreeAttribute();
                     this.inventory.ToTreeAttributes(tree);
                     tree.ToBytes(writer);
@@ -81,13 +80,12 @@ namespace Viconomy.BlockEntities
             using (MemoryStream ms = new MemoryStream(data))
             {
                 BinaryReader reader = new BinaryReader(ms);
-                reader.ReadString();
                 tree.FromBytes(reader);
             }
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
             
-            this.invDialog = new GuiViconGachaPress("Gacha Loader", this.Inventory, this.Pos, this.Api as ICoreClientAPI);
+            this.invDialog = new GuiViconGachaPress(Lang.Get("vinconomy:gui-gacha-loader"), this.Inventory, this.Pos, this.Api as ICoreClientAPI);
            
             //this.invDialog.OpenSound = this.OpenSound;
             //this.invDialog.CloseSound = this.CloseSound;
@@ -119,7 +117,7 @@ namespace Viconomy.BlockEntities
             }
 
             this.invDialog = null;
-            Console.WriteLine(Api.Side + ": Attempted to close GUI");
+            //Console.WriteLine(Api.Side + ": Attempted to close GUI");
         }
 
         #endregion

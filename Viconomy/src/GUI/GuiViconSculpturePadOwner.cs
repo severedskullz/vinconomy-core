@@ -305,8 +305,8 @@ namespace Viconomy.GUI
 
                 GuiElementTextInput sculptureInput = SingleComposer.GetTextInput("sculptureName");
                 sculptureInput.SetPlaceHolderText(Lang.Get("vinconomy:gui-sculpture-name-placeholder"));
-                if (stall.getSculptureName() != null && stall.getSculptureName().Length > 0)
-                    sculptureInput.SetValue(stall.getSculptureName());
+                if (stall.GetSculptureName() != null && stall.GetSculptureName().Length > 0)
+                    sculptureInput.SetValue(stall.GetSculptureName());
 
                 //.AddHorizontalTabs(tabs, tabBounds, new Action<int>(this.OnTabClicked), tabFont, tabFont.Clone().WithColor(GuiStyle.ActiveButtonTextColor), "tabs")
                 SingleComposer.Compose();
@@ -321,7 +321,7 @@ namespace Viconomy.GUI
 
         private void OnTextChanged(string name)
         {
-            if (name != stall.getSculptureName())
+            if (name != stall.GetSculptureName())
             {
                 byte[] data;
                 using (MemoryStream ms = new MemoryStream())

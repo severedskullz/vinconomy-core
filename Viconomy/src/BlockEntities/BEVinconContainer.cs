@@ -196,8 +196,7 @@ namespace Viconomy.BlockEntities
                 using (MemoryStream ms = new MemoryStream())
                 {
                     BinaryWriter writer = new BinaryWriter(ms);
-                    writer.Write("VinconomyInventory");
-                    writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Stall");
+                    writer.Write(OwnerName == null ? "" : OwnerName);
                     writer.Write((byte)StallSlotCount);
                     writer.Write((byte)StacksPerSlot);
                     writer.Write((byte)selectedStall);
@@ -225,8 +224,15 @@ namespace Viconomy.BlockEntities
             using (MemoryStream ms = new MemoryStream(data))
             {
                 BinaryReader reader = new BinaryReader(ms);
-                reader.ReadString();
-                dialogTitle = reader.ReadString();
+                string name = reader.ReadString();
+                if (name.Length > 0)
+                {
+                    dialogTitle = Lang.Get("vinconomy:gui-stall-owner", new string[] { name });
+                }
+                else
+                {
+                    dialogTitle = Lang.Get("vinconomy:gui-stall-unowned");
+                }
                 stallSlots = (int)reader.ReadByte();
                 itemsPerStallSlot = (int)reader.ReadByte();
                 stallSelection = (int)reader.ReadByte();

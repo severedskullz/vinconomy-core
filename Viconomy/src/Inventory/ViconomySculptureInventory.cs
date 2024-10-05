@@ -8,7 +8,7 @@ using Vintagestory.API.MathTools;
 
 namespace Viconomy.Inventory
 {
-    public class ViconomySculptureInventory : InventoryBase, ISlotProvider, IStallSlotUpdater
+    public class ViconomySculptureInventory : InventoryBase, ISlotProvider
     {
         BEVinconBase stall;
 
@@ -99,6 +99,7 @@ namespace Viconomy.Inventory
             base.SlotsToTreeAttributes(this.slots, tree);
         }
 
+        /*
         public int GetStallForSlot(int index)
         {
             throw new NotImplementedException();
@@ -111,17 +112,18 @@ namespace Viconomy.Inventory
 
         public int GetStallSlotCount()
         {
-            throw new NotImplementedException();
+            return 1;
         }
 
         public ItemSlot GetCurrencyForStallSlot(int stallSlot)
         {
-            throw new NotImplementedException();
+            return this[0];
         }
 
         public ItemSlot[] GetSlotsForStallSlot(int stallSlot)
         {
             throw new NotImplementedException();
         }
+        */
     }
 }

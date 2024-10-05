@@ -9,6 +9,7 @@ using Viconomy.Trading;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.Client.NoObf;
@@ -63,16 +64,8 @@ namespace Viconomy.BlockEntities
                 using (MemoryStream ms = new MemoryStream())
                 {
                     BinaryWriter writer = new BinaryWriter(ms);
-                    writer.Write("VinconomyInventory");
-                    if (register != null && register.Name != null)
-                    {
-                        writer.Write(register.Name);
-                    } else
-                    {
-                        writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Teller Machine");
-                    }
+                    writer.Write(OwnerName == null ? "" : OwnerName);
                     writer.Write(byPlayer.PlayerUID == Owner);
-                    
                     TreeAttribute tree = new TreeAttribute();
                     this.inventory.ToTreeAttributes(tree);
                     tree.ToBytes(writer);
@@ -266,8 +259,15 @@ namespace Viconomy.BlockEntities
             using (MemoryStream ms = new MemoryStream(data))
             {
                 BinaryReader reader = new BinaryReader(ms);
-                reader.ReadString();
-                dialogTitle = reader.ReadString();
+                string name = reader.ReadString();
+                if (name.Length > 0)
+                {
+                    dialogTitle = Lang.Get("vinconomy:gui-teller-owner", new string[] { name });
+                }
+                else
+                {
+                    dialogTitle = Lang.Get("vinconomy:gui-teller-unowned");
+                }
                 isOwner = reader.ReadBoolean();
                 tree.FromBytes(reader);
             }

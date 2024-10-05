@@ -139,8 +139,7 @@ namespace Viconomy.BlockEntities
                 using (MemoryStream ms = new MemoryStream())
                 {
                     BinaryWriter writer = new BinaryWriter(ms);
-                    writer.Write("VinconomyGachaInventory");
-                    writer.Write((OwnerName == null ? "Unowned" : OwnerName + "'s") + " Gacha Stand");
+                    writer.Write(OwnerName == null ? "" : OwnerName);
                     writer.Write(byPlayer.PlayerUID == Owner);
                     TreeAttribute tree = new TreeAttribute();
                     this.inventory.ToTreeAttributes(tree);
@@ -162,8 +161,15 @@ namespace Viconomy.BlockEntities
             using (MemoryStream ms = new MemoryStream(data))
             {
                 BinaryReader reader = new BinaryReader(ms);
-                reader.ReadString();
-                dialogTitle = reader.ReadString();
+                string name = reader.ReadString();
+                if (name.Length > 0)
+                {
+                    dialogTitle = Lang.Get("vinconomy:gui-stall-owner", new string[] { name });
+                }
+                else
+                {
+                    dialogTitle = Lang.Get("vinconomy:gui-stall-unowned");
+                }
                 isOwner = reader.ReadBoolean();
                 tree.FromBytes(reader);
             }
