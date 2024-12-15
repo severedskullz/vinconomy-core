@@ -206,7 +206,7 @@ namespace Viconomy.BlockEntities
                     tree.ToBytes(writer);
                     data = ms.ToArray();
                 }
-                ((ICoreServerAPI)this.Api).Network.SendBlockEntityPacket((IServerPlayer)byPlayer, this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.OPEN_GUI, data);
+                ((ICoreServerAPI)this.Api).Network.SendBlockEntityPacket((IServerPlayer)byPlayer, this.Pos, VinConstants.OPEN_GUI, data);
 
                 if (byPlayer.PlayerUID == this.Owner)
                     byPlayer.InventoryManager.OpenInventory(this.inventory);

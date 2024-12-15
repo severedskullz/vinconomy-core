@@ -21,7 +21,12 @@
   "attributes": {
     "displaycaseable": true,
     "shelvable": true,
-    "bookshelveable": true
+    "bookshelveable": true,
+    "groundStorageTransform": {
+			"translation": { "x": 0.12, "y": 0, "z": -0.04 },
+			"rotation": { "x": 0, "y": 35, "z": 90 },
+			"origin": { "x": 0.5, "y": 0.05, "z": 0.5 }
+		}
   },
   "shape": { "base": "game:block/clutter/bookshelves/small-normal" },
   "textures": {

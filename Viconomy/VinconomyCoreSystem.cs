@@ -672,7 +672,7 @@ namespace Viconomy
         }
         public event OnBlockPlacedDelegate OnBlockPlaced;
 
-        public EnumWorldAccessResponse TestAccess(IPlayer player, BlockSelection blockSelection, EnumBlockAccessFlags accessType, string claimant, EnumWorldAccessResponse response)
+        public EnumWorldAccessResponse TestAccess(IPlayer player, BlockSelection blockSelection, EnumBlockAccessFlags accessType, ref string claimant, EnumWorldAccessResponse response)
         {
             if (OnTestAccess != null)
             {

@@ -28,11 +28,11 @@ namespace Viconomy.GUI
             ProductInventory = new DummyInventory(capi, products.Count);
             ProductInventory.TakeLocked = true;
             ProductInventory.PutLocked = true;
-            ProductInventory.OnAcquireTransitionSpeed = NoDecay;
+            ProductInventory.OnAcquireTransitionSpeed += NoDecay;
             CurrencyInventory = new DummyInventory(capi, products.Count);
             CurrencyInventory.TakeLocked = true;
             CurrencyInventory.PutLocked = true;
-            CurrencyInventory.OnAcquireTransitionSpeed = NoDecay;
+            CurrencyInventory.OnAcquireTransitionSpeed += NoDecay;
             int index = 0;
 
             //Add our Product and Currency to each inventory. Catch JSON errors on attributes, cuz Quotes in descriptions got me once already

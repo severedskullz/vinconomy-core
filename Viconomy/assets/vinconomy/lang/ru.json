@@ -56,7 +56,7 @@
 	"gui-product": "Product",
 	"gui-quantity": "Quantity",
 	"gui-reverse-trade": "Reverese Trade?",
-	"gui-sale-entry": "{0}x {1} sold for {3}x {4}",
+	"gui-sale-entry": "{0}x {1} sold for {2}x {3}",
 	"gui-save": "Save",
 	"gui-sculpture-height": "Sculpture Height:",
 	"gui-sculpture-name": "Sculpture Name:",

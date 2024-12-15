@@ -34,7 +34,7 @@ namespace Viconomy.BlockEntities.TextureSwappable
             Inventory.LateInitialize(InventoryClassName + "-" + Pos.X + "/" + Pos.Y + "/" + Pos.Z, api);
             Inventory.Pos = Pos;
             Inventory.ResolveBlocksOrItems();
-            Inventory.OnAcquireTransitionSpeed = Inventory_OnAcquireTransitionSpeed;
+            Inventory.OnAcquireTransitionSpeed += Inventory_OnAcquireTransitionSpeed;
             if (api.Side == EnumAppSide.Client)
             {
                 Inventory.OnInventoryOpened += Inventory_OnInventoryOpenedClient;
