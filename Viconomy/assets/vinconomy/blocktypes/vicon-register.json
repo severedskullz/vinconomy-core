@@ -61,6 +61,14 @@
                         "type": "block",
                         "code": "register-north",
                         "attributes": {
+                            "PrimaryMaterial": "silver",
+                            "SecondaryMaterial": "acacia"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
                             "PrimaryMaterial": "iron",
                             "SecondaryMaterial": "acacia"
                         }
@@ -166,6 +174,14 @@
                         "type": "block",
                         "code": "register-north",
                         "attributes": {
+                            "PrimaryMaterial": "silver",
+                            "SecondaryMaterial": "baldcypress"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
                             "PrimaryMaterial": "iron",
                             "SecondaryMaterial": "baldcypress"
                         }
@@ -271,6 +287,14 @@
                         "type": "block",
                         "code": "register-north",
                         "attributes": {
+                            "PrimaryMaterial": "silver",
+                            "SecondaryMaterial": "birch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
                             "PrimaryMaterial": "iron",
                             "SecondaryMaterial": "birch"
                         }
@@ -376,6 +400,14 @@
                         "type": "block",
                         "code": "register-north",
                         "attributes": {
+                            "PrimaryMaterial": "silver",
+                            "SecondaryMaterial": "ebony"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
                             "PrimaryMaterial": "iron",
                             "SecondaryMaterial": "ebony"
                         }
@@ -481,6 +513,14 @@
                         "type": "block",
                         "code": "register-north",
                         "attributes": {
+                            "PrimaryMaterial": "silver",
+                            "SecondaryMaterial": "kapok"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
                             "PrimaryMaterial": "iron",
                             "SecondaryMaterial": "kapok"
                         }
@@ -579,6 +619,14 @@
                         "code": "register-north",
                         "attributes": {
                             "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "larch"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "silver",
                             "SecondaryMaterial": "larch"
                         }
                     },
@@ -684,6 +732,14 @@
                         "code": "register-north",
                         "attributes": {
                             "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "maple"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "silver",
                             "SecondaryMaterial": "maple"
                         }
                     },
@@ -789,6 +845,14 @@
                         "code": "register-north",
                         "attributes": {
                             "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "oak"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "silver",
                             "SecondaryMaterial": "oak"
                         }
                     },
@@ -894,6 +958,14 @@
                         "code": "register-north",
                         "attributes": {
                             "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "pine"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "silver",
                             "SecondaryMaterial": "pine"
                         }
                     },
@@ -999,6 +1071,14 @@
                         "code": "register-north",
                         "attributes": {
                             "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "purpleheart"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "silver",
                             "SecondaryMaterial": "purpleheart"
                         }
                     },
@@ -1104,6 +1184,14 @@
                         "code": "register-north",
                         "attributes": {
                             "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "redwood"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "silver",
                             "SecondaryMaterial": "redwood"
                         }
                     },
@@ -1209,6 +1297,14 @@
                         "code": "register-north",
                         "attributes": {
                             "PrimaryMaterial": "gold",
+                            "SecondaryMaterial": "walnut"
+                        }
+                    },
+                    {
+                        "type": "block",
+                        "code": "register-north",
+                        "attributes": {
+                            "PrimaryMaterial": "silver",
                             "SecondaryMaterial": "walnut"
                         }
                     },
@@ -1280,6 +1376,7 @@
         "blackbronze": { "base": "game:block/metal/plate/blackbronze" },
         "brass": { "base": "game:block/metal/plate/brass" },
         "copper": { "base": "game:block/metal/plate/copper" },
+        "silver": { "base": "game:block/metal/plate/silver" },
         "gold": { "base": "game:block/metal/plate/gold" },
         "iron": { "base": "game:block/metal/plate/iron" },
         "lead": { "base": "game:block/metal/plate/lead" },

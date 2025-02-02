@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Vintagestory.API.Common;
 using Vintagestory.Common;
@@ -62,10 +63,41 @@ namespace Viconomy.Util
         {
             return Task.Run(async delegate
             {
-                _ = 1;
                 try
                 {
                     HttpResponseMessage res = await Inst.GetAsync(uri);
+                    string response = await res.Content.ReadAsStringAsync();
+                    CompletedArgs args = new CompletedArgs
+                    {
+                        State = ((!res.IsSuccessStatusCode) ? CompletionState.Error : CompletionState.Good),
+                        StatusCode = (int)res.StatusCode,
+                        Response = response,
+                        ErrorMessage = res.ReasonPhrase
+                    };
+                    onFinished(args);
+                }
+                catch (Exception ex)
+                {
+                    CompletedArgs args = new CompletedArgs
+                    {
+                        State = CompletionState.Error,
+                        ErrorMessage = ex.Message
+                    };
+                    onFinished(args);
+                }
+
+            });
+        }
+
+        public static Task PostAsync(string uri, PostCompleteHandler onFinished)
+        {
+            return Task.Run(async delegate
+            {
+               
+                try
+                {
+                    var stringContent = new StringContent("", Encoding.UTF8, "application/json");
+                    HttpResponseMessage res = await Inst.PostAsync(uri, stringContent);
                     string response = await res.Content.ReadAsStringAsync();
                     CompletedArgs args = new CompletedArgs
                     {
