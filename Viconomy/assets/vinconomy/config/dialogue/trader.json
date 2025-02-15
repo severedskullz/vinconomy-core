@@ -1,0 +1,333 @@
+{
+	components: [
+		{
+			code: "testhasmet",
+			owner: "trader",
+			type: "condition",
+			variable: "player.hasmet",
+			isNotValue: "true",
+			thenJumpTo: "firstmeet",
+			elseJumpTo: "testnewtrader"
+		},
+		{
+			code: "testnewtrader",
+			owner: "trader",
+			type: "condition",
+			variable: "entity.hasmet",
+			isNotValue: "true",
+			thenJumpTo: "introduction",
+			elseJumpTo: "welcomeback"
+		},
+		{
+			code: "firstmeet",
+			owner: "trader",
+			type: "talk",
+			setVariables: { "entity.hasmet": "true" },
+			text: [
+				{ value: "Haven't seen you around before. You just wake up?" },
+			],
+		},
+		{
+			code: "firstmeetresponse",
+			owner: "player",
+			type: "talk",
+			setVariables: { "player.hasmet": "true" },
+			text: [
+				{ value: "I don't know what you mean.", jumpTo: "daisies" },
+				{ value: "I think so.", jumpTo: "morning" },
+				{ value: "I might still be dreaming.", jumpTo: "dream" },
+				{ value: "Damn it's good to see a friendly face.", jumpTo: "bold" },
+				{ value: "Not interested in chatter. What have you got for sale?", jumpTo: "opentrade" },
+			],
+		},
+
+		{
+			code: "daisies",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "dialogue-daisies" }
+			],
+		},
+		{
+			code: "daisiesresponse",
+			owner: "player",
+			type: "talk",
+			text: [
+				{ value: "I'm sorry, it's better left unsaid.", jumpTo: "alright" },
+				{ value: "I'm not entirely sure myself.", jumpTo: "hm" },
+				{ value: "I'm just trying to survive. As always.", jumpTo: "always" },
+				{ value: "There are more out there... like this?", jumpTo: "strangers" }
+			],
+		},
+		{
+			code: "alright",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "That's alright, stranger. I didn't expect anything else." }
+			],
+			jumpTo: "main"
+		},
+		{
+			code: "hm",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "Hm, wish I could be more help to ya." }
+			],
+			jumpTo: "main"
+		},
+		{
+			code: "always",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "(He nods soberly) As always." }
+			],
+			jumpTo: "main"
+		},
+		{
+			code: "strangers",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "That's right. Strange-colored strangers walk the land." }
+			],
+			jumpTo: "main"
+		},
+
+		{
+			code: "morning",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "dialogue-goodmorning" }
+			],
+			jumpTo: "main"
+		},
+
+		{
+			code: "dream",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "dialogue-aintadream" }
+			]
+		},
+		{
+			code: "dreamresponse",
+			owner: "player",
+			type: "talk",
+			text: [
+				{ value: "I've seen worse.", jumpTo: "notbad" },
+				{ value: "dialogue-theairthesun", jumpTo: "tired" },
+				{ value: "Perhaps you're right. There's still work to do.", jumpTo: "alwaysmore" },
+			],
+		},
+		{
+			code: "notbad",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "dialogue-damneddrifters" }
+			],
+			jumpTo: "main"
+		},
+		{
+			code: "tired",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "dialogue-demonsstalk" }
+			],
+			jumpTo: "main"
+		},
+		{
+			code: "alwaysmore",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "Aye, there's always more work to do." }
+			],
+			jumpTo: "main"
+		},
+
+		{
+			code: "bold",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "dialogue-welcome" }
+			],
+		},
+		{
+			code: "wellmet",
+			owner: "player",
+			type: "talk",
+			text: [
+				{ value: "Well met.", jumpTo: "main" }
+			]
+		},
+		{
+			code: "introduction",
+			owner: "trader",
+			type: "talk",
+			setVariables: { "entity.hasmet": "true" },
+			text: [
+				{ value: "Ah, a new customer! How can I help you?" }
+			],
+			jumpTo: "main"
+		},
+		{
+			code: "welcomeback",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "Welcome back {{playername}}! What can I do for you?" }
+			]
+		},
+		{
+			code: "main",
+			owner: "player",
+			type: "talk",
+			text: [
+				{ value: "Got anything to trade, {{npcname}}?", jumpTo: "opentrade" },
+				{ value: "dialogue-name", jumpTo: "name" },
+				{ value: "Why gears?", jumpTo: "gears" },
+				{ value: "Why live out here like this?", jumpTo: "profit" }
+			]
+		},
+		{
+			code: "opentrade",
+			owner: "trader",
+			trigger: "opentrade"
+		},
+		{
+			code: "name",
+			owner: "trader",
+			type: "talk",
+			trigger: "revealname",
+			text: [
+				{ value: "Kind of you to ask, traveler. It's {{npcname}}." }
+			],
+			jumpTo: "main"
+			},
+		{
+			code: "gears",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "dialogue-perfectcurrency" }
+			]
+		},
+		{
+			code: "gearsresponse",
+			owner: "player",
+			type: "talk",
+			text: [
+				{ value: "Surely you could find something better to use?", jumpTo: "specialgears" },
+				{ value: "What, you can't reproduce them?", jumpTo: "rustygears" },
+				{ value: "I see.", jumpTo: "main" }
+			]
+		},
+		{
+			code: "specialgears",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "dialogue-seedsofthepast" }
+			]
+		},
+		{
+			code: "holysymbols",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "dialogue-holysymbols" }
+			],
+			jumpTo: "gearsresponse"
+		},
+		{
+			code: "rustygears",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "dialogue-somethinggreater" }
+			],
+			jumpTo: "gearsresponse"
+		},
+		{
+			code: "profit",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "dialogue-profittobemade" }
+			]
+		},
+		{
+			code: "profitresponse",
+			owner: "player",
+			type: "talk",
+			text: [
+				{ value: "dialogue-horriblecreatures", jumpTo: "drifters" },
+				{ value: "dialogue-ravenousbeasts", jumpTo: "wealth" },
+				{ value: "dialogue-nicesafevillage", jumpTo: "main" }
+			]
+		},
+		{
+			code: "drifters",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "dialogue-miserablesouls" }
+			]
+		},
+		{
+			code: "driftersresponse",
+			owner: "player",
+			type: "talk",
+			text: [
+				{ value: "dialogue-punishedbygod", jumpTo: "challenged" },
+				{ value: "dialogue-theveryair", jumpTo: "bonds" },
+				{ value: "dialogue-worldcouldnothouse", jumpTo: "afraidso" }
+			]
+		},
+		{
+			code: "challenged",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "dialogue-wrigglelikeworms" }
+			],
+			jumpTo: "main"
+		},
+		{
+			code: "bonds",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "dialogue-trulylostcreatures" }
+			],
+			jumpTo: "main"
+		},
+		{
+			code: "afraidso",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "dialogue-tremblewithit" }
+			],
+			jumpTo: "main"
+		},
+		{
+			code: "wealth",
+			owner: "trader",
+			type: "talk",
+			text: [
+				{ value: "dialogue-wealthisavirtue" }
+			],
+			jumpTo: "main"
+		}
+	]
+}

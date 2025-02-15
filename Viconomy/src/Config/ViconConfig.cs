@@ -10,11 +10,29 @@ namespace Viconomy.Config
     {
         public bool FoodDecaysInShops { get; set; } = true;
         public float StallPerishRate { get; set; } = 0.15f;
-        public bool EnforceShopLimits { get; set; } = false;
-        public int StallsPerPlayer { get; set; } = 20;
-        public int ShopsPerPlayer { get; set; } = 5;
+        //public bool EnforceShopLimits { get; set; } = false;
+        //public int StallsPerPlayer { get; set; } = 20;
+        //public int ShopsPerPlayer { get; set; } = 5;
 
         public ViconTenretniWhitelist[] ViconTenretniWhitelists { get; set; }
+
+        public string tradingNetworkUrl { get; set; }
+        public Dictionary<string, string> networkAPIKeys { get; set; } = new Dictionary<string, string>();
+        public bool tradingNetworkEnabled { get; set; } = true;
+
+
+        public string GetAPIKey(string guid)
+        {
+            if (networkAPIKeys == null)
+            {
+                networkAPIKeys = new Dictionary<string, string>();
+            }
+            if (networkAPIKeys.ContainsKey(guid))
+            {
+                return networkAPIKeys[guid];
+            }
+            return null;
+        }
     }
 
     public class ViconTenretniWhitelist

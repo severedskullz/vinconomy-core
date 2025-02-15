@@ -68,5 +68,6 @@ namespace Viconomy.Inventory
         {
             base.SlotsToTreeAttributes(this.slots, tree);
         }
+
     }
 }

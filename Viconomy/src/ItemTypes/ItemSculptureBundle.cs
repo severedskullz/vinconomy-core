@@ -125,11 +125,8 @@ namespace Viconomy.ItemTypes
                         if (blockStack != null)
                         {
                             BlockPos newPos = new BlockPos(x + (int)pos.X - (sizeX/2), y + (int)pos.Y, z + (int)pos.Z - (sizeZ/2), 0);
-                            //Block worldBlock = ent.World.BlockAccessor.GetBlock(pos.X, pos.X, pos.X);
                             BlockSelection targetPos = new BlockSelection(newPos, blockSel.Face, blockSel.Block);
 
-
-                            //TODO: This doesnt seem to be working even though it came from BlockBehaviourHorizontalOrientation
                             Block block = blockStack.Block;
                             AssetLocation blockCode = block.CodeWithVariant("horizontalorientation", facing[0].Code);
                             Block orientedBlock = api.World.BlockAccessor.GetBlock(blockCode);
@@ -156,7 +153,7 @@ namespace Viconomy.ItemTypes
                                     BlockEntityMicroBlock be = api.World.BlockAccessor.GetBlockEntity<BlockEntityMicroBlock>(newPos);
                                     if (be != null)
                                     {
-                                        be.RotateModel(facing[0].Index * 90, EnumAxis.Z);
+                                        be.RotateModel(numRotations * 90, null);
                                     }
                                 }
                             }

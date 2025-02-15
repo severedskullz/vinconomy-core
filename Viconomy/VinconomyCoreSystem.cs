@@ -4,30 +4,37 @@ using Viconomy.BlockTypes;
 using Viconomy.Network;
 using Viconomy.Registry;
 using Viconomy.Config;
+using Viconomy.Util;
+using Viconomy.GUI;
+using Viconomy.Entities;
+using Viconomy.Database;
+using Viconomy.Trading;
+using Viconomy.Delegates;
+using Viconomy.Renderer;
+using Viconomy.ItemTypes;
+using Viconomy.Map;
+using Viconomy.Network.Api;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
-using Viconomy.Delegates;
-using System.Collections.Generic;
-using Viconomy.Renderer;
-using Viconomy.ItemTypes;
-using Cairo;
-using Viconomy.Database;
-using Viconomy.Trading;
 using Vintagestory.GameContent;
-using Viconomy.Map;
 using Vintagestory.API.Datastructures;
-using Viconomy.Util;
-using Viconomy.GUI;
+using Vintagestory.Common;
+using Cairo;
+using System.Collections.Generic;
 
 namespace Viconomy
 {
-    using RayTraceResults = Tuple<BlockSelection, EntitySelection>;
-
+    
+    
     public class VinconomyCoreSystem : ModSystem
     {
+        #region Variables 
+
+        const string CONFIG_NAME = "vinconomy-core.json";
+
         //Client Variables
         private ICoreClientAPI _coreClientAPI;
         private IClientNetworkChannel _clientChannel;
@@ -40,19 +47,24 @@ namespace Viconomy
         private IServerNetworkChannel _serverChannel;
         public ViconDatabase DB;
         private GuiDialogGeneric ShopCatalogGui;
+        private TradeNetworkUpdate TradeNetworkUpdate;
 
         //Shared Variables
         public ViconConfig Config { get; internal set; }
         private ShopRegistry ShopRegistry { get; set; }
 
+        #endregion Variables
 
+        #region ModSystem Stuff
         public override double ExecuteOrder() => 1;
 
-        // Called on server and client
-        // Useful for registering block/entity classes on both sides
         public override void Start(ICoreAPI api)
         {
- 
+
+
+            api.RegisterEntity("EntityVinconTrader", typeof(EntityVinconTrader));
+            //api.RegisterEntityClass("EntityVinconTrader", typeof(EntityVinconTrader));
+
             // 3.0 Block Mappings
             api.RegisterBlockClass("VinconContainer", typeof(BlockVContainer));
             api.RegisterBlockClass("VinconRegister", typeof(BlockVRegister));
@@ -62,6 +74,7 @@ namespace Viconomy
             api.RegisterBlockClass("VinconGacha", typeof(BlockVGacha));
             api.RegisterBlockClass("VinconGachaLoader", typeof(BlockVGachaLoader));
             api.RegisterBlockClass("VinconJobboard", typeof(BlockVJobboard));
+            api.RegisterBlockClass("VinconTradeCenter", typeof(BlockVTradeCenter));
 
             // 3.0 Block Entity Mappings
             api.RegisterBlockEntityClass("BEVinconContainer", typeof(BEVinconContainer));
@@ -77,8 +90,9 @@ namespace Viconomy
             api.RegisterBlockEntityClass("BEVinconGacha", typeof(BEVinconGacha));
             api.RegisterBlockEntityClass("BEVinconGachaLoader", typeof(BEVinconGachaLoader));
             api.RegisterBlockEntityClass("BEVinconJobboard", typeof(BEVinconJobboard));
+            api.RegisterBlockEntityClass("BEVinconTradeCenter", typeof(BEVinconTradeCenter));
 
-            
+
             //2.10 Legacy Block Entity
             api.RegisterBlockClass("ViconContainer", typeof(BlockVContainer));
             api.RegisterBlockClass("ViconRegister", typeof(BlockVRegister));
@@ -122,14 +136,14 @@ namespace Viconomy
 
         public override void StartPre(ICoreAPI api)
         {
-            string filename = "vinconomy-core.json";
+            
             try
             {
-                ViconConfig config = api.LoadModConfig<ViconConfig>(filename);
+                ViconConfig config = api.LoadModConfig<ViconConfig>(CONFIG_NAME);
                 if (config == null)
                 {
                     config = ResetModConfig();
-                    api.StoreModConfig(config, filename);
+                    api.StoreModConfig(config, CONFIG_NAME);
                 }
 
                 this.Config = config;
@@ -143,17 +157,7 @@ namespace Viconomy
 
             base.StartPre(api);
         }
-
-        public ViconConfig ResetModConfig()
-        {
-            ViconConfig config = new ViconConfig();
-            config.ViconTenretniWhitelists = new ViconTenretniWhitelist[] { new ViconTenretniWhitelist { name = "Pastebin.com", baseURL = "https://pastebin.com/raw/" } };
-
-            return config;
-        }
-
-
-
+       
         public override void StartServerSide(ICoreServerAPI api)
         {
             _coreServerAPI = api;
@@ -167,11 +171,35 @@ namespace Viconomy
             var parsers = api.ChatCommands.Parsers;
             api.ChatCommands.Create("viconomy")
                 .WithAlias("vicon")
-                .RequiresPrivilege(Privilege.gamemode)
+                .RequiresPrivilege(Privilege.chat)
                 .BeginSubCommand("setowner")
+                    .RequiresPrivilege(Privilege.gamemode)
                     .WithDescription("Sets the Owner of the Stall or Register at the given position to the provided player.")
                     .WithArgs(parsers.Word("Player Name"), parsers.Int("Block X"), parsers.Int("Block Y"), parsers.Int("Block Z"))
                     .HandleWith(SetOwner)
+                .EndSubCommand()
+               
+                .BeginSubCommand("network")
+                    .RequiresPrivilege(Privilege.controlserver)
+                    .WithDescription("Configures the Trade Network")
+                        .BeginSubCommand("configure")
+                            .WithDescription("Sets the Trade Network URL")
+                            .WithArgs(parsers.Word("Root URL (Ex: http://localhost:8080)"))
+                            .HandleWith(ConfigureNetwork)
+                        .EndSubCommand()
+                        .BeginSubCommand("join")
+                            .WithDescription("Joins a Trade Network")
+                            .WithArgs(parsers.Word("Join Key"))
+                            .HandleWith(JoinNetwork)
+                        .EndSubCommand()
+                        .BeginSubCommand("register")
+                            .WithDescription("Registers the current save-game with the Trade Network")
+                            .HandleWith(RegisterNetwork)
+                        .EndSubCommand()
+                        .BeginSubCommand("leave")
+                            .WithDescription("Leaves the Trade Network")
+                            .HandleWith(LeaveNetwork)
+                        .EndSubCommand()
                 .EndSubCommand();
 
             _coreServerAPI.Event.OnTestBlockAccess += TestAccess;
@@ -180,26 +208,6 @@ namespace Viconomy
             DB = new ViconDatabase(api);
             ShopRegistry = new ShopRegistry(DB);
 
-        }
-
-        private void OnRecieveTenretniInfo(IServerPlayer fromPlayer, TenretniPacket packet)
-        {
-            ItemSlot slot = fromPlayer.InventoryManager.ActiveHotbarSlot;
-            if (slot == null || slot.Itemstack == null || slot.Itemstack.Item == null)
-            {
-                return;
-            }
-            string name = slot.Itemstack.Item.Code.GetName();
-            if (name.StartsWith("book-tenretni") && slot.Itemstack.Attributes.GetString("Archive") == null) 
-            {
-                ITreeAttribute attr = slot.Itemstack.Attributes;
-                attr.SetString("Archive", packet.Archive);
-                attr.SetString("BaseURL", packet.BaseURL);
-                attr.SetString("ID", packet.ID);
-                attr.SetString("Name", packet.Name);
-                attr.SetString("Scribe", fromPlayer.PlayerName);
-                slot.MarkDirty();
-            }
         }
 
         public override void StartClientSide(ICoreClientAPI api)
@@ -219,10 +227,10 @@ namespace Viconomy
             }
 
             BeginRendererRegistration();
-                RegisterRenderer(new BlockRenderer());
-                RegisterRenderer(new ItemRenderer());
-                RegisterRenderer(new ClutterBlockRenderer());
-                RegisterRenderer(new MicroBlockRenderer());
+            RegisterRenderer(new BlockRenderer());
+            RegisterRenderer(new ItemRenderer());
+            RegisterRenderer(new ClutterBlockRenderer());
+            RegisterRenderer(new MicroBlockRenderer());
             EndRendererRegistration();
 
             RegisterCustomIcon("arms");
@@ -259,34 +267,70 @@ namespace Viconomy
                 Config.ViconTenretniWhitelists = new ViconTenretniWhitelist[] { new ViconTenretniWhitelist { name = "Pastebin.com", baseURL = "https://pastebin.com/raw/" } };
 
             }
+
         }
 
+        #endregion ModSystem Stuff
 
-
-        public void BeginRendererRegistration()
+        public ViconConfig ResetModConfig()
         {
-            isRegisteringRenderers = true;
+            ViconConfig config = new ViconConfig();
+            config.ViconTenretniWhitelists = new ViconTenretniWhitelist[] { new ViconTenretniWhitelist { name = "Pastebin.com", baseURL = "https://pastebin.com/raw/" } };
+
+            return config;
         }
 
-        public void RegisterRenderer(IItemRenderer blockRenderer)
+        private TextCommandResult ConfigureNetwork(TextCommandCallingArgs args)
         {
-            renderers[blockRenderer.getRendererClass()].Add(blockRenderer);
-            if (!isRegisteringRenderers)
+            Config.tradingNetworkUrl = (string) args[0];
+            _coreServerAPI.StoreModConfig(Config, CONFIG_NAME);
+            return TextCommandResult.Success("Set URL to: " + Config.tradingNetworkUrl);
+        }
+
+        private TextCommandResult RegisterNetwork(TextCommandCallingArgs args)
+        {
+            if (string.IsNullOrEmpty(Config.tradingNetworkUrl))
             {
-                renderers[blockRenderer.getRendererClass()].Sort((i1, i2) => { return i2.getPriority().CompareTo(i1.getPriority()); });
+                return TextCommandResult.Error("Trade Network URL not configured");
             }
+
+            TradeNetworkNodeRegistration data = new TradeNetworkNodeRegistration();
+            data.name = _coreServerAPI.WorldManager.SaveGame.WorldName;
+            data.guid = _coreServerAPI.World.SavegameIdentifier;
+            string jsonData = VinUtils.SerializeToJson(data);
+
+
+            VinUtils.PutAsync($"{Config.tradingNetworkUrl}/api/network/node", jsonData, OnRegisterNetworkResponse, Config.GetAPIKey(data.guid));
+            return TextCommandResult.Success("Requested - Check Console for updates");
         }
-        public void EndRendererRegistration()
+        
+        private TextCommandResult JoinNetwork(TextCommandCallingArgs args)
         {
-            isRegisteringRenderers = false;
-            foreach (EnumItemClass i in Enum.GetValues(typeof(EnumItemClass)))
+            if (string.IsNullOrEmpty(Config.tradingNetworkUrl))
             {
-                renderers[i].Sort((i1, i2) => { return i2.getPriority().CompareTo(i1.getPriority()); });
+                return TextCommandResult.Error("Trade Network URL not configured");
             }
 
+            if (string.IsNullOrEmpty(Config.GetAPIKey(_coreServerAPI.World.SavegameIdentifier)))
+            {
+                return TextCommandResult.Error("Trade Network Node not registered. Run \"/vicon network register\" first!");
+            }
+
+            TradeNetworkNodeRegistration data = new TradeNetworkNodeRegistration();
+            data.name = _coreServerAPI.WorldManager.CurrentWorldName;
+            data.guid = this._coreServerAPI.World.SavegameIdentifier;
+            string jsonData = VinUtils.SerializeToJson(data);
+
+
+            VinUtils.PutAsync($"{Config.tradingNetworkUrl}/api/network/join", jsonData, OnRegisterNetworkResponse, Config.GetAPIKey(data.guid));
+            return TextCommandResult.Success("Requested - Check Console for updates");
         }
 
-
+        private TextCommandResult LeaveNetwork(TextCommandCallingArgs args)
+        {
+            return TextCommandResult.Success("Success");
+        }
+        
         private TextCommandResult SetOwner(TextCommandCallingArgs args)
         {
 
@@ -308,21 +352,47 @@ namespace Viconomy
             }
 
             string playerUUID = playerData.PlayerUID;
-            if (entity is IOwnableStall) {
+            if (entity is IOwnableStall)
+            {
                 ((IOwnableStall)entity).SetOwner(playerUUID, playerData.LastKnownPlayername);
             }
-            else if (entity is BEVinconRegister) 
+            else if (entity is BEVinconRegister)
             {
                 BEVinconRegister register = ((BEVinconRegister)entity);
                 ShopRegistry.ClearShop(register.ID);
                 register.Owner = playerUUID;
                 AddShop(playerUUID, playerData.LastKnownPlayername, playerData.LastKnownPlayername + "'s Shop", register.Pos, register.ID);
-            } else
+            }
+            else
             {
                 return TextCommandResult.Error("Please target a Viconomy Stall or Register. (Wrong Class)");
             }
 
-            return TextCommandResult.Success("Set owner to " + playerData.LastKnownPlayername + " for " +pos.ToString());
+            return TextCommandResult.Success("Set owner to " + playerData.LastKnownPlayername + " for " + pos.ToString());
+        }
+
+        public void BeginRendererRegistration()
+        {
+            isRegisteringRenderers = true;
+        }
+
+        public void RegisterRenderer(IItemRenderer blockRenderer)
+        {
+            renderers[blockRenderer.getRendererClass()].Add(blockRenderer);
+            if (!isRegisteringRenderers)
+            {
+                renderers[blockRenderer.getRendererClass()].Sort((i1, i2) => { return i2.getPriority().CompareTo(i1.getPriority()); });
+            }
+        }
+        
+        public void EndRendererRegistration()
+        {
+            isRegisteringRenderers = false;
+            foreach (EnumItemClass i in Enum.GetValues(typeof(EnumItemClass)))
+            {
+                renderers[i].Sort((i1, i2) => { return i2.getPriority().CompareTo(i1.getPriority()); });
+            }
+
         }
 
         private void RegisterCustomIcon(string key)
@@ -334,47 +404,6 @@ namespace Viconomy
                int color = ColorUtil.ColorFromRgba(175, 200, 175, 125);
                _coreClientAPI.Gui.DrawSvg(asset, ctx.GetTarget() as ImageSurface, x, y, (int)w, (int)h, color);
            };
-        }
-
-        public RayTraceResults DoPlayerRaytrace(IClientPlayer player)
-        {
-            BlockSelection blockSelection = null;
-            EntitySelection entitySelection = null;
-
-            Vec3d camPos = new Vec3d(player.Entity.SidedPos.X, player.Entity.SidedPos.Y + player.Entity.LocalEyePos.Y, player.Entity.SidedPos.Z);
-
-            _coreClientAPI.World.RayTraceForSelection(camPos, player.CameraPitch, player.CameraYaw, 300f, ref blockSelection, ref entitySelection, null, null);
-
-            return new RayTraceResults(blockSelection, entitySelection);
-
-        }
-
-        private void OnRecieveRegistry(RegistryUpdatePacket packet)
-        {
-            ShopRegistry = new ShopRegistry(DB);
-            if (packet.registry != null) {
-                foreach (ShopUpdatePacket item in packet.registry)
-                {
-                    this.ShopRegistry.AddShop(new ShopRegistration(item));
-                }
-            }
-            if (ShopMapLayer != null)
-                this.ShopMapLayer.RebuildMapComponents();
-        }
-
-        private void OnRecieveRegistryUpdate(ShopUpdatePacket packet)
-        {
-            this.Mod.Logger.Debug("Got an update packet for shop " + packet.ID + ". It has coords " + packet.X + "/" + packet.Y + "/" + packet.Z + " and broadcasting is " + packet.IsWaypointBroadcasted);
-            if (packet.IsRemoval)
-            {
-                ShopRegistry.ClearShop(packet.ID);
-            } else
-            {
-                ShopRegistry.UpdateShopFromServer(packet);
-            }
-
-            if (ShopMapLayer != null)
-                this.ShopMapLayer.RebuildMapComponents();
         }
 
         public BEVinconRegister GetShopRegister(string owner, int registerID)
@@ -410,53 +439,7 @@ namespace Viconomy
         {
             return ShopRegistry;
         }
-
-        private void OnSaveGameLoading()
-        {
-            this.Mod.Logger.Debug("+============== Loading Viconomy ==============+");
-            DB.CleanupShops();
-            DB.LoadShops(ShopRegistry);
-
-            this.Mod.Logger.Debug("| Loaded " + ShopRegistry.GetCount() + " Shops");
-
-            foreach (string ownerId in ShopRegistry.GetAllShopOwners())
-            {
-                var shops = ShopRegistry.GetShopsForOwner(ownerId);
-                this.Mod.Logger.Debug("|  Loaded " + shops.Length + " Shops for Owner: " + ownerId);
-                foreach (ShopRegistration shop in shops)
-                {
-                    
-                    if (shop.Position == null)
-                    {
-                        this.Mod.Logger.Debug("|   Skipping Shop " + shop.Name + " (" + shop.ID + ") as it does not exist anymore");
-                    } else
-                    {
-                        this.Mod.Logger.Debug("|   Loading Shop " + shop.Name);
-
-                    }
-                }
-            }
-
-            this.Mod.Logger.Debug("=============== Loaded Viconomy ================");
-        }
-
-        private void SendAllPublicRegisters(IServerPlayer player)
-        {
-            List<ShopRegistration> shops = this.ShopRegistry.GetAllShops();
-            List<ShopUpdatePacket> updates = new List<ShopUpdatePacket>();
-            if (shops != null)
-            {
-               foreach (ShopRegistration shop in shops)
-                {
-                    if (shop.IsWaypointBroadcasted || shop.Owner == player.PlayerUID)
-                    {
-                        updates.Add(new ShopUpdatePacket(shop, shop.Owner == player.PlayerUID));
-                    }
-                }
-            }
-            _serverChannel.SendPacket(new RegistryUpdatePacket(updates), player);
-        }
-
+       
         public ShopRegistration AddShop(string owner, string ownerName, string name, BlockPos pos, int ID = -1)
         {
             if (_coreServerAPI != null)
@@ -479,8 +462,6 @@ namespace Viconomy
             }
             return null;
         }
-
-
 
         public ShopRegistration UpdateShop(string owner, int iD, string name, BlockPos pos)
         {
@@ -510,7 +491,6 @@ namespace Viconomy
                 ((IClientPlayer)player).ShowChatNotification(Lang.Get(message, args));
             }
         }
-
 
         public IItemRenderer GetRenderer(ItemStack stack)
         {
@@ -569,6 +549,32 @@ namespace Viconomy
 
             _serverChannel.SendPacket(update, player);
         }
+        
+        private void SendAllPublicRegisters(IServerPlayer player)
+        {
+            List<ShopRegistration> shops = this.ShopRegistry.GetAllShops();
+            List<ShopUpdatePacket> updates = new List<ShopUpdatePacket>();
+            if (shops != null)
+            {
+               foreach (ShopRegistration shop in shops)
+                {
+                    if (shop.IsWaypointBroadcasted || shop.Owner == player.PlayerUID)
+                    {
+                        updates.Add(new ShopUpdatePacket(shop, shop.Owner == player.PlayerUID));
+                    }
+                }
+            }
+            _serverChannel.SendPacket(new RegistryUpdatePacket(updates), player);
+        }
+        
+        public void UpdateShopConfig(int iD, string desc, string shortDesc, string webHook)
+        {
+            ShopRegistration reg = ShopRegistry.UpdateShopConfig(iD, desc, shortDesc, webHook);
+            if (_coreServerAPI != null)
+            {
+                BroadcastShopUpdate(iD);
+            }
+        }
 
         #region Event Delegates
 
@@ -601,8 +607,6 @@ namespace Viconomy
             DB.SavePurchase(result);
         }
         public event OnPurchasedItemDelegate OnPurchasedItem;
-
-
 
         /// <summary>
         /// Called befire an item is purchased to determine if the player is allowed to purchase this item. Return true if it should allow the player to purchase the item <br/><br/>
@@ -725,6 +729,19 @@ namespace Viconomy
             {
                 DB.UpdateShopProduct(shopId,pos,stallSlot,product,numItemsPerPurchase,currency);
             }
+
+            UpdateShopProductForNetwork(shopId, pos, stallSlot, product, numItemsPerPurchase, currency);
+        }
+
+        private void UpdateShopProductForNetwork(int shopId, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
+        {
+            if (Config.tradingNetworkEnabled && Config.networkAPIKeys != null)
+            //VinUtils.PostAsync()
+            if (TradeNetworkUpdate == null)
+            {
+                TradeNetworkUpdate = new TradeNetworkUpdate();
+            }
+            TradeNetworkUpdate.AddShopUpdate(shopId, pos, stallSlot, product, numItemsPerPurchase, currency);
         }
 
         public ShopCatalog RequestShopCatalog(ShopRegistration shop, bool includeProductList)
@@ -758,8 +775,9 @@ namespace Viconomy
 
         }
 
-        #endregion
+        #endregion Event Delegates
 
+        #region Callbacks
         private void OnRecieveShopCatalogRequest(IServerPlayer fromPlayer, ShopCatalogRequestPacket request)
         {
             ShopCatalogResponsePacket response = new ShopCatalogResponsePacket();
@@ -821,13 +839,122 @@ namespace Viconomy
             (mapMan.worldMapDlg.SingleComposer.GetElement("mapElem") as GuiElementMap).CenterMapTo(new BlockPos(x, y, z, 1));
         }
 
-        public void UpdateShopConfig(int iD, string desc, string shortDesc, string webHook)
+        private void OnRecieveRegistry(RegistryUpdatePacket packet)
         {
-            ShopRegistration reg = ShopRegistry.UpdateShopConfig(iD, desc, shortDesc, webHook);
-            if (_coreServerAPI != null)
+            ShopRegistry = new ShopRegistry(DB);
+            if (packet.registry != null)
             {
-                BroadcastShopUpdate(iD);
+                foreach (ShopUpdatePacket item in packet.registry)
+                {
+                    this.ShopRegistry.AddShop(new ShopRegistration(item));
+                }
+            }
+            if (ShopMapLayer != null)
+                this.ShopMapLayer.RebuildMapComponents();
+        }
+
+        private void OnRecieveRegistryUpdate(ShopUpdatePacket packet)
+        {
+            this.Mod.Logger.Debug("Got an update packet for shop " + packet.ID + ". It has coords " + packet.X + "/" + packet.Y + "/" + packet.Z + " and broadcasting is " + packet.IsWaypointBroadcasted);
+            if (packet.IsRemoval)
+            {
+                ShopRegistry.ClearShop(packet.ID);
+            }
+            else
+            {
+                ShopRegistry.UpdateShopFromServer(packet);
+            }
+
+            if (ShopMapLayer != null)
+                this.ShopMapLayer.RebuildMapComponents();
+        }
+
+        private void OnRegisterNetworkResponse(CompletedArgs args)
+        {
+            if (args.StatusCode == 200)
+            {
+                TradeNetworkNode node = VinUtils.DeserializeFromJson<TradeNetworkNode>(args.Response);
+                if (Config.networkAPIKeys == null)
+                {
+                    Config.networkAPIKeys = new Dictionary<string, string>();
+                }
+                Config.networkAPIKeys.Add(_coreServerAPI.World.SavegameIdentifier, node.apiKey);
+                _coreServerAPI.StoreModConfig(Config, CONFIG_NAME);
+
+                this.Mod.Logger.Notification("Completed registration of Trade Network Node. Api Key written to config!");
+            }
+            else
+            {
+                this.Mod.Logger.Error($"Failed registration of Trade Network Node. Error: {args.ErrorMessage}");
+            }
+
+        }
+
+        private void OnRecieveTenretniInfo(IServerPlayer fromPlayer, TenretniPacket packet)
+        {
+            ItemSlot slot = fromPlayer.InventoryManager.ActiveHotbarSlot;
+            if (slot == null || slot.Itemstack == null || slot.Itemstack.Item == null)
+            {
+                return;
+            }
+            string name = slot.Itemstack.Item.Code.GetName();
+            if (name.StartsWith("book-tenretni") && slot.Itemstack.Attributes.GetString("Archive") == null)
+            {
+                ITreeAttribute attr = slot.Itemstack.Attributes;
+                attr.SetString("Archive", packet.Archive);
+                attr.SetString("BaseURL", packet.BaseURL);
+                attr.SetString("ID", packet.ID);
+                attr.SetString("Name", packet.Name);
+                attr.SetString("Scribe", fromPlayer.PlayerName);
+                slot.MarkDirty();
             }
         }
+
+        private void OnSaveGameLoading()
+        {
+            this.Mod.Logger.Debug("+============== Loading Viconomy ==============+");
+            DB.CleanupShops();
+            DB.LoadShops(ShopRegistry);
+
+            this.Mod.Logger.Debug("| Loaded " + ShopRegistry.GetCount() + " Shops");
+
+            foreach (string ownerId in ShopRegistry.GetAllShopOwners())
+            {
+                var shops = ShopRegistry.GetShopsForOwner(ownerId);
+                this.Mod.Logger.Debug("|  Loaded " + shops.Length + " Shops for Owner: " + ownerId);
+                foreach (ShopRegistration shop in shops)
+                {
+
+                    if (shop.Position == null)
+                    {
+                        this.Mod.Logger.Debug("|   Skipping Shop " + shop.Name + " (" + shop.ID + ") as it does not exist anymore");
+                    }
+                    else
+                    {
+                        this.Mod.Logger.Debug("|   Loading Shop " + shop.Name);
+
+                    }
+                }
+            }
+
+            this.Mod.Logger.Debug("=============== Loaded Viconomy ================");
+        }
+
+        #endregion Callbacks
+
+        /*
+        public RayTraceResults DoPlayerRaytrace(IClientPlayer player)
+        {
+            BlockSelection blockSelection = null;
+            EntitySelection entitySelection = null;
+
+            Vec3d camPos = new Vec3d(player.Entity.SidedPos.X, player.Entity.SidedPos.Y + player.Entity.LocalEyePos.Y, player.Entity.SidedPos.Z);
+
+            _coreClientAPI.World.RayTraceForSelection(camPos, player.CameraPitch, player.CameraYaw, 300f, ref blockSelection, ref entitySelection, null, null);
+
+            return new RayTraceResults(blockSelection, entitySelection);
+
+        }
+        */
     }
 }

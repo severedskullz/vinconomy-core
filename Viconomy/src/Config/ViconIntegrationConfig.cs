@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Viconomy.Config
+﻿namespace Viconomy.Config
 {
     public class VinconIntegrationConfig
     {
-        public bool IsEnabled { get; set; } = true;
+        public bool IsEnabled { get; set; } = false;
         public int MessageIntervalMinutes { get; set; } = 10;
-        //public string GlobalWebhook { get; set; }
         public string PurchasesWebhook { get; set; }
-        //public string RestockWebhook { get; set; }
+
+
+
     }
 
 }

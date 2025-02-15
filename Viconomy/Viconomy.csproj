@@ -62,8 +62,11 @@
   <None Remove="assets\vinconomy\blocktypes\vicon-sculpturepad.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-shelf-legacy.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-tellermachine.json" />
+  <None Remove="assets\vinconomy\blocktypes\vicon-tradecenter.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-trademat.json" />
   <None Remove="assets\vinconomy\blocktypes\vicon-tradematdouble.json" />
+  <None Remove="assets\vinconomy\config\dialogue\trader.json" />
+  <None Remove="assets\vinconomy\entities\humanoid\vicon-trader.json" />
   <None Remove="assets\vinconomy\itemtypes\catalog.json" />
   <None Remove="assets\vinconomy\itemtypes\gacha.json" />
   <None Remove="assets\vinconomy\itemtypes\ledger.json" />

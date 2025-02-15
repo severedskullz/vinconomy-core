@@ -13,7 +13,7 @@ using Vintagestory.API.Server;
 namespace Viconomy
 {
 
-    public class VinconomyDiscordIntegrationSystem : ModSystem
+    public class VinconomyTradingIntegrationSystem : ModSystem
     {
         private ICoreServerAPI _coreServerAPI;
         private VinconomyCoreSystem _coreSystem;
@@ -88,13 +88,12 @@ namespace Viconomy
                 if (register != null)
                 {
                     int shopId = register.ID;
-
                     /*
-                    string customer = result.customer.PlayerName;
-                    string productName = product.GetName();
-                    int productAmount = product.StackSize;
-                    string paymentName = payment.GetName();
-                    int paymentAmount = payment.StackSize;
+                      string customer = result.customer.PlayerName;
+                      string productName = product.GetName();
+                      int productAmount = product.StackSize;
+                      string paymentName = payment.GetName();
+                      int paymentAmount = payment.StackSize;
                     */
 
                     if (!queuedSales.ContainsKey(shopId))
@@ -105,6 +104,7 @@ namespace Viconomy
                     queuedSales[shopId].AddPurchase(result, product, payment);
                 }
                 
+
               
             }
         }

@@ -1,4 +1,5 @@
 ﻿using Viconomy.BlockEntities;
+using Viconomy.Network.Api;
 using Viconomy.Trading;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -24,6 +25,8 @@ namespace Viconomy.Delegates
     public delegate bool OnBlockBrokenDelegate(AssetLocation code, IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier);
     public delegate void OnBlockPlacedDelegate(AssetLocation code, IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack);
     public delegate EnumWorldAccessResponse OnTestAccessDelegate(IPlayer player, BlockSelection blockSelection, EnumBlockAccessFlags accessType, string claimant, EnumWorldAccessResponse response);
-
+    
+    
+    public delegate void OnTradeSelectedDelegate(TradeNetworkProduct product);
 
 }

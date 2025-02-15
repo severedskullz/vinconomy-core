@@ -1,6 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using ProtoBuf;
+using System;
+using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Vintagestory.API.Common;
 using Vintagestory.Common;
@@ -59,13 +64,14 @@ namespace Viconomy.Util
             }
         }
 
-        public static Task GetAsync(string uri, PostCompleteHandler onFinished)
+        public static Task GetAsync(string rootUrl, PostCompleteHandler onFinished, string apiKey = null)
         {
             return Task.Run(async delegate
             {
                 try
                 {
-                    HttpResponseMessage res = await Inst.GetAsync(uri);
+                    HttpRequestMessage request = CreateRequest(rootUrl, HttpMethod.Get, null, apiKey);
+                    HttpResponseMessage res = await Inst.SendAsync(request, CancellationToken.None);
                     string response = await res.Content.ReadAsStringAsync();
                     CompletedArgs args = new CompletedArgs
                     {
@@ -89,24 +95,16 @@ namespace Viconomy.Util
             });
         }
 
-        public static Task PostAsync(string uri, PostCompleteHandler onFinished)
+        public static Task PostAsync(string rootUrl, string body, PostCompleteHandler onFinished, string apiKey = null)
         {
             return Task.Run(async delegate
             {
-               
                 try
                 {
-                    var stringContent = new StringContent("", Encoding.UTF8, "application/json");
-                    HttpResponseMessage res = await Inst.PostAsync(uri, stringContent);
+                    HttpRequestMessage request = CreateRequest(rootUrl, HttpMethod.Post, body, apiKey);
+                    HttpResponseMessage res = await Inst.SendAsync(request, CancellationToken.None);
                     string response = await res.Content.ReadAsStringAsync();
-                    CompletedArgs args = new CompletedArgs
-                    {
-                        State = ((!res.IsSuccessStatusCode) ? CompletionState.Error : CompletionState.Good),
-                        StatusCode = (int)res.StatusCode,
-                        Response = response,
-                        ErrorMessage = res.ReasonPhrase
-                    };
-                    onFinished(args);
+                    HandleResponse(onFinished, res, response);
                 }
                 catch (Exception ex)
                 {
@@ -121,6 +119,131 @@ namespace Viconomy.Util
             });
         }
 
+
+
+        public static Task PutAsync(string rootUrl, string body, PostCompleteHandler onFinished, string apiKey = null)
+        {
+            return Task.Run(async delegate
+            {
+                try
+                {
+                    HttpRequestMessage request = CreateRequest(rootUrl, HttpMethod.Put, body, apiKey);
+                    HttpResponseMessage res = await Inst.SendAsync(request, CancellationToken.None);
+                    string response = await res.Content.ReadAsStringAsync();
+                    HandleResponse(onFinished, res, response);
+                }
+                catch (Exception ex)
+                {
+                    CompletedArgs args = new CompletedArgs
+                    {
+                        State = CompletionState.Error,
+                        ErrorMessage = ex.Message
+                    };
+                    onFinished(args);
+                }
+
+            });
+        }
+
+        public static Task PatchAsync(string rootUrl, string body, PostCompleteHandler onFinished, string apiKey = null)
+        {
+            return Task.Run(async delegate
+            {
+                try
+                {
+                    HttpRequestMessage request = CreateRequest(rootUrl, HttpMethod.Patch, body, apiKey);
+                    HttpResponseMessage res = await Inst.SendAsync(request, CancellationToken.None);
+                    string response = await res.Content.ReadAsStringAsync();
+                    HandleResponse(onFinished, res, response);
+                }
+                catch (Exception ex)
+                {
+                    CompletedArgs args = new CompletedArgs
+                    {
+                        State = CompletionState.Error,
+                        ErrorMessage = ex.Message
+                    };
+                    onFinished(args);
+                }
+
+            });
+        }
+
+        public static Task DeleteAsync(string rootUrl, PostCompleteHandler onFinished, string apiKey = null)
+        {
+            return Task.Run(async delegate
+            {
+                try
+                {
+                    HttpRequestMessage request = CreateRequest(rootUrl, HttpMethod.Delete, null, apiKey);
+                    HttpResponseMessage res = await Inst.SendAsync(request, CancellationToken.None);
+                    string response = await res.Content.ReadAsStringAsync();
+                    HandleResponse(onFinished, res, response);
+                }
+                catch (Exception ex)
+                {
+                    CompletedArgs args = new CompletedArgs
+                    {
+                        State = CompletionState.Error,
+                        ErrorMessage = ex.Message
+                    };
+                    onFinished(args);
+                }
+
+            });
+        }
+
+        private static HttpRequestMessage CreateRequest(string rootUrl, HttpMethod method, string body, string apiKey)
+        {
+            HttpRequestMessage request = new HttpRequestMessage(method, rootUrl) { Version = HttpVersion.Version11, VersionPolicy = HttpVersionPolicy.RequestVersionOrLower };
+            if (body != null)
+            {
+                request.Content = new StringContent(body, Encoding.UTF8, "application/json"); ;
+            }
+            if (apiKey != null)
+            {
+                request.Headers.Add("X-API-KEY", apiKey);
+            }
+
+            return request;
+        }
+
+        private static void HandleResponse(PostCompleteHandler onFinished, HttpResponseMessage res, string response)
+        {
+            CompletedArgs args = new CompletedArgs
+            {
+                State = ((!res.IsSuccessStatusCode) ? CompletionState.Error : CompletionState.Good),
+                StatusCode = (int)res.StatusCode,
+                Response = response,
+                ErrorMessage = res.ReasonPhrase
+            };
+            onFinished(args);
+        }
+
+        public static string SerializeToJson(object payload)
+        {
+
+            JsonSerializer serializer = new JsonSerializer();
+            StringBuilder stringBuilder = new StringBuilder();
+            using (var stringWriter = new StringWriter(stringBuilder))
+            {
+                serializer.Serialize(stringWriter, payload);
+            }
+            var jsonStr = stringBuilder.ToString();
+            return jsonStr;
+        }
+
+        public static T DeserializeFromJson<T>(string payload)
+        {
+            JsonSerializer serializer = new JsonSerializer();
+            using (var stringReader = new StringReader(payload))
+            {
+                using (var jsonReader = new JsonTextReader(stringReader))
+                {
+                    return serializer.Deserialize<T>(jsonReader);
+                }
+            }
+        }
     }
 
 }
