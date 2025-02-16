@@ -23,7 +23,7 @@ namespace Viconomy
         public VinconIntegrationConfig Config { get; internal set; }
 
 
-        public override double ExecuteOrder() => 2;
+        public override double ExecuteOrder() => 1.1;
 
         public override bool ShouldLoad(EnumAppSide forSide)
         {

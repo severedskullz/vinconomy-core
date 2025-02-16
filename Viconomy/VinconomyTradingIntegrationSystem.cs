@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
-using Viconomy.BlockEntities;
+﻿using System;
+using System.Collections.Generic;
 using Viconomy.Config;
-using Viconomy.Registry;
-using Viconomy.Trading;
+using Viconomy.Network;
+using Viconomy.Network.Api;
+using Viconomy.Util;
 using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.Common;
 
 namespace Viconomy
 {
@@ -17,273 +16,166 @@ namespace Viconomy
     {
         private ICoreServerAPI _coreServerAPI;
         private VinconomyCoreSystem _coreSystem;
-        private HttpClient httpClient;
-        Dictionary<int, DiscordUpdate> queuedSales = new Dictionary<int, DiscordUpdate>();
 
-        public VinconIntegrationConfig Config { get; internal set; }
+        private TradeNetworkUpdate TradeNetworkUpdate;
 
-
-        public override double ExecuteOrder() => 2;
+        public override double ExecuteOrder() => 1.1;
 
         public override bool ShouldLoad(EnumAppSide forSide)
         {
             return forSide == EnumAppSide.Server;
         }
 
-        public override void StartPre(ICoreAPI api)
-        {
-            //this.Mod.Logger.Event("Start Pre Called");
-            string filename = "vinconomy-integration.json";
-            try
-            {
-                VinconIntegrationConfig config = api.LoadModConfig<VinconIntegrationConfig>(filename);
-                if (config == null)
-                {
-                    config = ResetModConfig();
-                    api.StoreModConfig(config, filename);
-                }
-
-                this.Config = config;
-            }
-            catch
-            {
-                Config = ResetModConfig();
-                this.Mod.Logger.Error("Could not load Mod Integration Config for Vinconomy. Loading defaults instead. Check your config and ensure there are no errors.");
-            }
-
-            base.StartPre(api);
-        }
-
-        public VinconIntegrationConfig ResetModConfig()
-        {
-            VinconIntegrationConfig config = new VinconIntegrationConfig();
-            return config;
-        }
-
-        public override void Dispose()
-        {
-            base.Dispose();
-            httpClient?.Dispose();
-        }
 
         public override void StartServerSide(ICoreServerAPI api)
         {
             _coreServerAPI = api;
             _coreSystem = api.ModLoader.GetModSystem<VinconomyCoreSystem>();
-            httpClient = new HttpClient();
-            //httpClient.BaseAddress = new Uri("https://discord.com");
-            PostAsync();
-            //Task.Run(PostAsync);
 
-            _coreSystem.OnPurchasedItem += EnquePurchase;
-            _coreServerAPI.Event.Timer(PostAsync, Config.MessageIntervalMinutes * 60);
+            _coreSystem.OnUpdateShopProduct += UpdateShopProductForNetwork;
+            _coreServerAPI.Event.Timer(SendQueuedNetworkShopUpdates, 10 * 60);
 
+            var parsers = api.ChatCommands.Parsers;
+            api.ChatCommands.GetOrCreate("viconomy")
+                .WithAlias("vicon")
+                .RequiresPrivilege(Privilege.chat)
+                .BeginSubCommand("network")
+                    .RequiresPrivilege(Privilege.controlserver)
+                    .WithDescription("Configures the Trade Network")
+                        .BeginSubCommand("configure")
+                            .WithDescription("Sets the Trade Network URL")
+                            .WithArgs(parsers.Word("Root URL (Ex: http://localhost:8080)"))
+                            .HandleWith(ConfigureNetwork)
+                        .EndSubCommand()
+                        .BeginSubCommand("join")
+                            .WithDescription("Joins a Trade Network")
+                            .WithArgs(parsers.Word("Join Key"))
+                            .HandleWith(JoinNetwork)
+                        .EndSubCommand()
+                        .BeginSubCommand("register")
+                            .WithDescription("Registers the current save-game with the Trade Network")
+                            .HandleWith(RegisterNetwork)
+                        .EndSubCommand()
+                        .BeginSubCommand("leave")
+                            .WithDescription("Leaves the Trade Network")
+                            .HandleWith(LeaveNetwork)
+                        .EndSubCommand()
+                .EndSubCommand();
         }
 
-        private void EnquePurchase(TradeResult result, ItemStack product, ItemStack payment)
+        private void SendQueuedNetworkShopUpdates()
         {
-            lock (this)
-            {
-                BEVinconRegister register = result.shopRegister;
-                if (register != null)
-                {
-                    int shopId = register.ID;
-                    /*
-                      string customer = result.customer.PlayerName;
-                      string productName = product.GetName();
-                      int productAmount = product.StackSize;
-                      string paymentName = payment.GetName();
-                      int paymentAmount = payment.StackSize;
-                    */
-
-                    if (!queuedSales.ContainsKey(shopId))
-                    {
-                        queuedSales.Add(shopId, new DiscordUpdate(_coreSystem.GetRegistry().GetShop(shopId)));
-                    }
-
-                    queuedSales[shopId].AddPurchase(result, product, payment);
-                }
-                
-
-              
-            }
-        }
-
-        public void PostAsync()
-        {
-            //this.Mod.Logger.VerboseDebug("Update HTTP Called with " + queuedSales.Count + " entries");
-            if (!Config.IsEnabled)
-            {
-                queuedSales.Clear();
+            if (TradeNetworkUpdate == null)
                 return;
+
+            ViconConfig config = _coreSystem.Config;
+            string apiKey = config.GetAPIKey(null);
+            if (string.IsNullOrEmpty(apiKey)) return;
+            if (!config.tradingNetworkEnabled) return;
+            if (string.IsNullOrEmpty(config.tradingNetworkUrl)) return;
+
+            //TODO: Change for one POST instead of multiple?
+            foreach (int shopId in TradeNetworkUpdate.Keys)
+            {
+                TradeNetworkShopUpdate shop = TradeNetworkUpdate[shopId];
+                string payload = shop.ToJsonString();
+                VinUtils.PostAsync($"{config.tradingNetworkUrl}/products/{shopId}", payload, OnNetworkShopUpdatesResponse, apiKey);
             }
 
-            if (queuedSales.Count == 0)
-            {
-                return;
-            }
-            List<Embed> embeds = new List<Embed>();
-            Dictionary<int, DiscordUpdate> sales = null;
+           
+        }
 
-            lock (this)
+        private void OnNetworkShopUpdatesResponse(CompletedArgs args)
+        {
+            if (args.StatusCode == 200)
             {
-                // Transfer queedSales over to GC-eligible variable, before clearing out queuedSales for the next update.
-                // Much easier to do this instead of putting *all* of the update logic inside of the Lock.
-                // This way we can read/modify the dictionary without the main game thread from adding more stuff to it.
-                sales = queuedSales;
-                queuedSales = new Dictionary<int, DiscordUpdate>();
+                TradeNetworkUpdate = null;
+            }
+        }
+
+        private TextCommandResult ConfigureNetwork(TextCommandCallingArgs args)
+        {
+            _coreSystem.Config.tradingNetworkUrl = (string)args[0];
+            _coreServerAPI.StoreModConfig(_coreSystem.Config, VinconomyCoreSystem.CONFIG_NAME);
+            return TextCommandResult.Success("Set URL to: " + _coreSystem.Config.tradingNetworkUrl);
+        }
+
+        private TextCommandResult RegisterNetwork(TextCommandCallingArgs args)
+        {
+            if (string.IsNullOrEmpty(_coreSystem.Config.tradingNetworkUrl))
+            {
+                return TextCommandResult.Error("Trade Network URL not configured");
             }
 
-            foreach (DiscordUpdate update in sales.Values)
+            TradeNetworkNodeRegistration data = new TradeNetworkNodeRegistration();
+            data.name = _coreServerAPI.WorldManager.SaveGame.WorldName;
+            data.guid = _coreServerAPI.World.SavegameIdentifier;
+            string jsonData = VinUtils.SerializeToJson(data);
+
+
+            VinUtils.PutAsync($"{_coreSystem.Config.tradingNetworkUrl}/api/network/node", jsonData, OnRegisterNetworkResponse, _coreSystem.Config.GetAPIKey(data.guid));
+            return TextCommandResult.Success("Requested - Check Console for updates");
+        }
+
+        private TextCommandResult JoinNetwork(TextCommandCallingArgs args)
+        {
+            if (string.IsNullOrEmpty(_coreSystem.Config.tradingNetworkUrl))
             {
-                Embed embed = new Embed();
-                embed.title = update.shopName;
-                if (update.url != null)
+                return TextCommandResult.Error("Trade Network URL not configured");
+            }
+
+            if (string.IsNullOrEmpty(_coreSystem.Config.GetAPIKey(_coreServerAPI.World.SavegameIdentifier)))
+            {
+                return TextCommandResult.Error("Trade Network Node not registered. Run \"/vicon network register\" first!");
+            }
+
+            TradeNetworkNodeRegistration data = new TradeNetworkNodeRegistration();
+            data.name = _coreServerAPI.WorldManager.CurrentWorldName;
+            data.guid = this._coreServerAPI.World.SavegameIdentifier;
+            string jsonData = VinUtils.SerializeToJson(data);
+
+
+            VinUtils.PutAsync($"{_coreSystem.Config.tradingNetworkUrl}/api/network/join", jsonData, OnRegisterNetworkResponse, _coreSystem.Config.GetAPIKey(data.guid));
+            return TextCommandResult.Success("Requested - Check Console for updates");
+        }
+
+        private TextCommandResult LeaveNetwork(TextCommandCallingArgs args)
+        {
+            return TextCommandResult.Success("Success");
+        }
+
+        private void UpdateShopProductForNetwork(int shopId, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
+        {
+            if (_coreSystem.Config.tradingNetworkEnabled && _coreSystem.Config.networkAPIKeys != null)
+                //VinUtils.PostAsync()
+                if (TradeNetworkUpdate == null)
                 {
-                    embed.thumbnail = new Thumbnail(update.url);
+                    TradeNetworkUpdate = new TradeNetworkUpdate();
                 }
+            TradeNetworkUpdate.AddShopUpdate(shopId, pos, stallSlot, product, numItemsPerPurchase, currency);
+        }
 
-                StringBuilder sb = new StringBuilder();
-                foreach (CustomerPurchaseList purchaseList in update.customers.Values)
+        private void OnRegisterNetworkResponse(CompletedArgs args)
+        {
+            if (args.StatusCode == 200)
+            {
+                TradeNetworkNode node = VinUtils.DeserializeFromJson<TradeNetworkNode>(args.Response);
+                if (_coreSystem.Config.networkAPIKeys == null)
                 {
-
-                    bool hasMultipleCustomers = purchaseList.purchases.Count > 1;
-                    if (hasMultipleCustomers)
-                    {
-                        sb.AppendLine($"- {purchaseList.customerName} purchased:");
-                        foreach (Purchase purchase in purchaseList.purchases.Values)
-                        {
-                            sb.AppendLine($" - {purchase.amountSold}x {purchase.productName} for {purchase.paymentCollected}x {purchase.paymentName}");
-                        }
-                    } else
-                    {
-                        Purchase purchase = purchaseList.purchases.FirstOrDefault().Value;
-                        sb.AppendLine($"- {purchaseList.customerName} purchased {purchase.amountSold}x {purchase.productName} for {purchase.paymentCollected}x {purchase.paymentName}");
-                    }
-                   
+                    _coreSystem.Config.networkAPIKeys = new Dictionary<string, string>();
                 }
-                embed.description = sb.ToString();
-                embeds.Add(embed);
+                _coreSystem.Config.networkAPIKeys.Add(_coreServerAPI.World.SavegameIdentifier, node.apiKey);
+                _coreServerAPI.StoreModConfig(_coreSystem.Config, VinconomyCoreSystem.CONFIG_NAME);
 
-                ShopRegistration shop = _coreSystem.GetRegistry().GetShop(update.shopId);
-                //TODO: For now Ill just hardcode it for Discord to prevent abuse. Without some custom JSON format, itll be pointless to have all webhooks have the same discord limitations.
-                if (shop != null && shop.WebHook != null && shop.WebHook.StartsWith("https://discord.com"))
-                {
-                    DiscordMessage shopMessage = new DiscordMessage();
-                    //message.content = "## :coin: The following shops have had sales recently:";
-                    shopMessage.embeds = new Embed[] { embed };
-                    string shopData = JsonSerializer.Serialize(shopMessage);
-                    StringContent shopJsonContent = new(shopData, Encoding.UTF8, "application/json");
-
-                    httpClient.PostAsync(shop.WebHook, shopJsonContent);
-                }
+                this.Mod.Logger.Notification("Completed registration of Trade Network Node. Api Key written to config!");
             }
-            if (Config.PurchasesWebhook != null )
+            else
             {
-                DiscordMessage message = new DiscordMessage();
-                //message.content = "## :coin: The following shops have had sales recently:";
-                message.embeds = embeds.Take(10).ToArray();
-                string data = JsonSerializer.Serialize(message);
-                StringContent jsonContent = new(data, Encoding.UTF8, "application/json");
-
-                httpClient.PostAsync(Config.PurchasesWebhook, jsonContent);
-            }
-            sales.Clear();
-
-        }
-
-        /*
-        public override void StartClientSide(ICoreClientAPI api)
-        {
-            this.Mod.Logger.Event("Start Clientside Called");
-        }
-        */
-
-        private class DiscordUpdate
-        {
-
-
-            internal int shopId { get; set; }
-            internal string shopName { get; set; }
-            internal string discordWebhook { get; set; }
-            internal bool isAdminShop { get; set; }
-            internal string url { get; set; }
-            //internal Dictionary<string, PurchaseList>  productsPurchased {get;set;} = new Dictionary<string, PurchaseList>();
-            internal Dictionary<string, CustomerPurchaseList> customers { get; set; } = new Dictionary<string, CustomerPurchaseList>();
-
-            internal DiscordUpdate(ShopRegistration reg)
-            {
-                shopId = reg.ID;
-                shopName = reg.Name;
-                url = "https://mods.vintagestory.at/files/asset/8379/Vinconomy-2.0.jpg";
-                //url = reg.imageUrl;
-                //discordWebhook = reg.webhook;
+                this.Mod.Logger.Error($"Failed registration of Trade Network Node. Error: {args.ErrorMessage}");
             }
 
-            internal void AddPurchase(TradeResult result, ItemStack product, ItemStack payment)
-            {
-                string customer = result.customer.PlayerName;
-                if (!customers.ContainsKey(customer))
-                {
-                    customers[customer] = new CustomerPurchaseList() { customerName = customer};
-                }
-
-                customers[customer].AddPurchase(product, payment);
-            }
         }
 
-        internal class CustomerPurchaseList
-        {
-            internal int totalPurchases { get; set; }
-            internal string customerName { get; set; }
-            internal Dictionary<string, Purchase> purchases { get; set; } = new Dictionary<string, Purchase>();
 
-            internal void AddPurchase(ItemStack product, ItemStack payment)
-            {
-                string key = product.Collectible.Code.GetName() + "-" + payment.Collectible.Code.GetName();
-                if (!purchases.ContainsKey(key))
-                {
-                    purchases[key] = new Purchase() { productName = product.GetName(), paymentName = payment.GetName() };
-                }
-
-                Purchase purchase = purchases[key];
-                purchase.amountSold += product.StackSize;
-                purchase.paymentCollected += payment.StackSize;
-                totalPurchases += product.StackSize;
-
-            }
-        }
-
-        internal class Purchase
-        {
-            public string productName { get; set; }
-            public string paymentName { get; set;  }
-            internal int amountSold { get; set; }
-            internal int paymentCollected { get; set; }
-        }
-
-        internal class DiscordMessage
-        {
-            public string content { get; set; }
-            public string username { get; set; }
-            public Embed[] embeds { get; set; }
-        }
-
-        internal class Thumbnail
-        {
-            public string url { get; set; }
-            internal Thumbnail(string url)
-            {
-                this.url = url;
-            }
-        }
-
-        internal class Embed
-        {
-            public string title { get; set; }
-            public string description { get; set; }
-            public int color { get; set; }
-            public Thumbnail thumbnail { get; set; }
-        }
     }
 }

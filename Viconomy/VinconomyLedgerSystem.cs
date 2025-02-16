@@ -23,7 +23,7 @@ namespace Viconomy
         private IServerNetworkChannel _serverChannel;
 
         //Shared Variables
-        private VinconomyCoreSystem core;
+        private VinconomyCoreSystem _coreSystem;
         private GuiViconLedger ledgerGUI;
 
         public override double ExecuteOrder() => 1.1;
@@ -32,7 +32,7 @@ namespace Viconomy
         // Useful for registering block/entity classes on both sides
         public override void Start(ICoreAPI api)
         {
-            core = api.ModLoader.GetModSystem<VinconomyCoreSystem>();
+            _coreSystem = api.ModLoader.GetModSystem<VinconomyCoreSystem>();
         }
 
 
@@ -68,7 +68,7 @@ namespace Viconomy
         private void OnRecieveRequestToReadLedgerData(IServerPlayer player, LedgerReadRequestPacket packet)
         {
 
-            ShopRegistration shop = core.GetRegistry().GetShop(packet.shopId);
+            ShopRegistration shop = _coreSystem.GetRegistry().GetShop(packet.shopId);
             if (shop != null)
             {
                 _serverChannel.SendPacket(new LedgerReadResponsePacket() { Id = shop.ID, Name = shop.Name }, new IServerPlayer[] { player });
@@ -105,7 +105,7 @@ namespace Viconomy
 
         private void OnRecieveLedgerRequestPacket(IServerPlayer player, LedgerEntryRequestPacket packet)
         {
-            Dictionary<string, List<LedgerEntry>> sales = core.DB.LoadSales(packet.ShopId, packet.Month, packet.Year);
+            Dictionary<string, List<LedgerEntry>> sales = _coreSystem.DB.LoadSales(packet.ShopId, packet.Month, packet.Year);
             _serverChannel.SendPacket(new LedgerEntryResponsePacket { entries = sales }, new IServerPlayer[] { player });
         }
 

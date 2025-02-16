@@ -12,7 +12,7 @@ namespace Viconomy.Network.Api
         {
             if (!ContainsKey(shopId))
             {
-                this.Add(shopId, new TradeNetworkShopUpdate());
+                this.Add(shopId, new TradeNetworkShopUpdate(shopId));
             }
 
             this[shopId].AddStallUpdate(pos, stallSlot, product, numItemsPerPurchase, currency);

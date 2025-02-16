@@ -29,4 +29,5 @@ namespace Viconomy.Delegates
     
     public delegate void OnTradeSelectedDelegate(TradeNetworkProduct product);
 
+    public delegate void OnUpdateShopProductDelegate(int shopId, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency);
 }

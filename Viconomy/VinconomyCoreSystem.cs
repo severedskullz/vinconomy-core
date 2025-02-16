@@ -13,7 +13,6 @@ using Viconomy.Delegates;
 using Viconomy.Renderer;
 using Viconomy.ItemTypes;
 using Viconomy.Map;
-using Viconomy.Network.Api;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -21,19 +20,17 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using Vintagestory.API.Datastructures;
-using Vintagestory.Common;
 using Cairo;
 using System.Collections.Generic;
 
 namespace Viconomy
 {
-    
-    
+        
     public class VinconomyCoreSystem : ModSystem
     {
         #region Variables 
 
-        const string CONFIG_NAME = "vinconomy-core.json";
+        public const string CONFIG_NAME = "vinconomy-core.json";
 
         //Client Variables
         private ICoreClientAPI _coreClientAPI;
@@ -47,7 +44,6 @@ namespace Viconomy
         private IServerNetworkChannel _serverChannel;
         public ViconDatabase DB;
         private GuiDialogGeneric ShopCatalogGui;
-        private TradeNetworkUpdate TradeNetworkUpdate;
 
         //Shared Variables
         public ViconConfig Config { get; internal set; }
@@ -169,7 +165,7 @@ namespace Viconomy
             api.Event.PlayerJoin += SendAllPublicRegisters;
 
             var parsers = api.ChatCommands.Parsers;
-            api.ChatCommands.Create("viconomy")
+            api.ChatCommands.GetOrCreate("viconomy")
                 .WithAlias("vicon")
                 .RequiresPrivilege(Privilege.chat)
                 .BeginSubCommand("setowner")
@@ -177,29 +173,6 @@ namespace Viconomy
                     .WithDescription("Sets the Owner of the Stall or Register at the given position to the provided player.")
                     .WithArgs(parsers.Word("Player Name"), parsers.Int("Block X"), parsers.Int("Block Y"), parsers.Int("Block Z"))
                     .HandleWith(SetOwner)
-                .EndSubCommand()
-               
-                .BeginSubCommand("network")
-                    .RequiresPrivilege(Privilege.controlserver)
-                    .WithDescription("Configures the Trade Network")
-                        .BeginSubCommand("configure")
-                            .WithDescription("Sets the Trade Network URL")
-                            .WithArgs(parsers.Word("Root URL (Ex: http://localhost:8080)"))
-                            .HandleWith(ConfigureNetwork)
-                        .EndSubCommand()
-                        .BeginSubCommand("join")
-                            .WithDescription("Joins a Trade Network")
-                            .WithArgs(parsers.Word("Join Key"))
-                            .HandleWith(JoinNetwork)
-                        .EndSubCommand()
-                        .BeginSubCommand("register")
-                            .WithDescription("Registers the current save-game with the Trade Network")
-                            .HandleWith(RegisterNetwork)
-                        .EndSubCommand()
-                        .BeginSubCommand("leave")
-                            .WithDescription("Leaves the Trade Network")
-                            .HandleWith(LeaveNetwork)
-                        .EndSubCommand()
                 .EndSubCommand();
 
             _coreServerAPI.Event.OnTestBlockAccess += TestAccess;
@@ -280,57 +253,7 @@ namespace Viconomy
             return config;
         }
 
-        private TextCommandResult ConfigureNetwork(TextCommandCallingArgs args)
-        {
-            Config.tradingNetworkUrl = (string) args[0];
-            _coreServerAPI.StoreModConfig(Config, CONFIG_NAME);
-            return TextCommandResult.Success("Set URL to: " + Config.tradingNetworkUrl);
-        }
 
-        private TextCommandResult RegisterNetwork(TextCommandCallingArgs args)
-        {
-            if (string.IsNullOrEmpty(Config.tradingNetworkUrl))
-            {
-                return TextCommandResult.Error("Trade Network URL not configured");
-            }
-
-            TradeNetworkNodeRegistration data = new TradeNetworkNodeRegistration();
-            data.name = _coreServerAPI.WorldManager.SaveGame.WorldName;
-            data.guid = _coreServerAPI.World.SavegameIdentifier;
-            string jsonData = VinUtils.SerializeToJson(data);
-
-
-            VinUtils.PutAsync($"{Config.tradingNetworkUrl}/api/network/node", jsonData, OnRegisterNetworkResponse, Config.GetAPIKey(data.guid));
-            return TextCommandResult.Success("Requested - Check Console for updates");
-        }
-        
-        private TextCommandResult JoinNetwork(TextCommandCallingArgs args)
-        {
-            if (string.IsNullOrEmpty(Config.tradingNetworkUrl))
-            {
-                return TextCommandResult.Error("Trade Network URL not configured");
-            }
-
-            if (string.IsNullOrEmpty(Config.GetAPIKey(_coreServerAPI.World.SavegameIdentifier)))
-            {
-                return TextCommandResult.Error("Trade Network Node not registered. Run \"/vicon network register\" first!");
-            }
-
-            TradeNetworkNodeRegistration data = new TradeNetworkNodeRegistration();
-            data.name = _coreServerAPI.WorldManager.CurrentWorldName;
-            data.guid = this._coreServerAPI.World.SavegameIdentifier;
-            string jsonData = VinUtils.SerializeToJson(data);
-
-
-            VinUtils.PutAsync($"{Config.tradingNetworkUrl}/api/network/join", jsonData, OnRegisterNetworkResponse, Config.GetAPIKey(data.guid));
-            return TextCommandResult.Success("Requested - Check Console for updates");
-        }
-
-        private TextCommandResult LeaveNetwork(TextCommandCallingArgs args)
-        {
-            return TextCommandResult.Success("Success");
-        }
-        
         private TextCommandResult SetOwner(TextCommandCallingArgs args)
         {
 
@@ -650,29 +573,65 @@ namespace Viconomy
         }
         public event TryPlaceBlockDelegate OnTryPlaceBlock;
 
-        //TODO: Multicast support
+        public void UpdateShopProduct(int shopId, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
+        {
+            if (OnUpdateShopProduct != null)
+            {
+                Delegate[] delegates = OnUpdateShopProduct.GetInvocationList();
+                foreach (Delegate delegator in delegates)
+                {
+                    try
+                    {
+                        ((OnUpdateShopProductDelegate)delegator).Invoke(shopId, pos, stallSlot, product, numItemsPerPurchase, currency);
+                    }
+                    catch (Exception e)
+                    {
+                        this.Mod.Logger.Error(e);
+                    }
+                }
+            }
+        }
+        public event OnUpdateShopProductDelegate OnUpdateShopProduct;
+
         public bool BlockBroken(AssetLocation code, IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier)
         {
             bool result = true;
-            if (OnTryPlaceBlock != null)
+            if (OnBlockBroken != null)
             {
-                try
+                Delegate[] delegates = OnBlockBroken.GetInvocationList();
+                foreach (Delegate delegator in delegates)
                 {
-                    result = OnBlockBroken.Invoke(code, world, pos, byPlayer, dropQuantityMultiplier);
-                }
-                catch (Exception e)
-                {
-                    this.Mod.Logger.Error(e);
+                    try
+                    {
+                        result = OnBlockBroken.Invoke(code, world, pos, byPlayer, dropQuantityMultiplier);
+                    }
+                    catch (Exception e)
+                    {
+                        this.Mod.Logger.Error(e);
+                    }
                 }
             }
             return result;
         }
         public event OnBlockBrokenDelegate OnBlockBroken;
 
-        //TODO: Multicast support
         public void BlockPlaced(AssetLocation code, IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack)
         {
-            OnBlockPlaced?.Invoke(code, world, blockPos, byItemStack);
+            if (OnBlockPlaced != null)
+            {
+                Delegate[] delegates = OnBlockPlaced.GetInvocationList();
+                foreach (Delegate delegator in delegates)
+                {
+                    try
+                    {
+                        ((OnBlockPlacedDelegate)delegator).Invoke(code, world, blockPos, byItemStack);
+                    }
+                    catch (Exception e)
+                    {
+                        this.Mod.Logger.Error(e);
+                    }
+                }
+            }
         }
         public event OnBlockPlacedDelegate OnBlockPlaced;
 
@@ -695,6 +654,8 @@ namespace Viconomy
             else return response;
         }
         public event OnTestAccessDelegate OnTestAccess;
+        
+        #endregion Event Delegates
 
         public EnumWorldAccessResponse AllowStallUse(IPlayer player, BlockSelection blockSelection, EnumBlockAccessFlags accessType, string claimant, EnumWorldAccessResponse response)
         {
@@ -730,19 +691,10 @@ namespace Viconomy
                 DB.UpdateShopProduct(shopId,pos,stallSlot,product,numItemsPerPurchase,currency);
             }
 
-            UpdateShopProductForNetwork(shopId, pos, stallSlot, product, numItemsPerPurchase, currency);
+            UpdateShopProduct(shopId, pos, stallSlot, product, numItemsPerPurchase, currency);
         }
 
-        private void UpdateShopProductForNetwork(int shopId, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
-        {
-            if (Config.tradingNetworkEnabled && Config.networkAPIKeys != null)
-            //VinUtils.PostAsync()
-            if (TradeNetworkUpdate == null)
-            {
-                TradeNetworkUpdate = new TradeNetworkUpdate();
-            }
-            TradeNetworkUpdate.AddShopUpdate(shopId, pos, stallSlot, product, numItemsPerPurchase, currency);
-        }
+
 
         public ShopCatalog RequestShopCatalog(ShopRegistration shop, bool includeProductList)
         {
@@ -775,7 +727,7 @@ namespace Viconomy
 
         }
 
-        #endregion Event Delegates
+       
 
         #region Callbacks
         private void OnRecieveShopCatalogRequest(IServerPlayer fromPlayer, ShopCatalogRequestPacket request)
@@ -869,27 +821,6 @@ namespace Viconomy
                 this.ShopMapLayer.RebuildMapComponents();
         }
 
-        private void OnRegisterNetworkResponse(CompletedArgs args)
-        {
-            if (args.StatusCode == 200)
-            {
-                TradeNetworkNode node = VinUtils.DeserializeFromJson<TradeNetworkNode>(args.Response);
-                if (Config.networkAPIKeys == null)
-                {
-                    Config.networkAPIKeys = new Dictionary<string, string>();
-                }
-                Config.networkAPIKeys.Add(_coreServerAPI.World.SavegameIdentifier, node.apiKey);
-                _coreServerAPI.StoreModConfig(Config, CONFIG_NAME);
-
-                this.Mod.Logger.Notification("Completed registration of Trade Network Node. Api Key written to config!");
-            }
-            else
-            {
-                this.Mod.Logger.Error($"Failed registration of Trade Network Node. Error: {args.ErrorMessage}");
-            }
-
-        }
-
         private void OnRecieveTenretniInfo(IServerPlayer fromPlayer, TenretniPacket packet)
         {
             ItemSlot slot = fromPlayer.InventoryManager.ActiveHotbarSlot;
@@ -957,4 +888,6 @@ namespace Viconomy
         }
         */
     }
+
+
 }
