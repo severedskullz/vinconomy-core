@@ -28,7 +28,7 @@ namespace Viconomy.BlockTypes
             {
                 return be.OnPlayerRightClick(byPlayer, blockSel);
             }
-            return false;
+            return true;
         }
 
 

@@ -1,5 +1,8 @@
-﻿namespace Viconomy.Network.Api
+﻿using ProtoBuf;
+
+namespace Viconomy.TradeNetwork
 {
+    [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
     public class TradeNetworkProduct
     {
         public string NodeId { get; set; }

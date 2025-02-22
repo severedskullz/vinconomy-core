@@ -253,7 +253,6 @@ namespace Viconomy
             return config;
         }
 
-
         private TextCommandResult SetOwner(TextCommandCallingArgs args)
         {
 
@@ -869,6 +868,15 @@ namespace Viconomy
             }
 
             this.Mod.Logger.Debug("=============== Loaded Viconomy ================");
+        }
+
+        public void PersistConfig()
+        {
+            if (_coreServerAPI != null)
+            {
+                _coreServerAPI.StoreModConfig(Config, CONFIG_NAME);
+            }
+           
         }
 
         #endregion Callbacks

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Viconomy.Registry;
+using Viconomy.TradeNetwork;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -10,15 +11,14 @@ namespace Viconomy.GUI
 {
     public class GuiVinconTrader : GuiDialogGeneric
     {
-
+        TradeNetworkShop shop;
         DummyInventory ProductInventory;
         DummyInventory CurrencyInventory;
 
-        public GuiVinconTrader(string DialogTitle, ShopCatalog catalog, ICoreClientAPI capi) : base(DialogTitle, capi)
+        public GuiVinconTrader(string DialogTitle, TradeNetworkShop shop, ICoreClientAPI capi) : base(DialogTitle, capi)
         {
-            this.DialogTitle = "Sev's Shop";
-
-            List<ShopProduct> products = catalog.Products.Products;
+            this.shop = shop;
+            List<TradeNetworkProduct> products = shop.products;
             ProductInventory = new DummyInventory(capi, products.Count);
             ProductInventory.TakeLocked = true;
             ProductInventory.PutLocked = true;
@@ -30,7 +30,7 @@ namespace Viconomy.GUI
             int index = 0;
 
             //Add our Product and Currency to each inventory. Catch JSON errors on attributes, cuz Quotes in descriptions got me once already
-            foreach (ShopProduct product in products)
+            foreach (TradeNetworkProduct product in products)
             {
 
                 ItemStack productStack = ResolveBlockOrItem(product.ProductCode, Math.Clamp(product.TotalStock,0,999));
@@ -119,8 +119,8 @@ namespace Viconomy.GUI
                 SingleComposer = capi.Gui.CreateCompo("GuiVinconTraderCatalog", dialogBounds)
                .AddShadedDialogBG(bgBounds)
                .AddDialogTitleBar(this.DialogTitle, OnTitleBarCloseClicked)
-               .AddStaticText(Lang.Get("vinconomy:gui-owner") + "SeveredSkullz", CairoFont.WhiteSmallText(), descLabelBounds)
-               .AddStaticText("Server: Vinconomy Cross-Server Testing  #1", CairoFont.WhiteSmallText(), serverLabelBounds)
+               .AddStaticText(Lang.Get("vinconomy:gui-owner") + shop.owner, CairoFont.WhiteSmallText(), descLabelBounds)
+               .AddStaticText(Lang.Get("vinconomy:gui-server") + shop.serverName, CairoFont.WhiteSmallText(), serverLabelBounds)
 
 
 
@@ -135,14 +135,14 @@ namespace Viconomy.GUI
                    .AddVerticalScrollbar(OnNewItemScrollbarValue, itemScrollbarBounds, "item-scrollbar")
                .EndChildElements()
 
-                                .AddStaticText(Lang.Get("vinconomy:gui-quantity"), CairoFont.WhiteSmallText(), quantitySelectionLabel)
-                    .AddNumberInput(quantitySelectionBounds, null, CairoFont.WhiteSmallText(), "quantity")
-                    .AddButton(Lang.Get("vinconomy:gui-deal"), new ActionConsumable(this.OnPurchase), purchaseButtonBounds, EnumButtonStyle.Small, "save")
-                    .AddStaticText(Lang.Get("vinconomy:gui-price"), CairoFont.WhiteSmallText(), currencyLabel)
-                    .AddPassiveItemSlot(currencySlotBounds, ProductInventory, ProductInventory[0], true)
+                .AddStaticText(Lang.Get("vinconomy:gui-quantity"), CairoFont.WhiteSmallText(), quantitySelectionLabel)
+                .AddNumberInput(quantitySelectionBounds, null, CairoFont.WhiteSmallText(), "quantity")
+                .AddButton(Lang.Get("vinconomy:gui-deal"), new ActionConsumable(this.OnPurchase), purchaseButtonBounds, EnumButtonStyle.Small, "save")
+                .AddStaticText(Lang.Get("vinconomy:gui-price"), CairoFont.WhiteSmallText(), currencyLabel)
+                .AddPassiveItemSlot(currencySlotBounds, ProductInventory, ProductInventory[0], true)
 
-                    .AddStaticText(Lang.Get("vinconomy:gui-product"), CairoFont.WhiteSmallText(), purchaseLabel)
-                    .AddItemSlotGrid(ProductInventory, null, 1, new int[] { 0 }, purchaseSlotBounds);
+                .AddStaticText(Lang.Get("vinconomy:gui-product"), CairoFont.WhiteSmallText(), purchaseLabel)
+                .AddItemSlotGrid(ProductInventory, null, 1, new int[] { 0 }, purchaseSlotBounds);
 
                 GuiElementContainer scrollArea = SingleComposer.GetContainer("products");
                 scrollArea.Add(SingleComposer.GetSlotGrid("item-grid"));

@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.Json.Nodes;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
 namespace Viconomy.Network.Api
 {
-    public class TradeNetworkShopUpdate : Dictionary<BlockPos, TradeNetworkStallUpdate>
+    public class ShopProducts : Dictionary<BlockPos, ShopStall>
     {
         int ShopId;
         bool RemoveAll;
 
-        public TradeNetworkShopUpdate(int shopId)
+        public ShopProducts(int shopId)
         {
             ShopId = shopId;
         }
@@ -20,11 +19,23 @@ namespace Viconomy.Network.Api
         {
             if (!ContainsKey(pos))
             {
-                this.Add(pos, new TradeNetworkStallUpdate(pos));
+                this.Add(pos, new ShopStall(pos));
             }
 
             this[pos].AddStallUpdate(stallSlot, product, numItemsPerPurchase, currency);
         }
+
+        public static ShopProducts FromJson(JsonObject obj)
+        {
+            obj.TryGetPropertyValue("id", out JsonNode id);
+            if (id == null)
+            {
+                throw new System.Exception("Shop must have an ID");
+            }
+            ShopProducts products = new ShopProducts(id.GetValue<int>());
+            return products;
+        }
+
 
         public string ToJsonString()
         {
@@ -35,7 +46,7 @@ namespace Viconomy.Network.Api
             };
 
             JsonArray stalls = new JsonArray();
-            foreach (TradeNetworkStallUpdate stallUpdate in this.Values) {
+            foreach (ShopStall stallUpdate in this.Values) {
                 stalls.Add(stallUpdate.ToJsonString());
             }
             json.Add("stalls", stalls);

@@ -6,13 +6,11 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
-using System.Collections.Generic;
 using Viconomy.GUI;
-using Viconomy.Registry;
+using Viconomy.TradeNetwork;
 
 namespace Viconomy.Entities
 {
@@ -76,8 +74,8 @@ namespace Viconomy.Entities
             if (value == "opentrade")
             {
                 ConversableBh.Dialog?.TryClose();
-                TryOpenTradeDialog(triggeringEntity);
                 talkingWithPlayer = triggeringEntity as EntityPlayer;
+                TryOpenTradeDialog(triggeringEntity);
                 return 0;
             }
 
@@ -86,15 +84,42 @@ namespace Viconomy.Entities
 
         private void TryOpenTradeDialog(EntityAgent forEntity)
         {
-            if (!Alive || World.Side != EnumAppSide.Client)
+            if (!Alive)
+                return;
+
+            if (World.Side == EnumAppSide.Client)
             {
+                /*
+               
+                */
                 return;
             }
 
-            EntityPlayer entityPlayer = forEntity as EntityPlayer;
-            IPlayer player = World.PlayerByUid(entityPlayer.PlayerUID);
+            ICoreServerAPI coreServerAPI = (ICoreServerAPI)Api;
+            VinconomyTradingIntegrationSystem tradingNetwork = coreServerAPI.ModLoader.GetModSystem<VinconomyTradingIntegrationSystem>();
+            tradingNetwork.GetTradeNetworkShop("380d4609-081d-44a2-a0cd-63ad3a98b554", 1, (shop) => {
+                if (shop != null)
+                {
+                    ICoreServerAPI coreServerAPI = Api as ICoreServerAPI;
+                    byte[] data = SerializerUtil.Serialize(shop);
+                    coreServerAPI.Network.SendEntityPacket(talkingWithPlayer.Player as IServerPlayer, EntityId, 2000, data);
+                }
+
+            });
+        }
+
+        public void OpenTradeNetworkDialogue(TradeNetworkShop shop)
+        {
             ICoreClientAPI coreClientAPI = (ICoreClientAPI)Api;
-            if (forEntity.Pos.SquareDistanceTo(Pos) <= 5f)
+            if (shop.products.Count <= 0)
+            {
+                coreClientAPI.TriggerIngameError(this, "noproducts", Lang.Get("This trader has no products for sale"));
+                return;
+            }
+
+            IPlayer player = World.PlayerByUid(talkingWithPlayer.PlayerUID);
+            
+            if (talkingWithPlayer.Pos.SquareDistanceTo(Pos) <= 5f)
             {
                 GuiDialog guiDialog = tradeDialog;
                 if (guiDialog == null || !guiDialog.IsOpened())
@@ -103,16 +128,7 @@ namespace Viconomy.Entities
                     {
                         coreClientAPI.Network.SendEntityPacket(EntityId, 1001);
                         player.InventoryManager.OpenInventory(Inventory);
-
-                        ShopCatalog catalog = new ShopCatalog();
-                        catalog.Products = new ShopProductList();
-                        catalog.Products.Products = new List<ShopProduct>();
-                        for (int i = 0; i < 120; i++)
-                        {
-                            catalog.Products.Products.Add(new ShopProduct() { ProductCode = "game:drypackeddirt", CurrencyCode = "game:drypackeddirt", TotalStock = 999 });
-                        }
-
-                        tradeDialog = new GuiVinconTrader("Shop", catalog , World.Api as ICoreClientAPI);
+                        tradeDialog = new GuiVinconTrader(shop.name, shop, World.Api as ICoreClientAPI);
                         tradeDialog.TryOpen();
                     }
                     else
@@ -123,7 +139,7 @@ namespace Viconomy.Entities
                     return;
                 }
             }
-
+            
             coreClientAPI.Network.SendPacketClient(coreClientAPI.World.Player.InventoryManager.CloseInventory(Inventory));
         }
 
@@ -148,6 +164,11 @@ namespace Viconomy.Entities
             }
         }
 
+        public override void OnReceivedClientPacket(IServerPlayer player, int packetid, byte[] data)
+        {
+            base.OnReceivedClientPacket(player, packetid, data);           
+        }
+
         public override void OnReceivedServerPacket(int packetid, byte[] data)
         {
             base.OnReceivedServerPacket(packetid, data);
@@ -164,6 +185,12 @@ namespace Viconomy.Entities
             if (packetid == 198)
             {
                 talkUtil.Talk(EnumTalkType.Death);
+            }
+
+            if (packetid == 2000)
+            {
+                TradeNetworkShop shop = SerializerUtil.Deserialize<TradeNetworkShop>(data);
+                OpenTradeNetworkDialogue(shop);
             }
         }
 

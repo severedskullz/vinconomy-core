@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Viconomy.Config
 {
@@ -32,6 +28,11 @@ namespace Viconomy.Config
                 return networkAPIKeys[guid];
             }
             return null;
+        }
+
+        public void ClearApiKeyForGUID(string savegameIdentifier)
+        {
+            networkAPIKeys.Remove(savegameIdentifier);
         }
     }
 

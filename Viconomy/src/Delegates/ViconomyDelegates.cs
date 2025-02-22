@@ -1,5 +1,5 @@
 ﻿using Viconomy.BlockEntities;
-using Viconomy.Network.Api;
+using Viconomy.TradeNetwork;
 using Viconomy.Trading;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -30,4 +30,5 @@ namespace Viconomy.Delegates
     public delegate void OnTradeSelectedDelegate(TradeNetworkProduct product);
 
     public delegate void OnUpdateShopProductDelegate(int shopId, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency);
+    public delegate void OnTradeNetworkShopRecieved(TradeNetworkShop shop);
 }

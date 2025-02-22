@@ -1,4 +1,4 @@
-﻿namespace Viconomy.Network.Api
+﻿namespace Viconomy.TradeNetwork
 {
     internal class TradeNetworkJoinResult
     {

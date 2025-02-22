@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.Json.Nodes;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
 namespace Viconomy.Network.Api
 {
-    public class TradeNetworkStallUpdate : Dictionary<int, TradeNetworkProductUpdate>
+    public class ShopStall : Dictionary<int, Product>
     {
         BlockPos pos;
         bool RemoveAll;
 
-        public TradeNetworkStallUpdate(BlockPos pos)
+        public ShopStall(BlockPos pos)
         {
             this.pos = pos;
         }
@@ -20,10 +19,11 @@ namespace Viconomy.Network.Api
         {
             if (!ContainsKey(stallSlot))
             {
-                this.Add(stallSlot, new TradeNetworkProductUpdate(stallSlot, product, numItemsPerPurchase, currency));
-            } else
+                Add(stallSlot, new Product(stallSlot, product, numItemsPerPurchase, currency));
+            }
+            else
             {
-                this[stallSlot].Product = product;
+                this[stallSlot].Item = product;
                 this[stallSlot].NumItemsPerPurchase = numItemsPerPurchase;
                 this[stallSlot].Currency = currency;
             }
@@ -40,7 +40,7 @@ namespace Viconomy.Network.Api
             };
 
             JsonArray products = new JsonArray();
-            foreach (TradeNetworkProductUpdate productUpdate in this.Values)
+            foreach (Product productUpdate in Values)
             {
                 products.Add(productUpdate.ToJsonString());
             }

@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Viconomy.Config;
-using Viconomy.Network;
+using Viconomy.Delegates;
 using Viconomy.Network.Api;
+using Viconomy.TradeNetwork;
 using Viconomy.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -18,6 +18,7 @@ namespace Viconomy
         private VinconomyCoreSystem _coreSystem;
 
         private TradeNetworkUpdate TradeNetworkUpdate;
+        private TradeNetworkCache TradeNetworkCache = new TradeNetworkCache();
 
         public override double ExecuteOrder() => 1.1;
 
@@ -33,7 +34,7 @@ namespace Viconomy
             _coreSystem = api.ModLoader.GetModSystem<VinconomyCoreSystem>();
 
             _coreSystem.OnUpdateShopProduct += UpdateShopProductForNetwork;
-            _coreServerAPI.Event.Timer(SendQueuedNetworkShopUpdates, 10 * 60);
+            _coreServerAPI.Event.Timer(SendQueuedNetworkShopUpdates, 1 * 60);
 
             var parsers = api.ChatCommands.Parsers;
             api.ChatCommands.GetOrCreate("viconomy")
@@ -49,7 +50,7 @@ namespace Viconomy
                         .EndSubCommand()
                         .BeginSubCommand("join")
                             .WithDescription("Joins a Trade Network")
-                            .WithArgs(parsers.Word("Join Key"))
+                            .WithArgs(parsers.Word("Join Key", new string[] { "GLOBAL" }), parsers.OptionalWord("Username"), parsers.OptionalWord("Password"))
                             .HandleWith(JoinNetwork)
                         .EndSubCommand()
                         .BeginSubCommand("register")
@@ -65,11 +66,16 @@ namespace Viconomy
 
         private void SendQueuedNetworkShopUpdates()
         {
+            this.Mod.Logger.Event("Attempting to send off Trade Network Updates");
             if (TradeNetworkUpdate == null)
+            {
+                this.Mod.Logger.Event("... but there were no updates");
                 return;
+            }
+                
 
             ViconConfig config = _coreSystem.Config;
-            string apiKey = config.GetAPIKey(null);
+            string apiKey = config.GetAPIKey(_coreServerAPI.World.SavegameIdentifier);
             if (string.IsNullOrEmpty(apiKey)) return;
             if (!config.tradingNetworkEnabled) return;
             if (string.IsNullOrEmpty(config.tradingNetworkUrl)) return;
@@ -77,12 +83,10 @@ namespace Viconomy
             //TODO: Change for one POST instead of multiple?
             foreach (int shopId in TradeNetworkUpdate.Keys)
             {
-                TradeNetworkShopUpdate shop = TradeNetworkUpdate[shopId];
+                ShopProducts shop = TradeNetworkUpdate[shopId];
                 string payload = shop.ToJsonString();
-                VinUtils.PostAsync($"{config.tradingNetworkUrl}/products/{shopId}", payload, OnNetworkShopUpdatesResponse, apiKey);
+                VinUtils.PatchAsync($"{config.tradingNetworkUrl}/api/shop/products/{shopId}", payload, OnNetworkShopUpdatesResponse, apiKey);
             }
-
-           
         }
 
         private void OnNetworkShopUpdatesResponse(CompletedArgs args)
@@ -90,6 +94,15 @@ namespace Viconomy
             if (args.StatusCode == 200)
             {
                 TradeNetworkUpdate = null;
+                this.Mod.Logger.Event("Trade Network Updates acknowledged and processed");
+            } else if (args.StatusCode == 401)
+            {
+                this.Mod.Logger.Error("API Key was not valid for the given Node. Re-register the network node and try again. Removing API Key from configuration");
+                _coreSystem.Config.ClearApiKeyForGUID(_coreServerAPI.World.SavegameIdentifier);
+                _coreSystem.PersistConfig();
+            } else
+            {
+                this.Mod.Logger.Event($"Trade Network Updates did not acknowledge. Will retry next cycle. Message was {args.Response}");
             }
         }
 
@@ -111,7 +124,7 @@ namespace Viconomy
             data.name = _coreServerAPI.WorldManager.SaveGame.WorldName;
             data.guid = _coreServerAPI.World.SavegameIdentifier;
             string jsonData = VinUtils.SerializeToJson(data);
-
+            IServerPlayer player = args.Caller.Player as IServerPlayer;
 
             VinUtils.PutAsync($"{_coreSystem.Config.tradingNetworkUrl}/api/network/node", jsonData, OnRegisterNetworkResponse, _coreSystem.Config.GetAPIKey(data.guid));
             return TextCommandResult.Success("Requested - Check Console for updates");
@@ -129,13 +142,18 @@ namespace Viconomy
                 return TextCommandResult.Error("Trade Network Node not registered. Run \"/vicon network register\" first!");
             }
 
-            TradeNetworkNodeRegistration data = new TradeNetworkNodeRegistration();
-            data.name = _coreServerAPI.WorldManager.CurrentWorldName;
-            data.guid = this._coreServerAPI.World.SavegameIdentifier;
+            TradeNetworkJoinRequest data = new TradeNetworkJoinRequest();
+            data.serverName = _coreServerAPI.WorldManager.CurrentWorldName;
+            data.guid = _coreServerAPI.World.SavegameIdentifier;
+            data.networkAccessKey = (string) args[0];
             string jsonData = VinUtils.SerializeToJson(data);
 
 
-            VinUtils.PutAsync($"{_coreSystem.Config.tradingNetworkUrl}/api/network/join", jsonData, OnRegisterNetworkResponse, _coreSystem.Config.GetAPIKey(data.guid));
+            VinUtils.PostAsync($"{_coreSystem.Config.tradingNetworkUrl}/api/network/join", jsonData, (completionArgs) => {
+                OnRegisterNetworkResponse(completionArgs);
+                VinconomyCoreSystem.PrintClientMessage(args.Caller.Player, completionArgs.Response);
+
+            }, _coreSystem.Config.GetAPIKey(data.guid));
             return TextCommandResult.Success("Requested - Check Console for updates");
         }
 
@@ -147,19 +165,23 @@ namespace Viconomy
         private void UpdateShopProductForNetwork(int shopId, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
         {
             if (_coreSystem.Config.tradingNetworkEnabled && _coreSystem.Config.networkAPIKeys != null)
+            {
                 //VinUtils.PostAsync()
                 if (TradeNetworkUpdate == null)
                 {
                     TradeNetworkUpdate = new TradeNetworkUpdate();
                 }
-            TradeNetworkUpdate.AddShopUpdate(shopId, pos, stallSlot, product, numItemsPerPurchase, currency);
+                TradeNetworkUpdate.AddShopUpdate(shopId, pos, stallSlot, product, numItemsPerPurchase, currency);
+                this.Mod.Logger.Log(EnumLogType.Event, $"Added a new shop product update. Queue now has {TradeNetworkUpdate.GetUpdateCount()}");
+            }
+
         }
 
         private void OnRegisterNetworkResponse(CompletedArgs args)
         {
             if (args.StatusCode == 200)
             {
-                TradeNetworkNode node = VinUtils.DeserializeFromJson<TradeNetworkNode>(args.Response);
+                TradeNetworkNode node = TradeNetworkNode.FromJson(args.Response);
                 if (_coreSystem.Config.networkAPIKeys == null)
                 {
                     _coreSystem.Config.networkAPIKeys = new Dictionary<string, string>();
@@ -167,15 +189,44 @@ namespace Viconomy
                 _coreSystem.Config.networkAPIKeys.Add(_coreServerAPI.World.SavegameIdentifier, node.apiKey);
                 _coreServerAPI.StoreModConfig(_coreSystem.Config, VinconomyCoreSystem.CONFIG_NAME);
 
-                this.Mod.Logger.Notification("Completed registration of Trade Network Node. Api Key written to config!");
+                Mod.Logger.Notification("Completed registration of Trade Network Node. Api Key written to config!");
             }
             else
             {
-                this.Mod.Logger.Error($"Failed registration of Trade Network Node. Error: {args.ErrorMessage}");
+                Mod.Logger.Error($"Failed registration of Trade Network Node. Error: {args.StatusCode} : {args.ErrorMessage}");
             }
 
         }
 
+        public void GetTradeNetworkShop(string nodeId, int shopId, OnTradeNetworkShopRecieved callback)
+        {
+            TradeNetworkShop shop = TradeNetworkCache.GetShop(nodeId, shopId);
+            if ( shop == null) {
 
+                ViconConfig config = _coreSystem.Config;
+                string apiKey = config.GetAPIKey(_coreServerAPI.World.SavegameIdentifier);
+                if (string.IsNullOrEmpty(apiKey)) return;
+                if (!config.tradingNetworkEnabled) return;
+                if (string.IsNullOrEmpty(config.tradingNetworkUrl)) return;
+
+                VinUtils.GetAsync($"{_coreSystem.Config.tradingNetworkUrl}/api/shop/inventory/{nodeId}/{shopId}", delegate (CompletedArgs args)  {
+                    TradeNetworkShop shop = null;
+                    if (args.StatusCode == 200)
+                    {
+                        shop = VinUtils.DeserializeFromJson<TradeNetworkShop>(args.Response);
+                        TradeNetworkCache.AddShop(shop);
+                        Mod.Logger.Notification("Added new shop to cache");
+                    }
+                    else
+                    {
+                        Mod.Logger.Error($"Failed lookup of Trade Network shop. Error: {args.ErrorMessage}");
+                    }
+                    callback.Invoke(shop);  
+                }, apiKey);
+            } else
+            {
+                callback.Invoke(shop);
+            } 
+        }
     }
 }

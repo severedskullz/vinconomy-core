@@ -73,14 +73,7 @@ namespace Viconomy.Util
                     HttpRequestMessage request = CreateRequest(rootUrl, HttpMethod.Get, null, apiKey);
                     HttpResponseMessage res = await Inst.SendAsync(request, CancellationToken.None);
                     string response = await res.Content.ReadAsStringAsync();
-                    CompletedArgs args = new CompletedArgs
-                    {
-                        State = ((!res.IsSuccessStatusCode) ? CompletionState.Error : CompletionState.Good),
-                        StatusCode = (int)res.StatusCode,
-                        Response = response,
-                        ErrorMessage = res.ReasonPhrase
-                    };
-                    onFinished(args);
+                    HandleResponse(onFinished, res, response);
                 }
                 catch (Exception ex)
                 {
