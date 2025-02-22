@@ -1,4 +1,5 @@
 ﻿using Viconomy.BlockEntities;
+using Viconomy.Inventory;
 using Viconomy.TradeNetwork;
 using Viconomy.Trading;
 using Vintagestory.API.Common;
@@ -27,7 +28,7 @@ namespace Viconomy.Delegates
     public delegate EnumWorldAccessResponse OnTestAccessDelegate(IPlayer player, BlockSelection blockSelection, EnumBlockAccessFlags accessType, string claimant, EnumWorldAccessResponse response);
     
     
-    public delegate void OnTradeSelectedDelegate(TradeNetworkProduct product);
+    public delegate void OnTradeSelectedDelegate(VinconNetworkItemSlot product);
 
     public delegate void OnUpdateShopProductDelegate(int shopId, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency);
     public delegate void OnTradeNetworkShopRecieved(TradeNetworkShop shop);

@@ -1,72 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using Viconomy.Registry;
+using Viconomy.Inventory;
 using Viconomy.TradeNetwork;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
-using Vintagestory.API.Datastructures;
 
 namespace Viconomy.GUI
 {
     public class GuiVinconTrader : GuiDialogGeneric
     {
         TradeNetworkShop shop;
+        VinconNetworkInventory inventory;
         DummyInventory ProductInventory;
         DummyInventory CurrencyInventory;
+
+        VinconNetworkItemSlot selectedProduct;
 
         public GuiVinconTrader(string DialogTitle, TradeNetworkShop shop, ICoreClientAPI capi) : base(DialogTitle, capi)
         {
             this.shop = shop;
-            List<TradeNetworkProduct> products = shop.products;
-            ProductInventory = new DummyInventory(capi, products.Count);
+            this.inventory = new VinconNetworkInventory(shop, capi);
+            inventory.OnTradeSelected += OnTradeSelected;
+            ProductInventory = new DummyInventory(capi, 1);
             ProductInventory.TakeLocked = true;
             ProductInventory.PutLocked = true;
             ProductInventory.OnAcquireTransitionSpeed += NoDecay;
-            CurrencyInventory = new DummyInventory(capi, products.Count);
+            CurrencyInventory = new DummyInventory(capi, 1);
             CurrencyInventory.TakeLocked = true;
             CurrencyInventory.PutLocked = true;
             CurrencyInventory.OnAcquireTransitionSpeed += NoDecay;
-            int index = 0;
-
-            //Add our Product and Currency to each inventory. Catch JSON errors on attributes, cuz Quotes in descriptions got me once already
-            foreach (TradeNetworkProduct product in products)
-            {
-
-                ItemStack productStack = ResolveBlockOrItem(product.ProductCode, Math.Clamp(product.TotalStock,0,999));
-                try
-                {
-                    if (product.ProductAttributes != null)
-                    {
-                        TreeAttribute attr = new TreeAttribute();
-                        attr.FromBytes(product.ProductAttributes);
-
-                        // Remove transition state from any food items. SQL entries are the last time it was inserted and isnt updated
-                        attr.RemoveAttribute("transitionstate");
-
-                        //JsonObject productAttr = JsonObject.FromJson(product.ProductAttributes);
-                        productStack.Attributes = attr;//(ITreeAttribute)ToAttribute(productAttr.Token);
-
-                    }
-                }
-                catch (Exception ex) { }
-                ProductInventory[index].Itemstack = productStack;
-
-                ItemStack currencyStack = ResolveBlockOrItem(product.CurrencyCode, product.CurrencyAmount);
-                if (product.CurrencyAttributes != null)
-                {
-                    TreeAttribute attr = new TreeAttribute();
-
-                    // Remove transition state from any food items. SQL entries are the last time it was inserted and isnt updated
-                    attr.RemoveAttribute("transitionstate");
-
-                    attr.FromBytes(product.CurrencyAttributes);
-                    //JsonObject currencyAttr = JsonObject.FromJson(product.CurrencyAttributes);
-                    currencyStack.Attributes = attr; // (ITreeAttribute)currencyAttr.ToAttribute();
-                }
-                CurrencyInventory[index].Itemstack = productStack;
-                index++;
-            }
+            
 
             try
             {
@@ -74,6 +37,29 @@ namespace Viconomy.GUI
             } catch (Exception ex) { 
                 Console.WriteLine(ex.ToString());
             }
+        }
+
+        private void OnTradeSelected(VinconNetworkItemSlot product)
+        {
+            selectedProduct = product;
+            ProductInventory[0].Itemstack = product.Product.Clone();
+            CurrencyInventory[0].Itemstack = product.Currency.Clone();
+
+            GuiElementNumberInput quantity = SingleComposer.GetNumberInput("quantity");
+            quantity.SetValue(1);
+
+            float amount = quantity.GetValue();
+            UpdatePurchaseAmounts(amount);
+        }
+
+        private void UpdatePurchaseAmounts(float amount)
+        {
+            if (amount <= 1)
+            {
+                amount = 1;
+            }
+            ProductInventory[0].Itemstack.StackSize = selectedProduct.Product.StackSize * (int)amount;
+            CurrencyInventory[0].Itemstack.StackSize = selectedProduct.Currency.StackSize * (int)amount;
         }
 
         private void Compose()
@@ -99,7 +85,7 @@ namespace Viconomy.GUI
                 ElementBounds itemScrollbarBounds = itemInsetContainerBounds.RightCopy().WithFixedOffset(5,0).WithFixedWidth(20);
                 ElementBounds itemClipBounds = itemInsetBounds.ForkContainingChild();
                 ElementBounds itemContainerBounds = itemInsetBounds.ForkContainingChild();
-                ElementBounds itemSlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 7, (int)Math.Ceiling(ProductInventory.Count / 7.0f)).WithParent(itemContainerBounds);
+                ElementBounds itemSlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 7, (int)Math.Ceiling(inventory.Count / 7.0f)).WithParent(itemContainerBounds);
 
                 ElementBounds currencyLabel = ElementBounds.FixedSize(60, 25).FixedRightOf(productLabelBounds).FixedUnder(serverLabelBounds).WithFixedOffset(0,-5);
                 ElementBounds currencySlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).FixedUnder(currencyLabel).FixedRightOf(descLabelBounds).WithFixedOffset(0, 5);
@@ -130,19 +116,19 @@ namespace Viconomy.GUI
                    .AddInset(itemInsetContainerBounds, insetDepth)
                    .BeginClip(itemClipBounds)
                         .AddContainer(itemContainerBounds, "products")
-                        .AddItemSlotGrid(ProductInventory, PacketHandler, 7, itemSlotBounds, "item-grid")
+                        .AddItemSlotGrid(inventory, null, 7, itemSlotBounds, "item-grid")
                    .EndClip()
                    .AddVerticalScrollbar(OnNewItemScrollbarValue, itemScrollbarBounds, "item-scrollbar")
                .EndChildElements()
 
                 .AddStaticText(Lang.Get("vinconomy:gui-quantity"), CairoFont.WhiteSmallText(), quantitySelectionLabel)
-                .AddNumberInput(quantitySelectionBounds, null, CairoFont.WhiteSmallText(), "quantity")
+                .AddNumberInput(quantitySelectionBounds, OnAmountChanged, CairoFont.WhiteSmallText(), "quantity")
                 .AddButton(Lang.Get("vinconomy:gui-deal"), new ActionConsumable(this.OnPurchase), purchaseButtonBounds, EnumButtonStyle.Small, "save")
                 .AddStaticText(Lang.Get("vinconomy:gui-price"), CairoFont.WhiteSmallText(), currencyLabel)
-                .AddPassiveItemSlot(currencySlotBounds, ProductInventory, ProductInventory[0], true)
+                .AddItemSlotGrid(CurrencyInventory, null, 1, new int[] { 0 }, currencySlotBounds, "CurrencySlot")
 
                 .AddStaticText(Lang.Get("vinconomy:gui-product"), CairoFont.WhiteSmallText(), purchaseLabel)
-                .AddItemSlotGrid(ProductInventory, null, 1, new int[] { 0 }, purchaseSlotBounds);
+                .AddItemSlotGrid(ProductInventory, null, 1, new int[] { 0 }, purchaseSlotBounds, "ProductSlot");
 
                 GuiElementContainer scrollArea = SingleComposer.GetContainer("products");
                 scrollArea.Add(SingleComposer.GetSlotGrid("item-grid"));
@@ -158,27 +144,29 @@ namespace Viconomy.GUI
             }
         }
 
+        private void OnAmountChanged(string txt)
+        {
+            if (txt.Length == 0)
+                return;
+
+            Int32.TryParse(txt, out int amount);
+
+            if (amount < 1)
+            {
+                amount = 1;
+                GuiElementNumberInput quantity = SingleComposer.GetNumberInput("quantity");
+                quantity.SetValue(1);
+            } else if (amount > selectedProduct.TotalStock) {
+                GuiElementNumberInput quantity = SingleComposer.GetNumberInput("quantity");
+                quantity.SetValue(selectedProduct.TotalStock);
+                amount = selectedProduct.TotalStock;
+            }
+            UpdatePurchaseAmounts(amount);
+        }
+
         private bool OnPurchase()
         {
             return true;
-        }
-
-        private ItemStack ResolveBlockOrItem(string code, int size)
-        {
-            AssetLocation location = new AssetLocation(code);
-            Item item = capi.World.GetItem(location);
-            if (item != null)
-            {
-                return new ItemStack(item, size);
-            }
-
-            Block block = capi.World.GetBlock(location);
-            if (block != null)
-            {
-                return new ItemStack(block, size);
-            }
-
-            return null;
         }
 
         private float NoDecay(EnumTransitionType transType, ItemStack stack, float mulByConfig)

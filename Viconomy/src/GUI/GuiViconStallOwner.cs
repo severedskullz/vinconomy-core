@@ -16,11 +16,8 @@ namespace Viconomy.GUI
     public class GuiViconStallOwner : GuiDialogBlockEntity
     {
         BEVinconContainer stall;
-        ViconomyInventory vinInv;
         ShopRegistration[] registers;
         ICoreClientAPI api;
-
-
         int stallSlotCount;
         private int stacksPerSlot;
         int curTab;
@@ -46,9 +43,8 @@ namespace Viconomy.GUI
             }
 
             registers = filteredRegisters.ToArray();
-            vinInv = Inventory as ViconomyInventory;
-            this.stallSlotCount = stall.StallSlotCount;
-            this.stacksPerSlot = stall.StacksPerSlot;
+            stallSlotCount = stall.StallSlotCount;
+            stacksPerSlot = stall.StacksPerSlot;
 
 
             if (base.IsDuplicate)
@@ -58,30 +54,22 @@ namespace Viconomy.GUI
             capi.World.Player.InventoryManager.OpenInventory(Inventory);
             this.DialogTitle = DialogTitle;
 
-            this.inv = new DummyInventory(capi);
+            inv = new DummyInventory(capi);
             purchaseSlot = new ViconPurchaseSlot(inv, 0);
-            this.inv.TakeLocked = true;
-            this.inv.PutLocked = true;
-            this.inv[0] = purchaseSlot;
+            inv.TakeLocked = true;
+            inv.PutLocked = true;
+            inv[0] = purchaseSlot;
 
-            this.Compose();
+            Compose();
         }
 
         private void Compose()
         {
             try
             {
-
-
                 ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);//.WithFixedAlignmentOffset(-GuiStyle.DialogToScreenPadding, 0.0);
-
-
                 ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.DialogToScreenPadding);
                 bgBounds.BothSizing = ElementSizing.FitToChildren;
-
-
-
-
 
                 ViconomyInventory vinInv = Inventory as ViconomyInventory;
                 int[] uiSlots = new int[stacksPerSlot];
@@ -238,17 +226,13 @@ namespace Viconomy.GUI
 
         }
 
-        private void SetCurrencySlot(object p)
-        {
 
-            SingleComposer.GetTextInput("costQuantity").SetValue(stallSlot.currency.StackSize);
-            capi.Network.SendBlockEntityPacket(BlockEntityPosition.X, BlockEntityPosition.Y, BlockEntityPosition.Z, p);
-        }
-
-        private void onCostQuantityChanged(string amount)
+        private void onCostQuantityChanged(string txt)
         {
-            int val = 1;
-            Int32.TryParse(amount, out val);
+            if (txt.Length == 0)
+                return;
+
+            Int32.TryParse(txt, out int val);
             val = Math.Max(val, 1);
 
             byte[] data;
@@ -259,7 +243,7 @@ namespace Viconomy.GUI
                 writer.Write(val);
                 data = ms.ToArray();
             }
-            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_ITEM_PRICE, data);
+            capi.Network.SendBlockEntityPacket(BlockEntityPosition, VinConstants.SET_ITEM_PRICE, data);
 
         }
 
@@ -288,7 +272,7 @@ namespace Viconomy.GUI
                 writer.Write(isToggled);
                 data = ms.ToArray();
             }
-            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_ADMIN_SHOP, data);
+            capi.Network.SendBlockEntityPacket(BlockEntityPosition, VinConstants.SET_ADMIN_SHOP, data);
 
         }
 
@@ -324,7 +308,7 @@ namespace Viconomy.GUI
                     writer.Write(val);
                     data = ms.ToArray();
                 }
-                this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_ITEMS_PER_PURCHASE, data);
+                capi.Network.SendBlockEntityPacket(BlockEntityPosition, VinConstants.SET_ITEMS_PER_PURCHASE, data);
 
                 if (purchaseSlot.Itemstack != null)
                 {
@@ -344,13 +328,19 @@ namespace Viconomy.GUI
                 writer.Write(id);
                 data = ms.ToArray();
             }
-            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_REGISTER_ID, data);
+            capi.Network.SendBlockEntityPacket(BlockEntityPosition, VinConstants.SET_REGISTER_ID, data);
 
         }
 
         private void SendInvPacket(object p)
         {
             UpdatePurchaseSlot();
+            capi.Network.SendBlockEntityPacket(BlockEntityPosition.X, BlockEntityPosition.Y, BlockEntityPosition.Z, p);
+        }
+
+        private void SetCurrencySlot(object p)
+        {
+            SingleComposer.GetTextInput("costQuantity").SetValue(stallSlot.currency.StackSize);
             capi.Network.SendBlockEntityPacket(BlockEntityPosition.X, BlockEntityPosition.Y, BlockEntityPosition.Z, p);
         }
 

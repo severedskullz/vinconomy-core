@@ -97,7 +97,7 @@ namespace Viconomy.Entities
 
             ICoreServerAPI coreServerAPI = (ICoreServerAPI)Api;
             VinconomyTradingIntegrationSystem tradingNetwork = coreServerAPI.ModLoader.GetModSystem<VinconomyTradingIntegrationSystem>();
-            tradingNetwork.GetTradeNetworkShop("380d4609-081d-44a2-a0cd-63ad3a98b554", 1, (shop) => {
+            tradingNetwork.GetTradeNetworkShop("f0d34c1a-472a-47c9-9cad-1c7317a434d3", 1, (shop) => {
                 if (shop != null)
                 {
                     ICoreServerAPI coreServerAPI = Api as ICoreServerAPI;

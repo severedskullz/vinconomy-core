@@ -17,7 +17,7 @@ namespace Viconomy.TradeNetwork
         public int ProductQuantity { get; set; }
         public int TotalStock { get; set; }
         public byte[] CurrencyAttributes { get; set; }
-        public int CurrencyAmount { get; set; }
+        public int currencyQuantity { get; set; }
         public string CurrencyCode { get; set; }
         public string CurrencyName { get; set; }
     }
