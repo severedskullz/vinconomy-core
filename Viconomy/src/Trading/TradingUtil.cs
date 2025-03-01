@@ -1,8 +1,6 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using Viconomy.Registry;
-using Viconomy.src.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 
@@ -10,16 +8,6 @@ namespace Viconomy.Trading
 {
     public class TradingUtil
     {
-        public static ItemStack GetChangeFor(ItemStack inputCurrency, ShopRegistration register)
-        {
-            string owner = register.Owner;
-            return null;
-        }
-
-        public static List<CurrencyConversion> GetConversionsFor(string itemName)
-        {
-            return null;
-        }
 
         public static void CommitPurchase(TradeResult purchaseResult)
         {
@@ -103,7 +91,7 @@ namespace Viconomy.Trading
 
             foreach (ItemStack item in productStacks)
             {
-                result.customer.InventoryManager.TryGiveItemstack(item, false);
+                result.customer.InventoryManager.TryGiveItemstack(item, true);
                 if (item.StackSize > 0)
                 {
                     result.coreApi.World.SpawnItemEntity(item, result.sellingEntity.Pos.ToVec3d().Add(0.5, 0.5, 0.5), null);
@@ -220,6 +208,25 @@ namespace Viconomy.Trading
             return true;
         }
 
+        public static bool CanAfford(IPlayer player, ItemStack currencyNeeded)
+        {
+            List<ItemSlot> validCurrency = GetAllValidCurrencyFor(player, currencyNeeded);
+
+            // Count the amount of currency that the player has to see if it covers the cost
+            int totalCurrency = 0;
+            foreach (var currencySlot in validCurrency)
+            {
+                totalCurrency += currencySlot.Itemstack.StackSize;
+            }
+
+            // If they havent covered the cost, tell them they dont have enough money
+            if (totalCurrency < currencyNeeded.StackSize)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public static bool CanAfford(TradeRequest request, TradeResult purchaseResult)
         {
             bool populatePurchaseResult = purchaseResult != null;
@@ -257,7 +264,7 @@ namespace Viconomy.Trading
                 //TODO: Auto Currency Conversion!
                 return false;
             }
-            // Set the slots applicable for payment, override the amount we are trying to purhcase, and set it on the result too
+            // Set the slots applicable for payment, override the amount we are trying to purchase, and set it on the result too
             request.numPurchases = Math.Min(request.numPurchases, totalCurrency / currencyRequired);
             int totalStock = 0;
             foreach (ItemSlot slot in request.productSourceSlots)

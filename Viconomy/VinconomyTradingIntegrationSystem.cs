@@ -1,12 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Viconomy.Config;
 using Viconomy.Delegates;
+using Viconomy.Network;
 using Viconomy.Network.Api;
 using Viconomy.TradeNetwork;
+using Viconomy.TradeNetwork.Api;
+using Viconomy.Trading;
 using Viconomy.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.Client.NoObf;
 using Vintagestory.Common;
 
 namespace Viconomy
@@ -14,10 +19,14 @@ namespace Viconomy
 
     public class VinconomyTradingIntegrationSystem : ModSystem
     {
+
         private ICoreServerAPI _coreServerAPI;
         private VinconomyCoreSystem _coreSystem;
 
-        private TradeNetworkUpdate TradeNetworkUpdate;
+        //TODO: Move this to DB so we dont lose info as soon as they shut down the server / crash
+        private TradeNetworkShopUpdate TradeNetworkUpdates;
+        private TradeNetworkPurchaseUpdate TradeNetworkPurchaseUpdates = new TradeNetworkPurchaseUpdate();
+
         private TradeNetworkCache TradeNetworkCache = new TradeNetworkCache();
 
         public override double ExecuteOrder() => 1.1;
@@ -34,7 +43,7 @@ namespace Viconomy
             _coreSystem = api.ModLoader.GetModSystem<VinconomyCoreSystem>();
 
             _coreSystem.OnUpdateShopProduct += UpdateShopProductForNetwork;
-            _coreServerAPI.Event.Timer(SendQueuedNetworkShopUpdates, 1 * 60);
+            _coreServerAPI.Event.Timer(SyncTradeNetwork, 1 * 60);
 
             var parsers = api.ChatCommands.Parsers;
             api.ChatCommands.GetOrCreate("viconomy")
@@ -64,46 +73,92 @@ namespace Viconomy
                 .EndSubCommand();
         }
 
-        private void SendQueuedNetworkShopUpdates()
+        private void SyncTradeNetwork()
         {
-            this.Mod.Logger.Event("Attempting to send off Trade Network Updates");
-            if (TradeNetworkUpdate == null)
+            ViconConfig config = _coreSystem.Config;
+            if (!config.tradingNetworkEnabled)
             {
-                this.Mod.Logger.Event("... but there were no updates");
                 return;
             }
-                
 
-            ViconConfig config = _coreSystem.Config;
             string apiKey = config.GetAPIKey(_coreServerAPI.World.SavegameIdentifier);
-            if (string.IsNullOrEmpty(apiKey)) return;
-            if (!config.tradingNetworkEnabled) return;
-            if (string.IsNullOrEmpty(config.tradingNetworkUrl)) return;
-
-            //TODO: Change for one POST instead of multiple?
-            foreach (int shopId in TradeNetworkUpdate.Keys)
+            if (apiKey == null)
             {
-                ShopProducts shop = TradeNetworkUpdate[shopId];
-                string payload = shop.ToJsonString();
-                VinUtils.PatchAsync($"{config.tradingNetworkUrl}/api/shop/products/{shopId}", payload, OnNetworkShopUpdatesResponse, apiKey);
+                return;
+            }
+
+            this.Mod.Logger.Event("Attempting to sync Trade Network Updates");
+
+
+            // Trade Network - Shop Updates
+            if (TradeNetworkUpdates != null)
+            {
+                if (string.IsNullOrEmpty(apiKey)) return;
+                if (!config.tradingNetworkEnabled) return;
+                if (string.IsNullOrEmpty(config.tradingNetworkUrl)) return;
+
+                //TODO: Change for one POST instead of multiple?
+                foreach (int shopId in TradeNetworkUpdates.Keys)
+                {
+                    ShopProducts shop = TradeNetworkUpdates[shopId];
+                    string payload = shop.ToJsonString();
+                    VinUtils.PatchAsync($"{config.tradingNetworkUrl}/api/shop/products/{shopId}", payload, OnNetworkShopUpdatesResponse, apiKey);
+                }
+            }
+
+            //Trade Network - Outgoing Purchase Updates
+            if (TradeNetworkPurchaseUpdates.Count > 0)
+            {
+                string payload = TradeNetworkPurchaseUpdates.ToJsonString();
+                VinUtils.PostAsync($"{config.tradingNetworkUrl}/api/market/purchase", payload, OnNetworkProductUpdatesResponse, apiKey);
+            }
+
+            //Trade Network - Incoming Purchase Updates
+            VinUtils.GetAsync($"{_coreSystem.Config.tradingNetworkUrl}/api/market/purchases/pending", OnNetworkIncomingPurchaseUpdatesResponse, apiKey);
+
+
+        }
+
+        private bool isValidResponse(CompletedArgs args)
+        {
+            if (args.StatusCode == 200)
+                return true;
+            else if (args.StatusCode == 401)
+            {
+                this.Mod.Logger.Error("API Key was not valid for the given Node. Re-register the network node and try again. Removing API Key from configuration");
+                _coreSystem.Config.ClearApiKeyForGUID(_coreServerAPI.World.SavegameIdentifier);
+                _coreSystem.PersistConfig();
+            } else {
+                this.Mod.Logger.Event($"An error occurred communicating with Trade Network. Message was {args.Response}");
+            }
+
+            return false;
+        }
+
+        private void OnNetworkIncomingPurchaseUpdatesResponse(CompletedArgs args)
+        {
+            if (isValidResponse(args))
+            {
+                this.Mod.Logger.Event("got response");
+            }
+        }
+
+        private void OnNetworkProductUpdatesResponse(CompletedArgs args)
+        {
+            if (isValidResponse(args))
+            {
+                TradeNetworkPurchaseUpdates.Clear();
+                this.Mod.Logger.Event("Trade Network Product Updates acknowledged and processed");
             }
         }
 
         private void OnNetworkShopUpdatesResponse(CompletedArgs args)
         {
-            if (args.StatusCode == 200)
+            if (isValidResponse(args))
             {
-                TradeNetworkUpdate = null;
-                this.Mod.Logger.Event("Trade Network Updates acknowledged and processed");
-            } else if (args.StatusCode == 401)
-            {
-                this.Mod.Logger.Error("API Key was not valid for the given Node. Re-register the network node and try again. Removing API Key from configuration");
-                _coreSystem.Config.ClearApiKeyForGUID(_coreServerAPI.World.SavegameIdentifier);
-                _coreSystem.PersistConfig();
-            } else
-            {
-                this.Mod.Logger.Event($"Trade Network Updates did not acknowledge. Will retry next cycle. Message was {args.Response}");
-            }
+                TradeNetworkUpdates = null;
+                this.Mod.Logger.Event("Trade Network Shop Updates acknowledged and processed");
+            } 
         }
 
         private TextCommandResult ConfigureNetwork(TextCommandCallingArgs args)
@@ -166,13 +221,12 @@ namespace Viconomy
         {
             if (_coreSystem.Config.tradingNetworkEnabled && _coreSystem.Config.networkAPIKeys != null)
             {
-                //VinUtils.PostAsync()
-                if (TradeNetworkUpdate == null)
+                if (TradeNetworkUpdates == null)
                 {
-                    TradeNetworkUpdate = new TradeNetworkUpdate();
+                    TradeNetworkUpdates = new TradeNetworkShopUpdate();
                 }
-                TradeNetworkUpdate.AddShopUpdate(shopId, pos, stallSlot, product, numItemsPerPurchase, currency);
-                this.Mod.Logger.Log(EnumLogType.Event, $"Added a new shop product update. Queue now has {TradeNetworkUpdate.GetUpdateCount()}");
+                TradeNetworkUpdates.AddShopUpdate(shopId, pos, stallSlot, product, numItemsPerPurchase, currency);
+                this.Mod.Logger.Log(EnumLogType.Event, $"Added a new shop product update. Queue now has {TradeNetworkUpdates.GetUpdateCount()}");
             }
 
         }
@@ -195,7 +249,11 @@ namespace Viconomy
             {
                 Mod.Logger.Error($"Failed registration of Trade Network Node. Error: {args.StatusCode} : {args.ErrorMessage}");
             }
+        }
 
+        public TradeNetworkShop GetTradeNetworkFromCache(string nodeId, int shopId)
+        {
+            return TradeNetworkCache.GetShop(nodeId, shopId);
         }
 
         public void GetTradeNetworkShop(string nodeId, int shopId, OnTradeNetworkShopRecieved callback)
@@ -214,6 +272,7 @@ namespace Viconomy
                     if (args.StatusCode == 200)
                     {
                         shop = VinUtils.DeserializeFromJson<TradeNetworkShop>(args.Response);
+                        shop.PopulateProductMap();
                         TradeNetworkCache.AddShop(shop);
                         Mod.Logger.Notification("Added new shop to cache");
                     }
@@ -228,5 +287,95 @@ namespace Viconomy
                 callback.Invoke(shop);
             } 
         }
+
+        public bool PurchaseFromNetworkShop(IPlayer customer, string nodeId, int shopId, TradeNetworkPurchasePacket purchase)
+        {
+            TradeNetworkShop shop = TradeNetworkCache.GetShop(nodeId, shopId);
+            if (shop == null) {
+                return false;
+            }
+            ShopProduct prod = shop.GetProductById(purchase.X, purchase.Y, purchase.Z, purchase.StallSlot);
+            if (prod == null)
+            {
+                return false;
+            }
+
+            ItemStack productStack = VinUtils.DeserializeProduct(_coreServerAPI, prod.ProductCode, prod.ProductQuantity, prod.ProductAttributes);
+            productStack.StackSize = productStack.StackSize * purchase.Amount;
+
+            ItemStack currencyStack = VinUtils.DeserializeProduct(_coreServerAPI, prod.CurrencyCode, prod.CurrencyQuantity, prod.CurrencyAttributes);
+            int currencyNeeded = currencyStack.StackSize * purchase.Amount;
+            List<ItemSlot> currencySlots = TradingUtil.GetAllValidCurrencyFor(customer, currencyStack);
+            foreach (ItemSlot slot in currencySlots)
+            {
+                currencyNeeded -= slot.StackSize;
+                if (currencyNeeded <= 0) {
+                    break;
+                }
+            }
+
+            // Are they unable to afford the trade? Return
+            if (currencyNeeded > 0) {
+                return false;
+            }
+
+            // Is there enough product left from total stock to buy all of it?
+            if (prod.TotalStock < prod.ProductQuantity * purchase.Amount) 
+            {
+                return false;
+            }
+
+            //Decrement the remaining stock from the Shop
+            prod.TotalStock -= prod.ProductQuantity * purchase.Amount;
+
+            //Take the money from the player.
+            currencyNeeded = currencyStack.StackSize * purchase.Amount;
+            foreach (ItemSlot itemSlot in currencySlots)
+            {
+
+                ItemStack takenStack = itemSlot.TakeOut(currencyNeeded);
+                currencyNeeded -= takenStack.StackSize;
+
+                itemSlot.MarkDirty();
+                if (currencyNeeded <= 0) break;
+            }
+
+            //Give the player the item
+            customer.InventoryManager.TryGiveItemstack(productStack, true);
+            if (productStack.StackSize > 0)
+            {
+                _coreServerAPI.World.SpawnItemEntity(productStack, customer.Entity.Pos.XYZ.Add(0.5, 0.5, 0.5), null);
+            }
+
+            //Add the purchase to the queued list
+            ShopPurchaseUpdate update = new ShopPurchaseUpdate()
+            {
+                StallSlot = purchase.StallSlot,
+                NodeId = nodeId,
+                ShopId = shopId,
+                X = purchase.X,
+                Y = purchase.Y,
+                Z = purchase.Z,
+                PlayerGuid = customer.PlayerUID,
+                Name = customer.PlayerName,
+                Amount = purchase.Amount,
+            };
+
+
+
+            TradeNetworkPurchaseUpdates.AddPurchaseUpdate(nodeId, shopId, update);
+
+            Block block = productStack.Block;
+            AssetLocation assetLocation = null;
+            if (block != null)
+            {
+                BlockSounds sounds = block.Sounds;
+                assetLocation = ((sounds != null) ? sounds.Place : null);
+            }
+            AssetLocation sound = assetLocation;
+            _coreServerAPI.World.PlaySoundAt((sound != null) ? sound : new AssetLocation("sounds/player/build"), customer.Entity, customer, true, 16f, 1f);
+            return true;
+        }
+
     }
 }

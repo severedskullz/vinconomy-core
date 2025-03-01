@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Viconomy.Registry;
+using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -38,38 +39,8 @@ namespace Viconomy.GUI
             //Add our Product and Currency to each inventory. Catch JSON errors on attributes, cuz Quotes in descriptions got me once already
             foreach (ShopProduct product in products)
             {
-                
-                ItemStack productStack = ResolveBlockOrItem(product.ProductCode, product.TotalStock);
-                try
-                {
-                    if (product.ProductAttributes != null)
-                    {
-                        TreeAttribute attr = new TreeAttribute();
-                        attr.FromBytes(product.ProductAttributes);
-
-                        // Remove transition state from any food items. SQL entries are the last time it was inserted and isnt updated
-                        attr.RemoveAttribute("transitionstate");
-                        
-                        //JsonObject productAttr = JsonObject.FromJson(product.ProductAttributes);
-                        productStack.Attributes = attr;//(ITreeAttribute)ToAttribute(productAttr.Token);
-
-                    }
-                } catch (Exception ex) { }
-                ProductInventory[index].Itemstack = productStack;
-
-                ItemStack currencyStack = ResolveBlockOrItem(product.CurrencyCode, product.CurrencyAmount);
-                if (product.CurrencyAttributes != null)
-                {
-                    TreeAttribute attr = new TreeAttribute();
-
-                    // Remove transition state from any food items. SQL entries are the last time it was inserted and isnt updated
-                    attr.RemoveAttribute("transitionstate");
-
-                    attr.FromBytes(product.CurrencyAttributes);
-                    //JsonObject currencyAttr = JsonObject.FromJson(product.CurrencyAttributes);
-                    currencyStack.Attributes = attr; // (ITreeAttribute)currencyAttr.ToAttribute();
-                }
-                CurrencyInventory[index].Itemstack = productStack;
+                ProductInventory[index].Itemstack = VinUtils.DeserializeProduct(capi, product.ProductCode, product.TotalStock, product.ProductAttributes);
+                CurrencyInventory[index].Itemstack = VinUtils.DeserializeProduct(capi, product.CurrencyCode, product.CurrencyQuantity, product.CurrencyAttributes);
                 index++;
             }
             
@@ -83,25 +54,6 @@ namespace Viconomy.GUI
         {
             return 0;
         }
-
-        private ItemStack ResolveBlockOrItem(string code, int size)
-        {
-            AssetLocation location = new AssetLocation(code);
-            Item item = capi.World.GetItem(location);
-            if (item != null)
-            {
-                return new ItemStack(item, size);
-            }
-
-            Block block = capi.World.GetBlock(location);
-            if (block != null)
-            {
-                return new ItemStack(block, size);
-            }
-
-            return null;
-        }
-
         private void Compose()
         {
             int insetWidth = 800;

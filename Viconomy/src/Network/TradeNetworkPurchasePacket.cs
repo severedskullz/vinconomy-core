@@ -1,20 +1,14 @@
 ﻿using ProtoBuf;
 
-namespace Viconomy.Network.Api
+namespace Viconomy.Network
 {
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
-    public class ShopProductId
+    public class TradeNetworkPurchasePacket
     {
-        public long NodeId { get; set; }
+        public int Amount { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
         public int Z { get; set; }
         public int StallSlot { get; set; }
-        public long ShopId { get; set; }
-
-        public string ToKey()
-        {
-            return $"{X}-{Y}-{Z}-{StallSlot}";
-        }
     }
 }

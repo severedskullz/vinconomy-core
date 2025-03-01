@@ -1,6 +1,7 @@
 ﻿using Viconomy.BlockEntities;
 using Viconomy.Inventory;
 using Viconomy.TradeNetwork;
+using Viconomy.TradeNetwork.Api;
 using Viconomy.Trading;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;

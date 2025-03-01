@@ -17,5 +17,7 @@ namespace Viconomy.Inventory
         public VinconNetworkItemSlot(InventoryBase inventory) : base(inventory)
         {
         }
+
+        public override bool DrawUnavailable { get => Product == null || Currency == null || Product.StackSize > TotalStock ; set => base.DrawUnavailable = value; }
     }
 }

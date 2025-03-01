@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Viconomy.TradeNetwork.Api;
 
 namespace Viconomy.TradeNetwork
 {
@@ -17,12 +18,12 @@ namespace Viconomy.TradeNetwork
 
         public void AddShop(TradeNetworkShop shop)
         {
-            if (!ContainsKey(shop.nodeId))
+            if (!ContainsKey(shop.NodeId))
             {
-                this.Add(shop.nodeId, new TradeNetworkShopCache());
+                this.Add(shop.NodeId, new TradeNetworkShopCache());
             }
 
-            this[shop.nodeId].AddShop(shop);
+            this[shop.NodeId].AddShop(shop);
         }
 
         public void RemoveOldCacheEntries()

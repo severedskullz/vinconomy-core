@@ -1,19 +1,21 @@
-﻿namespace Viconomy.Network.Api
+﻿using ProtoBuf;
+
+namespace Viconomy.Network.Api
 {
+    [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
     public class ShopProduct
     {
-        public ShopProductId id;
-        public long shopId;
-        public string productName;
-        public string productCode;
-        public int productQuantity;
-        public string productAttributes;
+        public ShopProductId Id { get; set; }
+        public string ProductName { get; set; }
+        public string ProductCode { get; set; }
+        public int ProductQuantity { get; set; }
+        public byte[] ProductAttributes { get; set; }
 
-        public string currencyName;
-        public string currencyCode;
-        public int currencyQuantity;
-        public string currencyAttributes;
+        public string CurrencyName { get; set; }
+        public string CurrencyCode { get; set; }
+        public int CurrencyQuantity { get; set; }
+        public byte[] CurrencyAttributes { get; set; }
 
-        public int totalStock;
+        public int TotalStock { get; set; }
     }
 }

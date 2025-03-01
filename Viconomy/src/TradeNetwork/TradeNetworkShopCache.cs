@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Viconomy.TradeNetwork.Api;
 
 namespace Viconomy.TradeNetwork
 {
@@ -17,7 +17,7 @@ namespace Viconomy.TradeNetwork
 
         public void AddShop(TradeNetworkShop shop)
         {
-            this.Add(shop.id, shop);
+            this.Add(shop.Id, shop);
         }
     }
 }

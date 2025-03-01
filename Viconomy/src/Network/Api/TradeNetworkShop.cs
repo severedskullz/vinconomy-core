@@ -1,18 +1,46 @@
 ﻿using ProtoBuf;
 using System.Collections.Generic;
+using Viconomy.Network.Api;
 
-namespace Viconomy.TradeNetwork
+namespace Viconomy.TradeNetwork.Api
 {
-    [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
+    [ProtoContract(ImplicitFields = ImplicitFields.AllFields)]
     public class TradeNetworkShop
     {
-        public int id { get; set; }
-        public string nodeId { get; set; }
-        public string name { get; set; }
-        public string serverName { get; set; }
-        public string owner {  get; set; }
-        public List<TradeNetworkProduct> products { get; set; } = new List<TradeNetworkProduct>();
-        public long lastUpdatedTimestamp { get; set; }
+        public int Id { get; set; }
+        public string NodeId { get; set; }
+        public string Name { get; set; }
+        public string ServerName { get; set; }
+        public string Owner {  get; set; }
+        public List<ShopProduct> Products { get; set; } = new List<ShopProduct>();
+        public long LastUpdatedTimestamp { get; set; }
 
+        public Dictionary<string, ShopProduct> ProductMap;
+
+        public ShopProduct GetProductById(string key)
+        {
+            if (ProductMap == null)
+            {
+                PopulateProductMap();
+            }
+
+            ProductMap.TryGetValue(key, out ShopProduct product);
+            return product;
+        }
+
+        public void PopulateProductMap()
+        {
+            ProductMap = new Dictionary<string, ShopProduct>();
+            foreach (ShopProduct product in Products)
+            {
+                ProductMap.Add(product.Id.ToKey(), product);
+            }
+        }
+
+        public  ShopProduct GetProductById(int x, int y, int z, int stallSlot)
+        {
+            string key = $"{x}-{y}-{z}-{stallSlot}";
+            return GetProductById(key);
+        }
     }
 }

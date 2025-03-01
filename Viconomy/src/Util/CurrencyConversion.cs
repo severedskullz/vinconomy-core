@@ -1,6 +1,6 @@
 ﻿using Vintagestory.API.Common;
 
-namespace Viconomy.src.Util
+namespace Viconomy.Util
 {
     public class CurrencyConversion
     {

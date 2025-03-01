@@ -492,7 +492,7 @@ namespace Viconomy.Database
                     product.TotalStock = reader.GetInt32(9);
                     product.CurrencyName = reader.GetString(10);
                     product.CurrencyCode = reader.GetString(11);
-                    product.CurrencyAmount = reader.GetInt32(12);
+                    product.CurrencyQuantity = reader.GetInt32(12);
                     product.CurrencyAttributes = (byte[])reader.GetValue(13);
                     products.Products.Add(product);
                 }

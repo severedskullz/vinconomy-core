@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using Viconomy.Delegates;
-using Viconomy.TradeNetwork;
+using Viconomy.Network.Api;
+using Viconomy.TradeNetwork.Api;
+using Viconomy.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
@@ -8,11 +11,11 @@ namespace Viconomy.Inventory
 {
     public class VinconNetworkInventory : InventoryBase
     {
-
+        Dictionary<string, VinconNetworkItemSlot> KeyedSlots = new Dictionary<string, VinconNetworkItemSlot>();
         VinconNetworkItemSlot[] Slots;
-        public VinconNetworkInventory(TradeNetworkShop shop, ICoreAPI api) : base(shop.nodeId + shop.id, api)
+        public VinconNetworkInventory(TradeNetworkShop shop, ICoreAPI api) : base(shop.NodeId + shop.Id, api)
         {
-            Slots = new VinconNetworkItemSlot[shop.products.Count];
+            Slots = new VinconNetworkItemSlot[shop.Products.Count];
             Init(shop);
         }
 
@@ -32,23 +35,6 @@ namespace Viconomy.Inventory
 
         }
 
-        private ItemStack ResolveBlockOrItem(string code, int size)
-        {
-            AssetLocation location = new AssetLocation(code);
-            Item item = Api.World.GetItem(location);
-            if (item != null)
-            {
-                return new ItemStack(item, size);
-            }
-
-            Block block = Api.World.GetBlock(location);
-            if (block != null)
-            {
-                return new ItemStack(block, size);
-            }
-            return null;
-        }
-
         public override object ActivateSlot(int slotId, ItemSlot sourceSlot, ref ItemStackMoveOperation op)
         {
             VinconNetworkItemSlot slot = Slots[slotId];
@@ -61,54 +47,40 @@ namespace Viconomy.Inventory
         {
             int index = 0;
             //Add our Product and Currency to each inventory. Catch JSON errors on attributes, cuz Quotes in descriptions got me once already
-            foreach (TradeNetworkProduct product in shop.products)
+            foreach (ShopProduct product in shop.Products)
             {
                 VinconNetworkItemSlot slot = new VinconNetworkItemSlot(this);
 
-                ItemStack productStack = ResolveBlockOrItem(product.ProductCode, Math.Clamp(product.ProductQuantity, 0, 999));
-                try
-                {
-                    if (product.ProductAttributes != null)
-                    {
-                        TreeAttribute attr = new TreeAttribute();
-                        attr.FromBytes(product.ProductAttributes);
-
-                        // Remove transition state from any food items. SQL entries are the last time it was inserted and isnt updated
-                        attr.RemoveAttribute("transitionstate");
-
-                        //JsonObject productAttr = JsonObject.FromJson(product.ProductAttributes);
-                        productStack.Attributes = attr;//(ITreeAttribute)ToAttribute(productAttr.Token);
-
-                    }
-                }
-                catch (Exception ex) { }
-
+                ItemStack productStack = VinUtils.DeserializeProduct(Api, product.ProductCode, Math.Clamp(product.ProductQuantity, 0, 999), product.ProductAttributes);
+                ItemStack currencyStack = VinUtils.DeserializeProduct(Api, product.CurrencyCode, product.CurrencyQuantity, product.CurrencyAttributes);
 
                 slot.Product = productStack;
-                slot.Itemstack = slot.Product.Clone();
-                slot.Itemstack.StackSize = product.TotalStock;
-                slot.X = product.X;
-                slot.Y = product.Y;
-                slot.Z = product.Z;
-                slot.StallSlot = product.StallSlot;
-                slot.TotalStock = product.TotalStock;
-
-                ItemStack currencyStack = ResolveBlockOrItem(product.CurrencyCode, product.currencyQuantity);
-                if (product.CurrencyAttributes != null)
-                {
-                    TreeAttribute attr = new TreeAttribute();
-
-                    // Remove transition state from any food items. SQL entries are the last time it was inserted and isnt updated
-                    attr.RemoveAttribute("transitionstate");
-
-                    attr.FromBytes(product.CurrencyAttributes);
-                    //JsonObject currencyAttr = JsonObject.FromJson(product.CurrencyAttributes);
-                    currencyStack.Attributes = attr; // (ITreeAttribute)currencyAttr.ToAttribute();
-                }
                 slot.Currency = currencyStack;
+                if (productStack != null) { 
+                    slot.Itemstack = slot.Product.Clone();
+                    slot.Itemstack.StackSize = product.TotalStock;
+                }
+                slot.X = product.Id.X;
+                slot.Y = product.Id.Y;
+                slot.Z = product.Id.Z;
+                slot.StallSlot = product.Id.StallSlot;
+                slot.TotalStock = product.TotalStock;
+                KeyedSlots.Add(product.Id.ToKey(), slot);
                 Slots[index] = slot;
                 index++;
             }
+        }
+
+        public VinconNetworkItemSlot GetProductById(string key)
+        {
+            KeyedSlots.TryGetValue(key, out VinconNetworkItemSlot product);
+            return product;
+        }
+
+        public VinconNetworkItemSlot GetProductById(int x, int y, int z, int stallSlot)
+        {
+            string key = $"{x}-{y}-{z}-{stallSlot}";
+            return GetProductById(key);
         }
     }
 }

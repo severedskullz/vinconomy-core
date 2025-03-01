@@ -1,26 +1,36 @@
 ﻿using System;
 using Viconomy.Inventory;
-using Viconomy.TradeNetwork;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.Util;
+using Viconomy.Network;
+using Viconomy.TradeNetwork.Api;
+using Vintagestory.GameContent;
 
 namespace Viconomy.GUI
 {
-    public class GuiVinconTrader : GuiDialogGeneric
+    public class GuiVinconTrader : GuiDialog
     {
-        TradeNetworkShop shop;
-        VinconNetworkInventory inventory;
+        string DialogTitle;
+
+        TradeNetworkShop Shop;
+        VinconNetworkInventory Inventory;
         DummyInventory ProductInventory;
         DummyInventory CurrencyInventory;
 
-        VinconNetworkItemSlot selectedProduct;
+        VinconNetworkItemSlot SelectedProduct;
+        EntityAgent OwningEntity;
 
-        public GuiVinconTrader(string DialogTitle, TradeNetworkShop shop, ICoreClientAPI capi) : base(DialogTitle, capi)
+        public override string ToggleKeyCombinationCode => null;
+
+        public GuiVinconTrader(string dialogTitle, TradeNetworkShop shop, EntityAgent owningEntity, ICoreClientAPI capi) : base(capi)
         {
-            this.shop = shop;
-            this.inventory = new VinconNetworkInventory(shop, capi);
-            inventory.OnTradeSelected += OnTradeSelected;
+            this.DialogTitle = dialogTitle;
+            this.Shop = shop;
+            this.OwningEntity = owningEntity;
+            Inventory = new VinconNetworkInventory(shop, capi);
+            Inventory.OnTradeSelected += OnTradeSelected;
             ProductInventory = new DummyInventory(capi, 1);
             ProductInventory.TakeLocked = true;
             ProductInventory.PutLocked = true;
@@ -33,17 +43,36 @@ namespace Viconomy.GUI
 
             try
             {
-                this.Compose();
+                Compose();
             } catch (Exception ex) { 
                 Console.WriteLine(ex.ToString());
             }
         }
 
+        public void UpdateSlotCount(int x, int y, int z, int stallSlot, int amount)
+        {
+            VinconNetworkItemSlot slot = Inventory.GetProductById(x, y, z, stallSlot);
+            slot.TotalStock -= amount * slot.Product.StackSize;
+            slot.Itemstack.StackSize = slot.TotalStock;
+        }
+
         private void OnTradeSelected(VinconNetworkItemSlot product)
         {
-            selectedProduct = product;
-            ProductInventory[0].Itemstack = product.Product.Clone();
-            CurrencyInventory[0].Itemstack = product.Currency.Clone();
+            if (product.DrawUnavailable)
+            {
+                return;
+            }
+
+            SelectedProduct = product;
+            if (product.Itemstack != null)
+            {
+                ProductInventory[0].Itemstack = product.Product.Clone();
+            }
+
+            if (product.Currency != null)
+            {
+                CurrencyInventory[0].Itemstack = product.Currency.Clone();
+            }
 
             GuiElementNumberInput quantity = SingleComposer.GetNumberInput("quantity");
             quantity.SetValue(1);
@@ -58,8 +87,8 @@ namespace Viconomy.GUI
             {
                 amount = 1;
             }
-            ProductInventory[0].Itemstack.StackSize = selectedProduct.Product.StackSize * (int)amount;
-            CurrencyInventory[0].Itemstack.StackSize = selectedProduct.Currency.StackSize * (int)amount;
+            ProductInventory[0].Itemstack.StackSize = SelectedProduct.Product.StackSize * (int)amount;
+            CurrencyInventory[0].Itemstack.StackSize = SelectedProduct.Currency.StackSize * (int)amount;
         }
 
         private void Compose()
@@ -85,7 +114,7 @@ namespace Viconomy.GUI
                 ElementBounds itemScrollbarBounds = itemInsetContainerBounds.RightCopy().WithFixedOffset(5,0).WithFixedWidth(20);
                 ElementBounds itemClipBounds = itemInsetBounds.ForkContainingChild();
                 ElementBounds itemContainerBounds = itemInsetBounds.ForkContainingChild();
-                ElementBounds itemSlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 7, (int)Math.Ceiling(inventory.Count / 7.0f)).WithParent(itemContainerBounds);
+                ElementBounds itemSlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 7, (int)Math.Ceiling(Inventory.Count / 7.0f)).WithParent(itemContainerBounds);
 
                 ElementBounds currencyLabel = ElementBounds.FixedSize(60, 25).FixedRightOf(productLabelBounds).FixedUnder(serverLabelBounds).WithFixedOffset(0,-5);
                 ElementBounds currencySlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).FixedUnder(currencyLabel).FixedRightOf(descLabelBounds).WithFixedOffset(0, 5);
@@ -105,8 +134,8 @@ namespace Viconomy.GUI
                 SingleComposer = capi.Gui.CreateCompo("GuiVinconTraderCatalog", dialogBounds)
                .AddShadedDialogBG(bgBounds)
                .AddDialogTitleBar(this.DialogTitle, OnTitleBarCloseClicked)
-               .AddStaticText(Lang.Get("vinconomy:gui-owner") + shop.owner, CairoFont.WhiteSmallText(), descLabelBounds)
-               .AddStaticText(Lang.Get("vinconomy:gui-server") + shop.serverName, CairoFont.WhiteSmallText(), serverLabelBounds)
+               .AddStaticText(Lang.Get("vinconomy:gui-owner") + Shop.Owner, CairoFont.WhiteSmallText(), descLabelBounds)
+               .AddStaticText(Lang.Get("vinconomy:gui-server") + Shop.ServerName, CairoFont.WhiteSmallText(), serverLabelBounds)
 
 
 
@@ -116,14 +145,14 @@ namespace Viconomy.GUI
                    .AddInset(itemInsetContainerBounds, insetDepth)
                    .BeginClip(itemClipBounds)
                         .AddContainer(itemContainerBounds, "products")
-                        .AddItemSlotGrid(inventory, null, 7, itemSlotBounds, "item-grid")
+                        .AddItemSlotGrid(Inventory, null, 7, itemSlotBounds, "item-grid")
                    .EndClip()
                    .AddVerticalScrollbar(OnNewItemScrollbarValue, itemScrollbarBounds, "item-scrollbar")
                .EndChildElements()
 
                 .AddStaticText(Lang.Get("vinconomy:gui-quantity"), CairoFont.WhiteSmallText(), quantitySelectionLabel)
                 .AddNumberInput(quantitySelectionBounds, OnAmountChanged, CairoFont.WhiteSmallText(), "quantity")
-                .AddButton(Lang.Get("vinconomy:gui-deal"), new ActionConsumable(this.OnPurchase), purchaseButtonBounds, EnumButtonStyle.Small, "save")
+                .AddButton(Lang.Get("vinconomy:gui-deal"), OnPurchase, purchaseButtonBounds, EnumButtonStyle.Small, "save")
                 .AddStaticText(Lang.Get("vinconomy:gui-price"), CairoFont.WhiteSmallText(), currencyLabel)
                 .AddItemSlotGrid(CurrencyInventory, null, 1, new int[] { 0 }, currencySlotBounds, "CurrencySlot")
 
@@ -140,7 +169,7 @@ namespace Viconomy.GUI
             }
             catch (Exception e)
             {
-                this.capi.Logger.Debug(e.ToString());
+                capi.Logger.Debug(e.ToString());
             }
         }
 
@@ -150,49 +179,42 @@ namespace Viconomy.GUI
                 return;
 
             Int32.TryParse(txt, out int amount);
+            if (amount == 1)
+            {
+                return;
+            } else if (amount * SelectedProduct.Product.StackSize > SelectedProduct.TotalStock)
+            {
+                GuiElementNumberInput quantity = SingleComposer.GetNumberInput("quantity");
 
-            if (amount < 1)
+                int maxAmount = (int)Math.Floor((double)SelectedProduct.TotalStock) / SelectedProduct.Product.StackSize;
+                quantity.SetValue(maxAmount);
+                amount = maxAmount;
+            } else if (amount < 1)
             {
                 amount = 1;
                 GuiElementNumberInput quantity = SingleComposer.GetNumberInput("quantity");
                 quantity.SetValue(1);
-            } else if (amount > selectedProduct.TotalStock) {
-                GuiElementNumberInput quantity = SingleComposer.GetNumberInput("quantity");
-                quantity.SetValue(selectedProduct.TotalStock);
-                amount = selectedProduct.TotalStock;
-            }
+            } 
             UpdatePurchaseAmounts(amount);
         }
 
         private bool OnPurchase()
         {
+            TradeNetworkPurchasePacket purchase = new TradeNetworkPurchasePacket();
+            GuiElementNumberInput quantity = SingleComposer.GetNumberInput("quantity");
+            purchase.Amount = (int)quantity.GetValue();
+            purchase.X = SelectedProduct.X;
+            purchase.Y = SelectedProduct.Y;
+            purchase.Z = SelectedProduct.Z;
+            purchase.StallSlot = SelectedProduct.StallSlot;
+            byte[] data = SerializerUtil.Serialize(purchase);
+            capi.Network.SendEntityPacket(OwningEntity.EntityId, 2001, data);
             return true;
         }
 
         private float NoDecay(EnumTransitionType transType, ItemStack stack, float mulByConfig)
         {
             return 0;
-        }
-
-        private void PacketHandler(object obj)
-        {
-            /*
-            if (obj is Packet_ActivateInventorySlot)
-            {
-                Packet_ActivateInventorySlot pack = (Packet_ActivateInventorySlot)obj;
-                Console.WriteLine(pack.ToString());
-            }
-            Packet_Client packet = (Packet_Client)obj;
-            Packet_ActivateInventorySlot inv = packet.ActivateInventorySlot;
-            Console.WriteLine(inv);
-            */
-        }
-
-        private void OnNewDescriptionScrollbarValue(float value)
-        {
-            ElementBounds bounds = SingleComposer.GetRichtext("description").Bounds;
-            bounds.fixedY = 5 - value;
-            bounds.CalcWorldBounds();
         }
 
         private void OnNewItemScrollbarValue(float value)
@@ -206,5 +228,52 @@ namespace Viconomy.GUI
         {
             TryClose();
         }
+
+        /*
+        private bool OnBuySellClicked()
+        {
+            EnumTransactionResult num = traderInventory.TryBuySell(capi.World.Player);
+            if (num == EnumTransactionResult.Success)
+            {
+                capi.Gui.PlaySound(new AssetLocation("sounds/effect/cashregister"), randomizePitch: false, 0.25f);
+                (owningEntity as EntityTradingHumanoid).TalkUtil?.Talk(EnumTalkType.Purchase);
+            }
+
+            if (num == EnumTransactionResult.PlayerNotEnoughAssets)
+            {
+                (owningEntity as EntityTradingHumanoid).TalkUtil?.Talk(EnumTalkType.Complain);
+                if (notifyPlayerMoneyTextSeconds <= 0.0)
+                {
+                    prevPlrAbsFixedX = base.SingleComposer.GetDynamicText("playerMoneyText").Bounds.absFixedX;
+                    prevPlrAbsFixedY = base.SingleComposer.GetDynamicText("playerMoneyText").Bounds.absFixedY;
+                }
+
+                notifyPlayerMoneyTextSeconds = 1.5;
+            }
+
+            if (num == EnumTransactionResult.TraderNotEnoughAssets)
+            {
+                (owningEntity as EntityTradingHumanoid).TalkUtil?.Talk(EnumTalkType.Complain);
+                if (notifyTraderMoneyTextSeconds <= 0.0)
+                {
+                    prevTdrAbsFixedX = base.SingleComposer.GetDynamicText("traderMoneyText").Bounds.absFixedX;
+                    prevTdrAbsFixedY = base.SingleComposer.GetDynamicText("traderMoneyText").Bounds.absFixedY;
+                }
+
+                notifyTraderMoneyTextSeconds = 1.5;
+            }
+
+            if (num == EnumTransactionResult.TraderNotEnoughSupplyOrDemand)
+            {
+                (owningEntity as EntityTradingHumanoid).TalkUtil?.Talk(EnumTalkType.Complain);
+            }
+
+            capi.Network.SendEntityPacket(owningEntity.EntityId, 1000);
+            TraderInventory_SlotModified(0);
+            CalcAndUpdateAssetsDisplay();
+            return true;
+        }
+        */
+
     }
 }
