@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Viconomy.BlockEntities;
 using Viconomy.Config;
 using Viconomy.Delegates;
 using Viconomy.Network;
 using Viconomy.Network.Api;
+using Viconomy.Registry;
 using Viconomy.TradeNetwork;
 using Viconomy.TradeNetwork.Api;
 using Viconomy.Trading;
@@ -11,7 +13,6 @@ using Viconomy.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
-using Vintagestory.Client.NoObf;
 using Vintagestory.Common;
 
 namespace Viconomy
@@ -43,11 +44,11 @@ namespace Viconomy
             _coreSystem = api.ModLoader.GetModSystem<VinconomyCoreSystem>();
 
             _coreSystem.OnUpdateShopProduct += UpdateShopProductForNetwork;
-            _coreServerAPI.Event.Timer(SyncTradeNetwork, 1 * 60);
+            //_coreServerAPI.Event.Timer(SyncTradeNetwork, 1 * 60);
 
             var parsers = api.ChatCommands.Parsers;
-            api.ChatCommands.GetOrCreate("viconomy")
-                .WithAlias("vicon")
+            api.ChatCommands.GetOrCreate("vinconomy")
+                .WithAlias("vincon")
                 .RequiresPrivilege(Privilege.chat)
                 .BeginSubCommand("network")
                     .RequiresPrivilege(Privilege.controlserver)
@@ -70,7 +71,20 @@ namespace Viconomy
                             .WithDescription("Leaves the Trade Network")
                             .HandleWith(LeaveNetwork)
                         .EndSubCommand()
+                        .BeginSubCommand("sync")
+                            .WithDescription("Syncs the Trade Network")
+                            .HandleWith(SyncNetwork)
+                        .EndSubCommand()
                 .EndSubCommand();
+
+
+            
+        }
+
+        private TextCommandResult SyncNetwork(TextCommandCallingArgs args)
+        {
+            SyncTradeNetwork();
+            return TextCommandResult.Success("Starting Sync");
         }
 
         private void SyncTradeNetwork()
@@ -114,7 +128,7 @@ namespace Viconomy
             }
 
             //Trade Network - Incoming Purchase Updates
-            VinUtils.GetAsync($"{_coreSystem.Config.tradingNetworkUrl}/api/market/purchases/pending", OnNetworkIncomingPurchaseUpdatesResponse, apiKey);
+            VinUtils.GetAsync($"{config.tradingNetworkUrl}/api/market/purchases/pending", OnNetworkIncomingPurchaseUpdatesResponse, apiKey);
 
 
         }
@@ -139,7 +153,122 @@ namespace Viconomy
         {
             if (isValidResponse(args))
             {
+                HashSet<string> playersToNotify = new HashSet<string>();
+
                 this.Mod.Logger.Event("got response");
+                List<ShopTradeUpdate> tradeUpdates = VinUtils.DeserializeFromJson<List<ShopTradeUpdate>>(args.Response);
+                List<ShopTradeUpdate> updateResults = new List<ShopTradeUpdate>();
+
+                foreach (ShopTradeUpdate update in tradeUpdates)
+                {
+                    this.Mod.Logger.Debug($"Processing update of shop {update.ShopId} and stall {update.X}-{update.Y}-{update.Z}-{update.StallSlot} with {update.Amount}x purchases from {update.RequestingNode}");
+                    ShopTradeUpdate curUpdate = update;
+                    ShopRegistration reg = _coreSystem.GetRegistry().GetShop(update.ShopId);
+
+                    if (reg != null)
+                    {
+                        //Load the chunk the Register is in
+                        VinUtils.LoadChunk(_coreServerAPI, reg.Position.X, reg.Position.Y, reg.Position.Z, () =>
+                        {
+                            BEVinconRegister register = _coreSystem.GetShopRegister(reg.Owner, reg.ID);
+
+                            if (register != null)
+                            {
+                                //Load the chunk that the Shop Stall is in
+                                VinUtils.LoadChunk(_coreServerAPI, curUpdate.X, curUpdate.Y, curUpdate.Z, () =>
+                                {
+
+                                    BlockPos pos = new BlockPos(curUpdate.X, curUpdate.Y, curUpdate.Z);
+                                    BEVinconContainer stall = _coreServerAPI.World.BlockAccessor.GetBlockEntity<BEVinconContainer>(pos);
+                                    if (stall != null)
+                                    {
+                                        //TODO: Check that the product/currency items match the trade
+                                        
+                                        ItemStack currencyStack = stall.GetCurrencyForStall(curUpdate.StallSlot).Itemstack;
+                                        if (currencyStack == null) {
+                                            this.Mod.Logger.Error("Tried to process network purchase on an item that didn't have a price set");
+                                            update.Status = VinConstants.TRADE_STATUS_LACKS_ITEMS;
+                                            updateResults.Add(update);
+                                            return;
+                                        }
+
+                                        ItemSlot firtProductSlot = stall.FindFirstNonEmptyStockSlotForStall(curUpdate.StallSlot);
+                                        if (firtProductSlot == null || firtProductSlot.Itemstack == null)
+                                        {
+                                            this.Mod.Logger.Error("Tried to process network purchase on an item that didn't have any product set");
+                                            update.Status = VinConstants.TRADE_STATUS_LACKS_ITEMS;
+                                            updateResults.Add(update);
+                                            return;
+                                        }
+
+                                        ItemSlot[] productSlots = stall.GetSlotsForStall(curUpdate.StallSlot);
+                                        int perPurchase = stall.GetNumItemsPerPurchaseForStall(curUpdate.StallSlot);
+                                        int totalProductsNeeded = perPurchase * curUpdate.Amount;
+                                        int numPurchases = 0;
+
+                                        foreach (ItemSlot productSlot in productSlots)
+                                        {
+                                            int numPossiblePurchases = productSlot.StackSize / perPurchase;
+                                            int availPurchases = Math.Clamp(numPossiblePurchases, 0, curUpdate.Amount);
+                                            if (availPurchases > 0)
+                                            {
+                                                productSlot.TakeOut(availPurchases * perPurchase);
+                                                numPurchases += availPurchases;
+                                            }
+
+                                            if (numPurchases >= curUpdate.Amount)
+                                            {
+                                                break;
+                                            }
+                                        }
+
+                                        if (numPurchases != curUpdate.Amount)
+                                        {
+                                            this.Mod.Logger.Warning("Tried to process network purchase on an item that didn't have enough product. Only providing partial payment");
+                                        }
+
+                                        ItemStack currency = currencyStack.Clone();
+                                        currency.StackSize = currencyStack.StackSize * numPurchases;
+                                        register.AddItem(currency, currency.StackSize);
+
+                                        playersToNotify.Add(reg.Owner);
+                                        update.Status = VinConstants.TRADE_STATUS_PROCESSED;
+                                        updateResults.Add(update);
+                                    }
+                                    else
+                                    {
+                                        this.Mod.Logger.Debug("Shit we didnt find an entity!");
+                                    }
+                                });
+                            }
+                           
+                        });
+                    }
+                    
+                }
+
+                if (updateResults.Count > 0)
+                {
+                    string jsonString = VinUtils.SerializeToJson(updateResults);
+                    ViconConfig config = _coreSystem.Config;
+                    string apiKey = config.GetAPIKey(_coreServerAPI.World.SavegameIdentifier);
+                    VinUtils.PostAsync($"{config.tradingNetworkUrl}/api/market/purchases/pending", jsonString, null, apiKey);
+                }
+
+                if (playersToNotify.Count > 0)
+                {
+                    foreach(string playerId in playersToNotify)
+                    {
+                        IPlayer player = _coreServerAPI.World.PlayerByUid(playerId);
+                        if (player != null && player.ClientId != 0)
+                        {
+                            _coreServerAPI.SendMessage(player, 0, "You recieved sales for cross-server trades", EnumChatType.OwnMessage);
+                        }
+
+                    }
+                }
+
+
             }
         }
 
@@ -269,7 +398,7 @@ namespace Viconomy
 
                 VinUtils.GetAsync($"{_coreSystem.Config.tradingNetworkUrl}/api/shop/inventory/{nodeId}/{shopId}", delegate (CompletedArgs args)  {
                     TradeNetworkShop shop = null;
-                    if (args.StatusCode == 200)
+                    if (isValidResponse(args))
                     {
                         shop = VinUtils.DeserializeFromJson<TradeNetworkShop>(args.Response);
                         shop.PopulateProductMap();
@@ -294,7 +423,7 @@ namespace Viconomy
             if (shop == null) {
                 return false;
             }
-            ShopProduct prod = shop.GetProductById(purchase.X, purchase.Y, purchase.Z, purchase.StallSlot);
+            Network.Api.ShopProduct prod = shop.GetProductById(purchase.X, purchase.Y, purchase.Z, purchase.StallSlot);
             if (prod == null)
             {
                 return false;

@@ -50,7 +50,7 @@ namespace Viconomy.Entities
         {
             AnimManager = new PersonalizedAnimationManager();
             Inventory = new InventoryGeneric(1,"trade-"+EntityId, null);
-            NodeId = "f0d34c1a-472a-47c9-9cad-1c7317a434d3";
+            NodeId = "ad23ed82-839e-438d-b3ac-dc79bb6b6f5b";
             ShopId = 1;
         }
 

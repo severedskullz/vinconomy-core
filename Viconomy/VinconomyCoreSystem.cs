@@ -165,8 +165,8 @@ namespace Viconomy
             api.Event.PlayerJoin += SendAllPublicRegisters;
 
             var parsers = api.ChatCommands.Parsers;
-            api.ChatCommands.GetOrCreate("viconomy")
-                .WithAlias("vicon")
+            api.ChatCommands.GetOrCreate("vinconomy")
+                .WithAlias("vincon")
                 .RequiresPrivilege(Privilege.chat)
                 .BeginSubCommand("setowner")
                     .RequiresPrivilege(Privilege.gamemode)

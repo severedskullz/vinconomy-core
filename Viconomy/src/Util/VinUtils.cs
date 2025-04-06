@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using ProtoBuf;
 using System;
 using System.IO;
 using System.Net;
@@ -7,9 +6,10 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Viconomy.Network.Api;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.Server;
 using Vintagestory.Common;
 using static Vintagestory.Common.VSWebClient;
 
@@ -99,7 +99,8 @@ namespace Viconomy.Util
                     HttpRequestMessage request = CreateRequest(rootUrl, HttpMethod.Post, body, apiKey);
                     HttpResponseMessage res = await Inst.SendAsync(request, CancellationToken.None);
                     string response = await res.Content.ReadAsStringAsync();
-                    HandleResponse(onFinished, res, response);
+                    if (onFinished != null)
+                        HandleResponse(onFinished, res, response);
                 }
                 catch (Exception ex)
                 {
@@ -108,7 +109,7 @@ namespace Viconomy.Util
                         State = CompletionState.Error,
                         ErrorMessage = ex.Message
                     };
-                    onFinished(args);
+                    if (onFinished != null) onFinished(args);
                 }
 
             });
@@ -259,6 +260,11 @@ namespace Viconomy.Util
 
         public static ItemStack DeserializeProduct(ICoreAPI api, string code, int quantity, byte[] attributes)
         {
+            if (code == null)
+            {
+                return null;
+            }
+
             ItemStack productStack = ResolveBlockOrItem(api, code, quantity);
 
             if (productStack == null)
@@ -281,6 +287,29 @@ namespace Viconomy.Util
             catch (Exception ex) { }
             return productStack;
         }
+
+        public static void LoadChunk(ICoreServerAPI api, int x, int y, int z, Action onLoaded)
+        {
+            int cx = x / GlobalConstants.ChunkSize;
+            int cy = y / GlobalConstants.ChunkSize;
+            int cz = z / GlobalConstants.ChunkSize;
+
+            IServerChunk chunk = api.WorldManager.GetChunk(cx, cy, cz);
+            if (chunk != null)
+            {
+                onLoaded.Invoke();
+            } else
+            {
+                ChunkLoadOptions options = new ChunkLoadOptions();
+                options.OnLoaded += onLoaded;
+
+                api.WorldManager.LoadChunkColumnPriority(cx, cz, options);
+            }
+
+          
+        }
     }
+
+
 
 }

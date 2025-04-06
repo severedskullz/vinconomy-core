@@ -32,5 +32,12 @@ namespace Viconomy.Util
         public const int CURRENCY_CONVERSION = 3003;
 
         public const int TOGGLE_GUI = 5000;
+
+        public const string TRADE_STATUS_PENDING = "PENDING";
+        public const string TRADE_STATUS_PROCESSED = "PROCESSED";
+        public const string TRADE_STATUS_COMPLETED = "COMPLETED";
+        public const string TRADE_STATUS_FAILED = "FAILED";
+        public const string TRADE_STATUS_LACKS_ITEMS = "LACKS_ITEMS";
+        public const string TRADE_STATUS_CANCELED = "CANCELED";
     }
 }
