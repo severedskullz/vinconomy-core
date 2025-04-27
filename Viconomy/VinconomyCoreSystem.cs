@@ -180,7 +180,6 @@ namespace Viconomy
 
             DB = new ViconDatabase(api);
             ShopRegistry = new ShopRegistry(DB);
-
         }
 
         public override void StartClientSide(ICoreClientAPI api)

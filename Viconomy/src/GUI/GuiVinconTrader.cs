@@ -58,7 +58,7 @@ namespace Viconomy.GUI
 
         private void OnTradeSelected(VinconNetworkItemSlot product)
         {
-            if (product.DrawUnavailable)
+            if (product.DrawUnavailable && false)
             {
                 return;
             }
@@ -83,12 +83,28 @@ namespace Viconomy.GUI
 
         private void UpdatePurchaseAmounts(float amount)
         {
+
             if (amount <= 1)
             {
                 amount = 1;
             }
-            ProductInventory[0].Itemstack.StackSize = SelectedProduct.Product.StackSize * (int)amount;
-            CurrencyInventory[0].Itemstack.StackSize = SelectedProduct.Currency.StackSize * (int)amount;
+            if ( SelectedProduct.Product != null)
+            {
+                ProductInventory[0].Itemstack.StackSize = SelectedProduct.Product.StackSize * (int)amount;
+            } else
+            {
+                ProductInventory[0].Itemstack = null;
+            }
+
+            if (SelectedProduct.Currency != null)
+            {
+                CurrencyInventory[0].Itemstack.StackSize = SelectedProduct.Currency.StackSize * (int)amount;
+            }
+            else
+            {
+                CurrencyInventory[0].Itemstack = null;
+            }
+
         }
 
         private void Compose()

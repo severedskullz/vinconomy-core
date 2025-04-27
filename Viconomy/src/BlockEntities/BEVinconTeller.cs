@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Viconomy.BlockTypes;
 using Viconomy.GUI;
 using Viconomy.Inventory;
 using Viconomy.Registry;
@@ -281,7 +280,7 @@ namespace Viconomy.BlockEntities
             {
                 this.invDialog = null;
 
-                ((ClientCoreAPI) Api).Network.SendBlockEntityPacket(this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.CLOSE_GUI, null);
+                ((ClientCoreAPI) Api).Network.SendBlockEntityPacket(this.Pos, VinConstants.CLOSE_GUI, null);
             };
             //Console.WriteLine(Api.Side + ": Attempted to open Shop GUI");
         }

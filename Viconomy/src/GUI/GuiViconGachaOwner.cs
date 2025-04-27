@@ -284,7 +284,7 @@ namespace Viconomy.GUI
             useTotalRandomizer = isToggled;
             UpdateSlotWinningChances();
             //Compose();
-            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_TOTAL_RANDOMIZER, data);
+            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.SET_TOTAL_RANDOMIZER, data);
 
         }
 
@@ -297,7 +297,7 @@ namespace Viconomy.GUI
                 writer.Write(isToggled);
                 data = ms.ToArray();
             }
-            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_ADMIN_SHOP, data);
+            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.SET_ADMIN_SHOP, data);
 
         }
 

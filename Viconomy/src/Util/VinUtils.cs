@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Viconomy.Network.Common;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
@@ -17,6 +18,9 @@ namespace Viconomy.Util
 {
     public class VinUtils
     {
+
+        public delegate void RESTCompletionHandler(HttpCompletionArgs args);
+
         /*
          * https://stackoverflow.com/questions/42519/how-do-you-rotate-a-two-dimensional-array
         def rotate(matrix):
@@ -66,7 +70,7 @@ namespace Viconomy.Util
             }
         }
 
-        public static Task GetAsync(string rootUrl, PostCompleteHandler onFinished, string apiKey = null)
+        public static Task GetAsync(string rootUrl, RESTCompletionHandler onFinished, string apiKey = null, IPlayer requestingPlayer = null)
         {
             return Task.Run(async delegate
             {
@@ -75,11 +79,11 @@ namespace Viconomy.Util
                     HttpRequestMessage request = CreateRequest(rootUrl, HttpMethod.Get, null, apiKey);
                     HttpResponseMessage res = await Inst.SendAsync(request, CancellationToken.None);
                     string response = await res.Content.ReadAsStringAsync();
-                    HandleResponse(onFinished, res, response);
+                    HandleResponse(onFinished, res, response, requestingPlayer);
                 }
                 catch (Exception ex)
                 {
-                    CompletedArgs args = new CompletedArgs
+                    HttpCompletionArgs args = new HttpCompletionArgs
                     {
                         State = CompletionState.Error,
                         ErrorMessage = ex.Message
@@ -90,7 +94,7 @@ namespace Viconomy.Util
             });
         }
 
-        public static Task PostAsync(string rootUrl, string body, PostCompleteHandler onFinished, string apiKey = null)
+        public static Task PostAsync(string rootUrl, string body, RESTCompletionHandler onFinished, string apiKey = null, IPlayer requestingPlayer = null)
         {
             return Task.Run(async delegate
             {
@@ -100,11 +104,11 @@ namespace Viconomy.Util
                     HttpResponseMessage res = await Inst.SendAsync(request, CancellationToken.None);
                     string response = await res.Content.ReadAsStringAsync();
                     if (onFinished != null)
-                        HandleResponse(onFinished, res, response);
+                        HandleResponse(onFinished, res, response, requestingPlayer);
                 }
                 catch (Exception ex)
                 {
-                    CompletedArgs args = new CompletedArgs
+                    HttpCompletionArgs args = new HttpCompletionArgs
                     {
                         State = CompletionState.Error,
                         ErrorMessage = ex.Message
@@ -117,7 +121,7 @@ namespace Viconomy.Util
 
 
 
-        public static Task PutAsync(string rootUrl, string body, PostCompleteHandler onFinished, string apiKey = null)
+        public static Task PutAsync(string rootUrl, string body, RESTCompletionHandler onFinished, string apiKey = null, IPlayer requestingPlayer = null)
         {
             return Task.Run(async delegate
             {
@@ -126,11 +130,11 @@ namespace Viconomy.Util
                     HttpRequestMessage request = CreateRequest(rootUrl, HttpMethod.Put, body, apiKey);
                     HttpResponseMessage res = await Inst.SendAsync(request, CancellationToken.None);
                     string response = await res.Content.ReadAsStringAsync();
-                    HandleResponse(onFinished, res, response);
+                    HandleResponse(onFinished, res, response, requestingPlayer);
                 }
                 catch (Exception ex)
                 {
-                    CompletedArgs args = new CompletedArgs
+                    HttpCompletionArgs args = new HttpCompletionArgs
                     {
                         State = CompletionState.Error,
                         ErrorMessage = ex.Message
@@ -141,7 +145,7 @@ namespace Viconomy.Util
             });
         }
 
-        public static Task PatchAsync(string rootUrl, string body, PostCompleteHandler onFinished, string apiKey = null)
+        public static Task PatchAsync(string rootUrl, string body, RESTCompletionHandler onFinished, string apiKey = null, IPlayer requestingPlayer = null)
         {
             return Task.Run(async delegate
             {
@@ -150,11 +154,11 @@ namespace Viconomy.Util
                     HttpRequestMessage request = CreateRequest(rootUrl, HttpMethod.Patch, body, apiKey);
                     HttpResponseMessage res = await Inst.SendAsync(request, CancellationToken.None);
                     string response = await res.Content.ReadAsStringAsync();
-                    HandleResponse(onFinished, res, response);
+                    HandleResponse(onFinished, res, response, requestingPlayer);
                 }
                 catch (Exception ex)
                 {
-                    CompletedArgs args = new CompletedArgs
+                    HttpCompletionArgs args = new HttpCompletionArgs
                     {
                         State = CompletionState.Error,
                         ErrorMessage = ex.Message
@@ -165,7 +169,7 @@ namespace Viconomy.Util
             });
         }
 
-        public static Task DeleteAsync(string rootUrl, PostCompleteHandler onFinished, string apiKey = null)
+        public static Task DeleteAsync(string rootUrl, RESTCompletionHandler onFinished, string apiKey = null, IPlayer requestingPlayer = null)
         {
             return Task.Run(async delegate
             {
@@ -174,11 +178,11 @@ namespace Viconomy.Util
                     HttpRequestMessage request = CreateRequest(rootUrl, HttpMethod.Delete, null, apiKey);
                     HttpResponseMessage res = await Inst.SendAsync(request, CancellationToken.None);
                     string response = await res.Content.ReadAsStringAsync();
-                    HandleResponse(onFinished, res, response);
+                    HandleResponse(onFinished, res, response, requestingPlayer);
                 }
                 catch (Exception ex)
                 {
-                    CompletedArgs args = new CompletedArgs
+                    HttpCompletionArgs args = new HttpCompletionArgs
                     {
                         State = CompletionState.Error,
                         ErrorMessage = ex.Message
@@ -204,14 +208,15 @@ namespace Viconomy.Util
             return request;
         }
 
-        private static void HandleResponse(PostCompleteHandler onFinished, HttpResponseMessage res, string response)
+        private static void HandleResponse(RESTCompletionHandler onFinished, HttpResponseMessage res, string response, IPlayer requestingPlayer)
         {
-            CompletedArgs args = new CompletedArgs
+            HttpCompletionArgs args = new HttpCompletionArgs
             {
-                State = ((!res.IsSuccessStatusCode) ? CompletionState.Error : CompletionState.Good),
+                State = !res.IsSuccessStatusCode ? CompletionState.Error : CompletionState.Good,
                 StatusCode = (int)res.StatusCode,
                 Response = response,
-                ErrorMessage = res.ReasonPhrase
+                ErrorMessage = res.ReasonPhrase,
+                RequestingPlayer = requestingPlayer
             };
             onFinished(args);
         }

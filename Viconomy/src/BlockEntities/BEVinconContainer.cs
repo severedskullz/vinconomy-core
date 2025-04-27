@@ -251,7 +251,7 @@ namespace Viconomy.BlockEntities
             this.invDialog.OnClosed += delegate ()
             {
                 this.invDialog = null;
-                capi.Network.SendBlockEntityPacket(this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.CLOSE_GUI, null);
+                capi.Network.SendBlockEntityPacket(this.Pos, VinConstants.CLOSE_GUI, null);
             };
             //Console.WriteLine(Api.Side + ": Attempted to open Shop GUI");
         }

@@ -6,7 +6,7 @@ namespace Viconomy.TradeNetwork
 {
     public class TradeNetworkCache : Dictionary<string, TradeNetworkShopCache>
     {
-        public TradeNetworkShop GetShop(string nodeId, int shopId)
+        public TradeNetworkShop GetShop(string nodeId, long shopId)
         {
             if (ContainsKey(nodeId))
             {

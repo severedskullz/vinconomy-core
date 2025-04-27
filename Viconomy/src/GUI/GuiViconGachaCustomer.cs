@@ -219,7 +219,7 @@ namespace Viconomy.GUI
         private bool OnPurchase()
         {
             //capi.Logger.Chat("Attempting to purchase item");
-            capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.PURCHASE_ITEMS, null);
+            capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.PURCHASE_ITEMS, null);
             return true;
         }
 

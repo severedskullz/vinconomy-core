@@ -3,7 +3,7 @@ using Vintagestory.API.Common;
 
 namespace Viconomy.BlockTypes
 {
-    public class BlockVTradeCenter : Block
+    public class BlockVTradeCenter : BlockVBase
     {
         public BlockVTradeCenter()
         {
@@ -19,5 +19,6 @@ namespace Viconomy.BlockTypes
             }
             return true;
         }
+
     }
 }

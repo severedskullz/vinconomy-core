@@ -5,6 +5,7 @@ using Viconomy.Config;
 using Viconomy.Delegates;
 using Viconomy.Network;
 using Viconomy.Network.Api;
+using Viconomy.Network.Common;
 using Viconomy.Registry;
 using Viconomy.TradeNetwork;
 using Viconomy.TradeNetwork.Api;
@@ -385,7 +386,7 @@ namespace Viconomy
             return TradeNetworkCache.GetShop(nodeId, shopId);
         }
 
-        public void GetTradeNetworkShop(string nodeId, int shopId, OnTradeNetworkShopRecieved callback)
+        public void GetTradeNetworkShop(string nodeId, long shopId, OnTradeNetworkShopRecieved callback)
         {
             TradeNetworkShop shop = TradeNetworkCache.GetShop(nodeId, shopId);
             if ( shop == null) {
@@ -396,7 +397,7 @@ namespace Viconomy
                 if (!config.tradingNetworkEnabled) return;
                 if (string.IsNullOrEmpty(config.tradingNetworkUrl)) return;
 
-                VinUtils.GetAsync($"{_coreSystem.Config.tradingNetworkUrl}/api/shop/inventory/{nodeId}/{shopId}", delegate (CompletedArgs args)  {
+                VinUtils.GetAsync($"{_coreSystem.Config.tradingNetworkUrl}/api/shop/inventory/{nodeId}/{shopId}", delegate (HttpCompletionArgs args)  {
                     TradeNetworkShop shop = null;
                     if (isValidResponse(args))
                     {
@@ -417,7 +418,7 @@ namespace Viconomy
             } 
         }
 
-        public bool PurchaseFromNetworkShop(IPlayer customer, string nodeId, int shopId, TradeNetworkPurchasePacket purchase)
+        public bool PurchaseFromNetworkShop(IPlayer customer, string nodeId, long shopId, TradeNetworkPurchasePacket purchase)
         {
             TradeNetworkShop shop = TradeNetworkCache.GetShop(nodeId, shopId);
             if (shop == null) {

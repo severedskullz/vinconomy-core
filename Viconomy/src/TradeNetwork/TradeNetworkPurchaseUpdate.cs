@@ -3,14 +3,13 @@ using System.Text.Json.Nodes;
 using Viconomy.Network;
 using Viconomy.Network.Api;
 using Vintagestory.API.MathTools;
-using static Viconomy.VinconomyDiscordIntegrationSystem;
 
 namespace Viconomy.TradeNetwork
 {
      public class TradeNetworkPurchaseUpdate : Dictionary<string, ShopPurchaseUpdate>
     {
 
-        public void AddPurchaseUpdate(string nodeId, int shopId, BlockPos pos, int stallSlot, int numPurchases)
+        public void AddPurchaseUpdate(string nodeId, long shopId, BlockPos pos, int stallSlot, int numPurchases)
         {
             string key = $"{nodeId}{shopId}{pos.X}{pos.Y}{pos.Z}{stallSlot}";
             if (!ContainsKey(key))
@@ -31,7 +30,7 @@ namespace Viconomy.TradeNetwork
             }
         }
 
-        public void AddPurchaseUpdate(string nodeId, int shopId, TradeNetworkPurchasePacket purchase)
+        public void AddPurchaseUpdate(string nodeId, long shopId, TradeNetworkPurchasePacket purchase)
         {
             string key = $"{nodeId}{shopId}{purchase.X}{purchase.Y}{purchase.Z}{purchase.StallSlot}";
             if (!ContainsKey(key))
@@ -53,7 +52,7 @@ namespace Viconomy.TradeNetwork
             
         }
 
-        public void AddPurchaseUpdate(string nodeId, int shopId, ShopPurchaseUpdate purchase)
+        public void AddPurchaseUpdate(string nodeId, long shopId, ShopPurchaseUpdate purchase)
         {
             string key = $"{nodeId}{shopId}{purchase.X}{purchase.Y}{purchase.Z}{purchase.StallSlot}";
             if (!ContainsKey(key))

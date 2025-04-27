@@ -12,22 +12,23 @@ using Vintagestory.GameContent;
 using Viconomy.GUI;
 using Viconomy.Network;
 using Viconomy.TradeNetwork.Api;
+using Vintagestory.API.MathTools;
+using Viconomy.BlockEntities;
+using System.Collections.Generic;
 
 namespace Viconomy.Entities
 {
     public class EntityVinconTrader : EntityAgent
     {
-        private EntityTrader trader; // Literally here so I can quickly go decompile the class for references. Remove when done
+        //private EntityTrader trader; // Literally here so I can quickly go decompile the class for references. Remove when done
 
         private bool IsLoading;
         private string NodeId;
-        private int ShopId;
-
+        private long ShopId;
+        private BlockPos Origin;
         public EntityTalkUtil talkUtil;
         private EntityPlayer talkingWithPlayer;
         private GuiVinconTrader tradeDialog;
-        private InventoryBase Inventory;
-        public EntityTalkUtil TalkUtil => talkUtil;
         private EntityBehaviorConversable ConversableBh => GetBehavior<EntityBehaviorConversable>();
         private VinconomyTradingIntegrationSystem TradingIntegrationSystem;
 
@@ -44,20 +45,23 @@ namespace Viconomy.Entities
             }
         }
 
+        public void SetNetworkShop(BlockPos origin, string nodeId, long shopId)
+        {
+            Origin = origin;
+            NodeId = nodeId;
+            ShopId = shopId;
+        }
         
 
         public EntityVinconTrader()
         {
             AnimManager = new PersonalizedAnimationManager();
-            Inventory = new InventoryGeneric(1,"trade-"+EntityId, null);
-            NodeId = "ad23ed82-839e-438d-b3ac-dc79bb6b6f5b";
-            ShopId = 1;
         }
 
         public override void Initialize(EntityProperties properties, ICoreAPI api, long InChunkIndex3d)
         {
             base.Initialize(properties, api, InChunkIndex3d);
-            Inventory.LateInitialize("trade-" + EntityId, api);
+            //Inventory.LateInitialize("trade-" + EntityId, api);
             if (api.Side == EnumAppSide.Client)
             {
                 talkUtil = new EntityTalkUtil(api as ICoreClientAPI, this, isMultiSoundVoice: false);
@@ -76,6 +80,10 @@ namespace Viconomy.Entities
             }
 
             TradingIntegrationSystem = api.ModLoader.GetModSystem<VinconomyTradingIntegrationSystem>();
+
+
+
+            
         }
 
         private int Dialog_DialogTriggers(EntityAgent triggeringEntity, string value, JsonObject data)
@@ -143,7 +151,7 @@ namespace Viconomy.Entities
                     if (coreClientAPI.Gui.OpenedGuis.FirstOrDefault((GuiDialog dlg) => dlg is GuiViconTrader && dlg.IsOpened()) == null)
                     {
                         coreClientAPI.Network.SendEntityPacket(EntityId, 1001);
-                        player.InventoryManager.OpenInventory(Inventory);
+                        //player.InventoryManager.OpenInventory(Inventory); // Why do I need an Inventory, again?
                         tradeDialog = new GuiVinconTrader(shop.Name, shop, this,  World.Api as ICoreClientAPI);
                         tradeDialog.TryOpen();
                     }
@@ -156,7 +164,7 @@ namespace Viconomy.Entities
                 }
             }
             
-            coreClientAPI.Network.SendPacketClient(coreClientAPI.World.Player.InventoryManager.CloseInventory(Inventory));
+            //coreClientAPI.Network.SendPacketClient(coreClientAPI.World.Player.InventoryManager.CloseInventory(Inventory));
         }
 
         public override void OnEntitySpawn()
@@ -177,6 +185,22 @@ namespace Viconomy.Entities
             if (Api.Side == EnumAppSide.Server)
             {
                 setupTaskBlocker();
+
+                if (Origin != null)
+                {
+                    BEVinconTradeCenter spawner = (Api as ICoreServerAPI).World.BlockAccessor.GetBlockEntity<BEVinconTradeCenter>(Origin);
+                    if (spawner == null || spawner.LastSpawnedTraderId != this.EntityId)
+                    {
+                        TradingIntegrationSystem.Mod.Logger.Debug("Cleaning up Network Trader due to missing Trade Center or mismatched Entity ID");
+                        this.Die(EnumDespawnReason.Removed);
+                    }
+                }
+                else
+                {
+                    TradingIntegrationSystem.Mod.Logger.Debug("Cleaning up Network Trader due Origin not being set");
+                    this.Die(EnumDespawnReason.Removed);
+                }
+
             }
         }
 
@@ -193,10 +217,11 @@ namespace Viconomy.Entities
                     ((ICoreServerAPI)Api).Network.SendEntityPacket(player, this.EntityId, 2002, data);
                 } else
                 {
-                    //TODO: Some sort of error message?
+                    TradingIntegrationSystem.Mod.Logger.Error("Error occurred attempting to purchase from network shop.");
+
                 }
 
-                
+
             }
         }
 
@@ -298,6 +323,36 @@ namespace Viconomy.Entities
             {
                 behavior2.OnShouldRunActivitySystem += () => talkingWithPlayer == null;
             }
+        }
+
+        public override void ToBytes(BinaryWriter writer, bool forClient)
+        {
+            base.ToBytes(writer, forClient);
+            writer.Write(NodeId == null ? "" : NodeId);
+            writer.Write(ShopId);
+            if (Origin != null)
+            {
+                writer.Write(Origin.X);
+                writer.Write(Origin.Y);
+                writer.Write(Origin.Z);
+            } else
+            {
+                // Should never happen, but *JUST* in case. :)
+                writer.Write(0);
+                writer.Write(0);
+                writer.Write(0);
+            }
+
+        }
+
+        public override void FromBytes(BinaryReader reader, bool isSync, Dictionary<string, string> serversideRemaps)
+        {
+            base.FromBytes(reader, isSync, serversideRemaps);
+
+            NodeId = reader.ReadString();
+            ShopId = reader.ReadInt64();
+            BlockPos pos = new BlockPos(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+            Origin = pos;
         }
 
     }

@@ -87,43 +87,40 @@ namespace Viconomy.GUI
                     .WithChildren(insetBounds, scrollbarBounds);
 
                 // Create the dialog
-                SingleComposer = capi.Gui.CreateCompo("demoScrollGui", dialogBounds)
-                    .AddShadedDialogBG(bgBounds)
-                    .AddDialogTitleBar(Lang.Get("vinconomy:gui-shop-catalog"), OnTitleBarCloseClicked)
-                    .BeginChildElements()
-                        .AddInset(insetBounds, insetDepth)
-                        .BeginClip(clipBounds);
+                SingleComposer = capi.Gui.CreateCompo("GuiVinconShopCatalog", dialogBounds)
+                .AddShadedDialogBG(bgBounds)
+                .AddDialogTitleBar(Lang.Get("vinconomy:gui-shop-catalog"), OnTitleBarCloseClicked)
+                .BeginChildElements()
+                    .AddInset(insetBounds, insetDepth)
+                    .BeginClip(clipBounds);
 
-                CairoFont font = CairoFont.WhiteSmallText();
-                GuiElementContainer scrollArea = SingleComposer.GetContainer("scroll-content");
-                if (shopList != null && shopList.Count > 0)
-                {
-                    for (int i = 0; i < shopList.Count; i++)
-                    {
-                        ShopCatalog catalog = shopList[i];
-                        Dictionary<string, ElementBounds> shop = shopBoundsList[i];
+                        CairoFont font = CairoFont.WhiteSmallText();
+                        if (shopList != null && shopList.Count > 0)
+                        {
+                            for (int i = 0; i < shopList.Count; i++)
+                            {
+                                ShopCatalog catalog = shopList[i];
+                                Dictionary<string, ElementBounds> shop = shopBoundsList[i];
 
-                        //scrollArea.Add(new GuiElementStaticText(capi, "Static Text", EnumTextOrientation.Left, shop["shopNameLabel"], font));
-
-
-                        SingleComposer.AddRichtext(catalog.Name, CairoFont.WhiteSmallText(), shop["shopNameLabel"]);
-                        SingleComposer.AddRichtext(Lang.Get("vinconomy:gui-owner") + catalog.OwnerName, CairoFont.WhiteSmallText(), shop["ownerLabel"]);
-
-                        string location = Lang.Get("vinconomy:gui-location")  + (catalog.IsWaypointBroadcasted ? $"<a href=\"viewmap://{catalog.WorldX}={catalog.Y}={catalog.WorldZ}\">({catalog.X}, {catalog.Y}, {catalog.Z})</a>" : Lang.Get("vinconomy:gui-no-location"));
-
-                        SingleComposer.AddRichtext(location, CairoFont.WhiteSmallText(), shop["locationLabel"]);
-                        SingleComposer.AddRichtext(catalog.ShortDescription == null ? "" : catalog.ShortDescription, CairoFont.WhiteSmallText(), shop["shortDescLabel"]);
-                        int index = i;
-                        SingleComposer.AddButton(Lang.Get("vinconomy:gui-view"), () => { return OpenShop(index); }, shop["openButton"]);
-                    }
-                } else
-                {
-                    SingleComposer.AddRichtext(Lang.Get("vinconomy:gui-no-shops"), CairoFont.WhiteSmallText(), lastEntry);
-                }
+                                //scrollArea.Add(new GuiElementStaticText(capi, "Static Text", EnumTextOrientation.Left, shop["shopNameLabel"], font));
 
 
-                //SingleComposer.AddContainer(containerBounds, "scroll-content");
-                SingleComposer.EndClip()
+                                SingleComposer.AddRichtext(catalog.Name, CairoFont.WhiteSmallText(), shop["shopNameLabel"]);
+                                SingleComposer.AddRichtext(Lang.Get("vinconomy:gui-f-owner", catalog.OwnerName), CairoFont.WhiteSmallText(), shop["ownerLabel"]);
+
+                                string location = Lang.Get("vinconomy:gui-location")  + (catalog.IsWaypointBroadcasted ? $"<a href=\"viewmap://{catalog.WorldX}={catalog.Y}={catalog.WorldZ}\">({catalog.X}, {catalog.Y}, {catalog.Z})</a>" : Lang.Get("vinconomy:gui-no-location"));
+
+                                SingleComposer.AddRichtext(location, CairoFont.WhiteSmallText(), shop["locationLabel"]);
+                                SingleComposer.AddRichtext(catalog.ShortDescription == null ? "" : catalog.ShortDescription, CairoFont.WhiteSmallText(), shop["shortDescLabel"]);
+                                int index = i;
+                                SingleComposer.AddButton(Lang.Get("vinconomy:gui-view"), () => { return OpenShop(index); }, shop["openButton"]);
+                            }
+                        } else
+                        {
+                            SingleComposer.AddRichtext(Lang.Get("vinconomy:gui-no-shops"), CairoFont.WhiteSmallText(), lastEntry);
+                        }
+
+                    SingleComposer.EndClip()
                     .AddVerticalScrollbar(OnNewScrollbarValue, scrollbarBounds, "scrollbar")
                 .EndChildElements();
 

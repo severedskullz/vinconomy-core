@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Viconomy.BlockEntities;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;

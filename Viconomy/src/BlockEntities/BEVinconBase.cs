@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Viconomy.BlockEntities.TextureSwappable;
 using Viconomy.Inventory;
-using Viconomy.src.Renderer;
+using Viconomy.Renderer;
 using Viconomy.Trading;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;

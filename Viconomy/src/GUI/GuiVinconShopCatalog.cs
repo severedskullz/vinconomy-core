@@ -1,12 +1,10 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
-using Vintagestory.API.Datastructures;
 
 namespace Viconomy.GUI
 {
@@ -43,9 +41,6 @@ namespace Viconomy.GUI
                 CurrencyInventory[index].Itemstack = VinUtils.DeserializeProduct(capi, product.CurrencyCode, product.CurrencyQuantity, product.CurrencyAttributes);
                 index++;
             }
-            
-                
-            
 
             this.Compose();
         }
@@ -54,6 +49,7 @@ namespace Viconomy.GUI
         {
             return 0;
         }
+
         private void Compose()
         {
             int insetWidth = 800;
@@ -66,16 +62,8 @@ namespace Viconomy.GUI
             bgBounds.BothSizing = ElementSizing.FitToChildren;
             ElementBounds settingBounds = ElementBounds.FixedSize(800, 600).WithFixedOffset(0, GuiStyle.TitleBarHeight);
 
-
-            
-
-            //IconUtil.DrawArrowRight
             try
             {
-                //GuiComposer sc = SingleComposer;
-                // sc.AddShadedDialogBG(bgBounds)
-                //     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);
-
                 ElementBounds descLabelBounds = ElementBounds.Fixed(0, GuiStyle.TitleBarHeight, 300, 20).WithFixedMargin(5, 0).WithFixedPadding(10,5);
                 ElementBounds descInsetBounds = descLabelBounds.BelowCopy().WithFixedSize(insetWidth, insetHeight);
                 ElementBounds descScrollbarBounds = descInsetBounds.RightCopy().WithFixedWidth(20);
@@ -113,7 +101,7 @@ namespace Viconomy.GUI
                             SingleComposer.AddRichtext(Catalog.Description != null ? Catalog.Description : "", CairoFont.WhiteDetailText(), descContainerBounds, "description");
                         } catch (Exception ex)
                         {
-                            SingleComposer.AddRichtext(Lang.Get("vinconomy:gui-error-tell-the-devl") + ex.Message, CairoFont.WhiteDetailText(), descContainerBounds, "description");
+                            SingleComposer.AddRichtext(Lang.Get("vinconomy:gui-error-tell-the-dev") + ex.Message, CairoFont.WhiteDetailText(), descContainerBounds, "description");
                         }
                 SingleComposer.EndClip()
                    .AddVerticalScrollbar(OnNewDescriptionScrollbarValue, descScrollbarBounds, "description-scrollbar")

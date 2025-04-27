@@ -3,7 +3,6 @@ using Viconomy.BlockTypes;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
 namespace Viconomy.BlockEntities.TextureSwappable

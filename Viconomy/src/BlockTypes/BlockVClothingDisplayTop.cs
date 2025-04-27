@@ -10,7 +10,6 @@ namespace Viconomy.BlockTypes
     public class BlockVClothingDisplayTop : Block
     {
 
-
         public BlockVClothingDisplayTop()
         {
             this.PlacedPriorityInteract = true;

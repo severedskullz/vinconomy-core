@@ -9,6 +9,7 @@ namespace Viconomy.BlockEntities
 {
     public class BEVinconPurchaseCrate : BETextureSwappableBlockDisplay, IOwnableStall
     {
+        public string Owner => throw new System.NotImplementedException();
         private bool requested;
         private ModSystemLabelMeshCache labelCacheSys;
         private MeshData labelMesh;
@@ -35,6 +36,7 @@ namespace Viconomy.BlockEntities
         public override string InventoryClassName { get { return "VinconomyInventory"; } }
         protected ViconomyInventory inventory;
         public override InventoryBase Inventory => inventory;
+
 
         public bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
         {

@@ -1,18 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Viconomy.Util
+﻿namespace Viconomy.Util
 {
     public static class VinConstants
     {
         public const string VINCONOMY_CHANNEL = "Vinconomy";
 
+        //Client Packets
+
+
         //Shared Packets
         public const int OPEN_GUI = 1000;
         public const int CLOSE_GUI = 1001;
+        public static int SEARCH_SHOPS = 1002;
+        public static int GET_PRODUCTS = 1003;
+        public static int SET_TRADER = 1004;
+        public static int SUMMON_TRADER = 1005;
+
 
         //Admin Packets
         public const int SET_ITEMS_PER_PURCHASE = 2001;
@@ -39,5 +41,6 @@ namespace Viconomy.Util
         public const string TRADE_STATUS_FAILED = "FAILED";
         public const string TRADE_STATUS_LACKS_ITEMS = "LACKS_ITEMS";
         public const string TRADE_STATUS_CANCELED = "CANCELED";
+
     }
 }

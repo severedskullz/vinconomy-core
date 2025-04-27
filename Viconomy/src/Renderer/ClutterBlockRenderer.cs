@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using Viconomy.BlockEntities;
+﻿using Viconomy.BlockEntities;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
-using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
 namespace Viconomy.Renderer

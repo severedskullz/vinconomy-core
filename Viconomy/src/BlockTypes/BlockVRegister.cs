@@ -102,27 +102,6 @@ namespace Viconomy.BlockTypes
                 ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("vinconomy:doesnt-own", new object[0]), EnumChatType.CommandError, null);
         }
 
-        public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)
-        {
-            VinconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
-            if (modSystem != null)
-            {
-                modSystem.BlockPlaced(this.Code, world, blockPos, byItemStack);
-            }
-            base.OnBlockPlaced(world, blockPos, byItemStack);
-        }
-
-        public override bool TryPlaceBlock(IWorldAccessor world, IPlayer byPlayer, ItemStack itemstack, BlockSelection blockSel, ref string failureCode)
-        {
-            VinconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
-            if (modSystem != null && !modSystem.TryPlaceBlock(world, byPlayer, itemstack, blockSel))
-            {
-                failureCode = "__ignore__";
-                return false;
-            }
-            return base.TryPlaceBlock(world, byPlayer, itemstack, blockSel, ref failureCode);
-        }
-
         public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
         {
             ITreeAttribute attrs = inSlot.Itemstack.Attributes;

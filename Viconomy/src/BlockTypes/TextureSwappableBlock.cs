@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Viconomy.BlockEntities;
 using Viconomy.BlockEntities.TextureSwappable;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -13,7 +12,7 @@ using Vintagestory.API.Util;
 
 namespace Viconomy.BlockTypes
 {
-    public class TextureSwappableBlock : Block , ITexPositionSource
+    public class TextureSwappableBlock : BlockVBase, ITexPositionSource
     {
         private const string GUI_MESHES = "viconStallGuiMeshRefs";
         protected ITexPositionSource tmpTextureSource;

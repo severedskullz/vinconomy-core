@@ -2,7 +2,7 @@
 using Viconomy.BlockEntities;
 using Vintagestory.API.Client;
 
-namespace Viconomy.src.Renderer
+namespace Viconomy.Renderer
 {
     public class DistanceRenderer : IRenderer, IDisposable
     {

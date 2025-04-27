@@ -88,11 +88,6 @@ namespace Viconomy.GUI
 
         }
 
-        private bool RefreshText()
-        {
-            throw new NotImplementedException();
-        }
-
         private bool ViewText()
         {
             try {

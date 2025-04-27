@@ -3,9 +3,9 @@ using Viconomy.TradeNetwork.Api;
 
 namespace Viconomy.TradeNetwork
 {
-    public class TradeNetworkShopCache : Dictionary<int, TradeNetworkShop>
+    public class TradeNetworkShopCache : Dictionary<long, TradeNetworkShop>
     {
-        public TradeNetworkShop GetShop(int shopId)
+        public TradeNetworkShop GetShop(long shopId)
         {
             if (ContainsKey(shopId))
             {
