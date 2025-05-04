@@ -1,8 +1,9 @@
-﻿using Vintagestory.API.Common;
+﻿using Viconomy.Inventory.Slots;
+using Vintagestory.API.Common;
 
 namespace Viconomy.Inventory
 {
-    internal interface IStallSlotUpdater
+    public interface IStallSlotUpdater
     {
         /**
          * Converts a global ItemSlot Id to a local Stall Slot
@@ -24,7 +25,7 @@ namespace Viconomy.Inventory
         /**
          * Gets the currenty ItemSlot for the given Stall Slot
          */
-        public ItemSlot GetCurrencyForStallSlot(int stallSlot);
+        public ViconCurrencySlot GetCurrencyForStallSlot(int stallSlot);
 
         /**
         * Gets the product ItemSlots for the given Stall Slot

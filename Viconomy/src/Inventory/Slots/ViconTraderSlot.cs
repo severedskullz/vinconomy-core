@@ -1,12 +1,12 @@
 ﻿using Vintagestory.API.Common;
 
-namespace Viconomy.Inventory
+namespace Viconomy.Inventory.Slots
 {
-    public class ViconPurchaseSlot : ItemSlot
+    public class ViconTraderSlot : ItemSlot
     {
         public int stallSlot { get; private set; }
 
-        public ViconPurchaseSlot(InventoryBase inventory, int stallSlot) : base(inventory)
+        public ViconTraderSlot(InventoryBase inventory, int stallSlot) : base(inventory)
         {
             this.stallSlot = stallSlot;
             //this.HexBackgroundColor = "#12526B";
@@ -27,6 +27,16 @@ namespace Viconomy.Inventory
             return false;
         }
 
+        public override void ActivateSlot(ItemSlot sourceSlot, ref ItemStackMoveOperation op)
+        {
+            if (Empty)
+            {
+                return;
+            }
+
+
+        }
+
     }
-    
+
 }

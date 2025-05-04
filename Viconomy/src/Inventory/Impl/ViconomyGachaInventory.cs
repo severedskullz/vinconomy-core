@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Viconomy.Filters;
+using Viconomy.Inventory.Slots;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace Viconomy.Inventory
+namespace Viconomy.Inventory.Impl
 {
     public class ViconomyGachaInventory : InventoryBase, ISlotProvider, IStallSlotUpdater
     {
@@ -23,10 +24,10 @@ namespace Viconomy.Inventory
         public ViconomyGachaInventory(int numSlots, string inventoryID, ICoreAPI api) : base(inventoryID, api)
         {
 
-            this.slots = new ItemSlot[numSlots];
+            slots = new ItemSlot[numSlots];
             for (int i = 0; i < numSlots; i++)
             {
-                this.slots[i] = NewSlot(i);
+                slots[i] = NewSlot(i);
             }
 
         }
@@ -86,12 +87,12 @@ namespace Viconomy.Inventory
 
         public override void FromTreeAttributes(ITreeAttribute tree)
         {
-            this.slots = this.SlotsFromTreeAttributes(tree, slots, null);
+            slots = SlotsFromTreeAttributes(tree, slots, null);
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
-            base.SlotsToTreeAttributes(this.slots, tree);
+            SlotsToTreeAttributes(slots, tree);
         }
 
         public ItemSlot GetCurrency()
@@ -112,11 +113,11 @@ namespace Viconomy.Inventory
             {
                 if (useTotalRandomizer)
                 {
-                    percent = Math.Round(((double)item.StackSize / (double)GetTotalItems()) * 100, 2);
+                    percent = Math.Round(item.StackSize / (double)GetTotalItems() * 100, 2);
                 }
                 else
                 {
-                    percent = Math.Round(((double)1 / (double) GetNonEmptySlotCount()) * 100, 2);
+                    percent = Math.Round(1 / (double)GetNonEmptySlotCount() * 100, 2);
                 }
             }
             return percent;
@@ -139,7 +140,7 @@ namespace Viconomy.Inventory
                 for (int i = 0; i < filled.Length; i++)
                 {
                     slot = filled[i];
-                    double curPercent = (double)slot.StackSize / (double)totalItems;
+                    double curPercent = slot.StackSize / (double)totalItems;
                     // Given we have 3 slots filled, Say the slots have 100, 80, and 20 items in their respective stacks.
                     // These slots would be worth 50%, 40% and 10% respectively.
                     // Check if the current value of percent is less than the stack's percentage worth.
@@ -147,17 +148,19 @@ namespace Viconomy.Inventory
                     // We then subtract the 50% from the 75%, leaving us with 25%.
                     // The next remaining stack is also 40% of the total itmes, which means the remaining 25% is less than the next item's 40% so it is a "Hit" and we return that item.
                     // If for SOME reason (like due to double precision issues) we dont get a hit on all the items, the last stack is returned as a safe-guard. Shouldnt happen though.
-                    if ( percent <= curPercent)
+                    if (percent <= curPercent)
                     {
                         break;
-                    } else
+                    }
+                    else
                     {
                         percent -= curPercent;
                     }
                 }
 
                 return slot;
-            } else
+            }
+            else
             {
                 return filled[random.Next(filled.Length)];
             }
@@ -185,7 +188,7 @@ namespace Viconomy.Inventory
         {
             int total = 0;
             // Start at 1 to bypass currency slot
-            for (int i = 1;  i < slots.Length;  i++)
+            for (int i = 1; i < slots.Length; i++)
             {
                 total += slots[i].StackSize;
             }
@@ -207,9 +210,9 @@ namespace Viconomy.Inventory
             return slots.Length - 1;
         }
 
-        public ItemSlot GetCurrencyForStallSlot(int stallSlot)
+        public ViconCurrencySlot GetCurrencyForStallSlot(int stallSlot)
         {
-            return slots[0]; // Always return the currency slot for all "Stalls"
+            return (ViconCurrencySlot)slots[0]; // Always return the currency slot for all "Stalls"
         }
 
         public ItemSlot[] GetSlotsForStallSlot(int stallSlot)

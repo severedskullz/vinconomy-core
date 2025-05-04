@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using Viconomy.BlockEntities;
-using Viconomy.Inventory;
 using Viconomy.Registry;
+using Viconomy.Inventory.Impl;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
+using Viconomy.Inventory.Slots;
 
 namespace Viconomy.GUI
 {

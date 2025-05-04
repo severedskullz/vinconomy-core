@@ -2,18 +2,20 @@
 using System.Collections.Generic;
 using System.IO;
 using Viconomy.BlockEntities;
-using Viconomy.Inventory;
+using Viconomy.Inventory.StallSlots;
 using Viconomy.Registry;
+using Viconomy.Inventory.Impl;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
+using Viconomy.Inventory.Slots;
 
 namespace Viconomy.GUI
 {
-    public class GuiViconStallOwner : GuiDialogBlockEntity
+    public class GuiViconStallOwner<E> : GuiDialogBlockEntity where E:ItemSlot
     {
         BEVinconContainer stall;
         ShopRegistration[] registers;
@@ -23,7 +25,7 @@ namespace Viconomy.GUI
         int curTab;
         DummyInventory inv;
         ViconPurchaseSlot purchaseSlot;
-        StallSlot stallSlot;
+        StallSlotBase<E> stallSlot;
 
         public GuiViconStallOwner(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
@@ -71,7 +73,7 @@ namespace Viconomy.GUI
                 ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.DialogToScreenPadding);
                 bgBounds.BothSizing = ElementSizing.FitToChildren;
 
-                ViconomyInventory vinInv = Inventory as ViconomyInventory;
+                ViconomyBaseInventory<E> vinInv = Inventory as ViconomyBaseInventory<E>;
                 int[] uiSlots = new int[stacksPerSlot];
                 int offset = curTab * (stacksPerSlot + 1) + 1;
                 if (vinInv != null)

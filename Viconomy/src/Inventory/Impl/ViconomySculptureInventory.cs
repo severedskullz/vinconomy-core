@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Viconomy.BlockEntities;
 using Viconomy.Config;
+using Viconomy.Inventory.Slots;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
-namespace Viconomy.Inventory
+namespace Viconomy.Inventory.Impl
 {
     public class ViconomySculptureInventory : InventoryBase, ISlotProvider
     {
@@ -25,10 +25,10 @@ namespace Viconomy.Inventory
         public ViconomySculptureInventory(int numSlots, string inventoryID, ICoreAPI api) : base(inventoryID, api)
         {
 
-            this.slots = new ItemSlot[numSlots];
+            slots = new ItemSlot[numSlots];
             for (int i = 0; i < numSlots; i++)
             {
-                this.slots[i] = NewSlot(i);
+                slots[i] = NewSlot(i);
             }
 
         }
@@ -50,14 +50,15 @@ namespace Viconomy.Inventory
         public override float GetTransitionSpeedMul(EnumTransitionType transType, ItemStack stack)
         {
             ViconConfig config = modSystem.Config;
-            if ( (config != null && config.FoodDecaysInShops) && (stall != null && !stall.IsAdminShop))
+            if (config != null && config.FoodDecaysInShops && stall != null && !stall.IsAdminShop)
             {
-                return base.GetDefaultTransitionSpeedMul(transType) * modSystem.Config.StallPerishRate; 
-            } else
+                return base.GetDefaultTransitionSpeedMul(transType) * modSystem.Config.StallPerishRate;
+            }
+            else
             {
                 return 0;
             }
-            
+
         }
 
         public override void DropAll(Vec3d pos, int maxStackSize = 0)
@@ -91,12 +92,12 @@ namespace Viconomy.Inventory
 
         public override void FromTreeAttributes(ITreeAttribute tree)
         {
-            this.slots = this.SlotsFromTreeAttributes(tree, slots, null);
+            slots = SlotsFromTreeAttributes(tree, slots, null);
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
-            base.SlotsToTreeAttributes(this.slots, tree);
+            SlotsToTreeAttributes(slots, tree);
         }
 
         /*

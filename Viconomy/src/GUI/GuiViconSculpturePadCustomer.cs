@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using Viconomy.BlockEntities;
-using Viconomy.Inventory;
-using Viconomy.Registry;
+using Viconomy.Inventory.Impl;
+using Viconomy.Inventory.Slots;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;

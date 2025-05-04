@@ -2,7 +2,8 @@
 using System.IO;
 using System.Text;
 using Viconomy.GUI;
-using Viconomy.Inventory;
+using Viconomy.Inventory.Impl;
+using Viconomy.Inventory.Slots;
 using Viconomy.Renderer;
 using Viconomy.Trading;
 using Viconomy.Util;

@@ -1,7 +1,7 @@
-﻿using Viconomy.Inventory;
-using Vintagestory.API.Client;
+﻿using Vintagestory.API.Client;
 using Viconomy.Filters;
 using Vintagestory.API.Common;
+using Viconomy.Inventory.Impl;
 
 namespace Viconomy.BlockEntities
 {
@@ -16,7 +16,7 @@ namespace Viconomy.BlockEntities
 
         public override void ConfigureInventory()
         {
-            inventory = new ViconomyInventory(this, null, null, StallSlotCount, StacksPerSlot);
+            inventory = new ViconomyItemInventory(this, null, null, StallSlotCount, StacksPerSlot);
             inventory.SetSlotFilter(0, ViconomyFilters.IsBootsSlot);
             inventory.SetSlotBackground(0, "vicon-boots");
             inventory.SetSlotFilter(1, ViconomyFilters.IsPantsSlot);

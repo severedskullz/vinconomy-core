@@ -3,7 +3,7 @@ using System.IO;
 using System.Numerics;
 using System.Threading;
 using Viconomy.GUI;
-using Viconomy.Inventory;
+using Viconomy.Inventory.Slots;
 using Viconomy.Trading;
 using Viconomy.Util;
 using Vintagestory.API.Client;

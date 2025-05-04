@@ -37,6 +37,16 @@ namespace Viconomy.Trading
                     //IDK Do something as an error?
                 }
             }
+
+            //Take the tool from the player, if needed
+            if (purchaseResult.requiredToolType != ToolType.NONE)
+            {
+                if (purchaseResult.shouldConsumeTool)
+                {
+                    purchaseResult.tool.TakeOut(1);
+                    purchaseResult.tool.MarkDirty();
+                }
+            }
            
 
             //Take the money from the player.
@@ -136,7 +146,11 @@ namespace Viconomy.Trading
                 }
             }
 
-
+            if (request.requiredToolType != ToolType.NONE && request.tool != null)
+            {
+                purchaseResult.error = TradingConstants.NO_TOOL;
+                return purchaseResult;
+            }
 
             if (CanAfford(request, purchaseResult) && CanSell(request, purchaseResult))
             {

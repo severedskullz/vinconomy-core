@@ -3,8 +3,10 @@ using System.IO;
 using System.Text;
 using Viconomy.Filters;
 using Viconomy.GUI;
-using Viconomy.Inventory;
+using Viconomy.Inventory.StallSlots;
 using Viconomy.Renderer;
+using Viconomy.Inventory.Impl;
+using Viconomy.Inventory.Slots;
 using Viconomy.Trading;
 using Viconomy.Util;
 using Vintagestory.API.Client;
@@ -20,7 +22,7 @@ namespace Viconomy.BlockEntities
     {
 
         protected GuiDialogBlockEntity invDialog;
-        protected ViconomyInventory inventory;
+        protected ViconomyItemInventory inventory;
         protected DummyInventory decorationInventory;
         protected bool bypassShelvableAttributes;
 
@@ -43,7 +45,7 @@ namespace Viconomy.BlockEntities
 
         public virtual void ConfigureInventory()
         {
-            this.inventory = new ViconomyInventory(this, null, Api, StallSlotCount, StacksPerSlot);
+            this.inventory = new ViconomyItemInventory(this, null, Api, StallSlotCount, StacksPerSlot);
             for (int i = 0; i < StallSlotCount; i++)
             {
                 inventory.SetSlotFilter(i, ViconomyFilters.IsGenericItem);
@@ -53,7 +55,11 @@ namespace Viconomy.BlockEntities
 
         public override bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
         {
-            int slotIndex = blockSel.SelectionBoxIndex;
+            int slotIndex = GetStallSlotForSelectionIndex(blockSel.SelectionBoxIndex);
+
+            if (slotIndex < 0)
+                slotIndex = 0;
+            
             //Console.WriteLine("Calling OnPlayerRightClick from " + Api.Side);
             bool shiftMod = byPlayer.Entity.Controls.Sneak;
             bool ctrlMod = byPlayer.Entity.Controls.Sprint;
@@ -90,7 +96,7 @@ namespace Viconomy.BlockEntities
                 else
                 {
                     // Open shop admin gui
-                    OpenShopForPlayer(byPlayer, blockSel.SelectionBoxIndex);
+                    OpenShopForPlayer(byPlayer, slotIndex);
                 }
             }
             else
@@ -103,7 +109,7 @@ namespace Viconomy.BlockEntities
                 else
                 {
                     // Open the shop inventory for that block selection
-                    OpenShopForPlayer(byPlayer, blockSel.SelectionBoxIndex);
+                    OpenShopForPlayer(byPlayer, slotIndex);
                 }
             }
             return true;
@@ -175,6 +181,12 @@ namespace Viconomy.BlockEntities
                 return;
             }
 
+            if (GetRequiredToolType(stallSlot) != ToolType.NONE)
+            {
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_TOOL);
+                return;
+            }
+
             if (modSystem.CanPurchaseItem(player, this, register, stallSlot, desiredAmount))
             {
                 PurchaseItem(player, stallSlot, desiredAmount, register);
@@ -242,9 +254,9 @@ namespace Viconomy.BlockEntities
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
             if (isOwner)
-                this.invDialog = new GuiViconStallOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+                this.invDialog = new GuiViconStallOwner<ViconItemSlot>(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
             else
-                this.invDialog = new GuiDialogViconStallCustomer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+                this.invDialog = new GuiDialogViconStallCustomer<ViconItemSlot>(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
             //this.invDialog.OpenSound = this.OpenSound;
             //this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();
@@ -446,7 +458,7 @@ namespace Viconomy.BlockEntities
                 ICoreClientAPI coreClientAPI = this.Api as ICoreClientAPI;
                 if (coreClientAPI != null)
                 {
-                    coreClientAPI.Network.SendBlockEntityPacket(this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.PURCHASE_ITEMS, data);
+                    coreClientAPI.Network.SendBlockEntityPacket(this.Pos, VinConstants.PURCHASE_ITEMS, data);
                     coreClientAPI.World.Player.TriggerFpAnimation(EnumHandInteract.HeldItemInteract);
                 }
             }
@@ -620,7 +632,7 @@ namespace Viconomy.BlockEntities
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
             int i = 0;
-            foreach (StallSlot slot in inventory.StallSlots)
+            foreach (StallSlotBase<ViconItemSlot> slot in inventory.StallSlots)
             {
                 i++;
                 ItemSlot stock = slot.FindFirstNonEmptyStockSlot();
@@ -703,7 +715,7 @@ namespace Viconomy.BlockEntities
 
         public override ItemSlot[] GetSlotsForStall(int stallSlot)
         {
-            return inventory.StallSlots[stallSlot].slots;
+            return inventory.StallSlots[stallSlot].GetSlots();
         }
 
         public override ItemSlot GetCurrencyForStall(int stallSlot)

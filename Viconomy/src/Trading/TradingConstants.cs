@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Viconomy.Trading
+﻿namespace Viconomy.Trading
 {
     public class TradingConstants
     {
@@ -22,5 +16,16 @@ namespace Viconomy.Trading
         public static readonly string NO_PRIVLEGE = "vinconomy:no-privelege";
         public static readonly string PURCHASED_ITEMS = "vinconomy:purchased-item";
         public static readonly string COULDNT_GET_REGISTER = "vinconomy:couldnt-find-register";
+        public static readonly string NO_TOOL = "vinconomy:no-tool";
+    }
+
+    public enum ToolType
+    {
+        NONE = 0,
+        FOOD_CONTAINER = 1,
+        DRINK_CONTAINER = 2,
+        LIQUID_COINTAINER = 3,
+        CHOPPING = 4,
+        CUTTING = 5
     }
 }

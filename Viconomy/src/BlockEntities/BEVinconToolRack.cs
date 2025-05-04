@@ -1,8 +1,8 @@
 ﻿using System;
-using Viconomy.Inventory;
 using Vintagestory.API.Client;
 using Viconomy.Filters;
 using Vintagestory.API.Common;
+using Viconomy.Inventory.Impl;
 
 namespace Viconomy.BlockEntities
 {
@@ -11,7 +11,7 @@ namespace Viconomy.BlockEntities
 
         public override void ConfigureInventory()
         {
-            this.inventory = new ViconomyInventory(this, null, null, StallSlotCount, StacksPerSlot);
+            this.inventory = new ViconomyItemInventory(this, null, null, StallSlotCount, StacksPerSlot);
             for (int i = 0; i < StallSlotCount; i++)
             {
                 inventory.SetSlotFilter(i, ViconomyFilters.IsToolOrWeapon);

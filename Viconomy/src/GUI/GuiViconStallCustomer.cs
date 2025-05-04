@@ -1,8 +1,9 @@
 ﻿using System;
 using System.IO;
 using Viconomy.BlockEntities;
-using Viconomy.Inventory;
-using Viconomy.Registry;
+using Viconomy.Inventory.StallSlots;
+using Viconomy.Inventory.Impl;
+using Viconomy.Inventory.Slots;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -11,7 +12,7 @@ using Vintagestory.API.MathTools;
 
 namespace Viconomy.GUI
 {
-    public class GuiDialogViconStallCustomer : GuiDialogBlockEntity
+    public class GuiDialogViconStallCustomer<E> : GuiDialogBlockEntity where E:ItemSlot
     {
         BEVinconContainer stall;
 
@@ -20,7 +21,7 @@ namespace Viconomy.GUI
         DummyInventory inv;
         ViconPurchaseSlot purchaseSlot;
         ViconCurrencySlot currancySlot;
-        StallSlot stallSlot;
+        StallSlotBase<E> stallSlot;
 
         public GuiDialogViconStallCustomer(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
@@ -55,7 +56,7 @@ namespace Viconomy.GUI
             ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.DialogToScreenPadding);
             bgBounds.BothSizing = ElementSizing.FitToChildren;
 
-            ViconomyInventory vinInv = Inventory as ViconomyInventory;
+            ViconomyBaseInventory<E> vinInv = Inventory as ViconomyBaseInventory<E>;
             stallSlot = vinInv.StallSlots[curTab];
             ItemSlot purchaseItem = stallSlot.FindFirstNonEmptyStockSlot();
             
@@ -156,7 +157,7 @@ namespace Viconomy.GUI
                 writer.Write(true);
                 data = ms.ToArray();
                 
-                capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.PURCHASE_ITEMS, data);
+                capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.PURCHASE_ITEMS, data);
             }
             return true;
         }

@@ -1,7 +1,8 @@
-﻿using Viconomy.Trading;
+﻿using Viconomy.Inventory.Impl;
+using Viconomy.Trading;
 using Vintagestory.API.Common;
 
-namespace Viconomy.Inventory
+namespace Viconomy.Inventory.Slots
 {
     public class ViconItemSlot : ItemSlot
     {
@@ -17,30 +18,36 @@ namespace Viconomy.Inventory
 
         public override bool CanHold(ItemSlot sourceSlot)
         {
-            if (this.slotFilter != null && this.slotFilter(sourceSlot) == false)
+            if (slotFilter != null && slotFilter(sourceSlot) == false)
             {
                 return false;
             }
 
-            if (this.inventory is ViconomyInventory) { 
-                ItemSlot slot = ((ViconomyInventory)this.inventory).FindFirstNonEmptyStockSlot(stallSlot);
+            if (inventory is ViconomyItemInventory)
+            {
+                ItemSlot slot = ((ViconomyItemInventory)inventory).FindFirstNonEmptyStockSlot(stallSlot);
                 if (slot == null)
                 {
                     //Console.WriteLine("Stall Slot " +stallSlot +":First Non-Empty Slot was null, so we called Base");
                     return base.CanHold(sourceSlot);
-                } else if (slot.Itemstack == null) {
+                }
+                else if (slot.Itemstack == null)
+                {
                     //Console.WriteLine("Stall Slot " + stallSlot + ":First Non-Empty Slot Item Stack was null, so we called Base");
                     return base.CanHold(sourceSlot);
-                } else if (TradingUtil.isMatchingItem(slot.Itemstack, sourceSlot.Itemstack, this.inventory.Api.World)) {
+                }
+                else if (TradingUtil.isMatchingItem(slot.Itemstack, sourceSlot.Itemstack, inventory.Api.World))
+                {
                     //Console.WriteLine("Stall Slot " + stallSlot + ":First Non-Empty Slot satisfied, so we called Base");
                     return base.CanHold(sourceSlot);
-                } else
+                }
+                else
                 {
                     return false;
                 }
-                    
-            } 
-            
+
+            }
+
             //Console.WriteLine("Stall Slot " + stallSlot + ":First Non-Empty Slot was not satisfied, so we return false");
             return base.CanHold(sourceSlot);
         }
@@ -57,9 +64,9 @@ namespace Viconomy.Inventory
 
         public void setFilter(Func<ItemSlot, bool> filter)
         {
-            this.slotFilter = filter;
+            slotFilter = filter;
         }
 
     }
-    
+
 }

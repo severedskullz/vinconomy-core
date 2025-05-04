@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Viconomy.BlockEntities;
-using Viconomy.Inventory;
+using Viconomy.Inventory.StallSlots;
+using Viconomy.Inventory.Impl;
+using Viconomy.Inventory.Slots;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -37,14 +39,14 @@ namespace Viconomy.BlockTypes
             List<WorldInteraction> interactions = new List<WorldInteraction>();
             if (be != null)
             {
-                StallSlot[] slots = ((ViconomyInventory)be.Inventory).StallSlots;
+                StallSlotBase<ViconItemSlot>[] slots = ((ViconomyItemInventory)be.Inventory).StallSlots;
                 //In case we have some oddity with selections, just exit gracefully.
                 if (selection.SelectionBoxIndex >= slots.Length)
                 {
                     return interactions.ToArray();
                 }
                 int selectionIndex = selection.SelectionBoxIndex + 3; // Add 3 for Boots, Legs, and Gloves
-                StallSlot slot = slots[selectionIndex];
+                StallSlotBase<ViconItemSlot> slot = slots[selectionIndex];
 
                 if (be.Owner != forPlayer.PlayerUID)
                 {

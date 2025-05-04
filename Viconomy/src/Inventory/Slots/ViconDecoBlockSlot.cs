@@ -1,17 +1,17 @@
 ﻿using Vintagestory.API.Common;
+using Vintagestory.GameContent;
 
-namespace Viconomy.Inventory
+namespace Viconomy.Inventory.Slots
 {
-    public class ViconGachaSlot : ItemSlot
+    public class ViconDecoBlockSlot : ItemSlot
     {
         public bool isDisabled { get; set; } = false;
-        public int Slot { get; internal set; }
-
-        public ViconGachaSlot(InventoryBase inventory,int itemSlot) : base(inventory)
+        public ViconDecoBlockSlot(InventoryBase inventory, int itemSlot) : base(inventory)
         {
             //this.HexBackgroundColor = "#65d934";
-            this.BackgroundIcon = "vicon-general";
-            this.Slot = itemSlot;
+            //this.BackgroundIcon = "vicon-boots";
+            MaxSlotStackSize = 1;
+
         }
 
         public override bool CanHold(ItemSlot sourceSlot)
@@ -19,12 +19,12 @@ namespace Viconomy.Inventory
             CollectibleObject collectible = sourceSlot.Itemstack?.Collectible;
             if (collectible != null && !isDisabled)
             {
-                if (collectible is Block)
+                if (collectible is BlockMicroBlock)
                 {
                     return base.CanHold(sourceSlot);
                 }
             }
-            
+
             //Console.WriteLine("Stall Slot " + stallSlot + ":First Non-Empty Slot was not satisfied, so we return false");
             return false;
         }
@@ -35,9 +35,10 @@ namespace Viconomy.Inventory
             {
                 return base.CanTakeFrom(sourceSlot, priority);
             }
-           
+
             return false;
         }
+
     }
 
 }

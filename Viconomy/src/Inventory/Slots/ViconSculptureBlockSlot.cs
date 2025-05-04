@@ -1,8 +1,6 @@
-﻿using System;
-using Vintagestory.API.Common;
-using Vintagestory.GameContent;
+﻿using Vintagestory.API.Common;
 
-namespace Viconomy.Inventory
+namespace Viconomy.Inventory.Slots
 {
     public class ViconSculptureBlockSlot : ItemSlot
     {

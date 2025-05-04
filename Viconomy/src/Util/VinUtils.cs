@@ -10,8 +10,11 @@ using Viconomy.Network.Common;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.Common;
+using Vintagestory.Common.Database;
+using Vintagestory.Server;
 using static Vintagestory.Common.VSWebClient;
 
 namespace Viconomy.Util
@@ -298,8 +301,17 @@ namespace Viconomy.Util
             int cx = x / GlobalConstants.ChunkSize;
             int cy = y / GlobalConstants.ChunkSize;
             int cz = z / GlobalConstants.ChunkSize;
-
             IServerChunk chunk = api.WorldManager.GetChunk(cx, cy, cz);
+
+            //BlockPos pos = new BlockPos(x, y, z);
+            //ChunkPos.ToChunkIndex(x, y, z);
+            //IServerChunk chunk = api.WorldManager.GetChunk(pos);
+
+            //https://discord.com/channels/302152934249070593/351624415039193098/1185988966479052850
+            //var chunkCoord = blockPos / 32;
+            //var chunkIndex = MapUtil.Index3dL(chunkCoord, chunkMapSizeX, chunkMapSizeZ);
+            // ChunkPosFromChunkIndex3D 
+
             if (chunk != null)
             {
                 onLoaded.Invoke();
@@ -313,6 +325,8 @@ namespace Viconomy.Util
 
           
         }
+
+
     }
 
 

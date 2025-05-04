@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using Viconomy.GUI;
-using Viconomy.Inventory;
 using Viconomy.Registry;
+using Viconomy.Inventory.Impl;
 using Viconomy.Trading;
 using Viconomy.Util;
 using Vintagestory.API.Client;

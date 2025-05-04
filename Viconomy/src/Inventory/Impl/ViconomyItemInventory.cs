@@ -2,43 +2,35 @@
 using System.Collections.Generic;
 using Viconomy.BlockEntities;
 using Viconomy.Config;
+using Viconomy.Inventory.StallSlots;
+using Viconomy.Inventory.Slots;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
-namespace Viconomy.Inventory
+namespace Viconomy.Inventory.Impl
 {
-    public class ViconomyInventory : InventoryBase, IStallSlotUpdater
+    public class ViconomyItemInventory : ViconomyBaseInventory<ViconItemSlot>, IStallSlotUpdater
     {
-        BEVinconBase Stall;
-
-        public int StallSlotSize => NumStacksPerStall + 1;
-        public override int Count { get { return (StallSlotSize * NumStalls) + 1; } }
-        
-
-        // The amount of different item groups there are for this inventory
-        protected int NumStalls = 4;
-        // the amount of items per item group
-        protected int NumStacksPerStall = 9;
-
-        public StallSlot[] StallSlots;
-        public ViconDecoBlockSlot ChiselDecoSlot;
 
 
-        VinconomyCoreSystem modSystem;
-
-        public ViconomyInventory(BEVinconBase stall, string inventoryID, ICoreAPI api, int numStalls, int numStacksPerStall) : base(inventoryID, api)
+        public ViconomyItemInventory(BEVinconBase stall, string inventoryID, ICoreAPI api, int numStalls, int numStacksPerStall) : base(stall, inventoryID, api, numStalls, numStacksPerStall)
         {
             Stall = stall;
             NumStalls = numStalls;
             NumStacksPerStall = numStacksPerStall;
 
-            StallSlots = new StallSlot[numStalls];
+
+            ChiselDecoSlot = new ViconDecoBlockSlot(this, 0);
+        }
+
+        protected override void InitializeStalls()
+        {
+            StallSlots = new ItemStallSlot[NumStalls];
             for (int i = 0; i < NumStalls; i++)
             {
-                StallSlots[i] = new StallSlot(this, i, NumStacksPerStall);
+                StallSlots[i] = new ItemStallSlot(this, i, NumStacksPerStall);
             }
-            ChiselDecoSlot = new ViconDecoBlockSlot(this, 0);
         }
 
         /*
@@ -58,18 +50,7 @@ namespace Viconomy.Inventory
 
         }
 
-        public override void ResolveBlocksOrItems()
-        {
-            using IEnumerator<ItemSlot> enumerator = GetEnumerator();
-            while (enumerator.MoveNext())
-            {
-                ItemSlot current = enumerator.Current;
-                if (current.Itemstack != null && !current.Itemstack.ResolveBlockOrItem(Api.World))
-                {
-                    current.Itemstack = null;
-                }
-            }
-        }
+
 
         protected override ItemSlot NewSlot(int slotId)
         {
@@ -80,7 +61,7 @@ namespace Viconomy.Inventory
 
             int index = slotId - 1;
             int stallSlot = index / StallSlotSize;
-            int itemSlot = slotId % (StallSlotSize);
+            int itemSlot = slotId % StallSlotSize;
             if (itemSlot == NumStacksPerStall)
             {
                 return new ViconCurrencySlot(this);
@@ -88,77 +69,11 @@ namespace Viconomy.Inventory
             return new ViconItemSlot(this, stallSlot, itemSlot);
         }
 
-        public int GetStallForSlot(int slotId)
-        {
-            // Subtract 1 from slotId for the chisel decoration block first
-            return (slotId - 1) / StallSlotSize;
-        }
 
-        public int GetItemSlotForStall(int slotId)
-        {
-            // Subtract 1 from slotId for the chisel decoration block first
-            return (slotId - 1) % StallSlotSize;
-        }
-
-        public int GetStallSlotCount() => NumStalls;
-        public int GetStacksPerStall() => NumStacksPerStall;
-        public override ItemSlot this[int inventorySlotId]
-        {
-            get
-            {
-                if (inventorySlotId == 0)
-                {
-                    return ChiselDecoSlot;
-                }
-                else
-                {
-                    int stallSlot = GetStallForSlot(inventorySlotId);
-                    int itemSlot = GetItemSlotForStall(inventorySlotId);
-                    if (itemSlot == NumStacksPerStall)
-                    {
-                        return StallSlots[stallSlot].currency;
-                    } else
-                    {
-                        return StallSlots[stallSlot].slots[itemSlot];
-                    }
-                }
-            }
-            set
-            {
-                if (inventorySlotId == 0)
-                {
-                    ChiselDecoSlot = (ViconDecoBlockSlot) value;
-                }
-                else
-                {
-                    int stallSlot = GetStallForSlot(inventorySlotId);
-                    int itemSlot = GetItemSlotForStall(inventorySlotId);
-
-                    if (inventorySlotId < 0 || inventorySlotId >= this.Count)
-                    {
-                        throw new ArgumentOutOfRangeException("slotId");
-                    }
-                    if (value == null)
-                    {
-                        throw new ArgumentNullException("value");
-                    }
-                    if (itemSlot == NumStacksPerStall)
-                    {
-                        this.StallSlots[stallSlot].currency = (ViconCurrencySlot)value;
-                    }
-                    else
-                    {
-                        this.StallSlots[stallSlot].slots[itemSlot] = (ViconItemSlot)value;
-                    }
-
-                }
-
-            }
-        }
 
         public void SetSlotFilter(int slot, Vintagestory.API.Common.Func<ItemSlot, bool> filter)
         {
-            ViconItemSlot[] filteredSlots = StallSlots[slot].slots;
+            ViconItemSlot[] filteredSlots = StallSlots[slot].GetSlots();
             foreach (var itemSlot in filteredSlots)
             {
                 itemSlot.setFilter(filter);
@@ -166,26 +81,15 @@ namespace Viconomy.Inventory
 
         }
 
-        public ItemSlot FindFirstNonEmptyStockSlot(int stallSlot)
-        {
-            return StallSlots[stallSlot].FindFirstNonEmptyStockSlot();
-        }
 
-        public ItemSlot GetCurrencyForStallSlot(int stallSlot)
-        {
-            return StallSlots[stallSlot].currency;
-        }
 
-        public ItemSlot[] GetSlotsForStallSlot(int stallSlot)
-        {
-            return StallSlots[stallSlot].slots;
-        }
+
 
         public override void FromTreeAttributes(ITreeAttribute tree)
         {
             for (int i = 0; i < NumStalls; i++)
             {
-                StallSlot stall = StallSlots[i];
+                ItemStallSlot stall = (ItemStallSlot)StallSlots[i];
                 ITreeAttribute stallTree = tree.GetOrAddTreeAttribute("stall" + i);
                 StallSlots[i].itemsPerPurchase = stallTree.GetInt("purchaseQuantity", 1);
 
@@ -194,7 +98,7 @@ namespace Viconomy.Inventory
                 {
                     ItemStack itemStack = stallTree.GetItemstack("slot" + j);
                     stall.slots[j].Itemstack = itemStack;
-                   
+
                 }
             }
             ChiselDecoSlot.Itemstack = tree.GetItemstack("decoBlock");
@@ -215,7 +119,7 @@ namespace Viconomy.Inventory
 
             for (int i = 0; i < NumStalls; i++)
             {
-                StallSlot stall = StallSlots[i];
+                ItemStallSlot stall = (ItemStallSlot)StallSlots[i];
                 stall.currency.Itemstack?.ResolveBlockOrItem(Api.World);
                 for (int j = 0; j < NumStacksPerStall; j++)
                 {
@@ -223,7 +127,7 @@ namespace Viconomy.Inventory
                 }
             }
             ChiselDecoSlot.Itemstack?.ResolveBlockOrItem(Api.World);
-            
+
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)
@@ -231,7 +135,7 @@ namespace Viconomy.Inventory
             //base.SlotsToTreeAttributes(this.slots, tree);
             for (int i = 0; i < NumStalls; i++)
             {
-                StallSlot stall = StallSlots[i];
+                ItemStallSlot stall = (ItemStallSlot)StallSlots[i];
                 ITreeAttribute stallTree = tree.GetOrAddTreeAttribute("stall" + i);
                 stallTree.SetInt("purchaseQuantity", StallSlots[i].itemsPerPurchase);
                 if (stall.currency.Itemstack != null)
@@ -255,7 +159,7 @@ namespace Viconomy.Inventory
         public override float GetTransitionSpeedMul(EnumTransitionType transType, ItemStack stack)
         {
             ViconConfig config = modSystem.Config;
-            if ((config != null && config.FoodDecaysInShops) && (Stall != null && !Stall.IsAdminShop))
+            if (config != null && config.FoodDecaysInShops && Stall != null && !Stall.IsAdminShop)
             {
                 return base.GetDefaultTransitionSpeedMul(transType) * modSystem.Config.StallPerishRate;
             }
@@ -297,19 +201,17 @@ namespace Viconomy.Inventory
 
         public int GetItemsPerPurchase(int stallSlot)
         {
-            return this.StallSlots[stallSlot].itemsPerPurchase;
+            return StallSlots[stallSlot].itemsPerPurchase;
         }
 
         public void SetSlotBackground(int stallSlot, string background = null, string hexColor = null)
         {
-            ItemSlot[] curSlots = this.GetSlotsForStallSlot(stallSlot);
+            ItemSlot[] curSlots = GetSlotsForStallSlot(stallSlot);
             foreach (var slot in curSlots)
             {
                 slot.BackgroundIcon = background;
                 slot.HexBackgroundColor = hexColor;
             }
         }
-
-
     }
 }

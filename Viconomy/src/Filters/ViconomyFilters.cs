@@ -1,6 +1,6 @@
-﻿
-using System;
+﻿using System;
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 
 namespace Viconomy.Filters
@@ -9,66 +9,79 @@ namespace Viconomy.Filters
     {
         public static bool IsHelmetSlot(ItemSlot slot)
         {
-            if (slot == null || slot.Itemstack == null)
-                return false;
-
-            return IsDressType(slot.Itemstack, EnumCharacterDressType.ArmorHead)
-                || IsDressType(slot.Itemstack, EnumCharacterDressType.Head)
-                || IsDressType(slot.Itemstack, EnumCharacterDressType.Shoulder);
+            return IsDressType(slot, EnumCharacterDressType.ArmorHead, EnumCharacterDressType.Head, EnumCharacterDressType.Shoulder);
         }
 
         public static bool IsBodySlot(ItemSlot slot)
         {
-            if (slot == null || slot.Itemstack == null)
-                return false;
-
-            return IsDressType(slot.Itemstack, EnumCharacterDressType.ArmorBody)
-                || IsDressType(slot.Itemstack, EnumCharacterDressType.UpperBody)
-                || IsDressType(slot.Itemstack, EnumCharacterDressType.UpperBodyOver);
+            return IsDressType(slot, EnumCharacterDressType.ArmorBody, EnumCharacterDressType.UpperBody, EnumCharacterDressType.UpperBodyOver);
         }
         public static bool IsPantsSlot(ItemSlot slot)
         {
-            if (slot == null || slot.Itemstack == null)
-                return false;
-
-            return IsDressType(slot.Itemstack, EnumCharacterDressType.LowerBody)
-                || IsDressType(slot.Itemstack, EnumCharacterDressType.ArmorLegs);
+            return IsDressType(slot, EnumCharacterDressType.LowerBody, EnumCharacterDressType.ArmorLegs);
         }
 
         public static bool IsFaceSlot(ItemSlot slot)
         {
-            if (slot == null || slot.Itemstack == null)
-                return false;
-
-            return IsDressType(slot.Itemstack, EnumCharacterDressType.Neck)
-                || IsDressType(slot.Itemstack, EnumCharacterDressType.Face);
+            return IsDressType(slot, EnumCharacterDressType.Neck, EnumCharacterDressType.Face);
         }
 
         public static bool IsArmSlot(ItemSlot slot)
         {
-            if (slot == null || slot.Itemstack == null)
-                return false;
-
-            return IsDressType(slot.Itemstack, EnumCharacterDressType.Arm)
-                || IsDressType(slot.Itemstack, EnumCharacterDressType.Hand)
-                || IsDressType(slot.Itemstack, EnumCharacterDressType.Shoulder);
+            return IsDressType(slot, EnumCharacterDressType.Arm, EnumCharacterDressType.Hand, EnumCharacterDressType.Shoulder);
         }
         public static bool IsWaistSlot(ItemSlot slot)
         {
+            return IsDressType(slot, EnumCharacterDressType.Waist);
+        }
+
+        public static bool IsDressType(ItemSlot slot, params EnumCharacterDressType[] dressTypes)
+        {
             if (slot == null || slot.Itemstack == null)
                 return false;
 
-            return IsDressType(slot.Itemstack, EnumCharacterDressType.Waist);
-        }
-
-        public static bool IsDressType(IItemStack itemstack, EnumCharacterDressType dressType)
-        {
-            if (itemstack == null || itemstack.Collectible.Attributes == null)
+            JsonObject attr = slot.Itemstack.Collectible.Attributes;
+            if (attr == null)
             {
                 return false;
             }
-            string stackDressType = itemstack.Collectible.Attributes["clothescategory"].AsString(null);
-            return stackDressType != null && dressType.ToString().Equals(stackDressType, StringComparison.InvariantCultureIgnoreCase);
+
+            string stackDressType = attr["clothescategory"].AsString(null);
+            if (stackDressType == null)
+                return false;
+
+            foreach (var dressType in dressTypes)
+            {
+                if (dressType.ToString().Equals(stackDressType, StringComparison.InvariantCultureIgnoreCase))
+                    return true;
+            }
+
+            return false;
+
+        }
+
+        public static bool IsDressType(ItemSlot slot, params string[] dressTypes)
+        {
+            if (slot == null || slot.Itemstack == null)
+                return false;
+
+            JsonObject attr = slot.Itemstack.Collectible.Attributes;
+            if (attr == null)
+            {
+                return false;
+            }
+
+            string stackDressType = attr["clothescategory"].AsString(null);
+            if (stackDressType == null)
+                return false;
+
+            foreach ( var dressType in dressTypes)
+            {
+                if (dressType.Equals(stackDressType, StringComparison.InvariantCultureIgnoreCase))
+                    return true;
+            }
+
+            return false;
         }
 
         public static bool IsClothingOrArmor(ItemSlot slot)
@@ -107,17 +120,17 @@ namespace Viconomy.Filters
 
         public static bool IsBootsSlot(ItemSlot slot)
         {
-            return IsDressType(slot.Itemstack, EnumCharacterDressType.Foot);
+            return IsDressType(slot, EnumCharacterDressType.Foot);
         }
 
         public static bool IsHandSlot(ItemSlot slot)
         {
-            return IsDressType(slot.Itemstack, EnumCharacterDressType.Hand);
+            return IsDressType(slot, EnumCharacterDressType.Hand);
         }
 
         public static bool IsNeckSlot(ItemSlot slot)
         {
-            return IsDressType(slot.Itemstack, EnumCharacterDressType.Neck) || IsDressType(slot.Itemstack, EnumCharacterDressType.Emblem);
+            return IsDressType(slot, EnumCharacterDressType.Neck, EnumCharacterDressType.Emblem);
         }
 
         public static bool IsEmptyGachaSlot(ItemSlot slot)

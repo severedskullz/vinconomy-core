@@ -1,13 +1,13 @@
 ﻿using Vintagestory.API.Common;
 
-namespace Viconomy.Inventory
+namespace Viconomy.Inventory.Slots
 {
     public class ViconCurrencySlot : ItemSlot
     {
         public ViconCurrencySlot(InventoryBase inventory) : base(inventory)
         {
             //this.HexBackgroundColor = "#B62521";
-            this.BackgroundIcon = "vicon-payment";
+            BackgroundIcon = "vicon-payment";
         }
 
         public override bool CanHold(ItemSlot sourceSlot)
@@ -30,7 +30,8 @@ namespace Viconomy.Inventory
             if (sourceSlot.Itemstack != null)
             {
                 SetCurrency(sourceSlot.Itemstack.Clone());
-            } else
+            }
+            else
             {
                 SetCurrency(null);
             }
@@ -38,7 +39,7 @@ namespace Viconomy.Inventory
 
         private void SetCurrency(ItemStack stack)
         {
-            this.itemstack = stack;
+            itemstack = stack;
         }
 
         public override ItemStack TakeOut(int quantity)
@@ -47,5 +48,5 @@ namespace Viconomy.Inventory
         }
 
     }
-    
+
 }

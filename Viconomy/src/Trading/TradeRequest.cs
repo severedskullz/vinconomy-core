@@ -10,6 +10,7 @@ namespace Viconomy.Trading
         public ICoreAPI coreApi;
         public IPlayer customer;
         public BEVinconRegister shopRegister;
+        public BEVinconBase sellingEntity;
 
         public ItemStack currencyNeeded;
         //public ItemSlot[] currencySourceSlots;
@@ -21,10 +22,14 @@ namespace Viconomy.Trading
 
         public int discountedPrice;
         public bool isAdminShop;
-        public bool requiresContainer;
-        public bool requiresTool;
-        public ItemStack tool;
-        internal BEVinconBase sellingEntity;
+
+        public ToolType requiredToolType;
+        public ItemSlot tool;
+        public bool shouldConsumeTool;
+
+        //public ItemStack couponNeeded;
+        //public bool shouldConsumeCoupon;
+
     }
 
     public class TradeResult : TradeRequest
@@ -46,12 +51,12 @@ namespace Viconomy.Trading
             productSourceSlots = request.productSourceSlots;
             shopRegister = request.shopRegister;
             isAdminShop = request.isAdminShop;
-            requiresContainer = request.requiresContainer;
-            requiresTool = request.requiresTool;
-            tool = request.tool;
             discountedPrice = request.discountedPrice;
             sellingEntity = request.sellingEntity;
 
+            requiredToolType = request.requiredToolType;
+            tool = request.tool;
+            shouldConsumeTool = request.shouldConsumeTool;
 
         }
     }

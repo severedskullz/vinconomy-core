@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using Viconomy.BlockEntities;
-using Viconomy.Inventory;
+using Viconomy.Inventory.StallSlots;
+using Viconomy.Inventory.Slots;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Viconomy.Inventory.Impl;
 
 namespace Viconomy.BlockTypes
 {
@@ -54,14 +56,14 @@ namespace Viconomy.BlockTypes
             if (be != null)
             {
                 int selectionIndex = selection.SelectionBoxIndex;
-                StallSlot[] slots = ((ViconomyInventory)be.Inventory).StallSlots;
+                StallSlotBase<ViconItemSlot>[] slots = ((ViconomyItemInventory)be.Inventory).StallSlots;
                 //In case we have some oddity with selections, just exit gracefully.
                 if (selection.SelectionBoxIndex >= slots.Length)
                 {
                     return interactions.ToArray();
                 }
 
-                StallSlot slot = slots[selectionIndex];
+                StallSlotBase<ViconItemSlot> slot = slots[selectionIndex];
 
                 if (be.Owner != forPlayer.PlayerUID)
                 {

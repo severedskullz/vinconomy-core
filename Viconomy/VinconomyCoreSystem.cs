@@ -61,6 +61,11 @@ namespace Viconomy
             api.RegisterEntity("EntityVinconTrader", typeof(EntityVinconTrader));
             //api.RegisterEntityClass("EntityVinconTrader", typeof(EntityVinconTrader));
 
+            // 5.0 Block Mappings
+            api.RegisterBlockClass("VinconFoodContainer", typeof(BlockVFoodContainer));
+            // 5.0 Block Entity Mappings
+            api.RegisterBlockEntityClass("BEVinconFoodContainer", typeof(BEVinconFoodContainer));
+
             // 3.0 Block Mappings
             api.RegisterBlockClass("VinconContainer", typeof(BlockVContainer));
             api.RegisterBlockClass("VinconRegister", typeof(BlockVRegister));

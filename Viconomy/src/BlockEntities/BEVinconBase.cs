@@ -90,10 +90,7 @@ namespace Viconomy.BlockEntities
 
                 ItemStack currency = inv.GetCurrencyForStallSlot(stallSlot).Itemstack;
                 modSystem.UpdateStallProductForStall(this.RegisterID, this.Pos, stallSlot,  product, GetNumItemsPerPurchaseForStall(stallSlot), currency);
-
             }
-           
-
         }
 
         public void SetOwner(IPlayer player)
@@ -147,6 +144,9 @@ namespace Viconomy.BlockEntities
             request.coreApi = this.Api;
             request.currencyNeeded = TradingUtil.GetItemStackClone(GetCurrencyForStall(stallSlot));
             request.isAdminShop = this.IsAdminShop;
+            request.shouldConsumeTool = ShouldConsumeTool(stallSlot);
+            request.requiredToolType = GetRequiredToolType(stallSlot);
+            request.tool = GetRequiredTool(player, stallSlot);
 
             TradeResult result = TradingUtil.TryPurchaseItem(request);
             if (result.error != null)
@@ -158,6 +158,26 @@ namespace Viconomy.BlockEntities
                 this.MarkDirty(true, null);
                 this.updateMeshes();
             }
+        }
+
+        protected virtual bool ShouldConsumeTool(int stallSlot)
+        {
+            return false;
+        }
+
+        protected virtual ToolType GetRequiredToolType( int stallSlot)
+        {
+            return ToolType.NONE;
+        }
+
+        protected virtual ItemSlot GetRequiredTool(IPlayer player, int stallSlot)
+        {
+            return null;
+        }
+
+        protected virtual int GetStallSlotForSelectionIndex(int index)
+        {
+            return index;
         }
 
         public abstract ItemSlot[] GetSlotsForStall(int stallSlot);
