@@ -5,6 +5,7 @@
             "B": {
                 "type": "item",
                 "code": "game:book-normal-*",
+				"allowedVariants": [ "brickred", "cherryred", "darkbeige", "darkgray", "darkgreen", "darkolive", "gray", "olive", "orange", "orangebrown", "purple", "purpleorange", "teal" ],
                 "name": "color"
             },
             "Q": {

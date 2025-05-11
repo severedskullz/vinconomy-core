@@ -10,11 +10,9 @@ using Viconomy.Network.Common;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.Common;
-using Vintagestory.Common.Database;
-using Vintagestory.Server;
+using Vintagestory.GameContent;
 using static Vintagestory.Common.VSWebClient;
 
 namespace Viconomy.Util
@@ -326,6 +324,70 @@ namespace Viconomy.Util
           
         }
 
+        public static ItemStack CreateItemStackFromJson(ITreeAttribute stackAttr, IWorldAccessor world, string defaultDomain)
+        {
+            CollectibleObject collObj;
+            var loc = AssetLocation.Create(stackAttr.GetString("code"), defaultDomain);
+            if (stackAttr.GetString("type") == "item")
+            {
+                collObj = world.GetItem(loc);
+            }
+            else
+            {
+                collObj = world.GetBlock(loc);
+            }
+
+            ItemStack stack = new ItemStack(collObj, (int)stackAttr.GetDecimal("quantity", 1));
+            var attr = (stackAttr["attributes"] as TreeAttribute)?.Clone();
+            if (attr != null) stack.Attributes = attr;
+
+            return stack;
+        }
+
+        public static bool IsEmptyContainer(ItemStack stack, ICoreAPI api)
+        {
+            if (stack == null)
+                return false;
+
+            if (stack.Block is IBlockMealContainer meal)
+                return meal.GetQuantityServings(api.World, stack) == 0 && meal.GetNonEmptyContents(api.World, stack).Length == 0;
+
+            // Cooking Pot - always empty, block type changes when it is turned into claypot-cooked
+            if (stack.Block is BlockCookingContainer pot)
+                return true;
+
+            if (stack.Block is BlockContainer container && stack?.Block?.Attributes["mealContainer"]?.AsBool() == true)
+                return container.GetNonEmptyContents(api.World, stack).Length == 0;
+
+            return false;
+        }
+
+        public static bool IsMergableContents(ItemStack[] source, ItemStack[] compareTo)
+        {
+            if (source.Length == 0 || compareTo.Length == 0) return true;
+
+            return IsMatchingContents(source, compareTo);
+        }
+
+        public static bool IsMatchingContents(ItemStack[] source, ItemStack[] compareTo)
+        {
+            if (source.Length != compareTo.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < compareTo.Length; i++)
+            {
+                ItemStack bowlStack = compareTo[i];
+                ItemStack containerStack = source[i];
+
+                if (bowlStack.Id != containerStack.Id)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
     }
 

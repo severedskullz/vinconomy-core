@@ -435,8 +435,13 @@ namespace Viconomy
 
             ItemStack currencyStack = VinUtils.DeserializeProduct(_coreServerAPI, prod.CurrencyCode, prod.CurrencyQuantity, prod.CurrencyAttributes);
             int currencyNeeded = currencyStack.StackSize * purchase.Amount;
-            List<ItemSlot> currencySlots = TradingUtil.GetAllValidCurrencyFor(customer, currencyStack);
-            foreach (ItemSlot slot in currencySlots)
+            AggregatedSlots currencySlots = TradingUtil.GetAllValidSlotsFor(customer, currencyStack);
+            if (currencySlots.TotalCount < currencyNeeded)
+            {
+                return false;
+            }
+            /*
+            foreach (ItemSlot slot in currencySlots.Slots)
             {
                 currencyNeeded -= slot.StackSize;
                 if (currencyNeeded <= 0) {
@@ -448,6 +453,7 @@ namespace Viconomy
             if (currencyNeeded > 0) {
                 return false;
             }
+            */
 
             // Is there enough product left from total stock to buy all of it?
             if (prod.TotalStock < prod.ProductQuantity * purchase.Amount) 
@@ -459,8 +465,8 @@ namespace Viconomy
             prod.TotalStock -= prod.ProductQuantity * purchase.Amount;
 
             //Take the money from the player.
-            currencyNeeded = currencyStack.StackSize * purchase.Amount;
-            foreach (ItemSlot itemSlot in currencySlots)
+            //currencyNeeded = currencyStack.StackSize * purchase.Amount;
+            foreach (ItemSlot itemSlot in currencySlots.Slots)
             {
 
                 ItemStack takenStack = itemSlot.TakeOut(currencyNeeded);

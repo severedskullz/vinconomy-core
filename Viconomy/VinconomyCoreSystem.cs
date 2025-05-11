@@ -44,6 +44,7 @@ namespace Viconomy
         private IServerNetworkChannel _serverChannel;
         public ViconDatabase DB;
         private GuiDialogGeneric ShopCatalogGui;
+        public static bool ShouldForceCustomerScreen;
 
         //Shared Variables
         public ViconConfig Config { get; internal set; }
@@ -62,7 +63,7 @@ namespace Viconomy
             //api.RegisterEntityClass("EntityVinconTrader", typeof(EntityVinconTrader));
 
             // 5.0 Block Mappings
-            api.RegisterBlockClass("VinconFoodContainer", typeof(BlockVFoodContainer));
+            //api.RegisterBlockClass("VinconFoodContainer", typeof(BlockVFoodContainer));
             // 5.0 Block Entity Mappings
             api.RegisterBlockEntityClass("BEVinconFoodContainer", typeof(BEVinconFoodContainer));
 
@@ -203,6 +204,16 @@ namespace Viconomy
                 renderers[i] = new List<IItemRenderer>();
             }
 
+            var parsers = api.ChatCommands.Parsers;
+            api.ChatCommands.GetOrCreate("vinconomy")
+               .WithAlias("vincon")
+               .RequiresPrivilege(Privilege.chat)
+               .BeginSubCommand("forcecustomer")
+                   .WithDescription("Forces display of Customer UIs even if they are the Owner")
+                   .WithArgs(parsers.Bool("Enabled"))
+                   .HandleWith(SetForcedCustomer)
+               .EndSubCommand();
+
             BeginRendererRegistration();
             RegisterRenderer(new BlockRenderer());
             RegisterRenderer(new ItemRenderer());
@@ -245,6 +256,12 @@ namespace Viconomy
 
             }
 
+        }
+
+        private TextCommandResult SetForcedCustomer(TextCommandCallingArgs args)
+        {
+            ShouldForceCustomerScreen = (bool)args[0];
+            return TextCommandResult.Success("Customer UI Forcing is now " + ShouldForceCustomerScreen);
         }
 
         #endregion ModSystem Stuff

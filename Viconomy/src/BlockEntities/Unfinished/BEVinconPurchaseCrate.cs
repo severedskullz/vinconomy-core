@@ -32,7 +32,7 @@ namespace Viconomy.BlockEntities.Unfinished
 
         public override int DisplayedItems => 0; // Dont display the 
         public override string InventoryClassName { get { return "VinconomyInventory"; } }
-        protected ViconomyItemInventory inventory;
+        protected ViconItemInventory inventory;
         public override InventoryBase Inventory => inventory;
 
 
@@ -41,7 +41,7 @@ namespace Viconomy.BlockEntities.Unfinished
             return true;
         }
 
-        protected override float[][] genTransformationMatrices()
+        protected override float[][] GenTransformationMatrices()
         {
             return null;
         }

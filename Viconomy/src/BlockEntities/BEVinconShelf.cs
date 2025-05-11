@@ -6,7 +6,7 @@ namespace Viconomy.BlockEntities
 {
     public class BEVinconShelf : BEVinconContainer
     {
-        protected override float[][] genTransformationMatrices()
+        protected override float[][] GenTransformationMatrices()
         {
 
             float[][] tfMatrices = new float[StallSlotCount][];

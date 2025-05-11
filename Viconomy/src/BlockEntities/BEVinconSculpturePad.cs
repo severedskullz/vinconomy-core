@@ -40,13 +40,13 @@ namespace Viconomy.BlockEntities
 
         protected void Inventory_SlotModified(int slot)
         {
-            updateMeshes();
+            UpdateMeshes();
             this.MarkDirty(true, null);
         }
 
         public virtual void ConfigureInventory()
         {
-            this.inventory = new ViconomySculptureInventory((maxSizeXZ * maxSizeXZ * maxSizeY) + 1, null, null);
+            this.inventory = new ViconSculptureInventory((maxSizeXZ * maxSizeXZ * maxSizeY) + 1, null, null);
         }
 
 
@@ -261,7 +261,7 @@ namespace Viconomy.BlockEntities
                 }
 
                 this.MarkDirty(true, null);
-                this.updateMeshes();
+                this.UpdateMeshes();
             }
         }
 
@@ -525,7 +525,7 @@ namespace Viconomy.BlockEntities
             ICoreClientAPI coreClientAPI = this.Api as ICoreClientAPI;
             if (coreClientAPI != null)
             {
-                updateMeshes();
+                UpdateMeshes();
             }
         }
 
@@ -586,7 +586,7 @@ namespace Viconomy.BlockEntities
         #endregion
 
         #region Model
-        protected override void updateMesh(int index)
+        protected override void UpdateMesh(int index)
         {
             ItemSlot slot = this.inventory[index];
             if (Api != null && Api.Side != EnumAppSide.Server && slot != null && !slot.Empty)
@@ -612,7 +612,7 @@ namespace Viconomy.BlockEntities
             }
         }
 
-        protected override float[][] genTransformationMatrices()
+        protected override float[][] GenTransformationMatrices()
         {
 
             float[][] tfMatrices = new float[DisplayedItems][];
@@ -665,7 +665,7 @@ namespace Viconomy.BlockEntities
 
         protected override MeshData getOrCreateMesh(ItemStack stack, int index)
         {
-            MeshData modeldata = getMesh(stack);
+            MeshData modeldata = GetMesh(stack);
             if (modeldata != null)
             {
                 return modeldata;
@@ -706,7 +706,7 @@ namespace Viconomy.BlockEntities
 
                 if (renderer.shouldCache(stack))
                 {
-                    string meshCacheKey = getMeshCacheKey(stack);
+                    string meshCacheKey = GetMeshCacheKey(stack);
                     MeshCache[meshCacheKey] = modeldata;
                 }
             }
@@ -726,7 +726,7 @@ namespace Viconomy.BlockEntities
             ICoreClientAPI coreClientAPI = this.Api as ICoreClientAPI;
             if (coreClientAPI != null)
             {
-                updateMeshes();
+                UpdateMeshes();
             }
 
         }
@@ -739,7 +739,7 @@ namespace Viconomy.BlockEntities
             ICoreClientAPI coreClientAPI = this.Api as ICoreClientAPI;
             if (coreClientAPI != null)
             {
-                updateMeshes();
+                UpdateMeshes();
             }
 
         }

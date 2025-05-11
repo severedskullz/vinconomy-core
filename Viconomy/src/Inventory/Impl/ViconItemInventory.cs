@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Viconomy.BlockEntities;
 using Viconomy.Config;
 using Viconomy.Inventory.StallSlots;
@@ -10,18 +9,12 @@ using Vintagestory.API.MathTools;
 
 namespace Viconomy.Inventory.Impl
 {
-    public class ViconomyItemInventory : ViconomyBaseInventory<ViconItemSlot>, IStallSlotUpdater
+    public class ViconItemInventory : ViconBaseInventory, IStallSlotUpdater
     {
 
-
-        public ViconomyItemInventory(BEVinconBase stall, string inventoryID, ICoreAPI api, int numStalls, int numStacksPerStall) : base(stall, inventoryID, api, numStalls, numStacksPerStall)
+        public ViconItemInventory(BEVinconBase stall, string inventoryID, ICoreAPI api, int numStalls, int numStacksPerStall) : base(stall, inventoryID, api, numStalls, numStacksPerStall)
         {
-            Stall = stall;
-            NumStalls = numStalls;
-            NumStacksPerStall = numStacksPerStall;
-
-
-            ChiselDecoSlot = new ViconDecoBlockSlot(this, 0);
+          
         }
 
         protected override void InitializeStalls()
@@ -42,14 +35,6 @@ namespace Viconomy.Inventory.Impl
             base.DidModifyItemSlot(slot, extractedStack);
         }
         */
-
-        public override void LateInitialize(string inventoryID, ICoreAPI api)
-        {
-            base.LateInitialize(inventoryID, api);
-            modSystem = Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
-
-        }
-
 
 
         protected override ItemSlot NewSlot(int slotId)
@@ -73,7 +58,7 @@ namespace Viconomy.Inventory.Impl
 
         public void SetSlotFilter(int slot, Vintagestory.API.Common.Func<ItemSlot, bool> filter)
         {
-            ViconItemSlot[] filteredSlots = StallSlots[slot].GetSlots();
+            ViconItemSlot[] filteredSlots = (ViconItemSlot[]) StallSlots[slot].GetSlots();
             foreach (var itemSlot in filteredSlots)
             {
                 itemSlot.setFilter(filter);
@@ -103,32 +88,10 @@ namespace Viconomy.Inventory.Impl
             }
             ChiselDecoSlot.Itemstack = tree.GetItemstack("decoBlock");
 
-            ResolveBlockItems();
+            ResolveBlocksOrItems();
         }
 
-        private void ResolveBlockItems()
-        {
-            // Because Tyron wants us to try to resolve block items both BEFORE and AFTER the Api has be passed off into the Inventory with LateInitialize,
-            // We need to make sure it actually is fucking SET before we try to resolve the blocks or items... See InventoryBase:SlotsFromTreeAtributes
-            // Thanks Tyron!
 
-            if (Api?.World == null)
-            {
-                return;
-            }
-
-            for (int i = 0; i < NumStalls; i++)
-            {
-                ItemStallSlot stall = (ItemStallSlot)StallSlots[i];
-                stall.currency.Itemstack?.ResolveBlockOrItem(Api.World);
-                for (int j = 0; j < NumStacksPerStall; j++)
-                {
-                    stall.slots[j].Itemstack?.ResolveBlockOrItem(Api.World);
-                }
-            }
-            ChiselDecoSlot.Itemstack?.ResolveBlockOrItem(Api.World);
-
-        }
 
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
@@ -156,19 +119,7 @@ namespace Viconomy.Inventory.Impl
             }
         }
 
-        public override float GetTransitionSpeedMul(EnumTransitionType transType, ItemStack stack)
-        {
-            ViconConfig config = modSystem.Config;
-            if (config != null && config.FoodDecaysInShops && Stall != null && !Stall.IsAdminShop)
-            {
-                return base.GetDefaultTransitionSpeedMul(transType) * modSystem.Config.StallPerishRate;
-            }
-            else
-            {
-                return 0;
-            }
 
-        }
 
         public override void DropAll(Vec3d pos, int maxStackSize = 0)
         {

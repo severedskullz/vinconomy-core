@@ -17,9 +17,7 @@ namespace Viconomy.BlockEntities
 {
     public class BEVinconGacha : BEVinconBase
     {
-        
-        protected GuiDialogBlockEntity invDialog;
-        protected ViconomyGachaInventory inventory;
+        protected ViconGachaInventory inventory;
         private MeshData[] meshes;
         public bool useTotalRandomizer { get; private set; }
 
@@ -29,7 +27,7 @@ namespace Viconomy.BlockEntities
 
         public BEVinconGacha()
         {
-            this.inventory = new ViconomyGachaInventory(10, null, Api);
+            this.inventory = new ViconGachaInventory(10, null, Api);
             this.inventory.SlotModified += Inventory_SlotModified;
         }
 
@@ -333,12 +331,12 @@ namespace Viconomy.BlockEntities
         }
 
         #endregion
-        protected override float[][] genTransformationMatrices()
+        protected override float[][] GenTransformationMatrices()
         {
             return new float[][] { };
         }
 
-        protected override void updateMesh(int index)
+        protected override void UpdateMesh(int index)
         {
             //Do nothing.
         }

@@ -188,9 +188,9 @@ namespace Viconomy.BlockEntities
 
             if (IsAdminShop)
             {
-                InventoryGeneric genInv = new InventoryGeneric(1, "purchase-inv" + Inventory.InventoryID, Api);
-                genInv[0].Itemstack = TradingUtil.GetItemStackClone(toCurrency);
-                productSlots.Add(genInv[0]);
+                DummySlot slot = new DummySlot();
+                slot.Itemstack = TradingUtil.GetItemStackClone(toCurrency);
+                productSlots.Add(slot);
             } else if (shopRegister != null)
             {
                 foreach (ItemSlot slot in shopRegister.Inventory)
@@ -321,7 +321,7 @@ namespace Viconomy.BlockEntities
             return inventory[stallSlot].StackSize;
         }
 
-        protected override float[][] genTransformationMatrices()
+        protected override float[][] GenTransformationMatrices()
         {
             return null;
         }

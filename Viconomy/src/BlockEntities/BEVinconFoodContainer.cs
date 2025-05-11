@@ -1,6 +1,13 @@
-﻿using Viconomy.Util;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using Viconomy.Inventory.Impl;
+using Viconomy.Inventory.StallSlots;
+using Viconomy.Trading;
+using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
@@ -9,163 +16,381 @@ namespace Viconomy.BlockEntities
 {
     public class BEVinconFoodContainer : BEVinconContainer
     {
-        public float QuantityServings { get; set; }
-        public string RecipeCode { get; set; }
 
-        internal BlockCookedContainer ownBlock;
+        public override int StacksPerSlot => 4;
+        public override int BulkPurchaseAmount => 6;
 
-        MeshData currentMesh;
-
-        public CookingRecipe FromRecipe
+        public override void ConfigureInventory()
         {
-            //get { return Api.GetCookingRecipe(RecipeCode); }
-            get { return Api.GetCookingRecipe("vegetablestew"); }
-        }
-        public string GetRecipeCode(IWorldAccessor world, ItemStack containerStack)
-        {
-            return containerStack.Attributes.GetString("recipeCode");
+            inventory = new ViconMealInventory(this, null, Api, StallSlotCount, StacksPerSlot);
         }
 
-        public MeshData GenMesh()
+        public MeshData GenMesh(int stallSlot)
         {
             if (Block == null) return null;
-            ItemStack[] stacks = GetFakeItemStack();
-            if (stacks == null || stacks.Length == 0) return null;
+            MealStallSlot stall = (MealStallSlot)inventory.StallSlots[stallSlot];
 
-            ICoreClientAPI capi = Api as ICoreClientAPI;
-            //TODO: Cache Mesh
-            return capi.ModLoader.GetModSystem<MealMeshCache>().GenMealMesh(FromRecipe, stacks, new Vec3f(0, 1 - (2.5f / 16f), 0));
+            ItemStack[] stacks = stall.GetMealStacks();
+            
+            CookingRecipe recipe = stall.GetMatchingCookingRecipe(Api);
+            Block potBlock = Api.World.GetBlock(new AssetLocation("game:claypot-cooked"));
+            if (inventory.ChiselDecoSlot.Itemstack != null)
+            {
+                return Api.ModLoader.GetModSystem<MealMeshCache>().GenMealInContainerMesh(potBlock, recipe, stacks, new Vec3f(0, 2.5f / 16f, 0));
+            } else
+            {
+                return Api.ModLoader.GetModSystem<MealMeshCache>().GenMealMesh(recipe, stacks, new Vec3f(0, 1 - (2.5f / 16f), 0));
+            }
         }
 
-        private ItemStack[] GetFakeItemStack()
-        {
-            ItemStack[] stacks = new ItemStack[4];
-            stacks[0] = VinUtils.ResolveBlockOrItem(Api, "game:vegetable-carrot", 1);
-            stacks[1] = VinUtils.ResolveBlockOrItem(Api, "game:vegetable-onion", 1);
-            stacks[2] = VinUtils.ResolveBlockOrItem(Api, "game:vegetable-turnip", 1);
-            stacks[3] = VinUtils.ResolveBlockOrItem(Api, "game:vegetable-parsnip", 1);
-            return stacks;
-        }
-
-        public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tesselator)
+        protected override void TesselateDisplayedItems(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
         {
             Vec3f origin = new Vec3f(0.5f, 0.5f, 0.5f);
+            float y = inventory.ChiselDecoSlot.Itemstack != null ? 1 - (4.79f / 16f) : 0;
             for (int i = 0; i < 4; i++)
             {
-                float left = -.25f;
-                float right = .25f;
-                float x = (i % 2 == 0) ? left : right;
-                float y = 0f;
-                float z = (i >= 2) ? left : right;
+                float x = (i % 2 == 0) ? -.25f : .25f;
+                float z = (i >= 2) ? .25f : -.25f;
                 Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(Block.Shape.rotateY).Translate(x, y, z).Translate(-0.5f, 0f, -0.5f);
 
-                MeshData data = GenMesh();
-                data.Rotate(origin, 0, GameMath.DEG2RAD * i * 90, 0);
-                mesher.AddMeshData(data, matrix.Values);
+                MeshData data = GenMesh(i);
+                if (data != null)
+                {
+                    data = data.Clone(); //TODO: Figure out why this affects pot meshes when I dont clone.
+                    data.Rotate(origin, 0, GameMath.DEG2RAD * i * 90, 0);
+                    mesher.AddMeshData(data, matrix.Values);
+                }
+
+            }
+        }
+
+        private bool CanMergeContents(ItemSlot handSlot, int stallSlot)
+        {
+            if (handSlot?.Itemstack == null) return false;
+
+            if (handSlot.Itemstack.Block is IBlockMealContainer meal)
+            {
+                return VinUtils.IsMergableContents(meal.GetNonEmptyContents(Api.World,handSlot.Itemstack), ((MealStallSlot)inventory.StallSlots[stallSlot]).GetMealStacks());
             }
 
             return false;
         }
 
-
-
-        /*
-        public void ServeIntoBowl(Block selectedBlock, BlockPos pos, ItemSlot potslot, IWorldAccessor world)
+        private int TransferContentsFromStall(ItemSlot source, int stallSlot, int amount)
         {
-            if (world.Side == EnumAppSide.Client) return;
-
-            string code = selectedBlock.Attributes["mealBlockCode"].AsString();
-            Block mealblock = Api.World.GetBlock(new AssetLocation(code));
-
-            world.BlockAccessor.SetBlock(mealblock.BlockId, pos);
-
-            IBlockEntityMealContainer bemeal = Api.World.BlockAccessor.GetBlockEntity(pos) as IBlockEntityMealContainer;
-            if (bemeal == null) return;
-
-            if (tryMergeServingsIntoBE(bemeal, potslot)) return;
-
-            bemeal.RecipeCode = GetRecipeCode(world, potslot.Itemstack);
-
-            ItemStack[] myStacks = GetNonEmptyContents(Api.World, potslot.Itemstack);
-            for (int i = 0; i < myStacks.Length; i++)
+            if (source?.Itemstack?.Block is IBlockMealContainer meal)
             {
-                bemeal.inventory[i].Itemstack = myStacks[i].Clone();
+                int curServings = (int)Math.Ceiling(meal.GetQuantityServings(Api.World,source.Itemstack)); // Only transfer whole servings, so count 1.3 servings as 2, for sake of math
+                int capacity = source.Itemstack.Block.Attributes["servingCapacity"].AsInt();
+
+                int toTransfer = Math.Min(amount, capacity - curServings);
+                ((MealStallSlot)inventory.StallSlots[stallSlot]).RemoveServings(toTransfer);
+
+                ItemStack item = source.Itemstack;
+
+                meal.SetContents(meal.GetRecipeCode(Api.World, item), item, meal.GetNonEmptyContents(Api.World, item), curServings + toTransfer);
+
+                return toTransfer;
             }
-
-            float quantityServings = GetServings(world, potslot.Itemstack);
-            float servingsToTransfer = Math.Min(quantityServings, selectedBlock.Attributes["servingCapacity"].AsFloat(1));
-
-            bemeal.QuantityServings = servingsToTransfer;
-
-            SetServingsMaybeEmpty(world, potslot, quantityServings - servingsToTransfer);
-
-            potslot.MarkDirty();
-            bemeal.MarkDirty(true);
+            return 0;
         }
-        
 
+        
         public override bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
         {
-            ItemSlot heldItem = byPlayer.InventoryManager.ActiveHotbarSlot;
-            if (heldItem?.Itemstack?.Collectible.Attributes?.IsTrue("mealContainer") == true)
+            int slotIndex = GetStallSlotForSelectionIndex(blockSel.SelectionBoxIndex);
+
+            bool shiftMod = byPlayer.Entity.Controls.Sneak;
+            bool ctrlMod = byPlayer.Entity.Controls.Sprint;
+
+
+            ItemSlot hotbarslot = byPlayer.InventoryManager.ActiveHotbarSlot;
+
+            if (byPlayer.PlayerUID == Owner && !VinconomyCoreSystem.ShouldForceCustomerScreen)
             {
-                if (heldItem.Itemstack.Block is BlockContainer)
+                // If we are holding an empty food container, and sneaking => take from stall
+                if (VinUtils.IsEmptyContainer(hotbarslot.Itemstack,Api) && shiftMod)
                 {
-                    doStuff(heldItem);
-                    //BlockContainer bc = heldItem.Itemstack.Block as BlockContainer;
-                    //bc.SetContents(heldItem.Itemstack, GetFakeItemStack());
-                    //heldItem.MarkDirty();
+                    TakeFromStallSlot(byPlayer, slotIndex, ctrlMod, hotbarslot);
+                }
+
+                // If we are holding a filled container, and it matches
+                else if (CanMergeContents(hotbarslot, slotIndex)) {
+                    // if we are holding Sneak, take from stall
+                    if (shiftMod)
+                    {
+                        TransferContentsFromStall(hotbarslot, slotIndex, ctrlMod ? BulkPurchaseAmount : 1);
+                    } else
+                    {
+                        TryPut(hotbarslot, slotIndex, ctrlMod);
+                    }
+                } else if (shiftMod && TradingUtil.isMatchingItem(inventory.GetCurrencyForStallSlot(slotIndex).Itemstack, hotbarslot.Itemstack, Api.World)) {
+                    RequestPurchaseItem(slotIndex, ctrlMod ? BulkPurchaseAmount : 1);
+                } else {
+                    OpenShopForPlayer(byPlayer, slotIndex);
+                }
+            }
+            else
+            {
+                if (shiftMod)
+                {
+                    //Purchase the items.
+                    RequestPurchaseItem(slotIndex, ctrlMod ? BulkPurchaseAmount : 1);
+                }
+                else
+                {
+                    // Open the shop inventory for that block selection
+                    OpenShopForPlayer(byPlayer, slotIndex);
                 }
             }
             return true;
         }
-        */
 
-        protected override int GetStallSlotForSelectionIndex(int index)
+        private void TakeFromStallSlot(IPlayer byPlayer, int slotIndex, bool ctrlMod, ItemSlot hotbarslot)
+        {
+            MealStallSlot stallSlot = ((MealStallSlot)inventory.StallSlots[slotIndex]);
+            ItemSlot firstStack = stallSlot.FindFirstNonEmptyStockSlot();
+            int capacity = hotbarslot.Itemstack.Block.Attributes["servingCapacity"].AsInt();
+            int toTake = Math.Min(firstStack.StackSize, ctrlMod ? BulkPurchaseAmount : 1);
+            toTake = Math.Min(capacity, toTake);
+
+            int transfered = TransferToMealBlock(byPlayer, hotbarslot, stallSlot.GetRecipeCode(Api), stallSlot.GetMealStacks(), toTake);
+            if (transfered != toTake)
+            {
+                modSystem.Mod.Logger.Error("Somehow generated differing quantity of food. Wanted " + toTake + " but took " + transfered);
+            }
+            foreach (ItemSlot foodSlot in inventory.StallSlots[slotIndex].GetSlots())
+            {
+                ItemStack stack = foodSlot.TakeOut(toTake);
+
+                if (stack.StackSize != toTake)
+                {
+                    modSystem.Mod.Logger.Error("Somehow generated differing quantity of food. Wanted " + toTake + " but took " + transfered);
+                }
+            }
+        }
+
+        protected override bool TryAddItemToStall(ItemSlot activeSlot, int stallSlot, bool bulk)
+        {
+
+            if (activeSlot.Itemstack?.Block is IBlockMealContainer)
+            {
+                return ((ViconMealInventory)inventory).AddMealToStall(stallSlot, activeSlot, bulk ? BulkPurchaseAmount : 1);
+            }
+            return false;
+        }
+
+        public override void PurchaseItem(IPlayer player, int stallSlot, int numPurchases, BEVinconRegister shopRegister)
+        {
+
+            MealStallSlot stall = (MealStallSlot)inventory.StallSlots[stallSlot];
+            if (stall.currency.Itemstack == null)
+            {
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRICE);
+                return;
+            }
+
+            int numActualTrades = Math.Min(numPurchases, stall.GetNumPurchasesRemaining());
+
+            // if NumPurchasesRemaining is < 1, return error
+            if (numActualTrades < 1)
+            {
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_ENOUGH_STOCK);
+                return;
+            }
+
+            // Get all empty bowls and cooking pots in inventory
+            ItemSlot[] containerSlots = GetContainerSlots(player);
+            int carryCapacity = 0;
+            foreach (ItemSlot containerSlot in containerSlots) {
+                // add up max servings
+                carryCapacity += containerSlot.StackSize * containerSlot.Itemstack.Block.Attributes["servingCapacity"].AsInt();
+            }
+            // if max servings is less than desired amount, reduce desired amount
+            numActualTrades = Math.Min(numActualTrades, carryCapacity / stall.itemsPerPurchase);
+
+            // if max servings is < 1, return error
+            if (numActualTrades < 1)
+            {
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_ENOUGH_CAPACITY);
+                return;
+            }
+
+            // Check if player has enough currency
+            AggregatedSlots currencySlots = TradingUtil.GetAllValidSlotsFor(player, stall.currency);
+            // if not enough, reduce desired amount to what they can afford
+            numActualTrades = Math.Min(numActualTrades, currencySlots.TotalCount / stall.itemsPerPurchase);
+
+            // If purchaseAmount > 0, continue
+            if (numActualTrades < 1) {
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_ENOUGH_MONEY);
+                return;
+            }
+
+            // At this point we know can "afford" something
+
+            // How many servings did we purchase from the stall
+            int totalServingsPurchased = numActualTrades * stall.itemsPerPurchase;
+            string recipeCode = stall.GetRecipeCode(Api);
+
+            int totalServingsLeftToTransfer = totalServingsPurchased;
+            // loop through player's containers and convert to meal blocks
+            foreach (ItemSlot containerSlot in containerSlots)
+            {
+                // Save stacksize as variable. We will be taking items OUT of this stack, so it would exit the loop early.
+                // Eg. Had 2 bowls, loop ran, took one out, 'i' is now 1, and stack size is 1, so loop terminates and doesnt run on second bowl.
+                int numAttempts = containerSlot.StackSize; 
+                for (int i = 0; i < numAttempts; i++)
+                {
+                    int capacity = containerSlot.Itemstack.Block.Attributes["servingCapacity"].AsInt();
+                    int servingsToTransfer = Math.Min(totalServingsLeftToTransfer, capacity);
+                    int left = TransferToMealBlock(player, containerSlot, recipeCode, stall.GetMealStacks(), totalServingsLeftToTransfer);
+                    totalServingsLeftToTransfer -= left;
+                    if (totalServingsLeftToTransfer <= 0)
+                        break;
+                }
+                if (totalServingsLeftToTransfer <= 0)
+                    break;
+
+            }
+
+            if (totalServingsLeftToTransfer > 0)
+            {
+                modSystem.Mod.Logger.Error("Somehow allowed purchase of " + totalServingsLeftToTransfer + " extra servings even though we didnt have enough containers");
+            }
+
+            //Take food out of the stall
+            stall.RemoveServings(totalServingsLeftToTransfer);
+
+
+            //Take the money from the player.
+            ItemStack paymentStack = null;
+            int currencyLeft = numActualTrades * stall.currency.StackSize;
+            foreach (ItemSlot itemSlot in currencySlots.Slots)
+            {
+                if (paymentStack == null)
+                {
+                    paymentStack = itemSlot.TakeOut(currencyLeft);
+                    currencyLeft -= paymentStack.StackSize;
+                }
+                else
+                {
+                    ItemStack takenStack = itemSlot.TakeOut(currencyLeft);
+                    currencyLeft -= takenStack.StackSize;
+                    paymentStack.StackSize += takenStack.StackSize;
+                }
+                itemSlot.MarkDirty();
+                if (currencyLeft <= 0) break;
+            }
+
+            ItemStack paymentStackClone = paymentStack.Clone();
+            // Add the payment to the register
+            if (shopRegister != null)
+            {
+                shopRegister.AddItem(paymentStack, paymentStack.StackSize);
+            }
+
+            //purchaseResult.purchasedItems = productStackClone;
+            //purchaseResult.purchasedCurrencyUsed = paymentStackClone;
+            TradeResult res = new TradeResult();
+            res.sellingEntity = this;
+            res.customer = player;
+            res.coreApi = Api;
+
+            ItemStack fakeStack = VinUtils.ResolveBlockOrItem(Api, "game:bowl-meal", numActualTrades);
+            (fakeStack.Block as BlockMeal).SetContents(recipeCode, fakeStack, stall.GetMealStacks(),1);
+
+            res.purchasedItems = fakeStack;
+            res.purchasedCurrencyUsed = paymentStackClone;
+
+            modSystem.PurchasedItem(res, fakeStack, paymentStackClone);
+
+            //Tell the player they purchased items
+            VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.PURCHASED_ITEMS, new object[] {
+                fakeStack.StackSize,
+                fakeStack.GetName(),
+                paymentStackClone.StackSize,
+                paymentStackClone.GetName()
+            });
+
+            this.MarkDirty(true, null);
+            this.UpdateMeshes();
+        }
+
+        private ItemSlot[] GetContainerSlots(IPlayer player)
+        {
+            List<ItemSlot> aggregatedSlots = new List<ItemSlot>();
+
+
+            ItemSlot handItem = player.InventoryManager.ActiveHotbarSlot;
+            if (VinUtils.IsEmptyContainer(handItem.Itemstack, Api))
+            {
+                aggregatedSlots.Add(handItem);
+            }
+
+            IInventory hotbarInv = player.InventoryManager.GetHotbarInventory();
+            foreach (ItemSlot itemSlot in hotbarInv)
+            {
+                if (handItem == itemSlot || itemSlot.Itemstack == null) { continue; }
+                if (VinUtils.IsEmptyContainer(itemSlot.Itemstack, Api))
+                {
+                    aggregatedSlots.Add(itemSlot);
+                }
+            }
+
+            IInventory characterInv = player.InventoryManager.GetOwnInventory(GlobalConstants.backpackInvClassName);
+            foreach (ItemSlot itemSlot in characterInv)
+            {
+                if (handItem == itemSlot) { continue; }
+                if (VinUtils.IsEmptyContainer(itemSlot.Itemstack, Api))
+                {
+                    aggregatedSlots.Add(itemSlot);
+                }
+            }
+            return aggregatedSlots.ToArray();
+        }
+
+        public override int GetStallSlotForSelectionIndex(int index)
         {
             if (index > 0 && index < 5) return index-1;
-            return -1;
+            return 0;
         }
 
-        private void doStuff(ItemSlot bowlSlot)
+        private int TransferToMealBlock(IPlayer player, ItemSlot containerSlot, string recipe, ItemStack[] mealStacks, int servings)
         {
-            ItemStack[] stacks = GetFakeItemStack();
-            string code = bowlSlot.Itemstack.Block.Attributes["mealBlockCode"].AsString();
-            if (code == null) return;
+
+            JsonObject attr = containerSlot.Itemstack.Block.Attributes;
+            string code = attr["mealBlockCode"]?.AsString();
+            if (code == null) return 0;
+
+            int capacity = 0;
+            if (attr.KeyExists("servingCapacity"))
+            {
+                capacity = attr["servingCapacity"].AsInt(); ;
+            }
+            if (capacity <= 0)
+            {
+                return 0;
+            }
+           
+
             Block mealblock = Api.World.GetBlock(new AssetLocation(code));
-
-            float servingsToTransfer = 1;//Math.Min(quantityServings, servingCapacity);
-
+            IBlockMealContainer meal = mealblock as IBlockMealContainer;
+            int servingsToTransfer = Math.Min(servings, capacity);
             ItemStack stack = new ItemStack(mealblock);
-            (mealblock as IBlockMealContainer).SetContents("vegetablestew", stack, stacks, servingsToTransfer);
+            meal.SetContents(recipe, stack, mealStacks, servingsToTransfer);
 
-            //SetServingsMaybeEmpty(Api.World, potslot, quantityServings - servingsToTransfer);
-            //potslot.Itemstack.Attributes.RemoveAttribute("sealed");
-            //potslot.MarkDirty();
+            containerSlot.TakeOut(1);
+            containerSlot.MarkDirty();
 
-            bowlSlot.Itemstack = stack;
-            bowlSlot.MarkDirty();
+            player.InventoryManager.TryGiveItemstack(stack, true);
+            if (!player.InventoryManager.TryGiveItemstack(stack, true))
+            {
+                Api.World.SpawnItemEntity(stack, player.Entity.ServerPos.XYZ.AddCopy(0.5, 0.5, 0.5), null);
+            }
+            return servingsToTransfer;
         }
 
-        public virtual ItemStack CreateItemStackFromJson(ITreeAttribute stackAttr, IWorldAccessor world, string defaultDomain)
-        {
-            CollectibleObject collObj;
-            var loc = AssetLocation.Create(stackAttr.GetString("code"), defaultDomain);
-            if (stackAttr.GetString("type") == "item")
-            {
-                collObj = world.GetItem(loc);
-            }
-            else
-            {
-                collObj = world.GetBlock(loc);
-            }
-
-            ItemStack stack = new ItemStack(collObj, (int)stackAttr.GetDecimal("quantity", 1));
-            var attr = (stackAttr["attributes"] as TreeAttribute)?.Clone();
-            if (attr != null) stack.Attributes = attr;
-
-            return stack;
-        }
 
 
     }

@@ -39,14 +39,14 @@ namespace Viconomy.BlockTypes
             List<WorldInteraction> interactions = new List<WorldInteraction>();
             if (be != null)
             {
-                StallSlotBase<ViconItemSlot>[] slots = ((ViconomyItemInventory)be.Inventory).StallSlots;
+                StallSlotBase[] slots = ((ViconItemInventory)be.Inventory).StallSlots;
                 //In case we have some oddity with selections, just exit gracefully.
                 if (selection.SelectionBoxIndex >= slots.Length)
                 {
                     return interactions.ToArray();
                 }
                 int selectionIndex = selection.SelectionBoxIndex + 3; // Add 3 for Boots, Legs, and Gloves
-                StallSlotBase<ViconItemSlot> slot = slots[selectionIndex];
+                StallSlotBase slot = slots[selectionIndex];
 
                 if (be.Owner != forPlayer.PlayerUID)
                 {

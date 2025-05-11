@@ -38,6 +38,7 @@ namespace Viconomy.Trading
                 }
             }
 
+            /*
             //Take the tool from the player, if needed
             if (purchaseResult.requiredToolType != ToolType.NONE)
             {
@@ -47,7 +48,7 @@ namespace Viconomy.Trading
                     purchaseResult.tool.MarkDirty();
                 }
             }
-           
+           */
 
             //Take the money from the player.
             ItemStack paymentStack = null;
@@ -146,11 +147,13 @@ namespace Viconomy.Trading
                 }
             }
 
+            /*
             if (request.requiredToolType != ToolType.NONE && request.tool != null)
             {
                 purchaseResult.error = TradingConstants.NO_TOOL;
                 return purchaseResult;
             }
+            */
 
             if (CanAfford(request, purchaseResult) && CanSell(request, purchaseResult))
             {
@@ -224,22 +227,32 @@ namespace Viconomy.Trading
 
         public static bool CanAfford(IPlayer player, ItemStack currencyNeeded)
         {
-            List<ItemSlot> validCurrency = GetAllValidCurrencyFor(player, currencyNeeded);
+            AggregatedSlots validCurrency = GetAllValidSlotsFor(player, currencyNeeded);
+            return validCurrency.TotalCount < currencyNeeded.StackSize; ;
+        }
 
-            // Count the amount of currency that the player has to see if it covers the cost
-            int totalCurrency = 0;
-            foreach (var currencySlot in validCurrency)
+        public static bool CanAfford(IPlayer player, ItemStack currencyNeeded, TradeResult purchaseResult = null)
+        {
+            AggregatedSlots validCurrency = GetAllValidSlotsFor(player, currencyNeeded);
+            if (purchaseResult != null)
             {
-                totalCurrency += currencySlot.Itemstack.StackSize;
+                purchaseResult.currencySourceSlots = validCurrency.Slots;
             }
 
             // If they havent covered the cost, tell them they dont have enough money
-            if (totalCurrency < currencyNeeded.StackSize)
+            if (validCurrency.TotalCount < currencyNeeded.StackSize)
             {
+                if (purchaseResult != null)
+                {
+                    purchaseResult.error = TradingConstants.NOT_ENOUGH_MONEY;
+                }
+
+                //TODO: Auto Currency Conversion!
                 return false;
             }
             return true;
         }
+
 
         public static bool CanAfford(TradeRequest request, TradeResult purchaseResult)
         {
@@ -253,22 +266,18 @@ namespace Viconomy.Trading
             }
             //int totalCurrencyRequired = request.numTryPurchase * currencyRequired;
 
-            List<ItemSlot> validCurrency = GetAllValidCurrencyFor(request.customer, request.currencyNeeded);
 
             // Count the amount of currency that the player has to see if it covers the cost
-            int totalCurrency = 0;
-            foreach (var currencySlot in validCurrency)
+            AggregatedSlots validCurrency = GetAllValidSlotsFor(request.customer, request.currencyNeeded);
+            if (populatePurchaseResult)
             {
-                int currAmount = currencySlot.Itemstack.StackSize;
-                if (populatePurchaseResult)
-                {
-                    purchaseResult.currencySourceSlots.Add(currencySlot);
-                }
-                totalCurrency += currAmount;
+                purchaseResult.currencySourceSlots = validCurrency.Slots;
             }
 
+            
+
             // If they havent covered the cost, tell them they dont have enough money
-            if (totalCurrency < currencyRequired)
+            if (validCurrency.TotalCount < currencyRequired)
             {
                 if (populatePurchaseResult)
                 {
@@ -279,7 +288,7 @@ namespace Viconomy.Trading
                 return false;
             }
             // Set the slots applicable for payment, override the amount we are trying to purchase, and set it on the result too
-            request.numPurchases = Math.Min(request.numPurchases, totalCurrency / currencyRequired);
+            request.numPurchases = Math.Min(request.numPurchases, validCurrency.TotalCount / currencyRequired);
             int totalStock = 0;
             foreach (ItemSlot slot in request.productSourceSlots)
             {
@@ -291,34 +300,38 @@ namespace Viconomy.Trading
             request.numPurchases = Math.Min(request.numPurchases, totalStock / request.productNeeded.StackSize);
             if (populatePurchaseResult)
             {
-                purchaseResult.currencySourceSlots = validCurrency;
+                purchaseResult.currencySourceSlots = validCurrency.Slots;
                 purchaseResult.numPurchases = request.numPurchases;
             }
             return true;
         }
 
-        public static List<ItemSlot> GetAllValidCurrencyFor(IPlayer customer, ItemSlot currency)
+        public static AggregatedSlots GetAllValidSlotsFor(IPlayer customer, ItemSlot desiredItem)
         {
-            return GetAllValidCurrencyFor(customer, currency.Itemstack);
+            return GetAllValidSlotsFor(customer, desiredItem.Itemstack);
         }
 
-        public static List<ItemSlot> GetAllValidCurrencyFor(IPlayer customer, ItemStack currency)
+        public static AggregatedSlots GetAllValidSlotsFor(IPlayer customer, ItemStack desiredItem)
         {
-            List<ItemSlot> validSlots = new List<ItemSlot>();
+            AggregatedSlots aggregatedSlots = new AggregatedSlots();
+            if (desiredItem == null)
+            {
+                return aggregatedSlots;
+            }
 
             ItemSlot handItem = customer.InventoryManager.ActiveHotbarSlot;
-            if (isMatchingItem(currency, handItem.Itemstack, customer.Entity.World))
+            if (isMatchingItem(desiredItem, handItem.Itemstack, customer.Entity.World))
             {
-                validSlots.Add(handItem);
+                aggregatedSlots.Add(handItem);
             }
 
             IInventory hotbarInv = customer.InventoryManager.GetHotbarInventory();
             foreach (ItemSlot itemSlot in hotbarInv)
             {
                 if (handItem == itemSlot || itemSlot.Itemstack == null) { continue; }
-                if (isMatchingItem(currency, itemSlot.Itemstack, customer.Entity.World))
+                if (isMatchingItem(desiredItem, itemSlot.Itemstack, customer.Entity.World))
                 {
-                    validSlots.Add(itemSlot);
+                    aggregatedSlots.Add(itemSlot);
                 }
             }
 
@@ -326,12 +339,12 @@ namespace Viconomy.Trading
             foreach (ItemSlot itemSlot in characterInv)
             {
                 if (handItem == itemSlot) { continue; }
-                if (isMatchingItem(currency, itemSlot.Itemstack, customer.Entity.World))
+                if (isMatchingItem(desiredItem, itemSlot.Itemstack, customer.Entity.World))
                 {
-                    validSlots.Add(itemSlot);
+                    aggregatedSlots.Add(itemSlot);
                 }
             }
-            return validSlots;
+            return aggregatedSlots;
         }
 
         public static bool isMatchingItem(ItemStack source, ItemStack payment, IWorldAccessor world)
@@ -349,15 +362,26 @@ namespace Viconomy.Trading
 
         public static ItemStack GetItemStackClone(ItemSlot slot, int stackSize = 0)
         {
-            ItemStack stack = null;
             if (slot == null) return null;
 
-            stack = slot.Itemstack.Clone();
+            ItemStack stack = slot.Itemstack.Clone();
             if (stackSize > 0)
             {
                 stack.StackSize = stackSize;
             }
             return stack;
+        }
+    }
+
+    public class AggregatedSlots
+    {
+        public List<ItemSlot> Slots { get; set; } = new List<ItemSlot>();
+        public int TotalCount { get; set; }
+
+        public void Add(ItemSlot item)
+        {
+            Slots.Add(item);
+            TotalCount += item.StackSize;
         }
     }
 }

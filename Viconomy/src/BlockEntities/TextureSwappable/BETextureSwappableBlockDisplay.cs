@@ -88,7 +88,7 @@ namespace Viconomy.BlockEntities.TextureSwappable
             capi = api as ICoreClientAPI;
             if (capi != null)
             {
-                updateMeshes();
+                UpdateMeshes();
                 api.Event.RegisterEventBusListener(OnEventBusEvent);
             }
         }
@@ -104,12 +104,12 @@ namespace Viconomy.BlockEntities.TextureSwappable
             {
                 if (!Inventory[i].Empty)
                 {
-                    string meshCacheKey = getMeshCacheKey(Inventory[i].Itemstack);
+                    string meshCacheKey = GetMeshCacheKey(Inventory[i].Itemstack);
                     MeshCache.Remove(meshCacheKey);
                 }
             }
 
-            updateMeshes();
+            UpdateMeshes();
             MarkDirty(redrawOnClient: true);
         }
 
@@ -117,25 +117,25 @@ namespace Viconomy.BlockEntities.TextureSwappable
         {
             if (worldForResolving.Side == EnumAppSide.Client && Api != null)
             {
-                updateMeshes();
+                UpdateMeshes();
                 MarkDirty(redrawOnClient: true);
             }
         }
 
-        public virtual void updateMeshes()
+        public virtual void UpdateMeshes()
         {
             if (Api != null && Api.Side != EnumAppSide.Server && DisplayedItems != 0)
             {
                 for (int i = 0; i < DisplayedItems; i++)
                 {
-                    updateMesh(i);
+                    UpdateMesh(i);
                 }
 
-                tfMatrices = genTransformationMatrices();
+                tfMatrices = GenTransformationMatrices();
             }
         }
 
-        protected virtual void updateMesh(int index)
+        protected virtual void UpdateMesh(int index)
         {
             if (Api != null && Api.Side != EnumAppSide.Server && !Inventory[index].Empty)
             {
@@ -143,7 +143,7 @@ namespace Viconomy.BlockEntities.TextureSwappable
             }
         }
 
-        protected virtual string getMeshCacheKey(ItemStack stack)
+        protected virtual string GetMeshCacheKey(ItemStack stack)
         {
             if (stack.Collectible is IContainedMeshSource containedMeshSource)
             {
@@ -153,16 +153,16 @@ namespace Viconomy.BlockEntities.TextureSwappable
             return stack.Collectible.Code.ToString();
         }
 
-        protected MeshData getMesh(ItemStack stack)
+        protected MeshData GetMesh(ItemStack stack)
         {
-            string meshCacheKey = getMeshCacheKey(stack);
+            string meshCacheKey = GetMeshCacheKey(stack);
             MeshCache.TryGetValue(meshCacheKey, out var value);
             return value;
         }
 
         protected virtual MeshData getOrCreateMesh(ItemStack stack, int index)
         {
-            MeshData modeldata = getMesh(stack);
+            MeshData modeldata = GetMesh(stack);
             if (modeldata != null)
             {
                 return modeldata;
@@ -219,12 +219,12 @@ namespace Viconomy.BlockEntities.TextureSwappable
                 modeldata.Translate(0f, -15f / 32f, 0f);
             }
 
-            string meshCacheKey = getMeshCacheKey(stack);
+            string meshCacheKey = GetMeshCacheKey(stack);
             MeshCache[meshCacheKey] = modeldata;
             return modeldata;
         }
 
-        protected abstract float[][] genTransformationMatrices();
+        protected abstract float[][] GenTransformationMatrices();
 
         /**
          * Draws any items specific for the display of this block. If the method returns false, then the base OnTesslation will
@@ -237,7 +237,7 @@ namespace Viconomy.BlockEntities.TextureSwappable
                 ItemSlot itemSlot = Inventory[i];
                 if (!itemSlot.Empty && tfMatrices != null)
                 {
-                    mesher.AddMeshData(getMesh(itemSlot.Itemstack), tfMatrices[i]);
+                    mesher.AddMeshData(GetMesh(itemSlot.Itemstack), tfMatrices[i]);
                 }
             }
         }

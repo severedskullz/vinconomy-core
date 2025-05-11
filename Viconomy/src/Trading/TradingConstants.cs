@@ -8,6 +8,7 @@
         public static readonly string NOT_ENOUGH_MONEY = "vinconomy:not-enough-money";
         public static readonly string NO_PRICE = "vinconomy:no-price";
         public static readonly string NOT_ENOUGH_STOCK = "vinconomy:not-enough-stock";
+        public static readonly string NOT_ENOUGH_CAPACITY = "vinconomy:not-enough-capacity";
         public static readonly string PURCHASED_ZERO = "vinconomy:purchased-zero-quantity";
         public static readonly string NO_PRODUCT = "vinconomy:no-product";
         public static readonly string NOT_REGISTERED = "vinconomy:not-registered-with-shop";

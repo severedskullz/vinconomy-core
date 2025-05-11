@@ -16,13 +16,13 @@ namespace Viconomy.GUI
     public class GuiViconGachaOwner : GuiDialogBlockEntity
     {
         BEVinconGacha stall;
-        ViconomyGachaInventory vinInv;
+        ViconGachaInventory vinInv;
         ShopRegistration[] registers;
         ICoreClientAPI api;
 
         bool useTotalRandomizer;
 
-        public GuiViconGachaOwner(string DialogTitle, ViconomyGachaInventory Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi)
+        public GuiViconGachaOwner(string DialogTitle, ViconGachaInventory Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
             api = capi;

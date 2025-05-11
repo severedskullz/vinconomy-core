@@ -3,7 +3,7 @@ using Vintagestory.API.Common;
 
 namespace Viconomy.Inventory.StallSlots
 {
-    public class ItemStallSlot : StallSlotBase<ViconItemSlot>
+    public class ItemStallSlot : StallSlotBase
     {
         public ViconItemSlot[] slots;
 
@@ -27,9 +27,9 @@ namespace Viconomy.Inventory.StallSlots
             return slots;
         }
 
-        public override void SetSlot(int itemSlot, ViconItemSlot value)
+        public override void SetSlot(int itemSlot, ItemSlot value)
         {
-            slots[itemSlot] = value;
+            slots[itemSlot] = (ViconItemSlot) value;
         }
 
         public override ViconItemSlot FindFirstNonEmptyStockSlot()

@@ -16,25 +16,26 @@ namespace Viconomy.BlockEntities
 
         public override void ConfigureInventory()
         {
-            inventory = new ViconomyItemInventory(this, null, null, StallSlotCount, StacksPerSlot);
-            inventory.SetSlotFilter(0, ViconomyFilters.IsBootsSlot);
-            inventory.SetSlotBackground(0, "vicon-boots");
-            inventory.SetSlotFilter(1, ViconomyFilters.IsPantsSlot);
-            inventory.SetSlotBackground(1, "vicon-legs");
-            inventory.SetSlotFilter(2, ViconomyFilters.IsHandSlot);
-            inventory.SetSlotBackground(2, "vicon-hands");
-            inventory.SetSlotFilter(3, ViconomyFilters.IsWaistSlot);
-            inventory.SetSlotBackground(3, "vicon-belt");
-            inventory.SetSlotFilter(4, ViconomyFilters.IsBodySlot);
-            inventory.SetSlotBackground(4, "vicon-body");
-            inventory.SetSlotFilter(5, ViconomyFilters.IsArmSlot);
-            inventory.SetSlotBackground(5, "vicon-arms");
-            inventory.SetSlotFilter(6, ViconomyFilters.IsNeckSlot);
-            inventory.SetSlotBackground(6, "vicon-neck");
-            inventory.SetSlotFilter(7, ViconomyFilters.IsFaceSlot);
-            inventory.SetSlotBackground(7, "vicon-face");
-            inventory.SetSlotFilter(8, ViconomyFilters.IsHelmetSlot);
-            inventory.SetSlotBackground(8, "vicon-helmet");
+            ViconItemInventory inv = new ViconItemInventory(this, null, null, StallSlotCount, StacksPerSlot);
+            inv.SetSlotFilter(0, ViconomyFilters.IsBootsSlot);
+            inv.SetSlotBackground(0, "vicon-boots");
+            inv.SetSlotFilter(1, ViconomyFilters.IsPantsSlot);
+            inv.SetSlotBackground(1, "vicon-legs");
+            inv.SetSlotFilter(2, ViconomyFilters.IsHandSlot);
+            inv.SetSlotBackground(2, "vicon-hands");
+            inv.SetSlotFilter(3, ViconomyFilters.IsWaistSlot);
+            inv.SetSlotBackground(3, "vicon-belt");
+            inv.SetSlotFilter(4, ViconomyFilters.IsBodySlot);
+            inv.SetSlotBackground(4, "vicon-body");
+            inv.SetSlotFilter(5, ViconomyFilters.IsArmSlot);
+            inv.SetSlotBackground(5, "vicon-arms");
+            inv.SetSlotFilter(6, ViconomyFilters.IsNeckSlot);
+            inv.SetSlotBackground(6, "vicon-neck");
+            inv.SetSlotFilter(7, ViconomyFilters.IsFaceSlot);
+            inv.SetSlotBackground(7, "vicon-face");
+            inv.SetSlotFilter(8, ViconomyFilters.IsHelmetSlot);
+            inv.SetSlotBackground(8, "vicon-helmet");
+            inventory = inv;
         }
 
 
@@ -77,7 +78,7 @@ namespace Viconomy.BlockEntities
 
 
 
-        protected override float[][] genTransformationMatrices()
+        protected override float[][] GenTransformationMatrices()
         {
             float[][] tfMatrices = new float[StallSlotCount][];
             for (int i = 0; i < StallSlotCount; i++)

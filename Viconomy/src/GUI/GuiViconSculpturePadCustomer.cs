@@ -52,7 +52,7 @@ namespace Viconomy.GUI
             ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.DialogToScreenPadding);
             bgBounds.BothSizing = ElementSizing.FitToChildren;
 
-            ViconomySculptureInventory vinInv = Inventory as ViconomySculptureInventory;
+            ViconSculptureInventory vinInv = Inventory as ViconSculptureInventory;
             ItemStack purchaseItem = stall.GenNewSculptureBundle();
             
             if (purchaseItem != null)

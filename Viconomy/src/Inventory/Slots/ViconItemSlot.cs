@@ -23,9 +23,9 @@ namespace Viconomy.Inventory.Slots
                 return false;
             }
 
-            if (inventory is ViconomyItemInventory)
+            if (inventory is ViconItemInventory)
             {
-                ItemSlot slot = ((ViconomyItemInventory)inventory).FindFirstNonEmptyStockSlot(stallSlot);
+                ItemSlot slot = ((ViconItemInventory)inventory).FindFirstNonEmptyStockSlot(stallSlot);
                 if (slot == null)
                 {
                     //Console.WriteLine("Stall Slot " +stallSlot +":First Non-Empty Slot was null, so we called Base");

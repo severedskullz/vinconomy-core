@@ -56,14 +56,14 @@ namespace Viconomy.BlockTypes
             if (be != null)
             {
                 int selectionIndex = selection.SelectionBoxIndex;
-                StallSlotBase<ViconItemSlot>[] slots = ((ViconomyItemInventory)be.Inventory).StallSlots;
+                StallSlotBase[] slots = ((ViconItemInventory)be.Inventory).StallSlots;
                 //In case we have some oddity with selections, just exit gracefully.
                 if (selection.SelectionBoxIndex >= slots.Length)
                 {
                     return interactions.ToArray();
                 }
 
-                StallSlotBase<ViconItemSlot> slot = slots[selectionIndex];
+                StallSlotBase slot = slots[selectionIndex];
 
                 if (be.Owner != forPlayer.PlayerUID)
                 {

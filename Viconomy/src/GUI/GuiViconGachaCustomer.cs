@@ -14,10 +14,10 @@ namespace Viconomy.GUI
     public class GuiDialogViconGachaCustomer : GuiDialogBlockEntity
     {
         BEVinconGacha stall;
-        ViconomyGachaInventory vinInv;
+        ViconGachaInventory vinInv;
         DummyInventory inv;
 
-        public GuiDialogViconGachaCustomer(string DialogTitle, ViconomyGachaInventory Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi)
+        public GuiDialogViconGachaCustomer(string DialogTitle, ViconGachaInventory Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
 

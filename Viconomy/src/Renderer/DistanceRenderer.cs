@@ -32,7 +32,7 @@ namespace Viconomy.Renderer
             {
                 viconBase.shouldRenderInventory = shouldRender;
                 this.viconBase.MarkDirty(true, null);
-                viconBase.updateMeshes();
+                viconBase.UpdateMeshes();
             }
         }
     }

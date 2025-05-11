@@ -1,6 +1,6 @@
 {
     "code": "mealtable",
-    "class": "VinconFoodContainer",
+    "class": "VinconContainer",
     "entityClass": "BEVinconFoodContainer",
     "priorityInteract": true,
     "creativeinventory": {},
@@ -110,7 +110,7 @@
         "redwood": { "base": "game:block/wood/planks/redwood1" },
         "walnut": { "base": "game:block/wood/planks/walnut1" }
     },
-    "shapebytype": {
+    "shapeByType": {
         "*-north": {
             "base": "block/mealtable",
             "rotateY": 0

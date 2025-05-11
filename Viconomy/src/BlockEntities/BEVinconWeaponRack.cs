@@ -11,17 +11,17 @@ namespace Viconomy.BlockEntities
 
         public override void ConfigureInventory()
         {
-            this.inventory = new ViconomyItemInventory(this, null, null, StallSlotCount, StacksPerSlot);
-            this.inventory.SetSlotFilter(0, ViconomyFilters.IsToolOrWeapon);
-            this.inventory.SetSlotBackground(0, "vicon-toolrack");
-            this.inventory.SetSlotFilter(1, ViconomyFilters.IsShield);
-            this.inventory.SetSlotBackground(1, "vicon-shield");
-            this.inventory.SetSlotFilter(2, ViconomyFilters.IsToolOrWeapon);
-            this.inventory.SetSlotBackground(2, "vicon-toolrack");
-
+            ViconItemInventory inv = new ViconItemInventory(this, null, null, StallSlotCount, StacksPerSlot);
+            inv.SetSlotFilter(0, ViconomyFilters.IsToolOrWeapon);
+            inv.SetSlotBackground(0, "vicon-toolrack");
+            inv.SetSlotFilter(1, ViconomyFilters.IsShield);
+            inv.SetSlotBackground(1, "vicon-shield");
+            inv.SetSlotFilter(2, ViconomyFilters.IsToolOrWeapon);
+            inv.SetSlotBackground(2, "vicon-toolrack");
+            inventory = inv;
         }
 
-        protected override float[][] genTransformationMatrices()
+        protected override float[][] GenTransformationMatrices()
         {
             float[][] tfMatrices = new float[3][];
             ItemSlot wepLeftItem = inventory.FindFirstNonEmptyStockSlot(0);

@@ -8,7 +8,7 @@ using Vintagestory.API.MathTools;
 
 namespace Viconomy.Inventory.Impl
 {
-    public class ViconomySculptureInventory : InventoryBase, ISlotProvider
+    public class ViconSculptureInventory : InventoryBase, ISlotProvider
     {
         BEVinconBase stall;
 
@@ -22,7 +22,7 @@ namespace Viconomy.Inventory.Impl
 
         VinconomyCoreSystem modSystem;
 
-        public ViconomySculptureInventory(int numSlots, string inventoryID, ICoreAPI api) : base(inventoryID, api)
+        public ViconSculptureInventory(int numSlots, string inventoryID, ICoreAPI api) : base(inventoryID, api)
         {
 
             slots = new ItemSlot[numSlots];

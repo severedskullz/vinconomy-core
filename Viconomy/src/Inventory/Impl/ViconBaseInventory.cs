@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using Viconomy.BlockEntities;
 using Viconomy.Inventory.StallSlots;
 using Viconomy.Inventory.Slots;
 using Vintagestory.API.Common;
+using Viconomy.Config;
 
 namespace Viconomy.Inventory.Impl
 {
-    public abstract class ViconomyBaseInventory<E> : InventoryBase where E : ItemSlot
+    public abstract class ViconBaseInventory : InventoryBase
     {
         protected VinconomyCoreSystem modSystem;
         protected BEVinconBase Stall;
@@ -19,9 +19,9 @@ namespace Viconomy.Inventory.Impl
         public int StallSlotSize = 10;
         public ViconDecoBlockSlot ChiselDecoSlot;
 
-        public StallSlotBase<E>[] StallSlots;
+        public StallSlotBase[] StallSlots;
 
-        protected ViconomyBaseInventory(BEVinconBase stall, string inventoryID, ICoreAPI api, int numStalls, int numStacksPerStall) : base(inventoryID, api)
+        protected ViconBaseInventory(BEVinconBase stall, string inventoryID, ICoreAPI api, int numStalls, int numStacksPerStall) : base(inventoryID, api)
         {
             Stall = stall;
             NumStalls = numStalls;
@@ -30,13 +30,19 @@ namespace Viconomy.Inventory.Impl
 
             InitializeStalls();
             ChiselDecoSlot = new ViconDecoBlockSlot(this, 0);
+        }
 
+        public override void LateInitialize(string inventoryID, ICoreAPI api)
+        {
+            base.LateInitialize(inventoryID, api);
+            modSystem = api.ModLoader.GetModSystem<VinconomyCoreSystem>();
         }
 
         protected abstract void InitializeStalls();
 
         public override int Count { get { return StallSlotSize * NumStalls + 1; } }
 
+        /*
         public override void ResolveBlocksOrItems()
         {
             using IEnumerator<ItemSlot> enumerator = GetEnumerator();
@@ -48,6 +54,29 @@ namespace Viconomy.Inventory.Impl
                     current.Itemstack = null;
                 }
             }
+        }*/
+
+        public override void ResolveBlocksOrItems()
+        {
+            // Because Tyron wants us to try to resolve block items both BEFORE and AFTER the Api has be passed off into the Inventory with LateInitialize,
+            // We need to make sure it actually is fucking SET before we try to resolve the blocks or items... See InventoryBase:SlotsFromTreeAtributes
+            // Thanks Tyron!
+
+            if (Api?.World == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < NumStalls; i++)
+            {
+                StallSlotBase stall = StallSlots[i];
+                stall.currency.Itemstack?.ResolveBlockOrItem(Api.World);
+                for (int j = 0; j < NumStacksPerStall; j++)
+                {
+                    stall.GetSlot(j).Itemstack?.ResolveBlockOrItem(Api.World);
+                }
+            }
+            ChiselDecoSlot.Itemstack?.ResolveBlockOrItem(Api.World);
         }
 
         public int GetStallForSlot(int slotId)
@@ -72,9 +101,23 @@ namespace Viconomy.Inventory.Impl
             return StallSlots[stallSlot].GetSlots();
         }
 
-        public E FindFirstNonEmptyStockSlot(int stallSlot)
+        public ItemSlot FindFirstNonEmptyStockSlot(int stallSlot)
         {
             return StallSlots[stallSlot].FindFirstNonEmptyStockSlot();
+        }
+
+        public override float GetTransitionSpeedMul(EnumTransitionType transType, ItemStack stack)
+        {
+            ViconConfig config = modSystem.Config;
+            if (config != null && config.FoodDecaysInShops && Stall != null && !Stall.IsAdminShop)
+            {
+                return base.GetDefaultTransitionSpeedMul(transType) * modSystem.Config.StallPerishRate;
+            }
+            else
+            {
+                return 0;
+            }
+
         }
 
         public int GetStallSlotCount() => NumStalls;
@@ -105,7 +148,7 @@ namespace Viconomy.Inventory.Impl
             {
                 if (inventorySlotId == 0)
                 {
-                    ChiselDecoSlot = (ViconDecoBlockSlot)value;
+                    ChiselDecoSlot = (ViconDecoBlockSlot) value;
                 }
                 else
                 {
@@ -122,11 +165,11 @@ namespace Viconomy.Inventory.Impl
                     }
                     if (itemSlot == NumStacksPerStall)
                     {
-                        StallSlots[stallSlot].currency = (ViconCurrencySlot)value;
+                        StallSlots[stallSlot].currency = (ViconCurrencySlot) value;
                     }
                     else
                     {
-                        StallSlots[stallSlot].SetSlot(itemSlot, (E)value);
+                        StallSlots[stallSlot].SetSlot(itemSlot, value);
                     }
 
                 }

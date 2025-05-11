@@ -17,7 +17,7 @@ namespace Viconomy.GUI
     public class GuiViconSculpturePadOwner : GuiDialogBlockEntity
     {
         BEVinconSculpturePad stall;
-        ViconomySculptureInventory vinInv;
+        ViconSculptureInventory vinInv;
         ShopRegistration[] registers;
         ICoreClientAPI api;
 
@@ -42,7 +42,7 @@ namespace Viconomy.GUI
             }
 
             registers = filteredRegisters.ToArray();
-            vinInv = Inventory as ViconomySculptureInventory;
+            vinInv = Inventory as ViconSculptureInventory;
 
             if (base.IsDuplicate)
             {

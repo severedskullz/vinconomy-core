@@ -15,9 +15,9 @@ using Viconomy.Inventory.Slots;
 
 namespace Viconomy.GUI
 {
-    public class GuiViconStallOwner<E> : GuiDialogBlockEntity where E:ItemSlot
+    public class GuiViconStallOwner : GuiDialogBlockEntity
     {
-        BEVinconContainer stall;
+        BEVinconBase stall;
         ShopRegistration[] registers;
         ICoreClientAPI api;
         int stallSlotCount;
@@ -25,13 +25,13 @@ namespace Viconomy.GUI
         int curTab;
         DummyInventory inv;
         ViconPurchaseSlot purchaseSlot;
-        StallSlotBase<E> stallSlot;
+        StallSlotBase stallSlot;
 
         public GuiViconStallOwner(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
             api = capi;
-            stall = capi.World.BlockAccessor.GetBlockEntity<BEVinconContainer>(BlockEntityPosition);
+            stall = capi.World.BlockAccessor.GetBlockEntity<BEVinconBase>(BlockEntityPosition);
             curTab = stallSelection;
             VinconomyCoreSystem modSystem = capi.ModLoader.GetModSystem<VinconomyCoreSystem>();
             ShopRegistration[] allRegisters = modSystem.GetRegistry().GetShopsForOwner(stall.Owner);
@@ -73,7 +73,7 @@ namespace Viconomy.GUI
                 ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.DialogToScreenPadding);
                 bgBounds.BothSizing = ElementSizing.FitToChildren;
 
-                ViconomyBaseInventory<E> vinInv = Inventory as ViconomyBaseInventory<E>;
+                ViconBaseInventory vinInv = Inventory as ViconBaseInventory;
                 int[] uiSlots = new int[stacksPerSlot];
                 int offset = curTab * (stacksPerSlot + 1) + 1;
                 if (vinInv != null)

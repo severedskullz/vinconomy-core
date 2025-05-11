@@ -3,6 +3,7 @@ using Viconomy.BlockEntities.TextureSwappable;
 using Viconomy.Inventory;
 using Viconomy.Renderer;
 using Viconomy.Trading;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
@@ -11,7 +12,8 @@ namespace Viconomy.BlockEntities
     public abstract class BEVinconBase : BETextureSwappableBlockDisplay, IOwnableStall
     {
         protected VinconomyCoreSystem modSystem;
-        
+        protected GuiDialogBlockEntity invDialog;
+
         public string Owner { get; protected set; }
         public string OwnerName { get; protected set; }
         public int RegisterID { get; protected set; } = -1;
@@ -19,9 +21,9 @@ namespace Viconomy.BlockEntities
 
         public override string InventoryClassName { get { return "VinconomyInventory"; } }
 
-        public virtual int StallSlotCount { get; protected set; } = 4;
-        public virtual int StacksPerSlot { get; protected set; } = 9;
-        public virtual int BulkPurchaseAmount { get; protected set; } = 5;
+        public virtual int StallSlotCount => 4;
+        public virtual int StacksPerSlot => 9;
+        public virtual int BulkPurchaseAmount => 5;
 
         public bool shouldRenderInventory;
         protected DistanceRenderer distanceRenderer;
@@ -130,7 +132,7 @@ namespace Viconomy.BlockEntities
 
         public abstract bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel);
 
-        public virtual void PurchaseItem(IPlayer player, int stallSlot, int desiredAmount, BEVinconRegister shopRegister)
+        public virtual void PurchaseItem(IPlayer player, int stallSlot, int numPurchases, BEVinconRegister shopRegister)
         {
             ItemSlot[] slots = GetSlotsForStall(stallSlot);
 
@@ -140,13 +142,13 @@ namespace Viconomy.BlockEntities
             request.sellingEntity = this;
             request.productNeeded = TradingUtil.GetItemStackClone(FindFirstNonEmptyStockSlotForStall(stallSlot), GetNumItemsPerPurchaseForStall(stallSlot)); ;
             request.productSourceSlots = slots;
-            request.numPurchases = desiredAmount;
+            request.numPurchases = numPurchases;
             request.coreApi = this.Api;
             request.currencyNeeded = TradingUtil.GetItemStackClone(GetCurrencyForStall(stallSlot));
             request.isAdminShop = this.IsAdminShop;
-            request.shouldConsumeTool = ShouldConsumeTool(stallSlot);
-            request.requiredToolType = GetRequiredToolType(stallSlot);
-            request.tool = GetRequiredTool(player, stallSlot);
+            //request.shouldConsumeTool = ShouldConsumeTool(stallSlot);
+            //request.requiredToolType = GetRequiredToolType(stallSlot);
+            //request.tool = GetRequiredTool(player, stallSlot, desiredAmount);
 
             TradeResult result = TradingUtil.TryPurchaseItem(request);
             if (result.error != null)
@@ -156,10 +158,16 @@ namespace Viconomy.BlockEntities
             else
             {
                 this.MarkDirty(true, null);
-                this.updateMeshes();
+                this.UpdateMeshes();
             }
         }
 
+        public virtual ItemStack GetProductForStall(int stallSlot)
+        {
+            return TradingUtil.GetItemStackClone(FindFirstNonEmptyStockSlotForStall(stallSlot), GetNumItemsPerPurchaseForStall(stallSlot)); ;
+        }
+
+        /*
         protected virtual bool ShouldConsumeTool(int stallSlot)
         {
             return false;
@@ -170,12 +178,32 @@ namespace Viconomy.BlockEntities
             return ToolType.NONE;
         }
 
-        protected virtual ItemSlot GetRequiredTool(IPlayer player, int stallSlot)
+        protected virtual ItemSlot GetRequiredTool(IPlayer player, int stallSlot, int numPurchases)
         {
+            ToolType type = GetRequiredToolType(stallSlot);
+            switch(type)
+            {
+                case ToolType.NONE:
+                    return null;
+
+                case ToolType.FOOD_CONTAINER:
+                    break;
+
+                case ToolType.DRINK_CONTAINER:
+                case ToolType.LIQUID_COINTAINER:
+                    break;
+
+                case ToolType.CHOPPING:
+                case ToolType.CUTTING:
+                    // I'll implement these later. As of right now, I have no ideas as to what would even require these.
+                    break;
+            }
+
             return null;
         }
+        */
 
-        protected virtual int GetStallSlotForSelectionIndex(int index)
+        public virtual int GetStallSlotForSelectionIndex(int index)
         {
             return index;
         }
@@ -184,7 +212,7 @@ namespace Viconomy.BlockEntities
         public abstract ItemSlot GetCurrencyForStall(int stallSlot);
         public abstract int GetNumItemsPerPurchaseForStall(int stallSlot);
 
-        public ItemSlot FindFirstNonEmptyStockSlotForStall(int stallSlot)
+        public virtual ItemSlot FindFirstNonEmptyStockSlotForStall(int stallSlot)
         {
             ItemSlot[] slots = GetSlotsForStall(stallSlot);
             foreach (ItemSlot slot in slots)
@@ -261,6 +289,39 @@ namespace Viconomy.BlockEntities
         public void SetNowTesselatingShape(Shape shape)
         {
             this.nowTesselatingShape = shape;
+        }
+
+        public override void OnBlockUnloaded()
+        {
+            base.OnBlockUnloaded();
+            if (this.invDialog != null)
+            {
+                if (invDialog.IsOpened())
+                {
+                    this.invDialog.TryClose();
+                }
+
+                this.invDialog?.Dispose();
+                this.invDialog = null;
+            }
+
+        }
+
+        public override void OnBlockRemoved()
+        {
+            base.OnBlockRemoved();
+
+            if (this.invDialog != null)
+            {
+                if (this.invDialog.IsOpened())
+                {
+                    this.invDialog.TryClose();
+                }
+
+            }
+
+            this.invDialog?.Dispose();
+            this.invDialog = null;
         }
 
     }

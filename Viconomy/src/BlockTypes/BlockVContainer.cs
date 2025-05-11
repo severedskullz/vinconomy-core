@@ -10,7 +10,6 @@ namespace Viconomy.BlockTypes
 {
     public class BlockVContainer : TextureSwappableBlock
     {
-        
 
         public BlockVContainer()
         {
@@ -34,17 +33,18 @@ namespace Viconomy.BlockTypes
 
         public override WorldInteraction[] GetPlacedBlockInteractionHelp(IWorldAccessor world, BlockSelection selection, IPlayer forPlayer)
         {
+
             BEVinconBase be = world.BlockAccessor.GetBlockEntity(selection.Position) as BEVinconBase;
             List<WorldInteraction> interactions = new List<WorldInteraction>();
             if (be != null)
             {
-                int index = selection.SelectionBoxIndex;
+                int index = be.GetStallSlotForSelectionIndex(selection.SelectionBoxIndex);
                 ItemSlot product = be.FindFirstNonEmptyStockSlotForStall(index);
                 ItemSlot currency = be.GetCurrencyForStall(index);
 
                 //StallSlot slot = slots[selection.SelectionBoxIndex];
 
-                if (be.Owner != forPlayer.PlayerUID)
+                if (be.Owner != forPlayer.PlayerUID || VinconomyCoreSystem.ShouldForceCustomerScreen)
                 {
                     if (currency.Itemstack != null && product != null)
                     {

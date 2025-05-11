@@ -9,7 +9,7 @@ using Vintagestory.API.Util;
 
 namespace Viconomy.Inventory.Impl
 {
-    public class ViconomyGachaInventory : InventoryBase, ISlotProvider, IStallSlotUpdater
+    public class ViconGachaInventory : InventoryBase, ISlotProvider, IStallSlotUpdater
     {
         private ItemSlot[] slots;
 
@@ -21,7 +21,7 @@ namespace Viconomy.Inventory.Impl
 
         //ViconomyCoreSystem modSystem;
 
-        public ViconomyGachaInventory(int numSlots, string inventoryID, ICoreAPI api) : base(inventoryID, api)
+        public ViconGachaInventory(int numSlots, string inventoryID, ICoreAPI api) : base(inventoryID, api)
         {
 
             slots = new ItemSlot[numSlots];

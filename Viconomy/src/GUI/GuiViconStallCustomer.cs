@@ -2,13 +2,13 @@
 using System.IO;
 using Viconomy.BlockEntities;
 using Viconomy.Inventory.StallSlots;
-using Viconomy.Inventory.Impl;
 using Viconomy.Inventory.Slots;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
+using Viconomy.Inventory.Impl;
 
 namespace Viconomy.GUI
 {
@@ -21,7 +21,7 @@ namespace Viconomy.GUI
         DummyInventory inv;
         ViconPurchaseSlot purchaseSlot;
         ViconCurrencySlot currancySlot;
-        StallSlotBase<E> stallSlot;
+        StallSlotBase stallSlot;
 
         public GuiDialogViconStallCustomer(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
@@ -56,7 +56,7 @@ namespace Viconomy.GUI
             ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.DialogToScreenPadding);
             bgBounds.BothSizing = ElementSizing.FitToChildren;
 
-            ViconomyBaseInventory<E> vinInv = Inventory as ViconomyBaseInventory<E>;
+            ViconBaseInventory vinInv = Inventory as ViconBaseInventory;
             stallSlot = vinInv.StallSlots[curTab];
             ItemSlot purchaseItem = stallSlot.FindFirstNonEmptyStockSlot();
             
