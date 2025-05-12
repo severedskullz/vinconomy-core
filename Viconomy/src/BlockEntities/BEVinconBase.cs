@@ -3,6 +3,7 @@ using Viconomy.BlockEntities.TextureSwappable;
 using Viconomy.Inventory;
 using Viconomy.Renderer;
 using Viconomy.Trading;
+using Viconomy.Trading.TradeHandlers;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -255,10 +256,48 @@ namespace Viconomy.BlockEntities
             this.invDialog = null;
         }
 
+        protected virtual AggregatedSlots GetAggregateProductSlots(int stallSlot)
+        {
+            AggregatedSlots slots = new AggregatedSlots();
+            foreach (ItemSlot slot in GetSlotsForStall(stallSlot))
+            {
+                slots.Add(slot);
+            }
+            return slots;
+        }
+
         public virtual void PurchaseItem(IPlayer player, int stallSlot, int numPurchases, BEVinconRegister shopRegister)
         {
-            ItemSlot[] slots = GetSlotsForStall(stallSlot);
+            GenericTradeRequest request = new GenericTradeRequest(Api, player);
 
+            ItemStack currencyStack = GetCurrencyForStall(stallSlot).Itemstack;
+            request.WithShop(shopRegister, this, stallSlot, IsAdminShop);
+            request.WithPurchases(numPurchases);
+            request.WithCurrency(currencyStack, TradingUtil.GetAllValidSlotsFor(player, currencyStack), currencyStack.StackSize);
+            request.WithProduct(TradingUtil.GetItemStackClone(FindFirstNonEmptyStockSlotForStall(stallSlot), 1), GetAggregateProductSlots(stallSlot), GetNumItemsPerPurchaseForStall(stallSlot));
+            
+            //request.WithCoupons(null, null, false, false, 0,0);
+            //request.WithTools(null, 1);
+            //request.WithTradePass(null, null);
+            request.Build();
+
+            GenericTradeResult result = GenericTradeHandler.TryPurchaseItem(request);
+            if (result.Error != null)
+            {
+                VinconomyCoreSystem.PrintClientMessage(player, result.Error);
+            } else
+            {
+                MarkDirty(true, null);
+                UpdateMeshes();
+            }
+
+
+
+
+
+
+            /*
+            ItemSlot[] slots = GetSlotsForStall(stallSlot);
             TradeRequest request = new TradeRequest();
             request.customer = player;
             request.shopRegister = shopRegister;
@@ -283,6 +322,8 @@ namespace Viconomy.BlockEntities
                 this.MarkDirty(true, null);
                 this.UpdateMeshes();
             }
+            */
+
         }
         public virtual ItemStack GetProductForStall(int stallSlot)
         {

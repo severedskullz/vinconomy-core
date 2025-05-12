@@ -665,12 +665,18 @@ namespace Viconomy.BlockEntities
                         modelTransform.EnsureDefaultValues();
                         modeldata.ModelTransform(modelTransform);
                     }
-                    else if (AttributeTransformCode == "onshelfTransform" && (stack.Collectible.Attributes?["onDisplayTransform"].Exists ?? false))
+                    else if (AttributeTransformCode == "onShelfTransform" && (stack.Collectible.Attributes?["onDisplayTransform"].Exists ?? false))
                     {
                         ModelTransform modelTransform2 = stack.Collectible.Attributes?["onDisplayTransform"].AsObject<ModelTransform>();
                         modelTransform2.EnsureDefaultValues();
                         modeldata.ModelTransform(modelTransform2);
+                    } else if (stack.Collectible.Attributes?["groundStorageTransform"].Exists ?? false)
+                    {
+                        ModelTransform modelTransform = stack.Collectible.Attributes?["groundStorageTransform"].AsObject<ModelTransform>();
+                        modelTransform.EnsureDefaultValues();
+                        modeldata.ModelTransform(modelTransform);
                     }
+
                 }
 
                 if (stack.Class == EnumItemClass.Item && (stack.Item.Shape == null || stack.Item.Shape.VoxelizeTexture))

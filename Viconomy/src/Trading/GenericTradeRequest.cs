@@ -11,6 +11,7 @@ namespace Viconomy.Trading
         public IPlayer Customer;
 
         public BEVinconRegister ShopRegister;
+        public int StallSlot;
         public BEVinconBase SellingEntity;
         public bool IsAdminShop;
 
@@ -44,11 +45,12 @@ namespace Viconomy.Trading
             Customer = player;
         }
 
-        public GenericTradeRequest WithShop(BEVinconRegister register, BEVinconBase shop, bool adminShop)
+        public GenericTradeRequest WithShop(BEVinconRegister register, BEVinconBase shop, int stallSlot, bool adminShop)
         {
             ShopRegister = register;
             SellingEntity = shop;
-            IsAdminShop = adminShop;  
+            IsAdminShop = adminShop;
+            StallSlot = stallSlot;
             return this;
         }
 
@@ -60,11 +62,11 @@ namespace Viconomy.Trading
             return this;
         }
 
-        public GenericTradeRequest WithCurrency(ItemStack currencyNeeded, AggregatedSlots slots, int productPerPurchase)
+        public GenericTradeRequest WithCurrency(ItemStack currencyNeeded, AggregatedSlots slots, int currencyPerPurchase)
         {
             CurrencyStackNeeded = currencyNeeded;
             CurrencySourceSlots = slots;
-            CurrencyNeededPerPurchase = productPerPurchase;
+            CurrencyNeededPerPurchase = currencyPerPurchase;
             
             return this;
         }

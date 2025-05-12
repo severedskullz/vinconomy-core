@@ -7,8 +7,12 @@ namespace Viconomy.Trading.TradeHandlers
     {
         public static bool HasRequiredTools(GenericTradeRequest req)
         {
+            if (req.ToolSourceSlots == null)
+            {
+                return true;
+            }
             //TODO: Possibly switch this from specific "total" variables to just use TotalCount instead?
-            if (req.ToolSourceSlots is ServingCapacityAggregatedSlots servings) {
+            else if (req.ToolSourceSlots is ServingCapacityAggregatedSlots servings) {
                 return servings.TotalCapacity / (req.ProductNeededPerPurchase + req.ProductBonusPerPurchase) > 0;
             } else if (req.ToolSourceSlots is DurabilityAggregatedSlots durability)
             {
@@ -84,10 +88,11 @@ namespace Viconomy.Trading.TradeHandlers
             
 
             VinconomyCoreSystem.PrintClientMessage(res.Request.Customer, TradingConstants.PURCHASED_ITEMS, new object[] {
-                res.TransferedCurrencyTotal,
-                res.Request.CurrencyStackNeeded.GetName(),
+
                 res.TransferedProductTotal,
-                res.Request.ProductStackNeeded.GetName()
+                res.Request.ProductStackNeeded.GetName(),
+                res.TransferedCurrencyTotal,
+                res.Request.CurrencyStackNeeded.GetName()
             });
 
             return res;
@@ -158,7 +163,7 @@ namespace Viconomy.Trading.TradeHandlers
                 ItemStack takenStack = itemSlot.TakeOut(currencyLeft);
                 currencyLeft -= takenStack.StackSize;
                 res.TransferedCurrency.Add(takenStack);
-                res.TransferedCurrencyTotal -= takenStack.StackSize;
+                res.TransferedCurrencyTotal += takenStack.StackSize;
                 itemSlot.MarkDirty();
 
                 if (currencyLeft <= 0) break;
@@ -202,7 +207,7 @@ namespace Viconomy.Trading.TradeHandlers
                     ItemStack takenStack = itemSlot.TakeOut(productLeft);
                     productLeft -= takenStack.StackSize;
                     res.TransferedProduct.Add(takenStack);
-                    res.TransferedProductTotal -= takenStack.StackSize;
+                    res.TransferedProductTotal += takenStack.StackSize;
                     itemSlot.MarkDirty();
 
                     if (productLeft <= 0) break;
@@ -243,11 +248,11 @@ namespace Viconomy.Trading.TradeHandlers
 
                 if (qntyLeft <= 0)
                 {
-                    break;
+                    return true;
                 }
             }
 
-            return qntyLeft > 0;
+            return qntyLeft <= 0;
         }
 
         public static GenericTradeResult SetErrorAndReturn(GenericTradeResult result, string error)

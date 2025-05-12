@@ -150,7 +150,7 @@ namespace Viconomy
                     bool hasMultipleCustomers = purchaseList.purchases.Count > 1;
                     if (hasMultipleCustomers)
                     {
-                        sb.AppendLine($"- {purchaseList.customerName} purchased:");
+                        sb.AppendLine($"{purchaseList.customerName} purchased:");
                         foreach (Purchase purchase in purchaseList.purchases.Values)
                         {
                             sb.AppendLine($" - {purchase.amountSold}x {purchase.productName} for {purchase.paymentCollected}x {purchase.paymentName}");
