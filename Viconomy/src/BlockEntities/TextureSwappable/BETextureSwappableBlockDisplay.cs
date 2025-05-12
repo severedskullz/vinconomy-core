@@ -194,26 +194,12 @@ namespace Viconomy.BlockEntities.TextureSwappable
                 }
             }
 
-            JsonObject attributes = stack.Collectible.Attributes;
-            if (attributes != null && attributes[AttributeTransformCode].Exists)
-            {
-                ModelTransform modelTransform = stack.Collectible.Attributes?[AttributeTransformCode].AsObject<ModelTransform>();
-                modelTransform.EnsureDefaultValues();
-                modeldata.ModelTransform(modelTransform);
-            }
-            else if (AttributeTransformCode == "onshelfTransform")
-            {
-                JsonObject attributes2 = stack.Collectible.Attributes;
-                if (attributes2 != null && attributes2["onDisplayTransform"].Exists)
-                {
-                    ModelTransform modelTransform2 = stack.Collectible.Attributes?["onDisplayTransform"].AsObject<ModelTransform>();
-                    modelTransform2.EnsureDefaultValues();
-                    modeldata.ModelTransform(modelTransform2);
-                }
-            }
+            TransformModel(modeldata, stack);
+           
 
             if (stack.Class == EnumItemClass.Item && (stack.Item.Shape == null || stack.Item.Shape.VoxelizeTexture))
             {
+                
                 modeldata.Rotate(new Vec3f(0.5f, 0.5f, 0.5f), MathF.PI / 2f, 0f, 0f);
                 modeldata.Scale(new Vec3f(0.5f, 0.5f, 0.5f), 0.33f, 0.33f, 0.33f);
                 modeldata.Translate(0f, -15f / 32f, 0f);
@@ -223,6 +209,29 @@ namespace Viconomy.BlockEntities.TextureSwappable
             MeshCache[meshCacheKey] = modeldata;
             return modeldata;
         }
+
+        protected virtual void TransformModel(MeshData modeldata, ItemStack stack)
+        {
+            if (stack.Collectible.Attributes?[AttributeTransformCode].Exists ?? false)
+            {
+                ModelTransform modelTransform = stack.Collectible.Attributes?[AttributeTransformCode].AsObject<ModelTransform>();
+                modelTransform.EnsureDefaultValues();
+                modeldata.ModelTransform(modelTransform);
+            }
+            else if (AttributeTransformCode == "onShelfTransform" && (stack.Collectible.Attributes?["onDisplayTransform"].Exists ?? false))
+            {
+                ModelTransform modelTransform2 = stack.Collectible.Attributes?["onDisplayTransform"].AsObject<ModelTransform>();
+                modelTransform2.EnsureDefaultValues();
+                modeldata.ModelTransform(modelTransform2);
+            }
+            else if (stack.Collectible.Attributes?["groundStorageTransform"].Exists ?? false)
+            {
+                ModelTransform modelTransform = stack.Collectible.Attributes?["groundStorageTransform"].AsObject<ModelTransform>();
+                modelTransform.EnsureDefaultValues();
+                modeldata.ModelTransform(modelTransform);
+            }
+        }
+
 
         protected abstract float[][] GenTransformationMatrices();
 

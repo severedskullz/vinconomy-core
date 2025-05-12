@@ -2,11 +2,17 @@
 using Viconomy.Filters;
 using Vintagestory.API.Common;
 using Viconomy.Inventory.Impl;
+using System;
+using Vintagestory.API.MathTools;
+using Vintagestory.API.Util;
+using Vintagestory.GameContent;
 
 namespace Viconomy.BlockEntities
 {
     public class BEVinconWeaponRack : BEVinconContainer
     {
+        public override string AttributeTransformCode => "toolrackTransform";
+
         public override int StallSlotCount => 3;
 
         public override void ConfigureInventory()
@@ -21,28 +27,94 @@ namespace Viconomy.BlockEntities
             inventory = inv;
         }
 
+        protected override MeshData getOrCreateMesh(ItemStack stack, int index)
+        {
+
+            //TODO: Im sick of fighting with matricies. If it works, it works... Dont cache because then everything breaks again
+
+
+            //MeshData modeldata = GetMesh(stack);
+            //if (modeldata != null)
+            //{
+            //    return modeldata;
+            //}
+
+            MeshData modeldata = null;
+
+            if (stack.Collectible is IContainedMeshSource containedMeshSource)
+            {
+                modeldata = containedMeshSource.GenMesh(stack, capi.BlockTextureAtlas, Pos);
+            }
+
+            if (modeldata == null)
+            {
+                ICoreClientAPI coreClientAPI = Api as ICoreClientAPI;
+                if (stack.Class == EnumItemClass.Block)
+                {
+                    modeldata = coreClientAPI.TesselatorManager.GetDefaultBlockMesh(stack.Block).Clone();
+                }
+                else
+                {
+                    nowTesselatingObj = stack.Collectible;
+                    nowTesselatingShape = null;
+                    if (stack.Item.Shape?.Base != null)
+                    {
+                        nowTesselatingShape = coreClientAPI.TesselatorManager.GetCachedShape(stack.Item.Shape.Base);
+                    }
+
+                    coreClientAPI.Tesselator.TesselateItem(stack.Item, out modeldata, this);
+                    modeldata.RenderPassesAndExtraBits.Fill((short)2);
+                }
+            }
+
+            TransformModel(modeldata, stack);
+            Vec3f origin = new Vec3f(0.5f,0.5f,0.5f);
+            float degree2Rad = (MathF.PI / 180f);
+            modeldata.Rotate(origin, 0, 90 * degree2Rad, 0);
+            if (index == 0) // Left Side
+            {
+                modeldata.Rotate(origin, 0, 90 * degree2Rad, 0);
+                modeldata.Rotate(origin, 90 * degree2Rad,0,0);
+                modeldata.Rotate(origin, 0, 0, 45 * degree2Rad);
+            } else if (index == 1) // Shield
+            {
+                modeldata.Rotate(origin, 95*degree2Rad, 0, 0);
+                modeldata.Translate(0, 1.15f, -.35f);
+            } else if (index == 2) // Right Side
+            {
+                modeldata.Rotate(origin, 0, 270 * degree2Rad, 0);
+                modeldata.Rotate(origin, -90 * degree2Rad, 0, 0);
+                modeldata.Rotate(origin, 0, 0, - 45 * degree2Rad);
+            }
+
+            //string meshCacheKey = GetMeshCacheKey(stack) + index;
+            //MeshCache[meshCacheKey] = modeldata;
+            return modeldata;
+        }
+
+        protected override void TransformModel(MeshData modeldata, ItemStack stack)
+        {
+            if (stack.Collectible.Attributes?[AttributeTransformCode].Exists ?? false)
+            {
+                ModelTransform modelTransform = stack.Collectible.Attributes?[AttributeTransformCode].AsObject<ModelTransform>();
+                modelTransform.EnsureDefaultValues();
+                modeldata.ModelTransform(modelTransform);
+            }
+        }
+
         protected override float[][] GenTransformationMatrices()
         {
             float[][] tfMatrices = new float[3][];
             ItemSlot wepLeftItem = inventory.FindFirstNonEmptyStockSlot(0);
-            if (wepLeftItem != null )
+            if (wepLeftItem != null)
             {
-
-                bool isStupidlyOffset = wepLeftItem.Itemstack.Item != null && (wepLeftItem.Itemstack.Item.Code.Path.StartsWith("saw") ||
-                      wepLeftItem.Itemstack.Item.Code.Path.StartsWith("hammer") ||
-                      wepLeftItem.Itemstack.Item.Code.Path.StartsWith("cleaver") ||
-                      wepLeftItem.Itemstack.Item.Code.Path.StartsWith("tong"));
-
-                float stupidOffset = isStupidlyOffset ? 0.35f : 0;
 
                 Matrixf wepLeft = new Matrixf()
                     .Translate(0.5f, 0.5f, 0.5f)
                     .RotateYDeg(Block.Shape.rotateY)
-                    .RotateXDeg(270)
-                    .RotateYDeg(-45)
-                    .Translate(0,0.35f-stupidOffset,0)
-                    .Scale(0.8f, 0.8f, 0.8f)
-                    .Translate(-0.5f, 0, -0.5f);
+                    .Translate(0, 0, -0.40f)
+                    .Scale(0.6f, 0.6f, 0.6f)
+                    .Translate(-0.5f, -0.5f, -0.5f);
                 tfMatrices[0] = wepLeft.Values;
             }
 
@@ -50,38 +122,29 @@ namespace Viconomy.BlockEntities
             ItemSlot shieldItem = inventory.FindFirstNonEmptyStockSlot(1);
             if (shieldItem != null && shieldItem.Itemstack.ItemAttributes.KeyExists("toolrackTransform") || true)
             {
-                Matrixf shield = new Matrixf().Translate(0.5f, 0f, 0.5f)
+                Matrixf shield = new Matrixf()
+                    .Translate(0.5f, 0f, 0.5f)
                     .RotateYDeg(Block.Shape.rotateY)
-                    .Translate(0.325f, 0.45f,-0.10)
-                    .Scale(0.8f, 0.8f, 0.8f)
-                    .Translate(-0.5f, 0, -0.5f);
-                    
+                    .Scale(0.6f, 0.6f, 0.6f)
+                    .Translate(-0.5f, -0.5f, -0.5f);
+
                 tfMatrices[1] = shield.Values;
             }
 
             ItemSlot wepRightItem = inventory.FindFirstNonEmptyStockSlot(2);
             if (wepRightItem != null)
             {
-                bool isStupidlyOffset = wepRightItem.Itemstack.Item != null && (wepRightItem.Itemstack.Item.Code.Path.StartsWith("saw") ||
-                     wepRightItem.Itemstack.Item.Code.Path.StartsWith("hammer") ||
-                     wepRightItem.Itemstack.Item.Code.Path.StartsWith("cleaver") ||
-                     wepRightItem.Itemstack.Item.Code.Path.StartsWith("tong"));
-
-                float stupidOffset = isStupidlyOffset ? 0.30f : 0;
-
                 Matrixf wepRight = new Matrixf()
                     .Translate(0.5f, 0.5f, 0.5f)
                     .RotateYDeg(Block.Shape.rotateY)
-                    .RotateXDeg(-270)
-                    .RotateYDeg(135)
-                    .Translate(0, -0.425f- stupidOffset, 0)
-                    .Scale(0.8f, 0.8f, 0.8f)
-                    .Translate(-0.5f, 0, -0.5f);
+                    .Translate(0,0,-0.35f)
+                    .Scale(0.6f, 0.6f, 0.6f)
+                    .Translate(-0.5f, -0.5f, -0.5f);
 
                 tfMatrices[2] = wepRight.Values;
             }
-
             return tfMatrices;
         }
     }
+
 }

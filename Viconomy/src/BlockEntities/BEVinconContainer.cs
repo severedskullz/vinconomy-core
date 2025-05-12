@@ -659,6 +659,7 @@ namespace Viconomy.BlockEntities
                 //Bypass the Display and Shelvable transforms for Armor Stands, where we want the model coordinates to match the character, not the zero'd positions.
                 if (!bypassShelvableAttributes)
                 {
+                    // pick our preselected Attribute Transform Code
                     if (stack.Collectible.Attributes?[AttributeTransformCode].Exists ?? false)
                     {
                         ModelTransform modelTransform = stack.Collectible.Attributes?[AttributeTransformCode].AsObject<ModelTransform>();
