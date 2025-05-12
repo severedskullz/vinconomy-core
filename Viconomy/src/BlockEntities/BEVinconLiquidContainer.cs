@@ -13,7 +13,7 @@ using Vintagestory.GameContent;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEVinconFoodContainer : BEVinconContainer
+    public class BEVinconLiquidContainer : BEVinconContainer
     {
 
         public override int StacksPerSlot => 4;
@@ -391,6 +391,8 @@ namespace Viconomy.BlockEntities
             }
             return servingsToTransfer;
         }
+
+
 
 
 

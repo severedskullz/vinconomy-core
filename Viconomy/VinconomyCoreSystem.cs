@@ -57,8 +57,6 @@ namespace Viconomy
 
         public override void Start(ICoreAPI api)
         {
-
-
             api.RegisterEntity("EntityVinconTrader", typeof(EntityVinconTrader));
             //api.RegisterEntityClass("EntityVinconTrader", typeof(EntityVinconTrader));
 
@@ -898,6 +896,11 @@ namespace Viconomy
                 _coreServerAPI.StoreModConfig(Config, CONFIG_NAME);
             }
            
+        }
+
+        internal void PurchasedItem(GenericTradeResult res)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion Callbacks

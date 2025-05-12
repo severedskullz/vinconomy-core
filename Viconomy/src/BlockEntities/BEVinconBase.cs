@@ -132,84 +132,15 @@ namespace Viconomy.BlockEntities
 
         public abstract bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel);
 
-        public virtual void PurchaseItem(IPlayer player, int stallSlot, int numPurchases, BEVinconRegister shopRegister)
-        {
-            ItemSlot[] slots = GetSlotsForStall(stallSlot);
-
-            TradeRequest request = new TradeRequest();
-            request.customer = player;
-            request.shopRegister = shopRegister;
-            request.sellingEntity = this;
-            request.productNeeded = TradingUtil.GetItemStackClone(FindFirstNonEmptyStockSlotForStall(stallSlot), GetNumItemsPerPurchaseForStall(stallSlot)); ;
-            request.productSourceSlots = slots;
-            request.numPurchases = numPurchases;
-            request.coreApi = this.Api;
-            request.currencyNeeded = TradingUtil.GetItemStackClone(GetCurrencyForStall(stallSlot));
-            request.isAdminShop = this.IsAdminShop;
-            //request.shouldConsumeTool = ShouldConsumeTool(stallSlot);
-            //request.requiredToolType = GetRequiredToolType(stallSlot);
-            //request.tool = GetRequiredTool(player, stallSlot, desiredAmount);
-
-            TradeResult result = TradingUtil.TryPurchaseItem(request);
-            if (result.error != null)
-            {
-                VinconomyCoreSystem.PrintClientMessage(player, result.error);
-            }
-            else
-            {
-                this.MarkDirty(true, null);
-                this.UpdateMeshes();
-            }
-        }
-
-        public virtual ItemStack GetProductForStall(int stallSlot)
-        {
-            return TradingUtil.GetItemStackClone(FindFirstNonEmptyStockSlotForStall(stallSlot), GetNumItemsPerPurchaseForStall(stallSlot)); ;
-        }
-
-        /*
-        protected virtual bool ShouldConsumeTool(int stallSlot)
-        {
-            return false;
-        }
-
-        protected virtual ToolType GetRequiredToolType( int stallSlot)
-        {
-            return ToolType.NONE;
-        }
-
-        protected virtual ItemSlot GetRequiredTool(IPlayer player, int stallSlot, int numPurchases)
-        {
-            ToolType type = GetRequiredToolType(stallSlot);
-            switch(type)
-            {
-                case ToolType.NONE:
-                    return null;
-
-                case ToolType.FOOD_CONTAINER:
-                    break;
-
-                case ToolType.DRINK_CONTAINER:
-                case ToolType.LIQUID_COINTAINER:
-                    break;
-
-                case ToolType.CHOPPING:
-                case ToolType.CUTTING:
-                    // I'll implement these later. As of right now, I have no ideas as to what would even require these.
-                    break;
-            }
-
-            return null;
-        }
-        */
-
         public virtual int GetStallSlotForSelectionIndex(int index)
         {
             return index;
         }
 
         public abstract ItemSlot[] GetSlotsForStall(int stallSlot);
+        
         public abstract ItemSlot GetCurrencyForStall(int stallSlot);
+        
         public abstract int GetNumItemsPerPurchaseForStall(int stallSlot);
 
         public virtual ItemSlot FindFirstNonEmptyStockSlotForStall(int stallSlot)
@@ -323,6 +254,76 @@ namespace Viconomy.BlockEntities
             this.invDialog?.Dispose();
             this.invDialog = null;
         }
+
+        public virtual void PurchaseItem(IPlayer player, int stallSlot, int numPurchases, BEVinconRegister shopRegister)
+        {
+            ItemSlot[] slots = GetSlotsForStall(stallSlot);
+
+            TradeRequest request = new TradeRequest();
+            request.customer = player;
+            request.shopRegister = shopRegister;
+            request.sellingEntity = this;
+            request.productNeeded = TradingUtil.GetItemStackClone(FindFirstNonEmptyStockSlotForStall(stallSlot), GetNumItemsPerPurchaseForStall(stallSlot)); ;
+            request.productSourceSlots = slots;
+            request.numPurchases = numPurchases;
+            request.coreApi = this.Api;
+            request.currencyNeeded = TradingUtil.GetItemStackClone(GetCurrencyForStall(stallSlot));
+            request.isAdminShop = this.IsAdminShop;
+            //request.shouldConsumeTool = ShouldConsumeTool(stallSlot);
+            //request.requiredToolType = GetRequiredToolType(stallSlot);
+            //request.tool = GetRequiredTool(player, stallSlot, desiredAmount);
+
+            TradeResult result = TradingUtil.TryPurchaseItem(request);
+            if (result.error != null)
+            {
+                VinconomyCoreSystem.PrintClientMessage(player, result.error);
+            }
+            else
+            {
+                this.MarkDirty(true, null);
+                this.UpdateMeshes();
+            }
+        }
+        public virtual ItemStack GetProductForStall(int stallSlot)
+        {
+            return TradingUtil.GetItemStackClone(FindFirstNonEmptyStockSlotForStall(stallSlot), GetNumItemsPerPurchaseForStall(stallSlot)); ;
+        }
+
+        /*
+        protected virtual bool ShouldConsumeTool(int stallSlot)
+        {
+            return false;
+        }
+
+        protected virtual ToolType GetRequiredToolType( int stallSlot)
+        {
+            return ToolType.NONE;
+        }
+
+        protected virtual ItemSlot GetRequiredTool(IPlayer player, int stallSlot, int numPurchases)
+        {
+            ToolType type = GetRequiredToolType(stallSlot);
+            switch(type)
+            {
+                case ToolType.NONE:
+                    return null;
+
+                case ToolType.FOOD_CONTAINER:
+                    break;
+
+                case ToolType.DRINK_CONTAINER:
+                case ToolType.LIQUID_COINTAINER:
+                    break;
+
+                case ToolType.CHOPPING:
+                case ToolType.CUTTING:
+                    // I'll implement these later. As of right now, I have no ideas as to what would even require these.
+                    break;
+            }
+
+            return null;
+        }
+        */
 
     }
 }

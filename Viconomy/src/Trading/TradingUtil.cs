@@ -1,14 +1,14 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
+using Vintagestory.GameContent;
 
 namespace Viconomy.Trading
 {
     public class TradingUtil
     {
-
         public static void CommitPurchase(TradeResult purchaseResult)
         {
             // Take the product from the stall
@@ -159,8 +159,6 @@ namespace Viconomy.Trading
             {
                 CommitPurchase(purchaseResult);
             }
-
-
 
             return purchaseResult;
 
@@ -353,12 +351,7 @@ namespace Viconomy.Trading
                 && payment != null
                 && source.Equals(world, payment, new string[] { "transitionstate", "temperature" });
         }
-        public static bool isMatchingCurrency(ItemSlot source, ItemSlot payment, IWorldAccessor world)
-        {
-            return source != null
-                && payment != null
-                && isMatchingItem(source.Itemstack, payment.Itemstack, world);
-        }
+
 
         public static ItemStack GetItemStackClone(ItemSlot slot, int stackSize = 0)
         {
@@ -371,14 +364,77 @@ namespace Viconomy.Trading
             }
             return stack;
         }
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+    //TODO: Figure out how to get durabilty for tools. For now we can just manually set it
+    public class DurabilityAggregatedSlots : AggregatedSlots
+    {
+        public int TotalDurability { get; set; }
+        public override void Add(ItemSlot item)
+        {
+            Slots.Add(item);
+            TotalCount += item.StackSize;
+            //TotalDurability += item.Durability ????
+        }
+    }
+
+    public class ServingCapacityAggregatedSlots : AggregatedSlots
+    {
+        public int TotalCapacity { get; set; }
+        public override void Add(ItemSlot item)
+        {
+            Slots.Add(item);
+            TotalCount += item.StackSize;
+
+            IBlockMealContainer meal = item.Itemstack.Block as IBlockMealContainer;
+            int curServings = (int) Math.Ceiling(meal.GetQuantityServings(Api.World, item.Itemstack)); //We assume it can merge, anyway...
+            JsonObject attr = item.Itemstack.Block.Attributes;
+
+            int capacity = 0;
+            if (attr.KeyExists("servingCapacity"))
+            {
+                capacity = attr["servingCapacity"].AsInt();
+            }
+            TotalCapacity += Math.Max(0, capacity - curServings);
+        }
+    }
+
+    public class MealAggregatedSlots : AggregatedSlots
+    {
+        public override void Add(ItemSlot item)
+        {
+            Slots.Add(item);
+            if (Slots.Count == 0)
+            {
+                TotalCount = item.StackSize;
+            } else
+            {
+                TotalCount = Math.Min(TotalCount, item.StackSize);
+            }
+        }
     }
 
     public class AggregatedSlots
     {
+        public ICoreAPI Api; // This is rediculous Tyron - just to get meal contents?
+
         public List<ItemSlot> Slots { get; set; } = new List<ItemSlot>();
         public int TotalCount { get; set; }
 
-        public void Add(ItemSlot item)
+        public virtual void Add(ItemSlot item)
         {
             Slots.Add(item);
             TotalCount += item.StackSize;

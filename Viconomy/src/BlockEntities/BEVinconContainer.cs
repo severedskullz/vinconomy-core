@@ -224,7 +224,7 @@ namespace Viconomy.BlockEntities
             }
         }
 
-        private void OpenShopGui(byte[] data)
+        protected virtual void OpenShopGui(byte[] data)
         {
             TreeAttribute tree = new TreeAttribute();
             string dialogTitle;
@@ -250,6 +250,7 @@ namespace Viconomy.BlockEntities
                 isOwner = reader.ReadBoolean();
                 tree.FromBytes(reader);
             }
+
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
             if (isOwner && !VinconomyCoreSystem.ShouldForceCustomerScreen)
@@ -267,7 +268,7 @@ namespace Viconomy.BlockEntities
             //Console.WriteLine(Api.Side + ": Attempted to open Shop GUI");
         }
 
-        private void CloseGui(IClientWorldAccessor clientWorld)
+        protected virtual void CloseGui(IClientWorldAccessor clientWorld)
         {
             clientWorld.Player.InventoryManager.CloseInventory(this.Inventory);
 
@@ -285,7 +286,6 @@ namespace Viconomy.BlockEntities
             }
 
             this.invDialog = null;
-            //Console.WriteLine(Api.Side + ": Attempted to close GUI");
         }
 
         #endregion

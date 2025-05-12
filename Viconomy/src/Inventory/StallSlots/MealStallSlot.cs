@@ -132,7 +132,14 @@ namespace Viconomy.Inventory.StallSlots
         {
             foreach (ItemSlot foodSlot in slots)
             {
-                foodSlot.TakeOut(amount);
+                if (foodSlot.Itemstack != null)
+                {
+                    foodSlot.Itemstack.StackSize -= amount;
+                    if (foodSlot.StackSize < 0)
+                    {
+                        foodSlot.Itemstack = null;
+                    }
+                }
             }
         }
     }

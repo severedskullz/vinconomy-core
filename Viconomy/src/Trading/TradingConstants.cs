@@ -18,6 +18,7 @@
         public static readonly string PURCHASED_ITEMS = "vinconomy:purchased-item";
         public static readonly string COULDNT_GET_REGISTER = "vinconomy:couldnt-find-register";
         public static readonly string NO_TOOL = "vinconomy:no-tool";
+        public static readonly string NO_PASS = "vinconomy:no-trade-pass";
     }
 
     public enum ToolType

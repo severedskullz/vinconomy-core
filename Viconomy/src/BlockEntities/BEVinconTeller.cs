@@ -18,8 +18,6 @@ namespace Viconomy.BlockEntities
     public class BEVinconTeller : BEVinconBase
     {
         private ViconomyTellerInventory inventory;
-        private GuiViconTeller invDialog;
-
 
         public override InventoryBase Inventory => inventory;
 

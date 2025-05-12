@@ -21,7 +21,6 @@ namespace Viconomy.BlockEntities
     public class BEVinconSculpturePad : BEVinconBase
     {
         
-        protected GuiDialogBlockEntity invDialog;
         protected InventoryBase inventory;
         int sizeXZ = 3;
         int sizeY = 3;
