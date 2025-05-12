@@ -364,19 +364,7 @@ namespace Viconomy.Trading
             }
             return stack;
         }
-
-
-
-
-
-
-
-
     }
-
-
-
-
 
 
     //TODO: Figure out how to get durabilty for tools. For now we can just manually set it

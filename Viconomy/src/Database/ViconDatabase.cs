@@ -149,6 +149,62 @@ namespace Viconomy.Database
             return shop;
         }
 
+
+        public void SavePurchase(GenericTradeResult purchaseResult, ItemStack product, ItemStack currency)
+        {
+            using (SqliteConnection connection = GetConnection())
+            {
+                GenericTradeRequest req = purchaseResult.Request;
+
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+                cmd.Parameters.Add("@ShopId", SqliteType.Integer).Value = req.SellingEntity.RegisterID;
+                cmd.Parameters.Add("@Customer", SqliteType.Text).Value = req.Customer.PlayerUID;
+                cmd.Parameters.Add("@Month", SqliteType.Integer).Value = req.Api.World.Calendar.Month;
+                cmd.Parameters.Add("@Year", SqliteType.Integer).Value = req.Api.World.Calendar.Year;
+                cmd.Parameters.Add("@ProductCode", SqliteType.Text).Value = product.Collectible.Code.ToString();
+                cmd.Parameters.Add("@ProductQuantity", SqliteType.Text).Value = purchaseResult.TransferedProductTotal;
+                cmd.Parameters.Add("@ProductAttributes", SqliteType.Text).Value = product.Attributes.ToJsonToken();
+                cmd.Parameters.Add("@CurrencyCode", SqliteType.Text).Value = currency.Collectible.Code.ToString();
+                cmd.Parameters.Add("@CurrencyQuantity", SqliteType.Text).Value = purchaseResult.TransferedCurrencyTotal;
+                cmd.Parameters.Add("@CurrencyAttributes", SqliteType.Text).Value = currency.Attributes.ToJsonToken();
+
+                cmd.CommandText = @"SELECT Count(*) FROM Sales 
+                                    WHERE ShopId = @ShopId 
+                                        AND Customer = @Customer
+                                        AND Month = @Month
+                                        AND Year = @Year
+                                        AND ProductCode = @ProductCode
+                                        AND CurrencyCode = @CurrencyCode";
+
+                int numRows = Convert.ToInt32(cmd.ExecuteScalar());
+                if (numRows == 1)
+                {
+                    cmd.CommandText = @"UPDATE Sales 
+                                    SET ProductQuantity = ProductQuantity + @ProductQuantity,
+                                        CurrencyQuantity = CurrencyQuantity + @CurrencyQuantity 
+                                    WHERE ShopId = @ShopId 
+                                        AND Customer = @Customer
+                                        AND Month = @Month
+                                        AND Year = @Year
+                                        AND ProductCode = @ProductCode
+                                        AND CurrencyCode = @CurrencyCode";
+                    cmd.ExecuteNonQuery();
+                }
+                else if (numRows == 0)
+                {
+                    cmd.CommandText = "INSERT INTO Sales VALUES (@ShopId, @Customer, @Month, @Year, @ProductCode, @ProductQuantity, @ProductAttributes, @CurrencyCode, @CurrencyQuantity, @CurrencyAttributes);";
+                    cmd.ExecuteNonQuery();
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException("Somehow have more than 1 sale record for purchase");
+                }
+
+                connection.Close();
+            }
+        }
+
         public void SavePurchase(TradeResult purchaseResult)
         {
             using (SqliteConnection connection = GetConnection())

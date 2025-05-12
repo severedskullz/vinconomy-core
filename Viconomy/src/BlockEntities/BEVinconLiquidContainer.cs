@@ -298,6 +298,7 @@ namespace Viconomy.BlockEntities
             res.customer = player;
             res.coreApi = Api;
 
+
             ItemStack fakeStack = VinUtils.ResolveBlockOrItem(Api, "game:bowl-meal", numActualTrades);
             (fakeStack.Block as BlockMeal).SetContents(recipeCode, fakeStack, stall.GetMealStacks(),1);
 

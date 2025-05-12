@@ -164,8 +164,13 @@ namespace Viconomy.Trading
        
         public List<ItemStack> TransferedCurrency;
         public int TransferedCurrencyTotal;
+
         public List<ItemStack> TransferedProduct;
         public int TransferedProductTotal;
+
+
+        public List<ItemStack> TransferedCoupons;
+        public int TransferedCouponTotal;
 
         public VinconomyCoreSystem modSystem;
 
@@ -176,6 +181,7 @@ namespace Viconomy.Trading
             //TransferedProduct = new AggregatedSlots();
             TransferedCurrency = new List<ItemStack>();
             TransferedProduct = new List<ItemStack>();
+            TransferedCoupons = new List<ItemStack>();
             modSystem = core;
         }
     }

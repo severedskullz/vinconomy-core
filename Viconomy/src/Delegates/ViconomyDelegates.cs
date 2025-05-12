@@ -1,6 +1,5 @@
 ﻿using Viconomy.BlockEntities;
 using Viconomy.Inventory;
-using Viconomy.TradeNetwork;
 using Viconomy.TradeNetwork.Api;
 using Viconomy.Trading;
 using Vintagestory.API.Common;
@@ -11,7 +10,7 @@ namespace Viconomy.Delegates
     /*
      *  Called whenever an item is purchased from a stall, regardless if it is assoicated with a Register (Nullable)
      */
-    public delegate void OnPurchasedItemDelegate(TradeResult result, ItemStack product, ItemStack payment);
+    public delegate void OnPurchasedItemDelegate(GenericTradeResult result, ItemStack product, ItemStack payment);
 
     /*
      *  Called whenever a player attempts to purchase from a stall, regardless if it is assoicated with a Register (Nullable). Return true to allow the purchase;

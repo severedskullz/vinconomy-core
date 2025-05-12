@@ -80,11 +80,11 @@ namespace Viconomy
 
         }
 
-        private void EnquePurchase(TradeResult result, ItemStack product, ItemStack payment)
+        private void EnquePurchase(GenericTradeResult result, ItemStack product, ItemStack payment)
         {
             lock (this)
             {
-                BEVinconRegister register = result.shopRegister;
+                BEVinconRegister register = result.Request.ShopRegister;
                 if (register != null)
                 {
                     int shopId = register.ID;
@@ -215,19 +215,18 @@ namespace Viconomy
             {
                 shopId = reg.ID;
                 shopName = reg.Name;
-                url = "https://mods.vintagestory.at/files/asset/8379/Vinconomy-2.0.jpg";
+                //url = "https://mods.vintagestory.at/files/asset/8379/Vinconomy-2.0.jpg";
                 //url = reg.imageUrl;
                 //discordWebhook = reg.webhook;
             }
 
-            internal void AddPurchase(TradeResult result, ItemStack product, ItemStack payment)
+            internal void AddPurchase(GenericTradeResult result, ItemStack product, ItemStack payment)
             {
-                string customer = result.customer.PlayerName;
+                string customer = result.Request.Customer.PlayerName;
                 if (!customers.ContainsKey(customer))
                 {
                     customers[customer] = new CustomerPurchaseList() { customerName = customer};
                 }
-
                 customers[customer].AddPurchase(product, payment);
             }
         }

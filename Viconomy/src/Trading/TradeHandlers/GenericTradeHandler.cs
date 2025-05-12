@@ -38,8 +38,6 @@ namespace Viconomy.Trading.TradeHandlers
             return !(req.TradePassNeeded != null && req.TradePassSlots.TotalCount <= 0);
         }
 
-
-
         public static GenericTradeResult TryPurchaseItem(GenericTradeRequest request)
         {
             
@@ -70,21 +68,20 @@ namespace Viconomy.Trading.TradeHandlers
             if (!CanFitPaymentInRegister(request))
                 return SetErrorAndReturn(res, TradingConstants.NO_REGISTER_SPACE);
 
-
+            // Extract all relevant items from their containers
             TryExtractProductSlots(res);
-
-
             TryExtractCurrencySlots(res);
-
-
             TryConsumeTools(res);
             TryConsumeCoupons(res);
-            //TryConsumeTradePass(res);
 
+            // Send TradeResult to mod system to take taxes, log sale in ledger, etc.
+            core.PurchasedItem(res, res.TransferedProduct[0], res.TransferedCurrency[0]);
+
+            // Add payment to stall and give player product.
             TryAddPaymentToStall(res);
             TryAddProductToPlayer(res);
 
-            core.PurchasedItem(res);
+            
 
             VinconomyCoreSystem.PrintClientMessage(res.Request.Customer, TradingConstants.PURCHASED_ITEMS, new object[] {
                 res.TransferedCurrencyTotal,
@@ -214,7 +211,7 @@ namespace Viconomy.Trading.TradeHandlers
 
             if (productLeft > 0)
             {
-                AuditLogError(res, $"Error collecting payment for trade. Needed {res.Request.NumPurchases * res.Request.ProductNeededPerPurchase} but is missing {currencyLeft}");
+                AuditLogError(res, $"Error collecting payment for trade. Needed {res.Request.NumPurchases * res.Request.ProductNeededPerPurchase} but is missing {productLeft}");
             }
 
             return productLeft;

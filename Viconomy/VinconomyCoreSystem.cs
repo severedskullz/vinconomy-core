@@ -22,6 +22,7 @@ using Vintagestory.GameContent;
 using Vintagestory.API.Datastructures;
 using Cairo;
 using System.Collections.Generic;
+using Viconomy.Network.Api;
 
 namespace Viconomy
 {
@@ -519,6 +520,18 @@ namespace Viconomy
 
         #region Event Delegates
 
+ 
+
+        //Deprecated until I convert everything over.
+        public void PurchasedItem(TradeResult result, ItemStack product, ItemStack payment)
+        {
+            GenericTradeRequest req = new GenericTradeRequest(result.coreApi, result.customer);
+            GenericTradeResult res = new GenericTradeResult(req, this);
+            res.TransferedProductTotal = product.StackSize;
+            res.TransferedCurrencyTotal = payment.StackSize;
+            PurchasedItem(res, product, payment);
+        }
+
         /// <summary>
         /// Called when an item is purchased. <br/><br/>
         /// player: The player making the purchase<br/>
@@ -527,7 +540,8 @@ namespace Viconomy
         /// product: The (clone) stack of items to be transfered to the player - Do not modify this<br/>
         /// payment: the stack of items representing payment to be stored in the Register
         /// </summary>
-        public void PurchasedItem(TradeResult result, ItemStack product, ItemStack payment)
+        /// 
+        public void PurchasedItem(GenericTradeResult result, ItemStack product, ItemStack payment)
         {
             if (OnPurchasedItem != null)
             {
@@ -545,7 +559,7 @@ namespace Viconomy
                 }
             }
 
-            DB.SavePurchase(result);
+            DB.SavePurchase(result, product, payment);
         }
         public event OnPurchasedItemDelegate OnPurchasedItem;
 
@@ -896,11 +910,6 @@ namespace Viconomy
                 _coreServerAPI.StoreModConfig(Config, CONFIG_NAME);
             }
            
-        }
-
-        internal void PurchasedItem(GenericTradeResult res)
-        {
-            throw new NotImplementedException();
         }
 
         #endregion Callbacks
