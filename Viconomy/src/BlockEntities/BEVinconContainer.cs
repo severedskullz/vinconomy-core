@@ -193,9 +193,6 @@ namespace Viconomy.BlockEntities
         }
 
 
-
-
-
         #region GUI
 
         protected void OpenShopForPlayer(IPlayer byPlayer, int selectedStall)
@@ -503,7 +500,6 @@ namespace Viconomy.BlockEntities
                 }
             }
 
-
         }
 
         protected virtual void TesselateDecoBlock(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
@@ -583,7 +579,6 @@ namespace Viconomy.BlockEntities
             return movedItems;
         }
 
-
         protected bool TryPut(ItemSlot slot, int stallSlot, bool bulk)
         {
             if (slot?.Itemstack == null)
@@ -605,9 +600,6 @@ namespace Viconomy.BlockEntities
 
             return false;
         }
-
-
-
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
@@ -635,8 +627,6 @@ namespace Viconomy.BlockEntities
         {
             this.Inventory.DropAll(atPos, 0);
         }
-
-
 
         public override float GetPerishRate()
         {
@@ -715,9 +705,9 @@ namespace Viconomy.BlockEntities
             return inventory.StallSlots[stallSlot].itemsPerPurchase;
         }
 
-        public override ItemSlot FindFirstNonEmptyStockSlotForStall(int stallSlot)
+        public override ItemStack FindFirstNonEmptyStockStack(int stallSlot)
         {
-            return inventory.StallSlots[stallSlot].FindFirstNonEmptyStockSlot();
+            return inventory.StallSlots[stallSlot].FindFirstNonEmptyStockSlot()?.Itemstack;
         }
     }
 }

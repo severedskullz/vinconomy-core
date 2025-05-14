@@ -26,8 +26,6 @@ namespace Viconomy.BlockEntities
         {
             tfMatrices = new float[StallSlotCount][];
 
-            int perRow = (int) Math.Ceiling(StallSlotCount / 2.0f);
-
             for (int i = 0; i < StallSlotCount; i++)
             {
                 float x = (i / 2 == 0) ? 0.55f : 0.05f; // Actually Y

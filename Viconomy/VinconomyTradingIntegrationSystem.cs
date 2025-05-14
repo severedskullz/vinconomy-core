@@ -193,8 +193,8 @@ namespace Viconomy
                                             return;
                                         }
 
-                                        ItemSlot firtProductSlot = stall.FindFirstNonEmptyStockSlotForStall(curUpdate.StallSlot);
-                                        if (firtProductSlot == null || firtProductSlot.Itemstack == null)
+                                        ItemStack firtProductSlot = stall.FindFirstNonEmptyStockStack(curUpdate.StallSlot);
+                                        if (firtProductSlot == null || firtProductSlot == null)
                                         {
                                             this.Mod.Logger.Error("Tried to process network purchase on an item that didn't have any product set");
                                             update.Status = VinConstants.TRADE_STATUS_LACKS_ITEMS;

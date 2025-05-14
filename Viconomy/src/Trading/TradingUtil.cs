@@ -353,9 +353,21 @@ namespace Viconomy.Trading
         }
 
 
+        public static ItemStack GetItemStackClone(ItemStack stack, int stackSize = 0)
+        {
+            if (stack == null) return null;
+
+            ItemStack newStack = stack.Clone();
+            if (stackSize > 0)
+            {
+                newStack.StackSize = stackSize;
+            }
+            return newStack;
+        }
+
         public static ItemStack GetItemStackClone(ItemSlot slot, int stackSize = 0)
         {
-            if (slot == null) return null;
+            if (slot?.Itemstack == null ) return null;
 
             ItemStack stack = slot.Itemstack.Clone();
             if (stackSize > 0)

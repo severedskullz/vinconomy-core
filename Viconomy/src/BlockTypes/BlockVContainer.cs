@@ -39,7 +39,7 @@ namespace Viconomy.BlockTypes
             if (be != null)
             {
                 int index = be.GetStallSlotForSelectionIndex(selection.SelectionBoxIndex);
-                ItemSlot product = be.FindFirstNonEmptyStockSlotForStall(index);
+                ItemStack product = be.FindFirstNonEmptyStockStack(index);
                 ItemSlot currency = be.GetCurrencyForStall(index);
 
                 //StallSlot slot = slots[selection.SelectionBoxIndex];
@@ -68,10 +68,10 @@ namespace Viconomy.BlockTypes
                         });
                     }
                 } else {
-                    ItemSlot firstSlot = product;
+                    ItemStack firstSlot = product;
                     if (firstSlot != null)
                     {
-                        ItemStack helpSlot = firstSlot.Itemstack.Clone();
+                        ItemStack helpSlot = firstSlot.Clone();
                         helpSlot.StackSize = 1;
                         interactions.Add(new WorldInteraction
                         {

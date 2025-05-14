@@ -60,16 +60,6 @@
   </Content>
 </ItemGroup>
 
-<ItemGroup>
-  <Content Update="assets\vinconomy\lang\en.json">
-    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-  </Content>
-</ItemGroup>
 
-<ItemGroup>
-  <Content Update="assets\vinconomy\itemtypes\playerfilter.json">
-    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-  </Content>
-</ItemGroup>
 
 </Project>

@@ -331,7 +331,7 @@ namespace Viconomy.GUI
                     writer.Write(name);
                     data = ms.ToArray();
                 }
-                this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_SCULPTURE_NAME, data);
+                this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.SET_SCULPTURE_NAME, data);
             }
         }
 
@@ -348,7 +348,7 @@ namespace Viconomy.GUI
                         writer.Write(target);
                         data = ms.ToArray();
                     }
-                    this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_SCULPTURE_SLOT, data);
+                    this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.SET_SCULPTURE_SLOT, data);
                     stall.GetSlotForGrid(x,y,z).isDisabled = target;
                     Compose();
              });
@@ -364,7 +364,7 @@ namespace Viconomy.GUI
                 writer.Write(isToggled);
                 data = ms.ToArray();
             }
-            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_ADMIN_SHOP, data);
+            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.SET_ADMIN_SHOP, data);
 
         }
 
@@ -394,7 +394,7 @@ namespace Viconomy.GUI
                 writer.Write(id);
                 data = ms.ToArray();
             }
-            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_REGISTER_ID, data);
+            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.SET_REGISTER_ID, data);
 
 
         }
@@ -408,7 +408,7 @@ namespace Viconomy.GUI
                 writer.Write(sizeY);
                 data = ms.ToArray();
             }
-            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_SCULPTURE_Y, data);
+            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.SET_SCULPTURE_Y, data);
             curTab = Math.Min(curTab, sizeY-1);
             this.Compose();
 
@@ -424,7 +424,7 @@ namespace Viconomy.GUI
                 writer.Write(sizeX);
                 data = ms.ToArray();
             }
-            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_SCULPTURE_XZ, data);
+            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.SET_SCULPTURE_XZ, data);
             
             this.Compose();
 

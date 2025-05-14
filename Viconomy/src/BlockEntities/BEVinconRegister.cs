@@ -9,16 +9,17 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.Client.NoObf;
+using Viconomy.Inventory.Impl;
+using Vintagestory.Server;
 
 namespace Viconomy.BlockEntities
 {
     public class BEVinconRegister : BETextureSwappableBlockContainer
     {
 
-        private InventoryGeneric inventory;
+        private ViconRegisterInventory inventory;
         private GuiViconRegister invDialog;
         private VinconomyCoreSystem modSystem;
-
         public int ID { get; internal set; } = -1;
         public string Owner { get; internal set; }
         public string OwnerName { get; internal set; }
@@ -29,13 +30,12 @@ namespace Viconomy.BlockEntities
 
         public BEVinconRegister()
         {
-            this.inventory = new InventoryGeneric(40, null, null);
+            this.inventory = new ViconRegisterInventory(40, 10, null, null);
         }
 
         public override void Initialize(ICoreAPI api)
         {
             base.Initialize(api);
-
             //block = (BlockVRegister)api.World.BlockAccessor.GetBlock(this.Pos);
             modSystem = Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
 
@@ -98,6 +98,7 @@ namespace Viconomy.BlockEntities
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.ToTreeAttributes(tree);
+
             tree.SetInt("ID", ID);
             tree.SetString("Owner", Owner);
             tree.SetString("OwnerName", OwnerName);
@@ -199,6 +200,7 @@ namespace Viconomy.BlockEntities
             if (this.Api.World is IServerWorldAccessor)
             {
                 ShopRegistration register = modSystem.GetRegistry().GetShop(ID);
+                //((ServerMain)Api.World).PlayerDataManager.GetPlayerDataByLastKnownName();
 
                 byte[] data;
                 using (MemoryStream ms = new MemoryStream())
@@ -355,7 +357,7 @@ namespace Viconomy.BlockEntities
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
             ShopRegistration shopRegistry = modSystem.GetRegistry().GetShop(ID);
-            this.invDialog = new GuiViconRegister(shopRegistry, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
+            this.invDialog = new GuiViconRegister(shopRegistry, inventory, this.Pos, this.Api as ICoreClientAPI);
             //this.invDialog.OpenSound = this.OpenSound;
             //this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();
@@ -363,7 +365,7 @@ namespace Viconomy.BlockEntities
             {
                 this.invDialog = null;
 
-                ((ClientCoreAPI) Api).Network.SendBlockEntityPacket(this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.CLOSE_GUI, null);
+                ((ClientCoreAPI) Api).Network.SendBlockEntityPacket(this.Pos, VinConstants.CLOSE_GUI, null);
             };
 
         }

@@ -4,6 +4,7 @@ using Viconomy.Inventory.StallSlots;
 using Viconomy.Inventory.Slots;
 using Vintagestory.API.Common;
 using Viconomy.Config;
+using Vintagestory.API.MathTools;
 
 namespace Viconomy.Inventory.Impl
 {
@@ -175,6 +176,15 @@ namespace Viconomy.Inventory.Impl
                 }
 
             }
+        }
+        public override ItemSlot GetAutoPushIntoSlot(BlockFacing atBlockFace, ItemSlot fromSlot)
+        {
+            return null;
+        }
+
+        public override ItemSlot GetAutoPullFromSlot(BlockFacing atBlockFace)
+        {
+            return null;
         }
     }
 }

@@ -69,22 +69,21 @@ namespace Viconomy.BlockEntities
 
             TransformModel(modeldata, stack);
             Vec3f origin = new Vec3f(0.5f,0.5f,0.5f);
-            float degree2Rad = (MathF.PI / 180f);
-            modeldata.Rotate(origin, 0, 90 * degree2Rad, 0);
+            modeldata.Rotate(origin, 0, 90 * GameMath.DEG2RAD, 0);
             if (index == 0) // Left Side
             {
-                modeldata.Rotate(origin, 0, 90 * degree2Rad, 0);
-                modeldata.Rotate(origin, 90 * degree2Rad,0,0);
-                modeldata.Rotate(origin, 0, 0, 45 * degree2Rad);
+                modeldata.Rotate(origin, 0, 90 * GameMath.DEG2RAD, 0);
+                modeldata.Rotate(origin, 90 * GameMath.DEG2RAD,0,0);
+                modeldata.Rotate(origin, 0, 0, 45 * GameMath.DEG2RAD);
             } else if (index == 1) // Shield
             {
-                modeldata.Rotate(origin, 95*degree2Rad, 0, 0);
+                modeldata.Rotate(origin, 95*GameMath.DEG2RAD, 0, 0);
                 modeldata.Translate(0, 1.15f, -.35f);
             } else if (index == 2) // Right Side
             {
-                modeldata.Rotate(origin, 0, 270 * degree2Rad, 0);
-                modeldata.Rotate(origin, -90 * degree2Rad, 0, 0);
-                modeldata.Rotate(origin, 0, 0, - 45 * degree2Rad);
+                modeldata.Rotate(origin, 0, 270 * GameMath.DEG2RAD, 0);
+                modeldata.Rotate(origin, -90 * GameMath.DEG2RAD, 0, 0);
+                modeldata.Rotate(origin, 0, 0, - 45 * GameMath.DEG2RAD);
             }
 
             //string meshCacheKey = GetMeshCacheKey(stack) + index;

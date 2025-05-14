@@ -170,9 +170,8 @@ namespace Viconomy.Trading
         public List<ItemStack> TransferedProduct;
         public int TransferedProductTotal;
 
-
         public List<ItemStack> TransferedCoupons;
-        public int TransferedCouponTotal;
+        public int TransferedCouponsTotal;
 
         public VinconomyCoreSystem modSystem;
 

@@ -1,13 +1,11 @@
-﻿using Cairo;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Viconomy.Inventory.Impl;
 using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
-using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
@@ -25,6 +23,8 @@ namespace Viconomy.GUI
 
         private VinconomyCoreSystem modSystem;
 
+        GuiTab[] tabs;
+
         //Waypoint Page Variables
         private string[] icons;
         private int[] colors;
@@ -36,7 +36,10 @@ namespace Viconomy.GUI
         ElementBounds descClipBounds;
         ElementBounds shortDescClipBounds;
 
-        public GuiViconRegister(ShopRegistration shopRegistration, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi) : base(shopRegistration.Name, Inventory, BlockEntityPosition, capi)
+        // Permissions Page Variables
+        ElementBounds accessClipBounds;
+
+        public GuiViconRegister(ShopRegistration shopRegistration, ViconRegisterInventory Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi) : base(shopRegistration.Name, Inventory, BlockEntityPosition, capi)
         {
             if (base.IsDuplicate)
             {
@@ -48,20 +51,91 @@ namespace Viconomy.GUI
             colors = modSystem.ShopMapLayer.WaypointColors.ToArray();
 
             capi.World.Player.InventoryManager.OpenInventory(Inventory);
+
+            tabs = GetTabs();
            
         }
 
         public GuiTab[] GetTabs()
         {
-            List<GuiTab> tabs = new List<GuiTab>();
-            tabs.Add(new GuiTab() { Name = Lang.Get("vinconomy:tabname-inventory"), Active = false});
-            tabs.Add(new GuiTab() { Name = Lang.Get("vinconomy:tabname-configuration"), Active = false });
-            tabs.Add(new GuiTab() { Name = Lang.Get("vinconomy:tabname-waypoint"), Active = false });
+            List<GuiTab> tabs = new List<GuiTab>
+            {
+                new GuiTab() { Name = Lang.Get("vinconomy:tabname-inventory"), Active = false },
+                new GuiTab() { Name = Lang.Get("vinconomy:tabname-permissions"), Active = false },
+                new GuiTab() { Name = Lang.Get("vinconomy:tabname-configuration"), Active = false },
+                new GuiTab() { Name = Lang.Get("vinconomy:tabname-waypoint"), Active = false }
+            };
             tabs[tabIndex].Active = true;
             return tabs.ToArray();
         }
 
+        public int[] GenerateArrayOf(int startingNumber, int num)
+        {
+            List<int> array = new List<int>();
+            for (int i = startingNumber; i < startingNumber+ num; i++)
+            {
+                array.Add(i);
+            }
+            return array.ToArray();
+        }
+
         public void ComposeInventoryPage()
+        {
+            try
+            {
+                ViconRegisterInventory regInv = (ViconRegisterInventory)Inventory;
+
+                ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);//.WithFixedAlignmentOffset(-GuiStyle.DialogToScreenPadding, 0.0);
+
+                ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.DialogToScreenPadding);
+                bgBounds.BothSizing = ElementSizing.FitToChildren;
+
+                ElementBounds currencyLabelBounds = ElementBounds.Fixed(0, GuiStyle.TitleBarHeight, 200, 25);
+                ElementBounds currencySlotGrid = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 10, (int)Math.Ceiling(regInv.CurrencySlotCount / 10.0)).FixedUnder(currencyLabelBounds);
+
+                ElementBounds couponLabelBounds = ElementBounds.FixedSize(200, 25).WithFixedOffset(0,20).FixedUnder(currencySlotGrid);
+                ElementBounds couponSlotGrid = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 10, (int)Math.Ceiling(regInv.CouponSlotCount / 10.0)).FixedUnder(couponLabelBounds);
+
+                bgBounds.WithChildren(currencyLabelBounds, currencySlotGrid, couponLabelBounds, couponSlotGrid);
+
+                //IconUtil.DrawArrowRight
+                ElementBounds tabBounds = ElementBounds.FixedSize(TAB_WIDTH, TAB_HEIGHT).FixedLeftOf(bgBounds);
+
+                
+
+
+                // Lastly, create the dialog
+                SingleComposer = capi.Gui.CreateCompo("ViconRegister", dialogBounds)
+                    .AddShadedDialogBG(bgBounds)
+                    .AddVerticalTabs(tabs, tabBounds, onTabChanged)
+                    .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked)
+                    .AddStaticText(Lang.Get("vinconomy:gui-currency"), CairoFont.WhiteSmallishText(), currencyLabelBounds)
+                    .AddItemSlotGrid(Inventory, new Action<object>(this.SendInvPacket), 10, GenerateArrayOf(1, regInv.CurrencySlotCount), currencySlotGrid, "currency")
+                    .AddStaticText(Lang.Get("vinconomy:gui-coupons"), CairoFont.WhiteSmallishText(), couponLabelBounds)
+                    .AddItemSlotGrid(Inventory, new Action<object>(this.SendInvPacket), 10, GenerateArrayOf(regInv.CurrencySlotCount + 1, regInv.CouponSlotCount), couponSlotGrid,"coupons");
+
+
+                UpdateSelectedTab();
+                SingleComposer.Compose();
+
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+
+            }
+        }
+
+        public void UpdateSelectedTab()
+        {
+            for (int i = 0; i < tabs.Length; i++)
+            {
+                tabs[i].Active = tabIndex == i;
+            }
+        }
+
+        public void ComposePermissionsPage()
         {
             try
             {
@@ -69,12 +143,32 @@ namespace Viconomy.GUI
 
                 ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.DialogToScreenPadding);
                 bgBounds.BothSizing = ElementSizing.FitToChildren;
-                ElementBounds slotGrid = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 40, 10, (int)Math.Ceiling(Inventory.Count / 10.0));//.FixedUnder(shopNameUpdateBounds);
 
-                bgBounds.WithChildren(slotGrid);
+                
+                ElementBounds tradePassBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, GuiStyle.TitleBarHeight, 1, 1);
+                ElementBounds tradePassLabelBounds = ElementBounds.Fixed(60, GuiStyle.TitleBarHeight+12, 440, 25);
+
+
+
+                ElementBounds accessInputLabelBounds = ElementBounds.FixedSize(500, 25).FixedUnder(tradePassBounds);
+                ElementBounds accessInputBounds = ElementBounds.FixedSize(400, 40).FixedUnder(accessInputLabelBounds);
+                ElementBounds accessAddButtonBounds = accessInputBounds.RightCopy().WithFixedSize(100,40);//ElementBounds.FixedSize(30, 30).FixedRightOf(accessInputBounds);
+
+                ElementBounds accessInsetBounds = ElementBounds.FixedSize(480, 200).FixedUnder(accessInputBounds);
+                accessClipBounds = accessInsetBounds.ForkContainingChild(GuiStyle.HalfPadding, GuiStyle.HalfPadding, GuiStyle.HalfPadding, GuiStyle.HalfPadding).FixedGrow(0, 0); // I dont know why "Grow" is needed here. It leaves me with 20px of missing space even if padding is 0.
+                ElementBounds accessContainerBounds = accessInsetBounds.ForkContainingChild(GuiStyle.HalfPadding, GuiStyle.HalfPadding, GuiStyle.HalfPadding, GuiStyle.HalfPadding);
+                ElementBounds accessScrollbarBounds = accessInsetBounds.RightCopy().WithFixedWidth(20);
+
+
+                ElementBounds accessStallsBounds = ElementBounds.FixedSize(30, 30).FixedUnder(accessInsetBounds).WithFixedOffset(0, 10);
+                ElementBounds accessStallsLabelBounds = accessStallsBounds.RightCopy().WithFixedSize(200, 30).WithFixedOffset(10, 0);
+
+
+
+                bgBounds.WithChildren(tradePassLabelBounds, tradePassBounds, accessStallsLabelBounds, accessStallsBounds,
+                    accessInsetBounds, accessScrollbarBounds, accessInputLabelBounds, accessInputBounds, accessAddButtonBounds);
 
                 //IconUtil.DrawArrowRight
-                GuiTab[] tabs = GetTabs();
                 ElementBounds tabBounds = ElementBounds.FixedSize(TAB_WIDTH, TAB_HEIGHT).FixedLeftOf(bgBounds);
 
                 // Lastly, create the dialog
@@ -82,14 +176,74 @@ namespace Viconomy.GUI
                     .AddShadedDialogBG(bgBounds)
                     .AddVerticalTabs(tabs, tabBounds, onTabChanged)
                     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked)
-                    .AddItemSlotGridExcl(Inventory, new Action<object>(this.SendInvPacket), 10, new int[] { }, slotGrid, "currency");
+                    .AddStaticText(Lang.Get("vinconomy:gui-trade-pass"), CairoFont.WhiteSmallishText(), tradePassLabelBounds)
+                    .AddItemSlotGrid(Inventory, new Action<object>(this.SendInvPacket), 10, new int[] { 0 }, tradePassBounds, "coupons")
+                    .AddStaticText(Lang.Get("vinconomy:gui-stall-access"), CairoFont.WhiteSmallishText(), accessStallsLabelBounds)
+                    .AddSwitch(EnableStallAccess, accessStallsBounds)
+                    .AddStaticText(Lang.Get("vinconomy:gui-shop-access"), CairoFont.WhiteSmallishText(), accessInputLabelBounds)
+                    .AddTextInput(accessInputBounds, OnAccessInputTextChanged)
+                    .AddButton("Add", OnAddAccess, accessAddButtonBounds)
+                    .AddInset(accessInsetBounds, 3)
+                        .BeginClip(accessClipBounds)
+                            .AddContainer(accessContainerBounds, "container").BeginChildElements();
+                                try
+                                {
+                                    for (int i = 0; i < 10; i++)
+                                    {
+                                        ElementBounds nameLabelBounds = ElementBounds.Fixed(10, 5+(40 * i), 300, 25);
+                                        // Static Text doesnt bind to the parent for some reason? Why? Dunno. Dynamic text works fine though???
+                                        //SingleComposer.AddStaticText($"Player {i}", CairoFont.WhiteMediumText(), nameLabelBounds);
+                                        SingleComposer.AddDynamicText($"Player {i}", CairoFont.WhiteSmallishText(), nameLabelBounds);
+                                        
+                                        ElementBounds removeButtonBounds = ElementBounds.Fixed(315, 40 * i, 150, 25);
+                                        SingleComposer.AddButton("Remove", RemovePlayerPermissions, removeButtonBounds, EnumButtonStyle.Small);
+                            
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    SingleComposer.AddRichtext(Lang.Get("vinconomy:gui-error-tell-the-dev") + ex.Message, CairoFont.WhiteDetailText(), accessContainerBounds, "description");
+                                }
+                    SingleComposer.EndChildElements().EndClip()
+                .AddVerticalScrollbar(OnNewShopAccessScrollbarValue, accessScrollbarBounds, "access-scrollbar");
+
+                UpdateSelectedTab();
+                
                 SingleComposer.Compose();
+                UpdateAccessScrollbar();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
 
             }
+        }
+
+        private void UpdateAccessScrollbar()
+        {
+            float descScrollVisibleHeight = (float)accessClipBounds.fixedHeight;
+            double descScrollTotalHeight = 800;//SingleComposer.GetContainer("container").Bounds.fixedHeight;
+            SingleComposer.GetScrollbar("access-scrollbar").SetHeights(descScrollVisibleHeight, (float)descScrollTotalHeight);
+        }
+
+        private bool OnAddAccess()
+        {
+            return true;
+        }
+
+        private void OnAccessInputTextChanged(string obj)
+        {
+            
+        }
+
+        private bool RemovePlayerPermissions()
+        {
+            return true;
+        }
+
+        private void EnableStallAccess(bool obj)
+        {
+            
         }
 
         public void ComposeText()
@@ -161,7 +315,6 @@ namespace Viconomy.GUI
                     descriptionLabelBounds, descriptionSizeLabelBounds,
                     webhookLabelBounds, webhookBounds, saveButtonBounds);
 
-                GuiTab[] tabs = GetTabs();
                 ElementBounds tabBounds = ElementBounds.FixedSize(TAB_WIDTH, TAB_HEIGHT).FixedLeftOf(bgBounds);
 
                 // Lastly, create the dialog
@@ -208,7 +361,7 @@ namespace Viconomy.GUI
 
                     .AddButton(Lang.Get("vinconomy:gui-save"), OnSaveShopConfigPressed, saveButtonBounds, EnumButtonStyle.Small, "save");
 
-
+                UpdateSelectedTab();
                 SingleComposer.Compose();
 
                 int shortLength = shop.ShortDescription == null ? 0 : shop.ShortDescription.Length;
@@ -259,6 +412,14 @@ namespace Viconomy.GUI
             bounds.fixedY = 5 - value;
             bounds.CalcWorldBounds();
         }
+
+        private void OnNewShopAccessScrollbarValue(float value)
+        {
+            ElementBounds bounds = SingleComposer.GetContainer("container").Bounds;
+            bounds.fixedY = 5 - value;
+            bounds.CalcWorldBounds();
+        }
+
 
         private void OnNewShortDescScrollbarValue(float value)
         {
@@ -330,9 +491,12 @@ namespace Viconomy.GUI
                     ComposeInventoryPage();
                     break;
                 case 1:
-                    ComposeConfigPage();
+                    ComposePermissionsPage();
                     break;
                 case 2:
+                    ComposeConfigPage();
+                    break;
+                case 3:
                     ComposeWaypointPage();
                     break;
                 default:
@@ -367,7 +531,6 @@ namespace Viconomy.GUI
             //ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.RightMiddle).WithFixedAlignmentOffset(-GuiStyle.DialogToScreenPadding, 0.0);
             ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
 
-            GuiTab[] tabs = GetTabs();
             ElementBounds tabBounds = ElementBounds.FixedSize(TAB_WIDTH, TAB_HEIGHT).FixedLeftOf(bgBounds);
 
            
@@ -382,8 +545,9 @@ namespace Viconomy.GUI
                     .AddStaticText(Lang.Get("vinconomy:gui-color"), CairoFont.WhiteSmallText(), colorLabelBounds)
                     .AddColorListPicker(colors, onToggleColor, colorRow, 500, "colorpicker")
                     .AddStaticText(Lang.Get("vinconomy:gui-icon"), CairoFont.WhiteSmallText(), iconLabelBounds)
-                    .AddIconListPicker(icons, onToggleIcon, iconRow, 500, "iconpicker")
-                .Compose();
+                    .AddIconListPicker(icons, onToggleIcon, iconRow, 500, "iconpicker");
+                    UpdateSelectedTab();
+                SingleComposer.Compose();
 
                 if (shop.IsWaypointBroadcasted)
                 {
@@ -425,7 +589,7 @@ namespace Viconomy.GUI
                 writer.Write(SingleComposer.GetTextInput("webhook").GetText());
                 data = ms.ToArray();
             }
-            capi.Network.SendBlockEntityPacket(BlockEntityPosition.X, BlockEntityPosition.Y, BlockEntityPosition.Z, VinConstants.SET_SHOP_NAME, data);
+            capi.Network.SendBlockEntityPacket(BlockEntityPosition, VinConstants.SET_SHOP_NAME, data);
             return true;
         }
 
@@ -453,7 +617,7 @@ namespace Viconomy.GUI
                 this.Inventory.Close(this.capi.World.Player);
                 this.capi.World.Player.InventoryManager.CloseInventory(this.Inventory);
             }
-            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.CLOSE_GUI, null);
+            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.CLOSE_GUI, null);
             this.capi.Gui.PlaySound(this.CloseSound, true, 1f);
         }
 
@@ -487,7 +651,7 @@ namespace Viconomy.GUI
                 data = ms.ToArray();
             }
 
-            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_WAYPOINT, data);
+            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.SET_WAYPOINT, data);
         }
 
 

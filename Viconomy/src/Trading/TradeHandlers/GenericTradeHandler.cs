@@ -73,19 +73,21 @@ namespace Viconomy.Trading.TradeHandlers
                 return SetErrorAndReturn(res, TradingConstants.NO_REGISTER_SPACE);
 
             // Extract all relevant items from their containers
-            TryExtractProductSlots(res);
-            TryExtractCurrencySlots(res);
             TryConsumeTools(res);
             TryConsumeCoupons(res);
+            TryExtractProductSlots(res);
+            TryExtractCurrencySlots(res);
+
 
             // Send TradeResult to mod system to take taxes, log sale in ledger, etc.
             core.PurchasedItem(res, res.TransferedProduct[0], res.TransferedCurrency[0]);
 
             // Add payment to stall and give player product.
             TryAddPaymentToStall(res);
+            TryAddCouponsToStall(res);
             TryAddProductToPlayer(res);
 
-            
+
 
             VinconomyCoreSystem.PrintClientMessage(res.Request.Customer, TradingConstants.PURCHASED_ITEMS, new object[] {
 
@@ -96,6 +98,26 @@ namespace Viconomy.Trading.TradeHandlers
             });
 
             return res;
+        }
+
+        private static void TryAddCouponsToStall(GenericTradeResult res)
+        {
+            // Add the payment to the register
+            if (res.Request.ShopRegister != null)
+            {
+                foreach (ItemStack couponStack in res.TransferedCoupons)
+                {
+                    if (!res.Request.ShopRegister.AddItem(couponStack, couponStack.StackSize))
+                    {
+                        AuditLogError(res, $"Failed to add coupons of {couponStack.StackSize} {couponStack.GetName()} to Shop Register");
+                    }
+                }
+
+            }
+            else
+            {
+                AuditLogError(res, $"Failed to add coupons to Register. ShopRegister was null");
+            }
         }
 
         private static void TryAddProductToPlayer(GenericTradeResult res)
@@ -128,12 +150,45 @@ namespace Viconomy.Trading.TradeHandlers
 
         }
 
-        private static void TryConsumeCoupons(GenericTradeResult res)
+        private static int TryConsumeCoupons(GenericTradeResult res)
         {
+            if (res.Request.CouponSlots == null || res.Request.ConsumeCoupon == false) {
+                return 0; 
+            }
+
+            // Take the product from the stall
+            int currencyLeft = 1;
+            if (res.Request.CouponPerTrade) { 
+                currencyLeft = res.Request.NumPurchases; 
+            }
+
+            foreach (ItemSlot itemSlot in res.Request.CouponSlots.Slots)
+            {
+                if (itemSlot.Itemstack == null) continue;
+                ItemStack takenStack = itemSlot.TakeOut(currencyLeft);
+                currencyLeft -= takenStack.StackSize;
+                res.TransferedCoupons.Add(takenStack);
+                res.TransferedCouponsTotal += takenStack.StackSize;
+                itemSlot.MarkDirty();
+
+                if (currencyLeft <= 0) break;
+            }
+
+
+            if (currencyLeft > 0)
+            {
+                AuditLogError(res, $"Error collecting coupons for trade. Needed {res.Request.NumPurchases} but is missing {currencyLeft}");
+            }
+
+            return currencyLeft;
         }
 
         private static void TryConsumeTools(GenericTradeResult res)
         {
+            if (res.Request.SellingEntity.ConsumeTool(res))
+            {
+                AuditLogError(res, "Error consuming tools for trade.");
+            }
         }
 
         public static void TryAddPaymentToStall(GenericTradeResult res)
@@ -149,6 +204,9 @@ namespace Viconomy.Trading.TradeHandlers
                     }
                 }
                 
+            } else
+            {
+                AuditLogError(res, $"Failed to add payments to Register. ShopRegister was null");
             }
         }
 
@@ -185,35 +243,7 @@ namespace Viconomy.Trading.TradeHandlers
         /// <returns></returns>
         private static int TryExtractProductSlots(GenericTradeResult res)
         {
-            // Take the product from the stall
-            int productLeft = res.Request.NumPurchases * res.Request.ProductNeededPerPurchase;
-            if (res.Request.IsAdminShop)
-            {
-                int maxStackSize = res.Request.ProductStackNeeded.Collectible.MaxStackSize;
-                while (productLeft > 0)
-                {
-                    ItemStack transferStack = res.Request.ProductStackNeeded.Clone();
-                    int stackSize = Math.Min(productLeft, maxStackSize);
-                    transferStack.StackSize = stackSize;
-                    res.TransferedProduct.Add(transferStack);
-                    res.TransferedProductTotal += stackSize;
-                    productLeft -= stackSize;
-                }
-            } else
-            {
-                foreach (ItemSlot itemSlot in res.Request.ProductSourceSlots.Slots)
-                {
-                    if (itemSlot.Itemstack == null) continue;
-                    ItemStack takenStack = itemSlot.TakeOut(productLeft);
-                    productLeft -= takenStack.StackSize;
-                    res.TransferedProduct.Add(takenStack);
-                    res.TransferedProductTotal += takenStack.StackSize;
-                    itemSlot.MarkDirty();
-
-                    if (productLeft <= 0) break;
-                }
-            }
-
+            int productLeft = res.Request.SellingEntity.ExtractProductFromStall(res);
             if (productLeft > 0)
             {
                 AuditLogError(res, $"Error collecting payment for trade. Needed {res.Request.NumPurchases * res.Request.ProductNeededPerPurchase} but is missing {productLeft}");

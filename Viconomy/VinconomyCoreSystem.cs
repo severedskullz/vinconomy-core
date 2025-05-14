@@ -22,7 +22,6 @@ using Vintagestory.GameContent;
 using Vintagestory.API.Datastructures;
 using Cairo;
 using System.Collections.Generic;
-using Viconomy.Network.Api;
 
 namespace Viconomy
 {

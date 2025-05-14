@@ -14,7 +14,7 @@ namespace Viconomy.BlockTypes
             if (be != null)
             {
                 int index = selection.SelectionBoxIndex;
-                ItemSlot product = be.FindFirstNonEmptyStockSlotForStall(index);
+                ItemStack product = be.FindFirstNonEmptyStockStack(index);
                 ItemSlot currency = be.GetCurrencyForStall(index);
 
                 //StallSlot slot = slots[selection.SelectionBoxIndex];

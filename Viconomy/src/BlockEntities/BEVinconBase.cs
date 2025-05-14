@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Viconomy.BlockEntities.TextureSwappable;
 using Viconomy.Inventory;
 using Viconomy.Renderer;
@@ -144,13 +145,13 @@ namespace Viconomy.BlockEntities
         
         public abstract int GetNumItemsPerPurchaseForStall(int stallSlot);
 
-        public virtual ItemSlot FindFirstNonEmptyStockSlotForStall(int stallSlot)
+        public virtual ItemStack FindFirstNonEmptyStockStack(int stallSlot)
         {
             ItemSlot[] slots = GetSlotsForStall(stallSlot);
             foreach (ItemSlot slot in slots)
             {
                 if (slot.Itemstack != null)
-                    return slot;
+                    return slot.Itemstack;
             }
             return null;
         }
@@ -274,7 +275,7 @@ namespace Viconomy.BlockEntities
             request.WithShop(shopRegister, this, stallSlot, IsAdminShop);
             request.WithPurchases(numPurchases);
             request.WithCurrency(currencyStack, TradingUtil.GetAllValidSlotsFor(player, currencyStack), currencyStack.StackSize);
-            request.WithProduct(TradingUtil.GetItemStackClone(FindFirstNonEmptyStockSlotForStall(stallSlot), 1), GetAggregateProductSlots(stallSlot), GetNumItemsPerPurchaseForStall(stallSlot));
+            request.WithProduct(TradingUtil.GetItemStackClone(FindFirstNonEmptyStockStack(stallSlot), 1), GetAggregateProductSlots(stallSlot), GetNumItemsPerPurchaseForStall(stallSlot));
             
             //request.WithCoupons(null, null, false, false, 0,0);
             //request.WithTools(null, 1);
@@ -290,81 +291,64 @@ namespace Viconomy.BlockEntities
                 MarkDirty(true, null);
                 UpdateMeshes();
             }
+        }
 
+        public virtual ItemStack GetProductForStall(int stallSlot)
+        {
+            return TradingUtil.GetItemStackClone(FindFirstNonEmptyStockStack(stallSlot), GetNumItemsPerPurchaseForStall(stallSlot)); ;
+        }
 
-
-
-
-
-            /*
-            ItemSlot[] slots = GetSlotsForStall(stallSlot);
-            TradeRequest request = new TradeRequest();
-            request.customer = player;
-            request.shopRegister = shopRegister;
-            request.sellingEntity = this;
-            request.productNeeded = TradingUtil.GetItemStackClone(FindFirstNonEmptyStockSlotForStall(stallSlot), GetNumItemsPerPurchaseForStall(stallSlot)); ;
-            request.productSourceSlots = slots;
-            request.numPurchases = numPurchases;
-            request.coreApi = this.Api;
-            request.currencyNeeded = TradingUtil.GetItemStackClone(GetCurrencyForStall(stallSlot));
-            request.isAdminShop = this.IsAdminShop;
-            //request.shouldConsumeTool = ShouldConsumeTool(stallSlot);
-            //request.requiredToolType = GetRequiredToolType(stallSlot);
-            //request.tool = GetRequiredTool(player, stallSlot, desiredAmount);
-
-            TradeResult result = TradingUtil.TryPurchaseItem(request);
-            if (result.error != null)
+        /// <summary>
+        /// Removes the product from the Slots and adds any stacks meant to be given to the user
+        /// to result.TransferedProduct. Update result.TransferedProductTotal accordingly
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public virtual int ExtractProductFromStall(GenericTradeResult result)
+        {
+            // Take the product from the stall
+            int productLeft = result.Request.NumPurchases * result.Request.ProductNeededPerPurchase;
+            if (result.Request.IsAdminShop)
             {
-                VinconomyCoreSystem.PrintClientMessage(player, result.error);
+                int maxStackSize = result.Request.ProductStackNeeded.Collectible.MaxStackSize;
+                while (productLeft > 0)
+                {
+                    ItemStack transferStack = result.Request.ProductStackNeeded.Clone();
+                    int stackSize = Math.Min(productLeft, maxStackSize);
+                    transferStack.StackSize = stackSize;
+                    result.TransferedProduct.Add(transferStack);
+                    result.TransferedProductTotal += stackSize;
+                    productLeft -= stackSize;
+                }
             }
             else
             {
-                this.MarkDirty(true, null);
-                this.UpdateMeshes();
-            }
-            */
+                foreach (ItemSlot itemSlot in result.Request.ProductSourceSlots.Slots)
+                {
+                    if (itemSlot.Itemstack == null) continue;
+                    ItemStack takenStack = itemSlot.TakeOut(productLeft);
+                    productLeft -= takenStack.StackSize;
+                    result.TransferedProduct.Add(takenStack);
+                    result.TransferedProductTotal += takenStack.StackSize;
+                    itemSlot.MarkDirty();
 
-        }
-        public virtual ItemStack GetProductForStall(int stallSlot)
-        {
-            return TradingUtil.GetItemStackClone(FindFirstNonEmptyStockSlotForStall(stallSlot), GetNumItemsPerPurchaseForStall(stallSlot)); ;
-        }
-
-        /*
-        protected virtual bool ShouldConsumeTool(int stallSlot)
-        {
-            return false;
-        }
-
-        protected virtual ToolType GetRequiredToolType( int stallSlot)
-        {
-            return ToolType.NONE;
-        }
-
-        protected virtual ItemSlot GetRequiredTool(IPlayer player, int stallSlot, int numPurchases)
-        {
-            ToolType type = GetRequiredToolType(stallSlot);
-            switch(type)
-            {
-                case ToolType.NONE:
-                    return null;
-
-                case ToolType.FOOD_CONTAINER:
-                    break;
-
-                case ToolType.DRINK_CONTAINER:
-                case ToolType.LIQUID_COINTAINER:
-                    break;
-
-                case ToolType.CHOPPING:
-                case ToolType.CUTTING:
-                    // I'll implement these later. As of right now, I have no ideas as to what would even require these.
-                    break;
+                    if (productLeft <= 0) break;
+                }
             }
 
-            return null;
+            return productLeft;
         }
-        */
+
+        /// <summary>
+        /// Consumes any tools needed to perform this trade. For Durability-based tools, it should subtract durability from the tool.
+        /// For container-based tools like bowls, pots, or buckets, it should add it to the contents of that blockitem.
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public virtual bool ConsumeTool(GenericTradeResult result)
+        {
+            return true;
+        }
 
     }
 }
