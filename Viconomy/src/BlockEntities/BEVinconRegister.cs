@@ -11,6 +11,7 @@ using Vintagestory.API.Server;
 using Vintagestory.Client.NoObf;
 using Viconomy.Inventory.Impl;
 using Vintagestory.Server;
+using System.Collections.Generic;
 
 namespace Viconomy.BlockEntities
 {
@@ -86,6 +87,20 @@ namespace Viconomy.BlockEntities
             modSystem.GetRegistry().ClearShopPos(ID);
         }
 
+        public bool CanAccess(IPlayer player)
+        {
+            if (player.PlayerUID == this.Owner)
+                return true;
+
+            ShopRegistration reg = modSystem.GetRegistry().GetShop(ID);
+            if (reg == null)
+            {
+                modSystem.Mod.Logger.Error("Couldnt find shop registration for register " + ID);
+                return false;
+            }
+            return reg.CanAccess(player);
+        }
+
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
             base.FromTreeAttributes(tree, worldForResolving);
@@ -156,7 +171,7 @@ namespace Viconomy.BlockEntities
                 if (Api.Side == EnumAppSide.Server)
                 {
                     IServerPlayer player = ((IServerPlayer)byPlayer);
-                    if (player.PlayerUID == Owner)
+                    if (CanAccess(player))
                     {
                         if (handSlot.Itemstack.Attributes.GetInt("ShopId", -1) <= 0)
                         {
@@ -178,7 +193,7 @@ namespace Viconomy.BlockEntities
                     }
                 }
             }
-            else if (byPlayer.PlayerUID == Owner)
+            else if (CanAccess(byPlayer))
             {
                 // Open shop admin gui
                 OpenAdminForPlayer(byPlayer);
@@ -290,10 +305,83 @@ namespace Viconomy.BlockEntities
                         }
                     }
                     break;
+                case VinConstants.ADD_PLAYER_PERMISSION:
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
+                        if (player.PlayerUID == Owner)
+                        {
+                            BinaryReader reader = new BinaryReader(ms);
+                            string playerName = reader.ReadString();
+                            IServerPlayerData selectedPlayer = ((ServerMain)Api.World).PlayerDataManager.GetPlayerDataByLastKnownName(playerName);
+                            if (selectedPlayer != null)
+                            {
+                                ShopRegistration reg = modSystem.GetRegistry().GetShop(ID);
+                                if (reg != null)
+                                {
+                                    reg.AddAccess(selectedPlayer.PlayerUID, selectedPlayer.LastKnownPlayername);
+                                    modSystem.UpdateShop(reg.Owner, reg.ID, reg.Name, this.Pos);
+                                    UpdateClientStallPermissions(player, reg);
+                                }
+
+                            } else
+                            {
+                                ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:player-not-found", new object[] { playerName }), EnumChatType.OwnMessage);
+                            }
+                        }
+                        else
+                        {
+                            ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
+                        }
+                    }
+                    break;
+                case VinConstants.REMOVE_PLAYER_PERMISSION:
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
+                        if (player.PlayerUID == Owner)
+                        {
+                            BinaryReader reader = new BinaryReader(ms);
+                            string playerUID = reader.ReadString();
+                           
+                            ShopRegistration reg = modSystem.GetRegistry().GetShop(ID);
+                            if (reg != null)
+                            {
+                                reg.RemoveAccess(playerUID);
+                                modSystem.UpdateShop(reg.Owner, reg.ID, reg.Name, this.Pos);
+                                UpdateClientStallPermissions(player, reg);
+                            }
+                        }
+                        else
+                        {
+                            ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
+                        }
+                    }
+                    break;
+                case VinConstants.SET_STALL_PERMISSION:
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
+                        if (player.PlayerUID == Owner)
+                        {
+                            BinaryReader reader = new BinaryReader(ms);
+                            bool stallAccess = reader.ReadBoolean();
+
+                            ShopRegistration reg = modSystem.GetRegistry().GetShop(ID);
+                            if (reg != null)
+                            {
+                                reg.StallPermissions = stallAccess;
+                                modSystem.UpdateShop(reg.Owner, reg.ID, reg.Name, this.Pos);
+                                UpdateClientStallPermissions(player, reg);
+                            }
+                        }
+                        else
+                        {
+                            ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
+                        }
+                    }
+                    break;
                 default:
                     if (packetid < 1000)
                     {
-                        if (player.PlayerUID != Owner)
+                        if (!CanAccess(player))
                         {
                             if (!((ICoreServerAPI)Api).Server.IsDedicated)
                             {
@@ -315,33 +403,77 @@ namespace Viconomy.BlockEntities
             }
         }
 
+        private void UpdateClientStallPermissions(IPlayer player, ShopRegistration reg)
+        {
+            using (MemoryStream mos = new MemoryStream())
+            {
+                BinaryWriter writer = new BinaryWriter(mos);
+                writer.Write(reg.StallPermissions);
+                writer.Write(reg.Permissions.Count);
+                foreach (ShopAccess item in reg.Permissions.Values)
+                {
+                    writer.Write(item.PlayerUID);
+                    writer.Write(item.PlayerName);
+                }
+                ((ICoreServerAPI)this.Api).Network.SendBlockEntityPacket((IServerPlayer)player, this.Pos, VinConstants.UPDATE_SHOP_PERMISSIONS, mos.ToArray());
+            }
+        }
+
         public override void OnReceivedServerPacket(int packetid, byte[] data)
         {
             //Console.WriteLine(Api.Side + ": OnRecievedServerPacket " + packetid);
             IClientWorldAccessor clientWorld = (IClientWorldAccessor)this.Api.World;
-            if (packetid == VinConstants.TOGGLE_GUI)
+            switch(packetid)
             {
-                if (this.invDialog != null)
-                {
-                    //Console.WriteLine(Api.Side + ": Toggling GUI OFF");
-                    CloseGui(clientWorld);
-                }
-                else
-                {
-                    //Console.WriteLine(Api.Side + ": Toggling GUI ON");
+                case VinConstants.TOGGLE_GUI:
+                    if (this.invDialog != null)
+                    {
+                        //Console.WriteLine(Api.Side + ": Toggling GUI OFF");
+                        CloseGui(clientWorld);
+                    }
+                    else
+                    {
+                        //Console.WriteLine(Api.Side + ": Toggling GUI ON");
+                        OpenShopGui(data);
+                    }
+                    break;
+                case VinConstants.OPEN_GUI:
                     OpenShopGui(data);
+                    break;
+                case VinConstants.CLOSE_GUI:
+                    CloseGui(clientWorld);
+                    break;
+                case VinConstants.UPDATE_SHOP_PERMISSIONS:
+                    UpdateShopPermissions(data);
+                    break;
+                default: 
+                    break;
+            }
+ 
+        }
+
+        private void UpdateShopPermissions(byte[] data)
+        {
+            if (this.invDialog != null)
+            {
+                List<ShopAccess> access = new List<ShopAccess>();
+                bool stallAccess = false;
+                using (MemoryStream ms = new MemoryStream(data))
+                {
+                    BinaryReader reader = new BinaryReader(ms);
+                    stallAccess = reader.ReadBoolean();
+                    int numItems = reader.ReadInt32();
+                    for (int i = 0; i < numItems; i++)
+                    {
+                        string playerUid = reader.ReadString();
+                        string playerName = reader.ReadString();
+                        access.Add( new ShopAccess(playerUid, playerName));
+
+                    }
                 }
 
+                invDialog.UpdateShopPermissions(access, stallAccess);
             }
-            if (packetid == VinConstants.OPEN_GUI)
-            {
-                OpenShopGui(data);
-            }
-            if (packetid == VinConstants.CLOSE_GUI)
-            {
-                CloseGui(clientWorld);
-            }
-
         }
 
         private void OpenShopGui(byte[] data)
@@ -357,6 +489,14 @@ namespace Viconomy.BlockEntities
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
             ShopRegistration shopRegistry = modSystem.GetRegistry().GetShop(ID);
+
+            if (shopRegistry == null)
+            {
+                ((ICoreClientAPI)Api).World.Player.ShowChatNotification($"Could not find client-side registry info for this shop ID {ID}. Ensure you have access to this register and ensure the shop exists in the Vinconomy database. (Failsafe)");
+                return;
+            }
+              
+
             this.invDialog = new GuiViconRegister(shopRegistry, inventory, this.Pos, this.Api as ICoreClientAPI);
             //this.invDialog.OpenSound = this.OpenSound;
             //this.invDialog.CloseSound = this.CloseSound;

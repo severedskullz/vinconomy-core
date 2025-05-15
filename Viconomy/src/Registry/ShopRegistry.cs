@@ -1,13 +1,9 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 using Viconomy.Database;
 using Viconomy.Network;
-using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
-using Vintagestory.Server;
 
 namespace Viconomy.Registry
 {
@@ -189,7 +185,8 @@ namespace Viconomy.Registry
                 }
                 shopsByOwner[packet.Owner][packet.ID] = reg;
             }
-
+            reg.Permissions = packet.Permissions;
+            reg.StallPermissions = packet.StallPermissions;
             reg.Name = packet.Name;
             reg.Owner = packet.Owner;
             reg.X = packet.X;

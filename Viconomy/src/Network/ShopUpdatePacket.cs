@@ -1,4 +1,5 @@
 ﻿using ProtoBuf;
+using System.Collections.Generic;
 using Viconomy.Registry;
 
 namespace Viconomy.Network
@@ -6,10 +7,12 @@ namespace Viconomy.Network
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
     public class ShopUpdatePacket
     {
-        public int ID { get; set; } = -1;
+        public int ID { get; internal set; } = -1;
         public string Name { get; set; }
-        public string Owner { get; set; }
-        public string OwnerName { get; set; }
+        public string Owner { get; internal set; }
+        public Dictionary<string, ShopAccess> Permissions { get; internal set; } = new Dictionary<string, ShopAccess>();
+        public bool StallPermissions { get; internal set; }
+        public string OwnerName { get; internal set; }
         public int X { get; set; }
         public int Y { get; set; }
         public int Z { get; set; }
@@ -28,6 +31,8 @@ namespace Viconomy.Network
             this.ID = reg.ID;
             this.Name = reg.Name;
             this.OwnerName = reg.OwnerName;
+            this.Permissions = reg.Permissions;
+            this.StallPermissions = reg.StallPermissions;
             this.IsWaypointBroadcasted = reg.IsWaypointBroadcasted;
 
             if (reg.IsWaypointBroadcasted || isOwner)

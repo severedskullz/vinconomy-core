@@ -6,9 +6,12 @@ using Viconomy.Inventory.Impl;
 using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
+using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
+using Vintagestory.ServerMods;
 
 namespace Viconomy.GUI
 {
@@ -20,6 +23,7 @@ namespace Viconomy.GUI
         private bool isLoaded;
 
         private ShopRegistration shop;
+        private List<ShopAccess> shopAccess = new List<ShopAccess>();
 
         private VinconomyCoreSystem modSystem;
 
@@ -39,13 +43,17 @@ namespace Viconomy.GUI
         // Permissions Page Variables
         ElementBounds accessClipBounds;
 
-        public GuiViconRegister(ShopRegistration shopRegistration, ViconRegisterInventory Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi) : base(shopRegistration.Name, Inventory, BlockEntityPosition, capi)
+
+        public GuiViconRegister(ShopRegistration shopRegistration, ViconRegisterInventory Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi) 
+            : base(shopRegistration.Name, Inventory, BlockEntityPosition, capi)
         {
             if (base.IsDuplicate)
             {
                 return;
             }
             shop = shopRegistration;
+            shopAccess = shop.Permissions.Values.ToList();
+
             modSystem = capi.ModLoader.GetModSystem<VinconomyCoreSystem>();
             icons = modSystem.ShopMapLayer.WaypointIcons.Keys.ToArray<string>();
             colors = modSystem.ShopMapLayer.WaypointColors.ToArray();
@@ -179,36 +187,44 @@ namespace Viconomy.GUI
                     .AddStaticText(Lang.Get("vinconomy:gui-trade-pass"), CairoFont.WhiteSmallishText(), tradePassLabelBounds)
                     .AddItemSlotGrid(Inventory, new Action<object>(this.SendInvPacket), 10, new int[] { 0 }, tradePassBounds, "coupons")
                     .AddStaticText(Lang.Get("vinconomy:gui-stall-access"), CairoFont.WhiteSmallishText(), accessStallsLabelBounds)
-                    .AddSwitch(EnableStallAccess, accessStallsBounds)
+                    .AddSwitch(EnableStallAccess, accessStallsBounds, "stallAccess")
                     .AddStaticText(Lang.Get("vinconomy:gui-shop-access"), CairoFont.WhiteSmallishText(), accessInputLabelBounds)
-                    .AddTextInput(accessInputBounds, OnAccessInputTextChanged)
+                    .AddTextInput(accessInputBounds, null, null, "playerName")
                     .AddButton("Add", OnAddAccess, accessAddButtonBounds)
                     .AddInset(accessInsetBounds, 3)
                         .BeginClip(accessClipBounds)
-                            .AddContainer(accessContainerBounds, "container").BeginChildElements();
+                        .AddStaticText("", CairoFont.SmallTextInput(), accessContainerBounds, "container")
+                            //.AddContainer(accessContainerBounds, "container")
+                            .BeginChildElements();
                                 try
                                 {
-                                    for (int i = 0; i < 10; i++)
+                                    int i = 0;
+                                    foreach (ShopAccess access in shopAccess)
                                     {
                                         ElementBounds nameLabelBounds = ElementBounds.Fixed(10, 5+(40 * i), 300, 25);
                                         // Static Text doesnt bind to the parent for some reason? Why? Dunno. Dynamic text works fine though???
-                                        //SingleComposer.AddStaticText($"Player {i}", CairoFont.WhiteMediumText(), nameLabelBounds);
-                                        SingleComposer.AddDynamicText($"Player {i}", CairoFont.WhiteSmallishText(), nameLabelBounds);
+                                        //SingleComposer.AddStaticText(access.PlayerName, CairoFont.WhiteMediumText(), nameLabelBounds);
+                                        SingleComposer.AddDynamicText(access.PlayerName, CairoFont.WhiteSmallishText(), nameLabelBounds);
                                         
                                         ElementBounds removeButtonBounds = ElementBounds.Fixed(315, 40 * i, 150, 25);
-                                        SingleComposer.AddButton("Remove", RemovePlayerPermissions, removeButtonBounds, EnumButtonStyle.Small);
-                            
+                                        SingleComposer.AddButton("Remove", RemovePlayerPermissions(access), removeButtonBounds);
+                                        //SingleComposer.AddSwitch(SetPlayerPermissions(access), removeButtonBounds, access.PlayerName);
+                                        i++;
                                     }
+                    
                                 }
                                 catch (Exception ex)
                                 {
                                     SingleComposer.AddRichtext(Lang.Get("vinconomy:gui-error-tell-the-dev") + ex.Message, CairoFont.WhiteDetailText(), accessContainerBounds, "description");
                                 }
-                    SingleComposer.EndChildElements().EndClip()
+                            SingleComposer.EndChildElements();
+                        SingleComposer.EndClip()
+                        
                 .AddVerticalScrollbar(OnNewShopAccessScrollbarValue, accessScrollbarBounds, "access-scrollbar");
 
                 UpdateSelectedTab();
-                
+                SingleComposer.GetTextInput("playerName").SetPlaceHolderText("Player Name");
+                SingleComposer.GetSwitch("stallAccess").SetValue(shop.StallPermissions);
                 SingleComposer.Compose();
                 UpdateAccessScrollbar();
             }
@@ -219,31 +235,65 @@ namespace Viconomy.GUI
             }
         }
 
+        private ActionConsumable RemovePlayerPermissions(ShopAccess access)
+        {
+            return () =>
+            {
+                RemovePlayerPermission(access.PlayerUID);
+                return true;
+            };
+        }
+
         private void UpdateAccessScrollbar()
         {
             float descScrollVisibleHeight = (float)accessClipBounds.fixedHeight;
-            double descScrollTotalHeight = 800;//SingleComposer.GetContainer("container").Bounds.fixedHeight;
+            double descScrollTotalHeight = 40 * shopAccess.Count;
             SingleComposer.GetScrollbar("access-scrollbar").SetHeights(descScrollVisibleHeight, (float)descScrollTotalHeight);
+        }
+
+        public void AddPlayerPermission(string playerName)
+        {
+           
+            byte[] data;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BinaryWriter writer = new BinaryWriter(ms);
+                writer.Write(playerName);
+                data = ms.ToArray();
+            }
+            capi.Network.SendBlockEntityPacket(BlockEntityPosition, VinConstants.ADD_PLAYER_PERMISSION, data);
+        }
+
+        public void RemovePlayerPermission(string playerUid)
+        {
+            byte[] data;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BinaryWriter writer = new BinaryWriter(ms);
+                writer.Write(playerUid);
+                data = ms.ToArray();
+            }
+            capi.Network.SendBlockEntityPacket(BlockEntityPosition, VinConstants.REMOVE_PLAYER_PERMISSION, data);
         }
 
         private bool OnAddAccess()
         {
-            return true;
-        }
-
-        private void OnAccessInputTextChanged(string obj)
-        {
-            
-        }
-
-        private bool RemovePlayerPermissions()
-        {
+            GuiElementTextInput input = SingleComposer.GetTextInput("playerName");
+            AddPlayerPermission(input.GetText());
             return true;
         }
 
         private void EnableStallAccess(bool obj)
         {
-            
+            GuiElementSwitch input = SingleComposer.GetSwitch("stallAccess");
+            byte[] data;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BinaryWriter writer = new BinaryWriter(ms);
+                writer.Write(input.On);
+                data = ms.ToArray();
+            }
+            capi.Network.SendBlockEntityPacket(BlockEntityPosition, VinConstants.SET_STALL_PERMISSION, data);
         }
 
         public void ComposeText()
@@ -415,7 +465,7 @@ namespace Viconomy.GUI
 
         private void OnNewShopAccessScrollbarValue(float value)
         {
-            ElementBounds bounds = SingleComposer.GetContainer("container").Bounds;
+            ElementBounds bounds = SingleComposer.GetStaticText("container").Bounds;
             bounds.fixedY = 5 - value;
             bounds.CalcWorldBounds();
         }
@@ -654,7 +704,37 @@ namespace Viconomy.GUI
             this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.SET_WAYPOINT, data);
         }
 
+        public void UpdateShopPermissions(List<ShopAccess> access, bool stallAccess)
+        {
+            // Originally, it would have had been as simple as replacing shop.Permissions with the new list and setting the checkbox and then calling Compose() like I do on every other one of my UIs
+            // HOWEVER, Simply calling Compose() again gives me a generic "Index out of bounds" on the container in some sort of OnMouseDown() call due to it trying to unfocus elements that have been cleared.
+            // To make matters worse, it works fine until I click again after Compose() is called and only THEN does it throw an error. Somehow the old SingleComposer selected index persists across
+            // creation of a new composer and as soon as I click it tries to unfocuse the old out of scope composer.
+            // I tried clearing the elements before calling Compose(), setting it explicitly to null, manually unfocusing the container, and even iterating through the elements and unfocusing them before clearing them.
+
+            // Grab the old container element, manually unfocus, clear elements, and try to reuse it rather than just recreating the UI.
+            // Somehow, this works, but trying to throw away the whole GuiComposer and make it from scratch each time doesn't - fucking rediculous.
+
+            // Now, even if I manually recreate the list on the fly without a recompose, removing any elements from the list *ALSO* triggers the same error.
+            // Instead of using a "Remove" button to remove it from the list, last ditch resort is radio buttons that persist after turning them off.
+            // That way they cant reduce the size of the list, and therefore the index out of bounds error cannot happen - STILL didnt work.
+
+            // Took multiple UI redesign and over 5 hours of fruitless debugging and trial and error.
+            // Nothing works - error is as vague as it possibly can be, and no graceful error handling. Fuck you, Tyron - this UI framework is *MISERABLE* to work with. >:(
+
+            // In the end, after all that, the hack was to use an invisible Static Text as the parent for the scrollbar to modify the Y position for the clip bounds. Fuck you very much, Tyron.
+
+            //shop.Permissions = access;
+            shop.StallPermissions = stallAccess;
+            shopAccess = access;
+
+            SingleComposer.GetTextInput("playerName").SetValue("");
+
+            Compose();
+            UpdateAccessScrollbar();
 
 
+
+        }
     }
 }

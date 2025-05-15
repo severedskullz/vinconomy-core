@@ -65,7 +65,7 @@ namespace Viconomy.BlockEntities
 
             ItemSlot hotbarslot = byPlayer.InventoryManager.ActiveHotbarSlot;
 
-            if (byPlayer.PlayerUID == Owner && !VinconomyCoreSystem.ShouldForceCustomerScreen)
+            if (CanAccess(byPlayer) && !VinconomyCoreSystem.ShouldForceCustomerScreen)
             {
                 ItemSlot item = inventory.FindFirstNonEmptyStockSlot(slotIndex);
 
@@ -208,7 +208,7 @@ namespace Viconomy.BlockEntities
                     writer.Write((byte)StallSlotCount);
                     writer.Write((byte)StacksPerSlot);
                     writer.Write((byte)selectedStall);
-                    writer.Write(byPlayer.PlayerUID == Owner);
+                    writer.Write(CanAccess(byPlayer));
                     TreeAttribute tree = new TreeAttribute();
                     inventory.ToTreeAttributes(tree);
                     tree.ToBytes(writer);
@@ -352,7 +352,7 @@ namespace Viconomy.BlockEntities
                 default:
                     if (packetid < 1000)
                     {
-                        if (player.PlayerUID != Owner)
+                        if (CanAccess(player))
                         {
                             ((IServerPlayer)player).Disconnect("Nice try, but that wasn't yours. (Tried to access Stall they didn't own)");
                             return;

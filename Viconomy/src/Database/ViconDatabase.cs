@@ -12,6 +12,9 @@ using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Viconomy.Inventory;
 using System.Data;
+using static HarmonyLib.Code;
+using static System.Net.Mime.MediaTypeNames;
+using System.Data.Common;
 
 namespace Viconomy.Database
 {
@@ -37,8 +40,17 @@ namespace Viconomy.Database
             {
                 connection.Open();
                 SqliteCommand cmd = connection.CreateCommand();
-                cmd.CommandText = "CREATE TABLE IF NOT EXISTS Shops (Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Owner TEXT, OwnerName TEXT, X INTEGER, Y INTEGER, Z INTEGER, BroadcastWaypoint INTEGER, WaypointIcon TEXT, WaypointColor INTEGER, Description TEXT, ShortDescription TEXT, WebHook TEXT);";
+                cmd.CommandText = "CREATE TABLE IF NOT EXISTS Shops (Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Owner TEXT, OwnerName TEXT, X INTEGER, Y INTEGER, Z INTEGER, BroadcastWaypoint INTEGER, WaypointIcon TEXT, WaypointColor INTEGER, Description TEXT, ShortDescription TEXT, WebHook TEXT, StallAccess INTEGER NOT NULL DEFAULT 0);";
                 cmd.ExecuteNonQuery();
+
+                try
+                {
+                    // For backwards compatability to 4.0
+                    cmd.CommandText = "ALTER TABLE Shops ADD COLUMN StallAccess INTEGER NOT NULL DEFAULT 0;";
+                    cmd.ExecuteNonQuery();
+                }
+                catch{ }
+
 
                 cmd.CommandText = "CREATE TABLE IF NOT EXISTS Sales (ShopId INTEGER, Customer TEXT, Month INTEGER, Year INTEGER, ProductCode TEXT, ProductQuantity INTEGER, ProductAttributes TEXT, CurrencyCode TEXT, CurrencyQuantity INTEGER, CurrencyAttributes TEXT);";
                 cmd.ExecuteNonQuery();
@@ -52,6 +64,8 @@ namespace Viconomy.Database
                 cmd.CommandText = "CREATE TABLE IF NOT EXISTS PendingSales (Id INTEGER PRIMARY KEY AUTOINCREMENT, X INTEGER, Y INTEGER, Z INTEGER, StallSlot INTEGER, ShopId INTEGER, Customer TEXT, ProductName TEXT, ProductCode TEXT, ProductQuantity INTEGER, ProductAttributes BLOB, CurrencyName TEXT, CurrencyCode TEXT, CurrencyQuantity INTEGER, CurrencyAttributes BLOB, Amount INTEGER);";
                 cmd.ExecuteNonQuery();
 
+                cmd.CommandText = "CREATE TABLE IF NOT EXISTS ShopPermissions (Id INTEGER, PlayerUid TEXT, PlayerName TEXT);";
+                cmd.ExecuteNonQuery();
 
                 connection.Close();
             }
@@ -73,12 +87,13 @@ namespace Viconomy.Database
             {
                 connection.Open();
                 SqliteCommand cmd = connection.CreateCommand();
-                cmd.CommandText = @"UPDATE Shops SET Name = @Name, Owner = @Owner, OwnerName = @OwnerName, X = @X, Y = @Y, Z = @Z, BroadcastWaypoint = @BroadcastWaypoint, WaypointIcon = @WaypointIcon, WaypointColor = @WaypointColor  WHERE ID = @ID;";
+                cmd.CommandText = @"UPDATE Shops SET Name = @Name, Owner = @Owner, OwnerName = @OwnerName, X = @X, Y = @Y, Z = @Z, BroadcastWaypoint = @BroadcastWaypoint, WaypointIcon = @WaypointIcon, WaypointColor = @WaypointColor, StallAccess = @StallAccess WHERE ID = @ID;";
                 cmd.Parameters.Add("@ID", SqliteType.Integer).Value = shop.ID;
                 cmd.Parameters.Add("@Name", SqliteType.Text).Value = shop.Name;
                 cmd.Parameters.Add("@Owner", SqliteType.Text).Value = shop.Owner;
                 cmd.Parameters.Add("@OwnerName", SqliteType.Text).Value = shop.OwnerName;
                 cmd.Parameters.Add("@BroadcastWaypoint", SqliteType.Integer).Value = shop.IsWaypointBroadcasted;
+                cmd.Parameters.Add("@StallAccess", SqliteType.Integer).Value = shop.StallPermissions;
 
 
                 if (shop.Position == null)
@@ -104,8 +119,23 @@ namespace Viconomy.Database
                     cmd.Parameters.Add("@WaypointIcon", SqliteType.Text).Value = shop.WaypointIcon;
                     cmd.Parameters.Add("@WaypointColor", SqliteType.Integer).Value = shop.WaypointColor;
                 }
-
                 cmd.ExecuteNonQuery();
+
+                cmd = connection.CreateCommand();
+                cmd.CommandText = @"DELETE FROM ShopPermissions WHERE ID = @ID;";
+                cmd.Parameters.Add("@ID", SqliteType.Integer).Value = shop.ID;
+                cmd.ExecuteNonQuery();
+
+                foreach (ShopAccess entry in shop.Permissions.Values)
+                {
+                    cmd = connection.CreateCommand();
+                    cmd.CommandText = @"INSERT INTO ShopPermissions VALUES( @ID, @PlayerUid, @PlayerName);";
+                    cmd.Parameters.Add("@ID", SqliteType.Integer).Value = shop.ID;
+                    cmd.Parameters.Add("@PlayerName", SqliteType.Text).Value = entry.PlayerName;
+                    cmd.Parameters.Add("@PlayerUid", SqliteType.Text).Value = entry.PlayerUID;
+                    cmd.ExecuteNonQuery();
+                }
+
             }
             return shop;
         }
@@ -350,6 +380,21 @@ namespace Viconomy.Database
                     if (!reader.IsDBNull("WebHook"))
                         reg.WebHook = reader.GetString("WebHook");
 
+                    bool access = reader.GetBoolean("StallAccess");
+                    reg.StallPermissions = access;
+
+                    SqliteCommand permissions = connection.CreateCommand();
+                    permissions.CommandText = "SELECT * FROM ShopPermissions WHERE ID = @ID";
+                    permissions.Parameters.Add("@ID", SqliteType.Integer).Value = reg.ID;
+                    SqliteDataReader permReader = permissions.ExecuteReader();
+
+                    while (permReader.Read())
+                    {
+                        string uid = permReader.GetString("PlayerUid");
+                        string name = permReader.GetString("PlayerName");
+                        reg.AddAccess(uid, name);
+                    }
+                   
 
                     registry.AddShop(reg);
                 }

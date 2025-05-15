@@ -29,6 +29,12 @@
         public const int SET_TOTAL_RANDOMIZER = 2010;
         public const int SET_ITEM_PRICE = 2011;
 
+        public const int ADD_PLAYER_PERMISSION = 2012;
+        public const int REMOVE_PLAYER_PERMISSION = 2013;
+        public const int SET_STALL_PERMISSION = 2014;
+        public const int UPDATE_SHOP_PERMISSIONS = 2014;
+
+
         // Customer Packets
         public const int PURCHASE_ITEMS = 3002;
         public const int CURRENCY_CONVERSION = 3003;
@@ -41,6 +47,5 @@
         public const string TRADE_STATUS_FAILED = "FAILED";
         public const string TRADE_STATUS_LACKS_ITEMS = "LACKS_ITEMS";
         public const string TRADE_STATUS_CANCELED = "CANCELED";
-
     }
 }

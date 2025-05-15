@@ -463,20 +463,34 @@ namespace Viconomy
             {
 
                 IServerPlayer owner = (IServerPlayer)_coreServerAPI.World.PlayerByUid(shop.Owner);
+
+                List<IServerPlayer> excludeList = new List<IServerPlayer>
+                {
+                    owner
+                };
+
                 if (owner.ConnectionState == EnumClientState.Playing)
                 {
                     SendShopOwnerUpdate(shop, owner);
                 }
 
+                //broadcast owner packet to all those with permission to the shop
+                foreach (ShopAccess access in shop.Permissions.Values)
+                {
+                    IServerPlayer granted = (IServerPlayer)_coreServerAPI.World.PlayerByUid(access.PlayerUID);
+                    SendShopOwnerUpdate(shop, granted);
+                    excludeList.Add(granted); // Dont send them the waypoint update if its broadcasted, too...
+                }
+
                 if (shop.IsWaypointBroadcasted)
                 {
                     ShopUpdatePacket update = new ShopUpdatePacket(shop, false);
-                    _serverChannel.BroadcastPacket(update, new IServerPlayer[] { owner });
+                    _serverChannel.BroadcastPacket(update, excludeList.ToArray());
                 }
             }
         }
 
-        private void SendShopOwnerUpdate(ShopRegistration shop, IServerPlayer player)
+        public void SendShopOwnerUpdate(ShopRegistration shop, IServerPlayer player)
         {
             ShopUpdatePacket update;
             if (shop == null)
@@ -499,7 +513,7 @@ namespace Viconomy
             {
                foreach (ShopRegistration shop in shops)
                 {
-                    if (shop.IsWaypointBroadcasted || shop.Owner == player.PlayerUID)
+                    if (shop.IsWaypointBroadcasted || shop.CanAccess(player))
                     {
                         updates.Add(new ShopUpdatePacket(shop, shop.Owner == player.PlayerUID));
                     }

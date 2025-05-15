@@ -1,18 +1,23 @@
 ﻿using ProtoBuf;
+using System.Collections.Generic;
 using Viconomy.Network;
+using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
 namespace Viconomy.Registry
 {
+
+    //Note to self: Why didnt I just extend ShopUpdatePacket? Well it doesnt fucking work, thats why.
+
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
     public class ShopRegistration
     {
 
-
-
         public int ID { get; internal set; } = -1;
         public string Name { get;  set; }
         public string Owner { get; internal set; }
+        public Dictionary<string,ShopAccess> Permissions { get; internal set; } = new Dictionary<string, ShopAccess>();
+        public bool StallPermissions { get; internal set; }
         public string OwnerName { get; internal set; }
         public int X { get; set; }
         public int Y { get; set; }
@@ -35,6 +40,8 @@ namespace Viconomy.Registry
             this.X = item.X;
             this.Y = item.Y;
             this.Z = item.Z;
+            this.Permissions = item.Permissions;
+            this.StallPermissions = item.StallPermissions;
             this.WaypointIcon = item.WaypointIcon;
             this.WaypointColor = item.WaypointColor;
             this.IsWaypointBroadcasted = item.IsWaypointBroadcasted;
@@ -70,6 +77,20 @@ namespace Viconomy.Registry
             }
         }
 
+        public void RemoveAccess(string playerUid)
+        {
+            Permissions.Remove(playerUid);
+        }
 
+        public void AddAccess(string playerUid, string playerName)
+        {
+            if (!Permissions.ContainsKey(playerUid))
+              Permissions.Add(playerUid, new ShopAccess(playerUid, playerName));
+        }
+
+        public bool CanAccess(IPlayer player)
+        {
+            return Permissions.ContainsKey(player.PlayerUID);
+        }
     }
 }

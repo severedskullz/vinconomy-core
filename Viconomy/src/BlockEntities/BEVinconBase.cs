@@ -2,6 +2,7 @@
 using System.IO;
 using Viconomy.BlockEntities.TextureSwappable;
 using Viconomy.Inventory;
+using Viconomy.Registry;
 using Viconomy.Renderer;
 using Viconomy.Trading;
 using Viconomy.Trading.TradeHandlers;
@@ -348,6 +349,20 @@ namespace Viconomy.BlockEntities
         public virtual bool ConsumeTool(GenericTradeResult result)
         {
             return true;
+        }
+
+        public bool CanAccess(IPlayer player)
+        {
+            if (player.PlayerUID == this.Owner)
+                return true;
+
+            ShopRegistration reg = modSystem.GetRegistry().GetShop(RegisterID);
+            if (reg == null)
+            {
+                modSystem.Mod.Logger.Error("Couldnt find shop registration for register " + RegisterID);
+                return false;
+            }
+            return reg.CanAccess(player);
         }
 
     }
