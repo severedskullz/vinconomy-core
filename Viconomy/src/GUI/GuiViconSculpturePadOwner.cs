@@ -331,7 +331,7 @@ namespace Viconomy.GUI
                     writer.Write(name);
                     data = ms.ToArray();
                 }
-                this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.SET_SCULPTURE_NAME, data);
+                this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.SET_ITEM_NAME, data);
             }
         }
 

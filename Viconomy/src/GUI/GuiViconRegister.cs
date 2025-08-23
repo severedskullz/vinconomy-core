@@ -7,11 +7,9 @@ using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
-using Vintagestory.ServerMods;
 
 namespace Viconomy.GUI
 {
@@ -21,6 +19,7 @@ namespace Viconomy.GUI
         private const int TAB_HEIGHT = 400;
         private int tabIndex;
         private bool isLoaded;
+        private bool isOwner;
 
         private ShopRegistration shop;
         private List<ShopAccess> shopAccess = new List<ShopAccess>();
@@ -54,6 +53,8 @@ namespace Viconomy.GUI
             shop = shopRegistration;
             shopAccess = shop.Permissions.Values.ToList();
 
+            isOwner = shop.Owner == capi.World.Player.PlayerUID;
+
             modSystem = capi.ModLoader.GetModSystem<VinconomyCoreSystem>();
             icons = modSystem.ShopMapLayer.WaypointIcons.Keys.ToArray<string>();
             colors = modSystem.ShopMapLayer.WaypointColors.ToArray();
@@ -68,11 +69,17 @@ namespace Viconomy.GUI
         {
             List<GuiTab> tabs = new List<GuiTab>
             {
-                new GuiTab() { Name = Lang.Get("vinconomy:tabname-inventory"), Active = false },
-                new GuiTab() { Name = Lang.Get("vinconomy:tabname-permissions"), Active = false },
-                new GuiTab() { Name = Lang.Get("vinconomy:tabname-configuration"), Active = false },
-                new GuiTab() { Name = Lang.Get("vinconomy:tabname-waypoint"), Active = false }
+                new GuiTab() { Name = Lang.Get("vinconomy:tabname-inventory"), Active = false }
             };
+
+            if (isOwner)
+            {
+                tabs.Add(new GuiTab() { Name = Lang.Get("vinconomy:tabname-permissions"), Active = false });
+                tabs.Add(new GuiTab() { Name = Lang.Get("vinconomy:tabname-configuration"), Active = false });
+                tabs.Add(new GuiTab() { Name = Lang.Get("vinconomy:tabname-waypoint"), Active = false });
+            }
+
+            tabIndex = Math.Min(tabs.Count-1, tabIndex);
             tabs[tabIndex].Active = true;
             return tabs.ToArray();
         }
@@ -107,7 +114,7 @@ namespace Viconomy.GUI
                 bgBounds.WithChildren(currencyLabelBounds, currencySlotGrid, couponLabelBounds, couponSlotGrid);
 
                 //IconUtil.DrawArrowRight
-                ElementBounds tabBounds = ElementBounds.FixedSize(TAB_WIDTH, TAB_HEIGHT).FixedLeftOf(bgBounds);
+                ElementBounds tabBounds = ElementBounds.FixedSize(TAB_WIDTH, TAB_HEIGHT).FixedLeftOf(bgBounds).WithFixedOffset(0, GuiStyle.TitleBarHeight);
 
                 
 
@@ -177,7 +184,7 @@ namespace Viconomy.GUI
                     accessInsetBounds, accessScrollbarBounds, accessInputLabelBounds, accessInputBounds, accessAddButtonBounds);
 
                 //IconUtil.DrawArrowRight
-                ElementBounds tabBounds = ElementBounds.FixedSize(TAB_WIDTH, TAB_HEIGHT).FixedLeftOf(bgBounds);
+                ElementBounds tabBounds = ElementBounds.FixedSize(TAB_WIDTH, TAB_HEIGHT).FixedLeftOf(bgBounds).WithFixedOffset(0, GuiStyle.TitleBarHeight);
 
                 // Lastly, create the dialog
                 SingleComposer = capi.Gui.CreateCompo("ViconRegister", dialogBounds)
@@ -365,7 +372,7 @@ namespace Viconomy.GUI
                     descriptionLabelBounds, descriptionSizeLabelBounds,
                     webhookLabelBounds, webhookBounds, saveButtonBounds);
 
-                ElementBounds tabBounds = ElementBounds.FixedSize(TAB_WIDTH, TAB_HEIGHT).FixedLeftOf(bgBounds);
+                ElementBounds tabBounds = ElementBounds.FixedSize(TAB_WIDTH, TAB_HEIGHT).FixedLeftOf(bgBounds).WithFixedOffset(0, GuiStyle.TitleBarHeight);
 
                 // Lastly, create the dialog
                 SingleComposer = capi.Gui.CreateCompo("ViconRegister", dialogBounds)
@@ -555,7 +562,7 @@ namespace Viconomy.GUI
 
         }
 
-        private void ComposeWaypointPage()
+        private void ComposeWaypointPage()  
         {
             ElementBounds waypointLabel = ElementBounds.Fixed(0.0, 28.0, 300.0, 25.0);
             ElementBounds waypointVisible = waypointLabel.RightCopy(0, -5);
@@ -581,7 +588,7 @@ namespace Viconomy.GUI
             //ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.RightMiddle).WithFixedAlignmentOffset(-GuiStyle.DialogToScreenPadding, 0.0);
             ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
 
-            ElementBounds tabBounds = ElementBounds.FixedSize(TAB_WIDTH, TAB_HEIGHT).FixedLeftOf(bgBounds);
+            ElementBounds tabBounds = ElementBounds.FixedSize(TAB_WIDTH, TAB_HEIGHT).FixedLeftOf(bgBounds).WithFixedOffset(0, GuiStyle.TitleBarHeight);
 
            
             try

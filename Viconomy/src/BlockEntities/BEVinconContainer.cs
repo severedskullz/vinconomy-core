@@ -251,7 +251,7 @@ namespace Viconomy.BlockEntities
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
             if (isOwner && !VinconomyCoreSystem.ShouldForceCustomerScreen)
-                this.invDialog = new GuiViconStallOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+                this.invDialog = new GuiViconStallOwner(dialogTitle, this.Inventory, isOwner, this.Pos, this.Api as ICoreClientAPI, stallSelection);
             else
                 this.invDialog = new GuiDialogViconStallCustomer<ViconItemSlot>(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
             //this.invDialog.OpenSound = this.OpenSound;
@@ -269,7 +269,7 @@ namespace Viconomy.BlockEntities
         {
             clientWorld.Player.InventoryManager.CloseInventory(this.Inventory);
 
-            if (this.invDialog != null)
+            if (invDialog != null)
             {
                 if (this.invDialog.IsOpened())
                 {
@@ -352,9 +352,16 @@ namespace Viconomy.BlockEntities
                 default:
                     if (packetid < 1000)
                     {
-                        if (CanAccess(player))
+                        if (!CanAccess(player))
                         {
-                            ((IServerPlayer)player).Disconnect("Nice try, but that wasn't yours. (Tried to access Stall they didn't own)");
+                            if (!((ICoreServerAPI)Api).Server.IsDedicated)
+                            {
+                                VinconomyCoreSystem.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
+                            }
+                            else
+                            {
+                                ((IServerPlayer)player).Disconnect("Nice try, but that wasn't yours. (Tried to access Register they didn't own)");
+                            }
                             return;
                         }
 
@@ -369,7 +376,7 @@ namespace Viconomy.BlockEntities
 
         protected void SetItemPrice(IPlayer byPlayer, int stallSlot, int price)
         {
-            if (byPlayer.PlayerUID != this.Owner)
+            if (!CanAccess(byPlayer))
             {
                 VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
                 return;
@@ -386,7 +393,7 @@ namespace Viconomy.BlockEntities
 
         protected void SetStallItemsPerPurchase(IPlayer byPlayer, byte[] data)
         {
-            if (byPlayer.PlayerUID != this.Owner)
+            if (!CanAccess(byPlayer))
             {
                 VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
                 return;
@@ -416,7 +423,7 @@ namespace Viconomy.BlockEntities
             IClientWorldAccessor clientWorld = (IClientWorldAccessor)this.Api.World;
             if (packetid == VinConstants.TOGGLE_GUI)
             {
-                if (this.invDialog != null)
+                if (invDialog != null)
                 {
                     Console.WriteLine(Api.Side + ": Toggling GUI OFF");
                     CloseGui(clientWorld);

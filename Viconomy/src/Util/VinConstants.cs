@@ -4,19 +4,21 @@
     {
         public const string VINCONOMY_CHANNEL = "Vinconomy";
 
-        //Client Packets
-
-
         //Shared Packets
         public const int OPEN_GUI = 1000;
         public const int CLOSE_GUI = 1001;
-        public static int SEARCH_SHOPS = 1002;
-        public static int GET_PRODUCTS = 1003;
-        public static int SET_TRADER = 1004;
-        public static int SUMMON_TRADER = 1005;
+        public const int SEARCH_SHOPS = 1002;
+        public const int GET_PRODUCTS = 1003;
+        public const int SET_TRADER = 1004;
+        public const int SUMMON_TRADER = 1005;
+        public const int SET_COUPON_SHOPS = 1006;
+        public const int SET_COUPON_DISCOUNT_TYPE = 1007;
+        public const int SET_COUPON_BONUS_TYPE = 1008;
+        public const int SET_COUPON_BLACKLIST = 1009;
+        public const int SET_COUPON_CONSUME_ON_PURCHASE = 1010;
+        public const int ACTIVATE_BLOCK = 1011;
 
-
-        //Admin Packets
+        //Owner Packets
         public const int SET_ITEMS_PER_PURCHASE = 2001;
         public const int SET_REGISTER_ID = 2002;
         public const int SET_SHOP_NAME = 2003;
@@ -24,7 +26,7 @@
         public const int SET_SCULPTURE_SLOT = 2005;
         public const int SET_SCULPTURE_XZ = 2006;
         public const int SET_SCULPTURE_Y = 2007;
-        public const int SET_SCULPTURE_NAME = 2008;
+        public const int SET_ITEM_NAME = 2008;
         public const int SET_WAYPOINT = 2009;
         public const int SET_TOTAL_RANDOMIZER = 2010;
         public const int SET_ITEM_PRICE = 2011;

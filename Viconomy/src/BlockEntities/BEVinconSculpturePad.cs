@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Numerics;
 using System.Text;
 using Viconomy.GUI;
 using Viconomy.Inventory.Impl;
@@ -423,7 +424,7 @@ namespace Viconomy.BlockEntities
                     {
                         BinaryReader reader = new BinaryReader(ms);
                         int size = reader.ReadInt32();
-                        SetSizeXZ(size);
+                        SetSizeXZ(player, size);
                     }
                     break;
 
@@ -433,11 +434,11 @@ namespace Viconomy.BlockEntities
                     {
                         BinaryReader reader = new BinaryReader(ms);
                         int size = reader.ReadInt32();
-                        SetSizeY(size);
+                        SetSizeY(player, size);
                     }
                     break;
 
-                case VinConstants.SET_SCULPTURE_NAME:
+                case VinConstants.SET_ITEM_NAME:
 
                     using (MemoryStream ms = new MemoryStream(data))
                     {
@@ -449,9 +450,16 @@ namespace Viconomy.BlockEntities
                 default:
                     if (packetid < 1000)
                     {
-                        if (player.PlayerUID != Owner)
+                        if (!CanAccess(player))
                         {
-                            ((IServerPlayer)player).Disconnect("Nice try, but that wasn't yours. (Tried to access Stall they didn't own)");
+                            if (!((ICoreServerAPI)Api).Server.IsDedicated)
+                            {
+                                VinconomyCoreSystem.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
+                            }
+                            else
+                            {
+                                ((IServerPlayer)player).Disconnect("Nice try, but that wasn't yours. (Tried to access Register they didn't own)");
+                            }
                             return;
                         }
 
@@ -465,7 +473,7 @@ namespace Viconomy.BlockEntities
 
         protected void SetItemPrice(IPlayer byPlayer, int stallSlot, int price)
         {
-            if (byPlayer.PlayerUID != this.Owner)
+            if (!CanAccess(byPlayer))
             {
                 VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
                 return;
@@ -717,8 +725,14 @@ namespace Viconomy.BlockEntities
 
         #endregion
 
-        private void SetSizeY(int size)
+        private void SetSizeY(IPlayer player, int size)
         {
+            if (!CanAccess(player))
+            {
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.DOESNT_OWN, new object[] { });
+                return;
+            }
+
             sizeY = size;
             this.MarkDirty(true);
             //genTransformationMatrices();
@@ -730,8 +744,14 @@ namespace Viconomy.BlockEntities
 
         }
 
-        private void SetSizeXZ(int size)
+        private void SetSizeXZ(IPlayer player, int size)
         {
+            if (!CanAccess(player))
+            {
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.DOESNT_OWN, new object[] { });
+                return;
+            }
+
             sizeXZ = size;
             this.MarkDirty(true);
             //genTransformationMatrices();
@@ -745,7 +765,7 @@ namespace Viconomy.BlockEntities
 
         private void SetSlotEnabled(IPlayer player, int x, int y, int z, bool disabled)
         {
-            if (player.PlayerUID != this.Owner)
+            if (!CanAccess(player))
             {
                 VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.DOESNT_OWN, new object[] { });
                 return;
@@ -756,7 +776,7 @@ namespace Viconomy.BlockEntities
 
         private void SetSculptureName(IPlayer player, string name)
         {
-            if (player.PlayerUID != this.Owner)
+            if (!CanAccess(player))
             {
                 VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.DOESNT_OWN, new object[] { });
                 return;

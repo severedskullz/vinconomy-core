@@ -64,9 +64,9 @@ namespace Viconomy.Registry
         {
             if (shopsByOwner.ContainsKey(owner) && shopsByOwner[owner] != null)
             {
-                return shopsByOwner[owner].Values.ToArray<ShopRegistration>();
+                return shopsByOwner[owner].Values.ToArray();
             }
-            return new ShopRegistration[0];
+            return [];
         }
 
 

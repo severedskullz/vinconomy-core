@@ -6,7 +6,7 @@
         "Severed Skullz"
     ],
     "description": "An Economy Mod allowing players to establish their own shops and sell goods to other players",
-    "version": "1.0.0", 
+    "version": "1.0.0-pre.1", 
   "dependencies": {
     "game": "1.20.0"
   }

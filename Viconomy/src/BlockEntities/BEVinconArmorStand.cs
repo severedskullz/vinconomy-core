@@ -40,25 +40,6 @@ namespace Viconomy.BlockEntities
 
 
         /*
-            RegisterCustomIcon("arms");
-            RegisterCustomIcon("belt");
-            RegisterCustomIcon("body");
-            RegisterCustomIcon("boots");
-            RegisterCustomIcon("face");
-            RegisterCustomIcon("general");
-            RegisterCustomIcon("general2");
-            RegisterCustomIcon("hands");
-            RegisterCustomIcon("hands2");
-            RegisterCustomIcon("hat");
-            RegisterCustomIcon("helmet");
-            RegisterCustomIcon("legs");
-            RegisterCustomIcon("neck");
-            RegisterCustomIcon("payment");
-            RegisterCustomIcon("produce");
-            RegisterCustomIcon("shield");
-            RegisterCustomIcon("toolrack");
-            RegisterCustomIcon("weapon");
-
             EnumCharacterDressType.Foot = "boots"
             EnumCharacterDressType.Hand="gloves"
             EnumCharacterDressType.Shoulder="cape"

@@ -44,9 +44,12 @@ namespace Viconomy.Trading.TradeHandlers
 
         public static GenericTradeResult TryPurchaseItem(GenericTradeRequest request)
         {
-            
+
             VinconomyCoreSystem core = request.Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
             GenericTradeResult res = new GenericTradeResult(request, core);
+
+            if (request.NumPurchases <= 0)
+                return SetErrorAndReturn(res, TradingConstants.PURCHASED_ZERO);
 
             if (request.ShopRegister == null)
                 return SetErrorAndReturn(res, TradingConstants.NOT_REGISTERED);
@@ -80,7 +83,7 @@ namespace Viconomy.Trading.TradeHandlers
 
 
             // Send TradeResult to mod system to take taxes, log sale in ledger, etc.
-            core.PurchasedItem(res, res.TransferedProduct[0], res.TransferedCurrency[0]);
+            core.PurchasedItem(res);
 
             // Add payment to stall and give player product.
             TryAddPaymentToStall(res);
@@ -90,7 +93,6 @@ namespace Viconomy.Trading.TradeHandlers
 
 
             VinconomyCoreSystem.PrintClientMessage(res.Request.Customer, TradingConstants.PURCHASED_ITEMS, new object[] {
-
                 res.TransferedProductTotal,
                 res.Request.ProductStackNeeded.GetName(),
                 res.TransferedCurrencyTotal,
@@ -112,7 +114,6 @@ namespace Viconomy.Trading.TradeHandlers
                         AuditLogError(res, $"Failed to add coupons of {couponStack.StackSize} {couponStack.GetName()} to Shop Register");
                     }
                 }
-
             }
             else
             {
@@ -237,13 +238,43 @@ namespace Viconomy.Trading.TradeHandlers
         }
 
         /// <summary>
-        /// Removes the product from the Product Source Slots.
+        /// Removes the product from the Product Source Slots and adds any stacks meant to be given to the user
+        /// to result.TransferedProduct. Update result.TransferedProductTotal accordingly
         /// </summary>
-        /// <param name="res"></param>
+        /// <param name="result"></param>
         /// <returns></returns>
         private static int TryExtractProductSlots(GenericTradeResult res)
         {
-            int productLeft = res.Request.SellingEntity.ExtractProductFromStall(res);
+            // Take the product from the stall
+            int productLeft = res.Request.NumPurchases * res.Request.ProductNeededPerPurchase;
+            if (res.Request.IsAdminShop)
+            {
+                int maxStackSize = res.Request.ProductStackNeeded.Collectible.MaxStackSize;
+                while (productLeft > 0)
+                {
+                    ItemStack transferStack = res.Request.ProductStackNeeded.Clone();
+                    int stackSize = Math.Min(productLeft, maxStackSize);
+                    transferStack.StackSize = stackSize;
+                    res.TransferedProduct.Add(transferStack);
+                    res.TransferedProductTotal += stackSize;
+                    productLeft -= stackSize;
+                }
+            }
+            else
+            {
+                foreach (ItemSlot itemSlot in res.Request.ProductSourceSlots.Slots)
+                {
+                    if (itemSlot.Itemstack == null) continue;
+                    ItemStack takenStack = itemSlot.TakeOut(productLeft);
+                    productLeft -= takenStack.StackSize;
+                    res.TransferedProduct.Add(takenStack);
+                    res.TransferedProductTotal += takenStack.StackSize;
+                    itemSlot.MarkDirty();
+
+                    if (productLeft <= 0) break;
+                }
+            }
+
             if (productLeft > 0)
             {
                 AuditLogError(res, $"Error collecting payment for trade. Needed {res.Request.NumPurchases * res.Request.ProductNeededPerPurchase} but is missing {productLeft}");
@@ -251,6 +282,8 @@ namespace Viconomy.Trading.TradeHandlers
 
             return productLeft;
         }
+
+
 
         private static void AuditLogError(GenericTradeResult res, string message)
         {

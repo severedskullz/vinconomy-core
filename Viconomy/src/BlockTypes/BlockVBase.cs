@@ -26,7 +26,7 @@ namespace Viconomy.BlockTypes
             }
 
             else if (api.Side == EnumAppSide.Server)
-                ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("vinconomy:doesnt-own", new object[0]), EnumChatType.CommandError, null);
+                ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("vinconomy:doesnt-own", []), EnumChatType.CommandError, null);
         }
 
         public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)

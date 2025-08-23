@@ -9,7 +9,7 @@
   "purchased-zero-quantity": "你必须一次至少购买一件商品。",
   "not-enough-money": "你手中没有足够的物品购买此物品。",
   "not-registered-with-shop": "此摊位尚未注册商店。无法购买。",
-  "couldnt-find-register": "无法找到商店的寄存器块 - 它是否在未加载的块中？开发注释：我正在修复这个问题！",
+  "couldnt-find-register": "无法找到商店的寄存器块 - 它是否在未加载的块中？",
   "item-cost": "此物品价格为{0}x{1}。请准备好付款。",
   "for-sale": "插槽{0}：{1}x{2}换{3}x{4}",
   "gacha-possibility": "获得{1}的概率为{0}%。",

@@ -159,6 +159,8 @@ namespace Viconomy.BlockEntities
 
         protected void SetAdminShop(IPlayer byPlayer, bool isAdmin)
         {
+            // No, this shouldnt be CanAccess(byPlayer) because we dont want admins accidentally turning player stalls into admin shops
+            // even if they were given access...
             if (byPlayer.PlayerUID != this.Owner)
             {
                 VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
@@ -198,6 +200,7 @@ namespace Viconomy.BlockEntities
 
         protected void SetStallRegisterID(IPlayer byPlayer, byte[] data)
         {
+            //Only the owner can change the register! Not any joint ownership players
             if (byPlayer.PlayerUID != this.Owner)
             {
                 VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
@@ -277,10 +280,15 @@ namespace Viconomy.BlockEntities
             request.WithPurchases(numPurchases);
             request.WithCurrency(currencyStack, TradingUtil.GetAllValidSlotsFor(player, currencyStack), currencyStack.StackSize);
             request.WithProduct(TradingUtil.GetItemStackClone(FindFirstNonEmptyStockStack(stallSlot), 1), GetAggregateProductSlots(stallSlot), GetNumItemsPerPurchaseForStall(stallSlot));
-            
+
             //request.WithCoupons(null, null, false, false, 0,0);
             //request.WithTools(null, 1);
-            //request.WithTradePass(null, null);
+
+            ItemStack tradePass = shopRegister.Inventory[0].Itemstack;
+            if (tradePass != null) {
+                request.WithTradePass(tradePass, TradingUtil.GetAllValidSlotsFor(player, tradePass));
+            }
+
             request.Build();
 
             GenericTradeResult result = GenericTradeHandler.TryPurchaseItem(request);
@@ -299,46 +307,7 @@ namespace Viconomy.BlockEntities
             return TradingUtil.GetItemStackClone(FindFirstNonEmptyStockStack(stallSlot), GetNumItemsPerPurchaseForStall(stallSlot)); ;
         }
 
-        /// <summary>
-        /// Removes the product from the Slots and adds any stacks meant to be given to the user
-        /// to result.TransferedProduct. Update result.TransferedProductTotal accordingly
-        /// </summary>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        public virtual int ExtractProductFromStall(GenericTradeResult result)
-        {
-            // Take the product from the stall
-            int productLeft = result.Request.NumPurchases * result.Request.ProductNeededPerPurchase;
-            if (result.Request.IsAdminShop)
-            {
-                int maxStackSize = result.Request.ProductStackNeeded.Collectible.MaxStackSize;
-                while (productLeft > 0)
-                {
-                    ItemStack transferStack = result.Request.ProductStackNeeded.Clone();
-                    int stackSize = Math.Min(productLeft, maxStackSize);
-                    transferStack.StackSize = stackSize;
-                    result.TransferedProduct.Add(transferStack);
-                    result.TransferedProductTotal += stackSize;
-                    productLeft -= stackSize;
-                }
-            }
-            else
-            {
-                foreach (ItemSlot itemSlot in result.Request.ProductSourceSlots.Slots)
-                {
-                    if (itemSlot.Itemstack == null) continue;
-                    ItemStack takenStack = itemSlot.TakeOut(productLeft);
-                    productLeft -= takenStack.StackSize;
-                    result.TransferedProduct.Add(takenStack);
-                    result.TransferedProductTotal += takenStack.StackSize;
-                    itemSlot.MarkDirty();
 
-                    if (productLeft <= 0) break;
-                }
-            }
-
-            return productLeft;
-        }
 
         /// <summary>
         /// Consumes any tools needed to perform this trade. For Durability-based tools, it should subtract durability from the tool.
@@ -362,7 +331,7 @@ namespace Viconomy.BlockEntities
                 modSystem.Mod.Logger.Error("Couldnt find shop registration for register " + RegisterID);
                 return false;
             }
-            return reg.CanAccess(player);
+            return reg.StallPermissions && reg.CanAccess(player);
         }
 
     }

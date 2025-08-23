@@ -1,0 +1,38 @@
+﻿{
+  "code": "couponcutter",
+  "class": "VinconCouponCutter",
+  "entityClass": "BEVinconCouponCutter",
+  "priorityInteract": true,
+  "creativeinventory": { "vinconomy": [ "*" ] },
+
+  "heldTpIdleAnimation": "holdbothhandslarge",
+  "heldTpUseAnimation": "twohandplaceblock",
+  "blockmaterial": "Metal",
+  "shape": {"base": "game:block"},
+
+  "collisionSelectionBoxes": [
+    {
+        "x1": 0,
+        "y1": 0,
+        "z1": 0,
+        "x2": 1,
+        "y2": 1,
+        "z2": 1
+       
+    }
+  ],
+  "lightAbsorption": 0,
+  "sidesolid": {
+    "all": "false"
+  },
+  "sideopaque": {
+    "all": "false"
+  },
+  "resistance": 3.5,
+  "sounds": {
+    "hit": "game:block/planks",
+    "break": "game:block/planks",
+    "place": "game:block/planks",
+    "walk": "game:walk/wood"
+  }
+}

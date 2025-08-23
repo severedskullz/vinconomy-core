@@ -148,7 +148,7 @@ namespace Viconomy.Entities
                 GuiDialog guiDialog = tradeDialog;
                 if (guiDialog == null || !guiDialog.IsOpened())
                 {
-                    if (coreClientAPI.Gui.OpenedGuis.FirstOrDefault((GuiDialog dlg) => dlg is GuiViconTrader && dlg.IsOpened()) == null)
+                    if (coreClientAPI.Gui.OpenedGuis.FirstOrDefault((GuiDialog dlg) => dlg is GuiVinconTrader && dlg.IsOpened()) == null)
                     {
                         coreClientAPI.Network.SendEntityPacket(EntityId, 1001);
                         //player.InventoryManager.OpenInventory(Inventory); // Why do I need an Inventory, again?
@@ -312,6 +312,11 @@ namespace Viconomy.Entities
 
         protected void setupTaskBlocker()
         {
+        }
+
+        /*
+        protected void setupTaskBlocker()
+        {
             EntityBehaviorTaskAI behavior = GetBehavior<EntityBehaviorTaskAI>();
             if (behavior != null)
             {
@@ -324,6 +329,9 @@ namespace Viconomy.Entities
                 behavior2.OnShouldRunActivitySystem += () => talkingWithPlayer == null;
             }
         }
+        */
+
+
 
         public override void ToBytes(BinaryWriter writer, bool forClient)
         {

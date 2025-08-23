@@ -5,7 +5,7 @@ using Vintagestory.API.Common;
 
 namespace Viconomy.BlockTypes
 {
-    public class BlockFoodContainer : BlockVContainer
+    public class BlockVFoodContainer : BlockVContainer
     {
         /*
         public override WorldInteraction[] GetPlacedBlockInteractionHelp(IWorldAccessor world, BlockSelection selection, IPlayer forPlayer)

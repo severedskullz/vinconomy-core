@@ -121,7 +121,7 @@ namespace Viconomy.BlockEntities
                 default:
                     if (packetid < 1000)
                     {
-                        if (player.PlayerUID != Owner)
+                        if (!CanAccess(player))
                         {
                             if (!((ICoreServerAPI)Api).Server.IsDedicated)
                             {
@@ -134,7 +134,6 @@ namespace Viconomy.BlockEntities
                             return;
                         }
 
-                        //Console.Write("Handling Inv Packet");
                         this.Inventory.InvNetworkUtil.HandleClientPacket(player, packetid, data);
                         this.Api.World.BlockAccessor.GetChunkAtBlockPos(this.Pos).MarkModified();
                         return;

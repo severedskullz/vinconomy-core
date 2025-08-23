@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Numerics;
-using System.Threading;
 using Viconomy.GUI;
 using Viconomy.Inventory.Slots;
 using Viconomy.Trading;
@@ -160,7 +158,7 @@ namespace Viconomy.BlockEntities
                     }
                     break;
 
-                case VinConstants.SET_SCULPTURE_NAME:
+                case VinConstants.SET_ITEM_NAME:
                     using (MemoryStream ms = new MemoryStream(data))
                     {
                         BinaryReader reader = new BinaryReader(ms);
@@ -317,21 +315,6 @@ namespace Viconomy.BlockEntities
        
 
         #endregion
-      
-      
-        public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
-        {
-            
-            if (this.inventory[0].Itemstack == null)
-            {
-                return false;
-            }
-            //mesher.AddMeshData(this.meshes[this.inventory[0].StackSize], 1);
-
-            return false;
-        }
-
-      
 
 
         public override void OnBlockUnloaded()
@@ -353,21 +336,17 @@ namespace Viconomy.BlockEntities
         public override void OnBlockRemoved()
         {
             base.OnBlockRemoved();
-            GuiDialogBlockEntity guiDialogBlockEntity = this.invDialog;
-            if (guiDialogBlockEntity != null && guiDialogBlockEntity.IsOpened())
+
+            if (this.invDialog != null)
             {
-                GuiDialogBlockEntity guiDialogBlockEntity2 = this.invDialog;
-                if (guiDialogBlockEntity2 != null)
+                if (invDialog.IsOpened())
                 {
-                    guiDialogBlockEntity2.TryClose();
+                    this.invDialog.TryClose();
                 }
+
+                //this.invDialog.Dispose(); // Got a Null Pointer when I had this closed the game when menu was open... how is invDialog null here?
+                this.invDialog = null;
             }
-            GuiDialogBlockEntity guiDialogBlockEntity3 = this.invDialog;
-            if (guiDialogBlockEntity3 == null)
-            {
-                return;
-            }
-            guiDialogBlockEntity3.Dispose();
         }
 
         public void Dispose()

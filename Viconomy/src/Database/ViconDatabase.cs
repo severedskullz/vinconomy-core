@@ -7,14 +7,9 @@ using Viconomy.Registry;
 using Viconomy.Trading;
 using Viconomy.Network;
 using System.Collections.Generic;
-using Microsoft.Win32;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
-using Viconomy.Inventory;
 using System.Data;
-using static HarmonyLib.Code;
-using static System.Net.Mime.MediaTypeNames;
-using System.Data.Common;
 
 namespace Viconomy.Database
 {
@@ -146,7 +141,7 @@ namespace Viconomy.Database
             {
                 connection.Open();
                 SqliteCommand cmd = connection.CreateCommand();
-                cmd.CommandText = "INSERT INTO Shops VALUES (@ID, @Name, @Owner, @OwnerName, @X, @Y, @Z, false, NULL, NULL, NULL, NULL, NULL); SELECT last_insert_rowid();";
+                cmd.CommandText = "INSERT INTO Shops VALUES (@ID, @Name, @Owner, @OwnerName, @X, @Y, @Z, false, NULL, NULL, NULL, NULL, NULL, 0); SELECT last_insert_rowid();";
                 cmd.Parameters.Add("@Name", SqliteType.Text).Value = shop.Name;
                 cmd.Parameters.Add("@Owner", SqliteType.Text).Value = shop.Owner;
                 cmd.Parameters.Add("@OwnerName", SqliteType.Text).Value = shop.OwnerName;
@@ -561,7 +556,7 @@ namespace Viconomy.Database
             if (productListCache.ContainsKey(ID))
             {
                 ShopProductList listing =  productListCache[ID];
-                // If the expiration timer is in the fiture, then simply return the cached copy.
+                // If the expiration timer is in the future, then simply return the cached copy.
                 if (listing.ExpiresAt >= DateTime.UtcNow.Ticks)
                 {
                     return listing;

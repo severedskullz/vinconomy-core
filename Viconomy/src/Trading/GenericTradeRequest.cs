@@ -185,5 +185,27 @@ namespace Viconomy.Trading
             TransferedCoupons = new List<ItemStack>();
             modSystem = core;
         }
+
+        public ItemStack GetTotalTransferedProduct()
+        {
+            if (TransferedProduct.Count >= 0)
+            {
+                ItemStack clone = TransferedProduct[0].Clone();
+                clone.StackSize = TransferedProductTotal;
+                return clone;
+            }
+            return null;
+        }
+
+        public ItemStack GetTotalTransferedCurrency()
+        {
+            if (TransferedCurrency.Count >= 0)
+            {
+                ItemStack clone = TransferedCurrency[0].Clone();
+                clone.StackSize = TransferedCurrencyTotal;
+                return clone;
+            }
+            return null;
+        }
     }
 }

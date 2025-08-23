@@ -5,19 +5,6 @@ using Vintagestory.API.Common;
 
 namespace Viconomy.Trading
 {
-    public class Product
-    {
-
-        public ItemStack productNeeded;
-        public ItemSlot[] productSourceSlots;
-    }
-
-    public class Payment
-    {
-        public ItemStack currencyNeeded;
-        //public ItemSlot[] currencySourceSlots;
-    }
-
     public class TradeRequest
     {
         public ICoreAPI coreApi;

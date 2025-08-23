@@ -9,7 +9,7 @@
     "purchased-zero-quantity": "Musisz kupić co najmniej 1 przedmiot na raz.",
     "not-enough-money": "Za mało przedmiotów w ręce, aby kupić ten przedmiot.",
     "not-registered-with-shop": "Ten stragan nie jest jeszcze zarejestrowany w sklepie. Nie można dokonać zakupu.",
-    "couldnt-find-register": "Nie można znaleźć bloku kasy sklepu - czy znajduje się w niezaładowanym chunk-u? UWAGA DEVELOPERA: Pracuję nad naprawą tego!",
+    "couldnt-find-register": "Nie można znaleźć bloku kasy sklepu - czy znajduje się w niezaładowanym chunk-u?",
     "item-cost": "Ten przedmiot kosztuje {0}x {1}. Miej zapłatę w ręce.",
     "for-sale": "Slot {0}: {1}x {2} za {3}x {4}",
     "gacha-possibility": "{0}% szansy na zdobycie {1}",

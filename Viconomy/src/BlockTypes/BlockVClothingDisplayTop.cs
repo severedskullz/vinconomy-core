@@ -2,7 +2,6 @@
 using Viconomy.BlockEntities;
 using Viconomy.Inventory.StallSlots;
 using Viconomy.Inventory.Impl;
-using Viconomy.Inventory.Slots;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -36,7 +35,7 @@ namespace Viconomy.BlockTypes
         public override WorldInteraction[] GetPlacedBlockInteractionHelp(IWorldAccessor world, BlockSelection selection, IPlayer forPlayer)
         {
             BEVinconArmorStand be = world.BlockAccessor.GetBlockEntity(selection.Position.DownCopy(1)) as BEVinconArmorStand;
-            List<WorldInteraction> interactions = new List<WorldInteraction>();
+            List<WorldInteraction> interactions = [];
             if (be != null)
             {
                 StallSlotBase[] slots = ((ViconItemInventory)be.Inventory).StallSlots;
@@ -57,7 +56,7 @@ namespace Viconomy.BlockTypes
                             ActionLangCode = "vinconomy:stall-purchase-armor" + selectionIndex,
                             MouseButton = EnumMouseButton.Right,
                             HotKeyCode = "shift",
-                            Itemstacks = new ItemStack[] { slot.currency.Itemstack }
+                            Itemstacks = [slot.currency.Itemstack ]
 
                         });
                     }
@@ -72,7 +71,7 @@ namespace Viconomy.BlockTypes
                             ActionLangCode = "vinconomy:stall-add-armor" + selectionIndex,
                             MouseButton = EnumMouseButton.Right,
                             HotKeyCode = "shift",
-                            Itemstacks = new ItemStack[] { firstSlot.Itemstack }
+                            Itemstacks = [firstSlot.Itemstack]
                         });
                     }
                     else
@@ -115,7 +114,7 @@ namespace Viconomy.BlockTypes
 
         public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
         {
-            return new ItemStack[0];
+            return [];
         }
 
         public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer)

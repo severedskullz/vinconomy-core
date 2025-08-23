@@ -267,9 +267,16 @@ namespace Viconomy.BlockEntities
                 default:
                     if (packetid < 1000)
                     {
-                        if (player.PlayerUID != Owner)
+                        if (!CanAccess(player))
                         {
-                            ((IServerPlayer)player).Disconnect("Nice try, but that wasn't yours. (Tried to access Stall they didn't own)");
+                            if (!((ICoreServerAPI)Api).Server.IsDedicated)
+                            {
+                                VinconomyCoreSystem.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
+                            }
+                            else
+                            {
+                                ((IServerPlayer)player).Disconnect("Nice try, but that wasn't yours. (Tried to access Register they didn't own)");
+                            }
                             return;
                         }
 

@@ -90,7 +90,7 @@ namespace Viconomy.Registry
 
         public bool CanAccess(IPlayer player)
         {
-            return Permissions.ContainsKey(player.PlayerUID);
+            return player.PlayerUID == Owner ||  Permissions.ContainsKey(player.PlayerUID);
         }
     }
 }

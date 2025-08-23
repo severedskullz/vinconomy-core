@@ -53,7 +53,7 @@ namespace Viconomy.BlockTypes
                             ActionLangCode = "vinconomy:stall-purchase",
                             MouseButton = EnumMouseButton.Right,
                             HotKeyCode = "sneak",
-                            Itemstacks = new ItemStack[] { currency.Itemstack }
+                            Itemstacks = [currency.Itemstack]
 
                         });
 
@@ -63,8 +63,8 @@ namespace Viconomy.BlockTypes
                         {
                             ActionLangCode = "vinconomy:stall-purchase-bulk",
                             MouseButton = EnumMouseButton.Right,
-                            HotKeyCodes = new string[] { "sneak", "sprint" },
-                            Itemstacks = new ItemStack[] { fiveStack }
+                            HotKeyCodes = ["sneak", "sprint"],
+                            Itemstacks = [fiveStack]
                         });
                     }
                 } else {
@@ -78,7 +78,7 @@ namespace Viconomy.BlockTypes
                             ActionLangCode = "vinconomy:stall-add",
                             MouseButton = EnumMouseButton.Right,
                             HotKeyCode = "sneak",
-                            Itemstacks = new ItemStack[] { helpSlot }
+                            Itemstacks = [helpSlot]
                         });
 
                         ItemStack helpSlotStack = helpSlot.Clone();
@@ -87,8 +87,8 @@ namespace Viconomy.BlockTypes
                         {
                             ActionLangCode = "vinconomy:stall-add",
                             MouseButton = EnumMouseButton.Right,
-                            HotKeyCodes = new string[] { "sneak", "sprint" },
-                            Itemstacks = new ItemStack[] { helpSlotStack }
+                            HotKeyCodes = ["sneak", "sprint"],
+                            Itemstacks = [helpSlotStack]
                         });
 
                         if (currency.Itemstack != null)
@@ -98,7 +98,7 @@ namespace Viconomy.BlockTypes
                                 ActionLangCode = "vinconomy:stall-purchase",
                                 MouseButton = EnumMouseButton.Right,
                                 HotKeyCode = "sneak",
-                                Itemstacks = new ItemStack[] { currency.Itemstack }
+                                Itemstacks = [currency.Itemstack]
 
                             });
 
@@ -108,8 +108,8 @@ namespace Viconomy.BlockTypes
                             {
                                 ActionLangCode = "vinconomy:stall-purchase-bulk",
                                 MouseButton = EnumMouseButton.Right,
-                                HotKeyCodes = new string[] { "sneak", "sprint" },
-                                Itemstacks = new ItemStack[] { fiveStack }
+                                HotKeyCodes = ["sneak", "sprint"],
+                                Itemstacks = [fiveStack]
                             });
                         }
                     } else {

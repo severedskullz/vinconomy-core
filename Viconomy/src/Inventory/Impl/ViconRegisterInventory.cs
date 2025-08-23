@@ -88,6 +88,7 @@ namespace Viconomy.Inventory.Impl
             {
                 tradepass?.ResolveBlockOrItem(Api.World);
             }
+            TradePass.Itemstack = tradepass;
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)

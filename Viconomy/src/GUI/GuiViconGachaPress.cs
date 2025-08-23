@@ -220,7 +220,7 @@ namespace Viconomy.GUI
                 writer.Write(amount);
                 data = ms.ToArray();
             }
-            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.PURCHASE_ITEMS, data);
+            capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.PURCHASE_ITEMS, data);
         }
 
         private void OnAmountChanged(int i, string amountStr)
@@ -257,7 +257,7 @@ namespace Viconomy.GUI
                 writer.Write(amount);
                 data = ms.ToArray();
             }
-            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_ITEMS_PER_PURCHASE, data);
+            capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.SET_ITEMS_PER_PURCHASE, data);
 
         }
 
@@ -275,7 +275,7 @@ namespace Viconomy.GUI
                 writer.Write(obj);
                 data = ms.ToArray();
             }
-            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_SCULPTURE_NAME, data);
+            capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.SET_ITEM_NAME, data);
         }
 
         private void SendInvPacket(object p)

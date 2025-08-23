@@ -1,27 +1,28 @@
-﻿using System;
+﻿using Cairo;
+using System;
+using System.Collections.Generic;
 using Viconomy.BlockEntities;
+using Viconomy.BlockEntities.Unfinished;
 using Viconomy.BlockTypes;
-using Viconomy.Network;
-using Viconomy.Registry;
 using Viconomy.Config;
-using Viconomy.Util;
-using Viconomy.GUI;
-using Viconomy.Entities;
 using Viconomy.Database;
-using Viconomy.Trading;
 using Viconomy.Delegates;
-using Viconomy.Renderer;
+using Viconomy.Entities;
+using Viconomy.GUI;
 using Viconomy.ItemTypes;
 using Viconomy.Map;
+using Viconomy.Network;
+using Viconomy.Registry;
+using Viconomy.Renderer;
+using Viconomy.Trading;
+using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
-using Vintagestory.API.Datastructures;
-using Cairo;
-using System.Collections.Generic;
 
 namespace Viconomy
 {
@@ -60,10 +61,16 @@ namespace Viconomy
             api.RegisterEntity("EntityVinconTrader", typeof(EntityVinconTrader));
             //api.RegisterEntityClass("EntityVinconTrader", typeof(EntityVinconTrader));
 
+            // 5.0 Item Mappings
+            api.RegisterItemClass("VinconCoupon", typeof(ItemCoupon));
+
             // 5.0 Block Mappings
-            //api.RegisterBlockClass("VinconFoodContainer", typeof(BlockVFoodContainer));
+            api.RegisterBlockClass("VinconFoodContainer", typeof(BlockVFoodContainer));
+            api.RegisterBlockClass("VinconCouponCutter", typeof(BlockVCouponCutter));
+
             // 5.0 Block Entity Mappings
             api.RegisterBlockEntityClass("BEVinconFoodContainer", typeof(BEVinconFoodContainer));
+            api.RegisterBlockEntityClass("BEVinconCouponCutter", typeof(BEVinconCouponCutter));
 
             // 3.0 Block Mappings
             api.RegisterBlockClass("VinconContainer", typeof(BlockVContainer));
@@ -542,7 +549,7 @@ namespace Viconomy
             GenericTradeResult res = new GenericTradeResult(req, this);
             res.TransferedProductTotal = product.StackSize;
             res.TransferedCurrencyTotal = payment.StackSize;
-            PurchasedItem(res, product, payment);
+            PurchasedItem(res);
         }
 
         /// <summary>
@@ -554,8 +561,11 @@ namespace Viconomy
         /// payment: the stack of items representing payment to be stored in the Register
         /// </summary>
         /// 
-        public void PurchasedItem(GenericTradeResult result, ItemStack product, ItemStack payment)
+        public void PurchasedItem(GenericTradeResult result)
         {
+            ItemStack product = result.GetTotalTransferedProduct();
+            ItemStack payment = result.GetTotalTransferedCurrency();
+
             if (OnPurchasedItem != null)
             {
                 Delegate[] delegates = OnPurchasedItem.GetInvocationList();

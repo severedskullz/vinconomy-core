@@ -23,11 +23,12 @@ namespace Viconomy.GUI
         int stallSlotCount;
         private int stacksPerSlot;
         int curTab;
+        bool isOwner;
         DummyInventory inv;
         ViconPurchaseSlot purchaseSlot;
         StallSlotBase stallSlot;
 
-        public GuiViconStallOwner(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
+        public GuiViconStallOwner(string DialogTitle, InventoryBase Inventory, bool isOwner,  BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
             api = capi;
@@ -48,6 +49,7 @@ namespace Viconomy.GUI
             stallSlotCount = stall.StallSlotCount;
             stacksPerSlot = stall.StacksPerSlot;
 
+            this.isOwner = isOwner;
 
             if (base.IsDuplicate)
             {
@@ -171,7 +173,7 @@ namespace Viconomy.GUI
 
                 SingleComposer.BeginChildElements(settingBounds)
                     .AddStaticText(Lang.Get("vinconomy:gui-shop"), CairoFont.WhiteSmallText(), shopSelectionLabel)
-                    .AddDropDown(shopsKeys, shopsNames, selectedIndex, new SelectionChangedDelegate(this.onSelectionChanged), shopSelectBounds)
+                    .AddDropDown(shopsKeys, shopsNames, selectedIndex, new SelectionChangedDelegate(this.onSelectionChanged), shopSelectBounds, "shopSelection")
                     .AddIf(api.World.Player.HasPrivilege("gamemode"))
                         .AddStaticText(Lang.Get("vinconomy:gui-admin-shop"), CairoFont.WhiteSmallText(), adminShopLabel)
                         .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
@@ -213,6 +215,7 @@ namespace Viconomy.GUI
                 if (capi.World.Player.HasPrivilege("gamemode"))
                     SingleComposer.GetSwitch("admin").SetValue(stall.IsAdminShop);
 
+                SingleComposer.GetDropDown("shopSelection").Enabled = isOwner;
 
                 SingleComposer.GetTextInput("costQuantity").SetValue(stallSlot.currency.StackSize);
                 SingleComposer.GetTextInput("sellQuantity").SetValue(stallSlot.itemsPerPurchase);
