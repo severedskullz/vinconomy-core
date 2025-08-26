@@ -13,27 +13,30 @@ namespace Viconomy.Trading.TradeHandlers
             }
             //TODO: Possibly switch this from specific "total" variables to just use TotalCount instead?
             else if (req.ToolSourceSlots is ServingCapacityAggregatedSlots servings) {
-                return servings.TotalCapacity / (req.ProductNeededPerPurchase + req.ProductBonusPerPurchase) > 0;
+                return servings.TotalCapacity / req.GetFinalProductNeededPerPurchase() > 0;
             } else if (req.ToolSourceSlots is DurabilityAggregatedSlots durability)
             {
-                return durability.TotalDurability / (req.ProductNeededPerPurchase + req.ProductBonusPerPurchase) > 0;
+                return durability.TotalDurability / req.GetFinalProductNeededPerPurchase() > 0;
             } else
             {
-                return req.ToolSourceSlots.TotalCount / (req.ProductNeededPerPurchase + req.ProductBonusPerPurchase) > 0;
+                return req.ToolSourceSlots.TotalCount / req.GetFinalProductNeededPerPurchase() > 0;
             }
         }
 
-        public static bool HasRequiredProduct(GenericTradeRequest req)
+        public static bool StallHasRequiredProduct(GenericTradeRequest req)
         {
             if (req.CurrencySourceSlots != null)
-                return req.ProductSourceSlots.TotalCount / (req.ProductNeededPerPurchase + req.ProductBonusPerPurchase) > 0;
+                return req.ProductSourceSlots.TotalCount / req.GetFinalProductNeededPerPurchase() > 0;
             return false;
         }
 
-        public static bool HasRequiredCurrency(GenericTradeRequest req)
+        public static bool PlayerHasRequiredCurrency(GenericTradeRequest req)
         {
+            if (req.GetFinalCurrencyNeededPerPurchase() == 0)
+                return true;
+
             if (req.CurrencySourceSlots != null)
-                return req.CurrencySourceSlots.TotalCount / (req.CurrencyNeededPerPurchase - req.CurrencyDiscountPerPurchase) > 0;
+                return req.CurrencySourceSlots.TotalCount / req.GetFinalCurrencyNeededPerPurchase() > 0;
             return false;
         }
 
@@ -44,14 +47,11 @@ namespace Viconomy.Trading.TradeHandlers
 
         public static GenericTradeResult TryPurchaseItem(GenericTradeRequest request)
         {
+            bool isAdminShop = request.SellingEntity.IsAdminShop;
 
             VinconomyCoreSystem core = request.Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
             GenericTradeResult res = new GenericTradeResult(request, core);
-
-            if (request.NumPurchases <= 0)
-                return SetErrorAndReturn(res, TradingConstants.PURCHASED_ZERO);
-
-            if (request.ShopRegister == null)
+            if (request.ShopRegister == null && !isAdminShop)
                 return SetErrorAndReturn(res, TradingConstants.NOT_REGISTERED);
 
             if (request.CurrencyStackNeeded == null)
@@ -60,11 +60,14 @@ namespace Viconomy.Trading.TradeHandlers
             if (request.ProductStackNeeded == null)
                 return SetErrorAndReturn(res, TradingConstants.NO_PRODUCT);
 
-            if (!HasRequiredCurrency(request))
+            if (!isAdminShop && !StallHasRequiredProduct(request))
+                return SetErrorAndReturn(res, TradingConstants.NOT_ENOUGH_STOCK);
+
+            if (!PlayerHasRequiredCurrency(request))
                 return SetErrorAndReturn(res, TradingConstants.NOT_ENOUGH_MONEY);
 
-            if (!HasRequiredProduct(request))
-                return SetErrorAndReturn(res, TradingConstants.NOT_ENOUGH_STOCK);
+            if (request.NumPurchases <= 0)
+                return SetErrorAndReturn(res, TradingConstants.PURCHASED_ZERO);
 
             if (!HasRequiredTools(request))
                 return SetErrorAndReturn(res, TradingConstants.NO_TOOL);
@@ -72,7 +75,7 @@ namespace Viconomy.Trading.TradeHandlers
             if (!HasRequiredTradePass(request))
                 return SetErrorAndReturn(res, TradingConstants.NO_PASS);
 
-            if (!CanFitPaymentInRegister(request))
+            if (request.ShopRegister != null && !CanFitPaymentInRegister(request))
                 return SetErrorAndReturn(res, TradingConstants.NO_REGISTER_SPACE);
 
             // Extract all relevant items from their containers
@@ -86,8 +89,12 @@ namespace Viconomy.Trading.TradeHandlers
             core.PurchasedItem(res);
 
             // Add payment to stall and give player product.
-            TryAddPaymentToStall(res);
-            TryAddCouponsToStall(res);
+            if (res.Request.ShopRegister != null)
+            {
+                TryAddPaymentToRegister(res);
+                TryAddCouponsToRegister(res);
+            }
+
             TryAddProductToPlayer(res);
 
 
@@ -102,8 +109,11 @@ namespace Viconomy.Trading.TradeHandlers
             return res;
         }
 
-        private static void TryAddCouponsToStall(GenericTradeResult res)
+        public static void TryAddCouponsToRegister(GenericTradeResult res)
         {
+            if (res.Request.SellingEntity.IsAdminShop && res.Request.SellingEntity.DiscardProduct)
+                return;
+
             // Add the payment to the register
             if (res.Request.ShopRegister != null)
             {
@@ -121,7 +131,7 @@ namespace Viconomy.Trading.TradeHandlers
             }
         }
 
-        private static void TryAddProductToPlayer(GenericTradeResult res)
+        public static void TryAddProductToPlayer(GenericTradeResult res)
         {
             if (res.TransferedProduct?.Count == 0)
             {
@@ -151,40 +161,36 @@ namespace Viconomy.Trading.TradeHandlers
 
         }
 
-        private static int TryConsumeCoupons(GenericTradeResult res)
+        public static int TryConsumeCoupons(GenericTradeResult res)
         {
             if (res.Request.CouponSlots == null || res.Request.ConsumeCoupon == false) {
                 return 0; 
             }
 
             // Take the product from the stall
-            int currencyLeft = 1;
-            if (res.Request.CouponPerTrade) { 
-                currencyLeft = res.Request.NumPurchases; 
-            }
-
+            int couponsNeeded = res.Request.NumPurchases;
             foreach (ItemSlot itemSlot in res.Request.CouponSlots.Slots)
             {
                 if (itemSlot.Itemstack == null) continue;
-                ItemStack takenStack = itemSlot.TakeOut(currencyLeft);
-                currencyLeft -= takenStack.StackSize;
+                ItemStack takenStack = itemSlot.TakeOut(couponsNeeded);
+                couponsNeeded -= takenStack.StackSize;
                 res.TransferedCoupons.Add(takenStack);
                 res.TransferedCouponsTotal += takenStack.StackSize;
                 itemSlot.MarkDirty();
 
-                if (currencyLeft <= 0) break;
+                if (couponsNeeded <= 0) break;
             }
 
 
-            if (currencyLeft > 0)
+            if (couponsNeeded > 0)
             {
-                AuditLogError(res, $"Error collecting coupons for trade. Needed {res.Request.NumPurchases} but is missing {currencyLeft}");
+                AuditLogError(res, $"Error collecting coupons for trade. Needed {res.Request.NumPurchases} but is missing {couponsNeeded}");
             }
 
-            return currencyLeft;
+            return couponsNeeded;
         }
 
-        private static void TryConsumeTools(GenericTradeResult res)
+        public static void TryConsumeTools(GenericTradeResult res)
         {
             if (res.Request.SellingEntity.ConsumeTool(res))
             {
@@ -192,8 +198,11 @@ namespace Viconomy.Trading.TradeHandlers
             }
         }
 
-        public static void TryAddPaymentToStall(GenericTradeResult res)
+        public static void TryAddPaymentToRegister(GenericTradeResult res)
         {
+            if (res.Request.SellingEntity.IsAdminShop && res.Request.SellingEntity.DiscardProduct)
+                return;
+
             // Add the payment to the register
             if (res.Request.ShopRegister != null)
             {
@@ -211,10 +220,12 @@ namespace Viconomy.Trading.TradeHandlers
             }
         }
 
-        private static int TryExtractCurrencySlots(GenericTradeResult res)
+        public static int TryExtractCurrencySlots(GenericTradeResult res)
         {
+            int requestedCurrency = res.Request.NumPurchases * res.Request.GetFinalCurrencyNeededPerPurchase();
+
             // Take the product from the stall
-            int currencyLeft = res.Request.NumPurchases * res.Request.CurrencyNeededPerPurchase;
+            int currencyLeft = requestedCurrency;
            
             foreach (ItemSlot itemSlot in res.Request.CurrencySourceSlots.Slots)
             {
@@ -231,7 +242,7 @@ namespace Viconomy.Trading.TradeHandlers
 
             if (currencyLeft > 0)
             {
-                AuditLogError(res, $"Error collecting payment for trade. Needed {res.Request.NumPurchases * res.Request.CurrencyNeededPerPurchase} but is missing {currencyLeft}");
+                AuditLogError(res, $"Error collecting payment for trade. Needed {requestedCurrency} but is missing {currencyLeft}");
             }
 
             return currencyLeft;
@@ -243,10 +254,11 @@ namespace Viconomy.Trading.TradeHandlers
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        private static int TryExtractProductSlots(GenericTradeResult res)
+        public static int TryExtractProductSlots(GenericTradeResult res)
         {
+            int requestedProduct = res.Request.NumPurchases * res.Request.GetFinalProductNeededPerPurchase();
             // Take the product from the stall
-            int productLeft = res.Request.NumPurchases * res.Request.ProductNeededPerPurchase;
+            int productLeft = requestedProduct;
             if (res.Request.IsAdminShop)
             {
                 int maxStackSize = res.Request.ProductStackNeeded.Collectible.MaxStackSize;
@@ -277,7 +289,7 @@ namespace Viconomy.Trading.TradeHandlers
 
             if (productLeft > 0)
             {
-                AuditLogError(res, $"Error collecting payment for trade. Needed {res.Request.NumPurchases * res.Request.ProductNeededPerPurchase} but is missing {productLeft}");
+                AuditLogError(res, $"Error collecting payment for trade. Needed {requestedProduct} but is missing {productLeft}");
             }
 
             return productLeft;
@@ -285,15 +297,18 @@ namespace Viconomy.Trading.TradeHandlers
 
 
 
-        private static void AuditLogError(GenericTradeResult res, string message)
+        public static void AuditLogError(GenericTradeResult res, string message)
         {
-        
+            res.Request.Api.ModLoader.GetModSystem<VinconomyCoreSystem>().Mod.Logger.Error(message);
         }
 
-        private static bool CanFitPaymentInRegister(GenericTradeRequest request)
+        public static bool CanFitPaymentInRegister(GenericTradeRequest request)
         {
+            if (request.SellingEntity.IsAdminShop && request.SellingEntity.DiscardProduct)
+                return true;
+
             int maxStackSize = request.CurrencyStackNeeded.Collectible.MaxStackSize;
-            int qntyLeft = request.CurrencyNeededPerPurchase * request.NumPurchases;
+            int qntyLeft =  request.NumPurchases * request.GetFinalCurrencyNeededPerPurchase();
             IInventory inv = request.ShopRegister.Inventory;
             foreach (ItemSlot itemSlot in inv)
             {

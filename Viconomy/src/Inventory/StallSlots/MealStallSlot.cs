@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Viconomy.Inventory.Slots;
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 
 namespace Viconomy.Inventory.StallSlots
@@ -12,9 +13,9 @@ namespace Viconomy.Inventory.StallSlots
         //public string RecipeCode;
         public int Capacity;
 
-        public MealStallSlot(InventoryBase inventory, int stallSlot, int numSlots) : base(inventory)
+        public MealStallSlot(InventoryBase inventory, int stallSlot, int numSlots) : base(inventory, numSlots)
         {
-            slots = new ItemSlot[4];
+            slots = new ItemSlot[numSlots];
             for (int i = 0; i < numSlots; i++)
             {
                 slots[i] = new ViconItemSlot(inventory, stallSlot, i);
@@ -30,6 +31,29 @@ namespace Viconomy.Inventory.StallSlots
                     return slot;
             }
             return null;
+        }
+
+        public override ItemSlot this[int slotId]
+        {
+            get
+            {
+                if (slotId < ProductStacksPerStall)
+                {
+                    return slots[slotId];
+                }
+                else
+                    return Currency;
+
+            }
+            set
+            {
+                if (slotId < ProductStacksPerStall)
+                {
+                    slots[slotId] = (ViconItemSlot)value;
+                }
+                else
+                    Currency = (ViconCurrencySlot)value;
+            }
         }
 
         public override ItemSlot GetSlot(int itemSlot)
@@ -140,6 +164,35 @@ namespace Viconomy.Inventory.StallSlots
                         foodSlot.Itemstack = null;
                     }
                 }
+            }
+        }
+
+        public override void ToTreeAttributes(ITreeAttribute tree)
+        {
+            tree.SetInt("purchaseQuantity", ItemsPerPurchase);
+            if (Currency.Itemstack != null)
+            {
+                tree.SetItemstack("currency", Currency.Itemstack);
+            }
+
+            for (int j = 0; j < ProductStacksPerStall; j++)
+            {
+                if (slots[j].Itemstack != null)
+                {
+                    tree.SetItemstack("slot" + j, slots[j].Itemstack);
+                }
+            }
+        }
+
+        public override void FromTreeAttributes(ITreeAttribute tree)
+        {
+            ItemsPerPurchase = tree.GetInt("purchaseQuantity", 1);
+
+            Currency.Itemstack = tree.GetItemstack("currency");
+            for (int j = 0; j < ProductStacksPerStall; j++)
+            {
+                slots[j].Itemstack = tree.GetItemstack("slot" + j);
+
             }
         }
     }

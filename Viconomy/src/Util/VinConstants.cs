@@ -36,6 +36,10 @@
         public const int SET_STALL_PERMISSION = 2014;
         public const int UPDATE_SHOP_PERMISSIONS = 2014;
 
+        public const int SET_PURCHASES_REMAINING = 2015;
+        public const int SET_REGISTER_FALLBACK = 2016;
+        public const int SET_LIMITED_PURCHASES = 2017;
+
 
         // Customer Packets
         public const int PURCHASE_ITEMS = 3002;
@@ -49,5 +53,6 @@
         public const string TRADE_STATUS_FAILED = "FAILED";
         public const string TRADE_STATUS_LACKS_ITEMS = "LACKS_ITEMS";
         public const string TRADE_STATUS_CANCELED = "CANCELED";
+
     }
 }

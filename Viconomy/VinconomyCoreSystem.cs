@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using Viconomy.BlockEntities;
-using Viconomy.BlockEntities.Unfinished;
 using Viconomy.BlockTypes;
 using Viconomy.Config;
 using Viconomy.Database;
@@ -71,6 +70,7 @@ namespace Viconomy
             // 5.0 Block Entity Mappings
             api.RegisterBlockEntityClass("BEVinconFoodContainer", typeof(BEVinconFoodContainer));
             api.RegisterBlockEntityClass("BEVinconCouponCutter", typeof(BEVinconCouponCutter));
+            api.RegisterBlockEntityClass("BEVinconPurchaseContainer", typeof(BEVinconPurchaseContainer));
 
             // 3.0 Block Mappings
             api.RegisterBlockClass("VinconContainer", typeof(BlockVContainer));
@@ -239,6 +239,7 @@ namespace Viconomy
             RegisterCustomIcon("helmet");
             RegisterCustomIcon("legs");
             RegisterCustomIcon("neck");
+            RegisterCustomIcon("paper");
             RegisterCustomIcon("payment");
             RegisterCustomIcon("produce");
             RegisterCustomIcon("shield");

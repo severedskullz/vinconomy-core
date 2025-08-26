@@ -21,15 +21,17 @@ namespace Viconomy.BlockEntities
         public string OwnerName { get; protected set; }
         public int RegisterID { get; protected set; } = -1;
         public bool IsAdminShop { get; protected set; }
+        public bool DiscardProduct { get; protected set; }
 
         public override string InventoryClassName { get { return "VinconomyInventory"; } }
 
         public virtual int StallSlotCount => 4;
-        public virtual int StacksPerSlot => 9;
+        public virtual int ProductStacksPerSlot => 9;
         public virtual int BulkPurchaseAmount => 5;
 
         public bool shouldRenderInventory;
         protected DistanceRenderer distanceRenderer;
+        
 
         //protected AssetLocation OpenSound;
         //protected AssetLocation CloseSound;
@@ -157,7 +159,7 @@ namespace Viconomy.BlockEntities
             return null;
         }
 
-        protected void SetAdminShop(IPlayer byPlayer, bool isAdmin)
+        protected virtual void SetAdminShop(IPlayer byPlayer, bool isAdmin)
         {
             // No, this shouldnt be CanAccess(byPlayer) because we dont want admins accidentally turning player stalls into admin shops
             // even if they were given access...
@@ -182,20 +184,21 @@ namespace Viconomy.BlockEntities
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.ToTreeAttributes(tree);
-            tree.SetString("Owner", this.Owner);
-            tree.SetString("OwnerName", this.OwnerName);
-            tree.SetInt("RegisterID", this.RegisterID);
-            tree.SetBool("isAdminShop", this.IsAdminShop);
+            tree.SetString("Owner", Owner);
+            tree.SetString("OwnerName", OwnerName);
+            tree.SetInt("RegisterID", RegisterID);
+            tree.SetBool("isAdminShop", IsAdminShop);
+            tree.SetBool("DiscardProduct", DiscardProduct);
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor world)
         {
             base.FromTreeAttributes(tree, world);
-            this.Owner = tree.GetString("Owner");
-            this.OwnerName = tree.GetString("OwnerName");
-            this.RegisterID = tree.GetInt("RegisterID");
-            this.IsAdminShop = tree.GetBool("isAdminShop");
-
+            Owner = tree.GetString("Owner");
+            OwnerName = tree.GetString("OwnerName");
+            RegisterID = tree.GetInt("RegisterID");
+            IsAdminShop = tree.GetBool("isAdminShop");
+            DiscardProduct = tree.GetBool("DiscardProduct");
         }
 
         protected void SetStallRegisterID(IPlayer byPlayer, byte[] data)
@@ -210,8 +213,7 @@ namespace Viconomy.BlockEntities
             using (MemoryStream ms = new MemoryStream(data))
             {
                 BinaryReader reader = new BinaryReader(ms);
-                int ID = reader.ReadInt32();
-                SetRegisterID(ID);
+                SetRegisterID(reader.ReadInt32());
             }
 
             //PrintClientMessage(byPlayer, "set ID to " + this.RegisterID);
@@ -281,13 +283,22 @@ namespace Viconomy.BlockEntities
             request.WithCurrency(currencyStack, TradingUtil.GetAllValidSlotsFor(player, currencyStack), currencyStack.StackSize);
             request.WithProduct(TradingUtil.GetItemStackClone(FindFirstNonEmptyStockStack(stallSlot), 1), GetAggregateProductSlots(stallSlot), GetNumItemsPerPurchaseForStall(stallSlot));
 
-            //request.WithCoupons(null, null, false, false, 0,0);
-            //request.WithTools(null, 1);
-
-            ItemStack tradePass = shopRegister.Inventory[0].Itemstack;
-            if (tradePass != null) {
-                request.WithTradePass(tradePass, TradingUtil.GetAllValidSlotsFor(player, tradePass));
+            AggregatedSlots coupons = TradingUtil.GetCouponsSlotsFor(player, request.ProductStackNeeded, shopRegister);
+            if (coupons.Slots.Count > 0)
+            {
+                request.WithCoupons(coupons.Slots[0]);
             }
+            
+            //request.WithTools(null, 1);
+            if (shopRegister != null)
+            {
+                ItemStack tradePass = shopRegister.Inventory[0].Itemstack;
+                if (tradePass != null)
+                {
+                    request.WithTradePass(tradePass, TradingUtil.GetAllValidSlotsFor(player, tradePass));
+                }
+            }
+
 
             request.Build();
 

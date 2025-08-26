@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Viconomy.BlockEntities;
+using Viconomy.ItemTypes;
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 
 namespace Viconomy.Trading
 {
@@ -18,20 +20,21 @@ namespace Viconomy.Trading
         public int NumPurchases;
         public int RequestedPurchases;
 
-        public int ProductBonusPerPurchase; // Applied via Group or Coupon set in Register
         public int ProductNeededPerPurchase;
         public ItemStack ProductStackNeeded;
         public AggregatedSlots ProductSourceSlots;
 
-        public int CurrencyDiscountPerPurchase; // Applied via Group or Coupon set in Register
+        
         public int CurrencyNeededPerPurchase;
         public ItemStack CurrencyStackNeeded;
         public AggregatedSlots CurrencySourceSlots;
 
         public bool ConsumeCoupon;
-        public bool CouponPerTrade;
         public ItemStack CouponStackNeeded;
         public AggregatedSlots CouponSlots;
+        public int CouponValue;
+        public string CouponBonusType;
+        public string CouponDiscountType;
 
         public ItemStack TradePassNeeded;
         public AggregatedSlots TradePassSlots;
@@ -88,15 +91,27 @@ namespace Viconomy.Trading
         /// <param name="consumeCoupon"> Whether or not to take the coupon from the player and place it inside the register</param>
         /// <param name="bonusPerPurchase"> The amount of extra product the customer will recieve</param>
         /// <param name="discountPerPurchase"> The discount on the price paid</param>
-        public GenericTradeRequest WithCoupons(ItemStack couponNeeded, AggregatedSlots slots, bool perTradeBasis, bool consumeCoupon, int bonusPerPurchase, int discountPerPurchase)
+        public GenericTradeRequest WithCoupons(ItemSlot couponSlot)
         {
-            CouponStackNeeded = couponNeeded;
-            CouponSlots = slots;
-            CouponPerTrade = perTradeBasis;
-            ConsumeCoupon = consumeCoupon;
-            CurrencyDiscountPerPurchase = discountPerPurchase;
-            ProductBonusPerPurchase = bonusPerPurchase;
-            return this;
+            if (couponSlot.Itemstack != null && couponSlot.Itemstack.Class == EnumItemClass.Item)
+            {
+                if (couponSlot.Itemstack.Item.Code == "vinconomy:coupon")
+                {
+                    CouponStackNeeded = couponSlot.Itemstack;
+                    //TODO: Kinda pointless if we only want to ever have 1 coupon applied at at time. Should see about refactoring this.
+                    AggregatedSlots couponSlots = new AggregatedSlots();
+                    couponSlots.Add(couponSlot);
+                    CouponSlots = couponSlots;
+
+
+                    ITreeAttribute attrs = couponSlot.Itemstack.Attributes;
+                    ConsumeCoupon = attrs.GetBool(ItemCoupon.CONSUME_COUPON);
+                    CouponDiscountType = attrs.GetString(ItemCoupon.DISCOUNT_TYPE);
+                    CouponBonusType = attrs.GetString(ItemCoupon.BONUS_TYPE);
+                    CouponValue = attrs.GetInt(ItemCoupon.VALUE);
+                }
+            }
+                return this;
         }
 
         public GenericTradeRequest WithTradePass(ItemStack pass, AggregatedSlots slots)
@@ -134,7 +149,7 @@ namespace Viconomy.Trading
             if (CouponSlots != null)
             {
                 //Need 1 coupon per every trade.
-                if (CouponPerTrade)
+                if (ConsumeCoupon)
                 {
                     totalTrades = Math.Min(totalTrades, CouponSlots.TotalCount);
                 } 
@@ -145,15 +160,44 @@ namespace Viconomy.Trading
                 }
             }
 
-            // If we never called WithCoupons(), discount and bonus should still be 0
-            // Also, I wish Math.Min was a var-arg... :/
-            totalTrades = Math.Min(totalTrades, CurrencySourceSlots.TotalCount / (CurrencyNeededPerPurchase - CurrencyDiscountPerPurchase));
-            totalTrades = Math.Min(totalTrades, ProductSourceSlots.TotalCount / (ProductNeededPerPurchase + ProductBonusPerPurchase));
+            int currencyNeeded = GetFinalCurrencyNeededPerPurchase();
+            if (currencyNeeded > 0)
+                totalTrades = Math.Min(totalTrades, CurrencySourceSlots.TotalCount / currencyNeeded);
+
+            int productNeeded = GetFinalProductNeededPerPurchase();
+            if (productNeeded > 0 && !IsAdminShop)
+                totalTrades = Math.Min(totalTrades, ProductSourceSlots.TotalCount / productNeeded);
 
             return totalTrades;
 
         }
 
+        public int GetFinalProductNeededPerPurchase()
+        {
+            int bonusProduct = 0;
+            if (CouponBonusType == ItemCoupon.BONUS_TYPE_PRODUCT)
+            {
+                if (CouponDiscountType == ItemCoupon.DISCOUNT_TYPE_PERCENT)
+                    bonusProduct = (int)((CouponValue / 100.0f) * ProductNeededPerPurchase);
+                else if (CouponDiscountType == ItemCoupon.DISCOUNT_TYPE_UNIT)
+                    bonusProduct = CouponValue;
+            }
+            return ProductNeededPerPurchase + bonusProduct;
+        }
+
+        public int GetFinalCurrencyNeededPerPurchase()
+        {
+            int priceDiscount = 0;
+            if (CouponBonusType == ItemCoupon.BONUS_TYPE_DISCOUNT)
+            {
+                if (CouponDiscountType == ItemCoupon.DISCOUNT_TYPE_PERCENT)
+                    priceDiscount = (int)((CouponValue / 100.0f) * CurrencyNeededPerPurchase);
+                else if (CouponDiscountType == ItemCoupon.DISCOUNT_TYPE_UNIT)
+                    priceDiscount = CouponValue;
+            }
+
+            return Math.Max(0, CurrencyNeededPerPurchase - priceDiscount);
+        }
     }
 
     public class GenericTradeResult {

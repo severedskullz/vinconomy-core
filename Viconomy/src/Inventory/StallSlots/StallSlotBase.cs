@@ -1,19 +1,29 @@
-﻿using Viconomy.Inventory.Slots;
+﻿using System;
+using Viconomy.Inventory.Slots;
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 
 namespace Viconomy.Inventory.StallSlots
 {
     public abstract class StallSlotBase
     {
+        public int ProductStacksPerStall;
+        public ViconCurrencySlot Currency;
+        public int ItemsPerPurchase = 1;
+        //protected InventoryBase Inventory;
 
-        public ViconCurrencySlot currency;
-        public int itemsPerPurchase = 1;
+        public virtual int StallSlots => ProductStacksPerStall;
+        public virtual int TotalSlots => StallSlots + 1;
 
-        public StallSlotBase(InventoryBase inventory)
+
+        public StallSlotBase(InventoryBase inventory, int numStacksPerStall)
         {
-            currency = new ViconCurrencySlot(inventory);
-
+            //Inventory = inventory;
+            Currency = new ViconCurrencySlot(inventory);
+            ProductStacksPerStall = numStacksPerStall;
         }
+
+        public abstract ItemSlot this[int slotId] { get; set; }
 
         public abstract void SetSlot(int itemSlot, ItemSlot value);
         public abstract ItemSlot GetSlot(int itemSlot);
@@ -36,9 +46,9 @@ namespace Viconomy.Inventory.StallSlots
             return amount;
         }
 
-        public int GetNumPurchasesRemaining()
+        public virtual int GetNumPurchasesRemaining()
         {
-            return GetProductQuantity() / itemsPerPurchase;
+            return GetProductQuantity() / ItemsPerPurchase;
         }
 
         public virtual string GetProductName(ICoreAPI api)
@@ -48,7 +58,19 @@ namespace Viconomy.Inventory.StallSlots
 
         public virtual string GetCurrencyName(ICoreAPI api)
         {
-            return currency?.Itemstack.GetName();
+            return Currency?.Itemstack.GetName();
+        }
+
+        public abstract void ToTreeAttributes(ITreeAttribute tree);
+        public abstract void FromTreeAttributes(ITreeAttribute tree);
+
+        public virtual void ResolveBlockOrItem(IWorldAccessor world)
+        {
+            Currency.Itemstack?.ResolveBlockOrItem(world);
+            for (int j = 0; j < StallSlots; j++)
+            {
+                GetSlot(j).Itemstack?.ResolveBlockOrItem(world);
+            }
         }
     }
 }

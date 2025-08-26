@@ -16,7 +16,7 @@ namespace Viconomy.BlockEntities
 
         public override void ConfigureInventory()
         {
-            ViconItemInventory inv = new ViconItemInventory(this, null, null, StallSlotCount, StacksPerSlot);
+            ViconItemInventory inv = new ViconItemInventory(this, null, null, StallSlotCount, ProductStacksPerSlot);
             inv.SetSlotFilter(0, ViconomyFilters.IsBootsSlot);
             inv.SetSlotBackground(0, "vicon-boots");
             inv.SetSlotFilter(1, ViconomyFilters.IsPantsSlot);

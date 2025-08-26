@@ -6,7 +6,7 @@
     "creativeinventory": { "vinconomy": [ "*-east" ] },
     "attributes": {
         "handbook": {
-            "groupBy": [ "gacha-east" ],
+            "groupBy": [ "gachaloader-east" ],
             "extraSections": [
                 {
                     "title": "",
@@ -71,14 +71,6 @@
             "base": "block/gachaloader",
             "rotateY": 90
         }
-    },
-    "selectionBox": {
-        "x1": 0,
-        "y1": 0,
-        "z1": 0,
-        "x2": 1,
-        "y2": 1,
-        "z2": 0.875
     },
 
     "collisionboxes": [

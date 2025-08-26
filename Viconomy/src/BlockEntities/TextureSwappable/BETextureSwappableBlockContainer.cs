@@ -89,7 +89,7 @@ namespace Viconomy.BlockEntities.TextureSwappable
             foreach (ItemSlot item in Inventory)
             {
                 ItemStack itemstack = item.Itemstack;
-                if (itemstack != null && itemstack.Collectible.RequiresTransitionableTicking(Api.World, itemstack))
+                if (itemstack != null && itemstack.Collectible != null && itemstack.Collectible.RequiresTransitionableTicking(Api.World, itemstack))
                 {
                     return true;
                 }
@@ -220,7 +220,7 @@ namespace Viconomy.BlockEntities.TextureSwappable
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
             base.GetBlockInfo(forPlayer, dsc);
-            room = roomReg.GetRoomForPosition(Pos);
+            //room = roomReg.GetRoomForPosition(Pos);
             float num = GetPerishRate();
             if (Inventory is InventoryGeneric)
             {

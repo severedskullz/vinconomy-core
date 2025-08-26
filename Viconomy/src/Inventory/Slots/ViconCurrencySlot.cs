@@ -40,6 +40,7 @@ namespace Viconomy.Inventory.Slots
         private void SetCurrency(ItemStack stack)
         {
             itemstack = stack;
+            this.OnItemSlotModified(stack);
         }
 
         public override ItemStack TakeOut(int quantity)

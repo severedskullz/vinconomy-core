@@ -100,31 +100,6 @@ namespace Viconomy.Inventory.Impl
             SlotsToTreeAttributes(slots, tree);
         }
 
-        /*
-        public int GetStallForSlot(int index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int GetItemSlotForStall(int index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int GetStallSlotCount()
-        {
-            return 1;
-        }
-
-        public ItemSlot GetCurrencyForStallSlot(int stallSlot)
-        {
-            return this[0];
-        }
-
-        public ItemSlot[] GetSlotsForStallSlot(int stallSlot)
-        {
-            throw new NotImplementedException();
-        }
-        */
+        
     }
 }

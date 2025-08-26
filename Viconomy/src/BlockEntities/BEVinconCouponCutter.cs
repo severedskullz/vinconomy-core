@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Viconomy.GUI;
 using Viconomy.Inventory.Slots;
+using Viconomy.ItemTypes;
 using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
@@ -11,7 +12,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
-namespace Viconomy.BlockEntities.Unfinished
+namespace Viconomy.BlockEntities
 {
     public class BEVinconCouponCutter : BlockEntityContainer
     {
@@ -34,6 +35,7 @@ namespace Viconomy.BlockEntities.Unfinished
         public BEVinconCouponCutter()
         {
             this.inventory = new InventoryGeneric(11, null, Api, onNewSlot);
+            AppliedShops = [];
         }
 
         private ItemSlot onNewSlot(int slotId, InventoryGeneric self)
@@ -42,17 +44,131 @@ namespace Viconomy.BlockEntities.Unfinished
             {
                 ViconItemSlot slot = new ViconItemSlot(self, 0, slotId);
                 slot.setFilter(IsPaper);
-                slot.BackgroundIcon = "vicon-general2";
+                slot.BackgroundIcon = "vicon-paper";
                 return slot;
             }
             else
             {
-                return new ViconCurrencySlot(self);
+                ViconCurrencySlot slot = new ViconCurrencySlot(self);
+                slot.BackgroundIcon = "vicon-general";
+                return slot;
             }
         }
 
-        public void PrintCoupon()
+        private void CutCoupons(IPlayer byPlayer)
         {
+            if (Inventory[0].Itemstack == null)
+                return;
+
+            var coupon = new ItemStack(Api.World.GetItem(new AssetLocation("vinconomy:coupon")), NumCouponsPerCraft);
+            ITreeAttribute tree = coupon.Attributes;
+            tree.SetString(ItemCoupon.OWNER, byPlayer.PlayerUID);
+            tree.SetString(ItemCoupon.OWNER_NAME, byPlayer.PlayerName);
+            tree.SetString(ItemCoupon.NAME, CouponName);
+            tree.SetInt(ItemCoupon.VALUE, CouponValue);
+            tree.SetString(ItemCoupon.DISCOUNT_TYPE, DiscountType);
+            tree.SetString(ItemCoupon.BONUS_TYPE, BonusType);
+            tree.SetBool(ItemCoupon.CONSUME_COUPON, ConsumeCoupon);
+            tree.SetBool(ItemCoupon.IS_BLACKLIST, ItemBlacklist);
+
+
+
+            VinconomyCoreSystem modSystem = Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
+            ShopRegistry registry = modSystem.GetRegistry();
+
+            // Save all shops which we either own, or have access to (Might remove that part)
+            // Note: Changing the shop list would erase shops not actually owned - Meaning we can create coupons for a cutter that someone else set up, but the second
+            // we change the available shops, those shops vanish from the list. Additionally, this doesnt work for "all" shops when none is explicitly selected
+            List<ShopRegistration> validShops = new List<ShopRegistration>();
+            for (int i = 0; i < AppliedShops.Length; i++)
+            {
+                ShopRegistration reg = registry.GetShop(AppliedShops[i]);
+                if (reg != null)
+                {
+                    if (reg.CanAccess(byPlayer))
+                    {
+                        validShops.Add(reg);
+                    }
+                    else
+                    {
+                        modSystem.Mod.Logger.Warning($"Player {byPlayer.PlayerName} did not have access to create coupon for shop [{reg.ID}] {reg.Name} owned by {reg.OwnerName}. Skipping...");
+                    }
+                }
+                else
+                {
+                    modSystem.Mod.Logger.Warning($"Could not find shop with ID of {AppliedShops[i]}. Skipping...");
+                }
+            }
+            if ( validShops.Count > 0 )
+            {
+                ITreeAttribute appliedTree = tree.GetOrAddTreeAttribute(ItemCoupon.APPLIED_SHOPS);
+                for (int i = 0; i < validShops.Count; i++)
+                {
+                    appliedTree.SetInt("ID-" + i.ToString(), validShops[i].ID);
+                    appliedTree.SetString("Name-" + i.ToString(), validShops[i].Name);
+                }
+                tree.SetInt(ItemCoupon.APPLIED_SHOPS_COUNT, validShops.Count);
+            }
+           
+
+            // Save all Whitelisted/Blacklisted items that were not null
+            List<string> items = new List<string>();
+            for (int i = 1; i < inventory.Count; i++)
+            {
+                ItemStack stack = inventory[i].Itemstack;
+                if (stack != null)
+                {
+                    items.Add(stack.Collectible.Code);
+                }
+
+            }
+            if (items.Count > 0)
+            {
+                ITreeAttribute itemList = tree.GetOrAddTreeAttribute(ItemCoupon.ITEM_LIST);
+                for (int i = 0; i < items.Count; i++)
+                {
+                    itemList.SetString(i.ToString(), items[i]);
+                }
+                tree.SetInt(ItemCoupon.ITEM_LIST_COUNT, items.Count);
+            }
+
+            Inventory[0].TakeOut(1);
+
+            Api.World.SpawnItemEntity(coupon, Pos.AddCopy(0.5f, 0.5f, 0.5f), null);
+            Api.World.PlaySoundAt(new AssetLocation("sounds/tool/scythe2"), Pos, 0.5f, null, true, 16, 1);
+        }
+
+        public override void OnReceivedServerPacket(int packetid, byte[] data)
+        {
+            //Console.WriteLine(Api.Side + ": OnRecievedServerPacket " + packetid);
+            IClientWorldAccessor clientWorld = (IClientWorldAccessor)this.Api.World;
+
+            switch (packetid)
+            {
+                case VinConstants.OPEN_GUI:
+                    OpenShopGui(data);
+                    break;
+                case VinConstants.CLOSE_GUI:
+                    CloseGui(clientWorld);
+                    break;
+                case VinConstants.TOGGLE_GUI:
+
+                    if (invDialog != null)
+                    {
+                        Console.WriteLine(Api.Side + ": Toggling GUI OFF");
+                        CloseGui(clientWorld);
+                    }
+                    else
+                    {
+                        Console.WriteLine(Api.Side + ": Toggling GUI ON");
+                        OpenShopGui(data);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+
 
         }
 
@@ -220,111 +336,7 @@ namespace Viconomy.BlockEntities.Unfinished
             }
         }
 
-        private void CutCoupons(IPlayer byPlayer)
-        {
-            if (Inventory[0].Itemstack == null)
-                return;
-
-            var coupon = new ItemStack(Api.World.GetItem(new AssetLocation("vinconomy:coupon")), NumCouponsPerCraft);
-            ITreeAttribute tree = coupon.Attributes;
-            tree.SetString("CouponOwner", byPlayer.PlayerUID);
-            tree.SetString("CouponOwnerName", byPlayer.PlayerName);
-            tree.SetString("CouponName", CouponName);
-            tree.SetInt("CouponValue", CouponValue);
-            tree.SetString("DiscountType", DiscountType);
-            tree.SetString("BonusType", BonusType);
-            tree.SetBool("ConsumeCoupon", ConsumeCoupon);
-            tree.SetBool("ItemBlacklist", ItemBlacklist);
-            
-           
-
-            VinconomyCoreSystem modSystem = Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
-            ShopRegistry registry = modSystem.GetRegistry();
-
-            // Save all shops which we either own, or have access to (Might remove that part)
-            // Note: Changing the shop list would erase shops not actually owned - Meaning we can create coupons for a cutter that someone else set up, but the second
-            // we change the available shops, those shops vanish from the list. Additionally, this doesnt work for "all" shops when none is explicitly selected
-            List<ShopRegistration> validShops = new List<ShopRegistration>();
-            for (int i = 0; i < AppliedShops.Length; i++)
-            {
-                ShopRegistration reg = registry.GetShop(AppliedShops[i]);
-                if (reg != null) {
-                    if (reg.CanAccess(byPlayer))
-                    {
-                        validShops.Add(reg);
-                    } else
-                    {
-                        modSystem.Mod.Logger.Warning($"Player {byPlayer.PlayerName} did not have access to create coupon for shop [{reg.ID}] {reg.Name} owned by {reg.OwnerName}. Skipping...");
-                    }
-                } else
-                {
-                    modSystem.Mod.Logger.Warning($"Could not find shop with ID of {AppliedShops[i]}. Skipping...");
-                }
-            }
-            ITreeAttribute appliedTree = tree.GetOrAddTreeAttribute("AppliedShops");
-            for (int i = 0; i < validShops.Count; i++)
-            {
-                appliedTree.SetInt("ID-"+i.ToString(), validShops[i].ID);
-                appliedTree.SetString("Name-" + i.ToString(), validShops[i].Name);
-            }
-            tree.SetInt("AppliedShopLength", validShops.Count);
-
-            // Save all Whitelisted/Blacklisted items that were not null
-            List<string> items = new List<string>();
-            for (int i = 1; i < inventory.Count; i++)
-            {
-                ItemStack stack = inventory[i].Itemstack;
-                if (stack != null)
-                {
-                    items.Add(stack.Collectible.Code);
-                }
-
-            }
-            ITreeAttribute itemList = tree.GetOrAddTreeAttribute("ItemList");
-            for (int i = 0; i < items.Count; i++)
-            {
-                itemList.SetString(i.ToString(), items[i]);
-            }
-            tree.SetInt("ItemListLength", items.Count);
-
-
-            Api.World.SpawnItemEntity(coupon, Pos.AddCopy(0.5f, 0.5f, 0.5f), null);
-            Api.World.PlaySoundAt(new AssetLocation("sounds/tool/scythe2"),Pos,0.5f,null,true,16,1);
-        }
-
-        public override void OnReceivedServerPacket(int packetid, byte[] data)
-        {
-            //Console.WriteLine(Api.Side + ": OnRecievedServerPacket " + packetid);
-            IClientWorldAccessor clientWorld = (IClientWorldAccessor)this.Api.World;
-
-            switch(packetid)
-            {
-                case VinConstants.OPEN_GUI:
-                    OpenShopGui(data);
-                    break;
-                case VinConstants.CLOSE_GUI:
-                    CloseGui(clientWorld);
-                    break;
-                case VinConstants.TOGGLE_GUI:
-
-                    if (invDialog != null)
-                    {
-                        Console.WriteLine(Api.Side + ": Toggling GUI OFF");
-                        CloseGui(clientWorld);
-                    }
-                    else
-                    {
-                        Console.WriteLine(Api.Side + ": Toggling GUI ON");
-                        OpenShopGui(data);
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-
-
-        }
+       
 
         static bool ReadStreamBool(byte[] data)
         {
@@ -378,17 +390,17 @@ namespace Viconomy.BlockEntities.Unfinished
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
         {
             base.FromTreeAttributes(tree, worldForResolving);
-            CouponName = tree.GetString("CouponName");
-            AppliedShops = new int[tree.GetInt("AppliedShopLength")];
+            CouponName = tree.GetString(ItemCoupon.NAME);
+            AppliedShops = new int[tree.GetInt(ItemCoupon.APPLIED_SHOPS_COUNT)];
             for (int i = 0; i < AppliedShops.Length; i++)
             {
                 AppliedShops[i] = tree.GetInt("AS" + i);
             }
-            CouponValue = tree.GetInt("CouponValue");
-            DiscountType = tree.GetString("DiscountType");
-            BonusType = tree.GetString("BonusType");
-            ConsumeCoupon = tree.GetBool("ConsumeCoupon");
-            ItemBlacklist = tree.GetBool("ItemBlacklist");
+            CouponValue = tree.GetInt(ItemCoupon.VALUE);
+            DiscountType = tree.GetString(ItemCoupon.DISCOUNT_TYPE, ItemCoupon.DISCOUNT_TYPE_UNIT);
+            BonusType = tree.GetString(ItemCoupon.BONUS_TYPE, ItemCoupon.BONUS_TYPE_DISCOUNT);
+            ConsumeCoupon = tree.GetBool(ItemCoupon.CONSUME_COUPON);
+            ItemBlacklist = tree.GetBool(ItemCoupon.IS_BLACKLIST);
 
 
         }
@@ -396,17 +408,24 @@ namespace Viconomy.BlockEntities.Unfinished
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.ToTreeAttributes(tree);
-            tree.SetString("CouponName", CouponName);
-            tree.SetInt("AppliedShopLength", AppliedShops.Length);
+            tree.SetString(ItemCoupon.NAME, CouponName);
+            tree.SetInt(ItemCoupon.APPLIED_SHOPS_COUNT, AppliedShops.Length);
             for (int i = 0; i < AppliedShops.Length; i++)
             {
                 tree.SetInt("AS"+i, AppliedShops[i]);
             }
-            tree.SetInt("CouponValue", CouponValue);
-            tree.SetString("DiscountType", DiscountType);
-            tree.SetString("BonusType", BonusType);
-            tree.SetBool("ConsumeCoupon", ConsumeCoupon);
-            tree.SetBool("ItemBlacklist", ItemBlacklist);
+            tree.SetInt(ItemCoupon.VALUE, CouponValue);
+            tree.SetString(ItemCoupon.DISCOUNT_TYPE, GetDefaultValue(DiscountType, ItemCoupon.DISCOUNT_TYPE_UNIT));
+            tree.SetString(ItemCoupon.BONUS_TYPE, GetDefaultValue(BonusType, ItemCoupon.BONUS_TYPE_DISCOUNT));
+            tree.SetBool(ItemCoupon.CONSUME_COUPON, ConsumeCoupon);
+            tree.SetBool(ItemCoupon.IS_BLACKLIST, ItemBlacklist);
+        }
+
+        private string GetDefaultValue(string val, string defaultVal)
+        {
+            if (val == null || val.Trim() == "")
+                return defaultVal;
+            return val;
         }
     }
 }   

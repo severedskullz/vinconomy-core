@@ -43,7 +43,7 @@ namespace Viconomy.BlockEntities
 
         public virtual void ConfigureInventory()
         {
-            ViconItemInventory inv = new ViconItemInventory(this, null, Api, StallSlotCount, StacksPerSlot);
+            ViconItemInventory inv = new ViconItemInventory(this, null, Api, StallSlotCount, ProductStacksPerSlot);
             for (int i = 0; i < StallSlotCount; i++)
             {
                 inv.SetSlotFilter(i, ViconomyFilters.IsGenericItem);
@@ -111,17 +111,10 @@ namespace Viconomy.BlockEntities
             return true;
         }
 
-        private void TryPurchaseItem(IPlayer player, byte[] data)
+        protected virtual void TryPurchaseItem(IPlayer player, int stallSlot, int numPurchases)
         {
 
-            int stallSlot;
-            int numPurchases;
-            using (MemoryStream memoryStream = new MemoryStream(data))
-            {
-                BinaryReader binaryReader = new BinaryReader(memoryStream);
-                stallSlot = binaryReader.ReadInt32();
-                numPurchases = binaryReader.ReadInt32();
-            }
+
 
             if (numPurchases <= 0)
             {
@@ -195,7 +188,7 @@ namespace Viconomy.BlockEntities
 
         #region GUI
 
-        protected void OpenShopForPlayer(IPlayer byPlayer, int selectedStall)
+        protected virtual void OpenShopForPlayer(IPlayer byPlayer, int selectedStall)
         {
 
             if (Api.Side == EnumAppSide.Server)
@@ -206,7 +199,7 @@ namespace Viconomy.BlockEntities
                     BinaryWriter writer = new BinaryWriter(ms);
                     writer.Write(OwnerName == null ? "" : OwnerName);
                     writer.Write((byte)StallSlotCount);
-                    writer.Write((byte)StacksPerSlot);
+                    writer.Write((byte)ProductStacksPerSlot);
                     writer.Write((byte)selectedStall);
                     writer.Write(CanAccess(byPlayer));
                     TreeAttribute tree = new TreeAttribute();
@@ -295,31 +288,33 @@ namespace Viconomy.BlockEntities
             //Console.WriteLine(Api.Side + ": OnRecievedClientPacket " + packetid);
             //PrintClientMessage(player, Api.Side + ": OnRecievedClientPacket");
             IPlayerInventoryManager inventoryManager = player.InventoryManager;
+            int stallSlot;
+            int amount;
             switch (packetid)
             {
-                /*
-                case VinConstants.OPEN_GUI:
-                    if (inventoryManager == null)
-                    {
-                        return;
-                    }
-                    inventoryManager.OpenInventory(this.Inventory);
-                    break;
-                */
-
                 case VinConstants.CLOSE_GUI:
-                    if (inventoryManager != null)
-                    {
-                        inventoryManager.CloseInventory(this.Inventory);
-                    }
+                        inventoryManager?.CloseInventory(this.Inventory);
                     break;
 
                 case VinConstants.PURCHASE_ITEMS:
-                    TryPurchaseItem(player, data);
+
+                    using (MemoryStream memoryStream = new MemoryStream(data))
+                    {
+                        BinaryReader binaryReader = new BinaryReader(memoryStream);
+                        stallSlot = binaryReader.ReadInt32();
+                        amount = binaryReader.ReadInt32();
+                    }
+                    TryPurchaseItem(player, stallSlot, amount);
                     break;
 
                 case VinConstants.SET_ITEMS_PER_PURCHASE:
-                    SetStallItemsPerPurchase(player, data);
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
+                        BinaryReader reader = new BinaryReader(ms);
+                        stallSlot = (int)reader.ReadInt32();
+                        amount = (int)reader.ReadInt32();
+                    }
+                    SetStallItemsPerPurchase(player, stallSlot, amount);
                     break;
 
                 case VinConstants.SET_REGISTER_ID:
@@ -337,16 +332,13 @@ namespace Viconomy.BlockEntities
                     break;
 
                 case VinConstants.SET_ITEM_PRICE:
-                    int price = 0;
-                    int stall = 0;
-
                     using (MemoryStream ms = new MemoryStream(data))
                     {
                         BinaryReader reader = new BinaryReader(ms);
-                        stall = reader.ReadInt32();
-                        price = reader.ReadInt32();
+                        stallSlot = reader.ReadInt32();
+                        amount = reader.ReadInt32();
                     }
-                    SetItemPrice(player, stall, price);
+                    SetItemPrice(player, stallSlot, amount);
                     break;
 
                 default:
@@ -360,7 +352,7 @@ namespace Viconomy.BlockEntities
                             }
                             else
                             {
-                                ((IServerPlayer)player).Disconnect("Nice try, but that wasn't yours. (Tried to access Register they didn't own)");
+                                ((IServerPlayer)player).Disconnect("Nice try, but that wasn't yours. (Tried to access Stall they didn't own)");
                             }
                             return;
                         }
@@ -374,7 +366,7 @@ namespace Viconomy.BlockEntities
         }
 
 
-        protected void SetItemPrice(IPlayer byPlayer, int stallSlot, int price)
+        protected virtual void SetItemPrice(IPlayer byPlayer, int stallSlot, int price)
         {
             if (!CanAccess(byPlayer))
             {
@@ -382,7 +374,7 @@ namespace Viconomy.BlockEntities
                 return;
             }
 
-            ItemSlot slot = this.inventory.StallSlots[stallSlot].currency;
+            ItemSlot slot = this.inventory.StallSlots[stallSlot].Currency;
             if (slot.Itemstack != null)
             {
                 slot.Itemstack.StackSize = price;
@@ -391,7 +383,7 @@ namespace Viconomy.BlockEntities
             
         }
 
-        protected void SetStallItemsPerPurchase(IPlayer byPlayer, byte[] data)
+        protected virtual void SetStallItemsPerPurchase(IPlayer byPlayer, int stallSlot, int numItems)
         {
             if (!CanAccess(byPlayer))
             {
@@ -399,16 +391,7 @@ namespace Viconomy.BlockEntities
                 return;
             }
 
-            int stallSlot;
-            int amountItems;
-            using (MemoryStream ms = new MemoryStream(data))
-            {
-                BinaryReader reader = new BinaryReader(ms);
-                stallSlot = (int)reader.ReadInt32();
-                amountItems = (int)reader.ReadInt32();
-            }
-
-            this.inventory.StallSlots[stallSlot].itemsPerPurchase = amountItems;
+            this.inventory.StallSlots[stallSlot].ItemsPerPurchase = numItems;
             //ViconomyCoreSystem.PrintClientMessage(byPlayer, "set quantity to " + amountItems, new object[] { amountItems });
             this.MarkDirty();
         }
@@ -564,7 +547,7 @@ namespace Viconomy.BlockEntities
             int amountItem = bulk ? activeSlot.Itemstack.StackSize : 1;
             bool movedItems = false;
 
-            for (int i = 0; i < StacksPerSlot; i++)
+            for (int i = 0; i < ProductStacksPerSlot; i++)
             {
                 if (activeSlot.Itemstack != null)
                 {
@@ -615,10 +598,10 @@ namespace Viconomy.BlockEntities
             {
                 i++;
                 ItemSlot stock = slot.FindFirstNonEmptyStockSlot();
-                ItemSlot currency = slot.currency;
+                ItemSlot currency = slot.Currency;
                 if (stock != null && stock.Itemstack != null && currency.Itemstack != null)
                 {
-                    dsc.AppendLine(Lang.Get("vinconomy:for-sale", new Object[] { i, slot.itemsPerPurchase, slot.GetProductName(Api), currency.Itemstack.StackSize, slot.GetCurrencyName(Api) }));
+                    dsc.AppendLine(Lang.Get("vinconomy:for-sale", new Object[] { i, slot.ItemsPerPurchase, slot.GetProductName(Api), currency.Itemstack.StackSize, slot.GetCurrencyName(Api) }));
                 }
                 else
                 {
@@ -704,12 +687,12 @@ namespace Viconomy.BlockEntities
 
         public override ItemSlot GetCurrencyForStall(int stallSlot)
         {
-            return inventory.StallSlots[stallSlot].currency;
+            return inventory.StallSlots[stallSlot].Currency;
         }
 
         public override int GetNumItemsPerPurchaseForStall(int stallSlot)
         {
-            return inventory.StallSlots[stallSlot].itemsPerPurchase;
+            return inventory.StallSlots[stallSlot].ItemsPerPurchase;
         }
 
         public override ItemStack FindFirstNonEmptyStockStack(int stallSlot)

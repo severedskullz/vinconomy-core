@@ -498,8 +498,8 @@ namespace Viconomy.BlockEntities
               
 
             this.invDialog = new GuiViconRegister(shopRegistry, inventory, this.Pos, this.Api as ICoreClientAPI);
-            //this.invDialog.OpenSound = this.OpenSound;
-            //this.invDialog.CloseSound = this.CloseSound;
+            this.invDialog.OpenSound = "sounds/effect/cashregister";
+            // this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();
             this.invDialog.OnClosed += delegate ()
             {

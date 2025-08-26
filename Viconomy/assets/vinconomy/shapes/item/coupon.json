@@ -1,0 +1,42 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": true
+	},
+	"textureWidth": 10,
+	"textureHeight": 12,
+	"textureSizes": {
+		"coupon": [10,12]
+	},
+	"textures": {
+	},
+	"elements": [
+		{
+			"name": "origin",
+			"from": [ 8.0, 0.0, 8.0 ],
+			"to": [ 8.0, 0.0, 8.0 ],
+			"uv": [ 0.0, 0.0 ],
+			"rotationOrigin": [ 8.0, 0.0, 8.0 ],
+			"faces": {
+			},
+			"children": [
+				{
+					"name": "coupon",
+					"from": [ -5.0, 0.1, -2.5 ],
+					"to": [ 5.0, 0.6, 2.5 ],
+					"autoUnwrap": false,
+					"uv": [ 0.0, 1.0 ],
+					"rotationOrigin": [ 0.0, 0.1, 0.0 ],
+					"rotationZ": -1.0,
+					"faces": {
+						"north": { "texture": "#coupon", "uv": [ 0.0, 11.5, 10.0, 12.0 ], "windMode": [-1,-1,-1,-1] },
+						"east": { "texture": "#coupon", "uv": [ 5.0, 5.0, 10.0, 5.5 ], "windMode": [-1,-1,-1,-1] },
+						"south": { "texture": "#coupon", "uv": [ 0.0, 11.0, 10.0, 11.5 ], "windMode": [-1,-1,-1,-1] },
+						"west": { "texture": "#coupon", "uv": [ 0.0, 5.0, 5.0, 5.5 ], "windMode": [-1,-1,-1,-1] },
+						"up": { "texture": "#coupon", "uv": [ 0.0, 0.0, 10.0, 5.0 ] },
+						"down": { "texture": "#coupon", "uv": [ 0.0, 5.5, 10.0, 10.5 ], "windMode": [-1,-1,-1,-1] }
+					}
+				}
+			]
+		}
+	]}

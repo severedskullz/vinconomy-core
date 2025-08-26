@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Viconomy.BlockEntities;
+using Viconomy.ItemTypes;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
@@ -304,6 +306,103 @@ namespace Viconomy.Trading
             return true;
         }
 
+        public static AggregatedSlots GetCouponsSlotsFor(IPlayer customer, ItemStack desiredItem, BEVinconRegister register)
+        {
+            AggregatedSlots aggregatedSlots = new AggregatedSlots();
+            if (desiredItem == null)
+            {
+                return aggregatedSlots;
+            }
+
+            ItemSlot handItem = customer.InventoryManager.ActiveHotbarSlot;
+            if (IsValidCoupon(handItem, desiredItem, register))
+            {
+                aggregatedSlots.Add(handItem);
+            }
+
+            ItemSlot offhandItem = customer.InventoryManager.OffhandHotbarSlot;
+            if (IsValidCoupon(offhandItem, desiredItem, register))
+            {
+                aggregatedSlots.Add(offhandItem);
+            }
+
+            return aggregatedSlots;
+        }
+
+        private static bool IsValidCoupon(ItemSlot itemSlot, ItemStack desiredItem, BEVinconRegister register)
+        {
+            if (itemSlot.Itemstack != null && itemSlot.Itemstack.Class == EnumItemClass.Item)
+            {
+                if (itemSlot.Itemstack.Item.Code == "vinconomy:coupon")
+                {
+                    string desiredCode = null;
+                    if (desiredItem.Class == EnumItemClass.Item)
+                        desiredCode = desiredItem.Item?.Code;
+                    else 
+                        desiredCode = desiredItem.Block.Code;
+
+                    ITreeAttribute attrs = itemSlot.Itemstack.Attributes;
+                    if (attrs.HasAttribute(ItemCoupon.ITEM_LIST))
+                    {
+                        bool isBlacklist = attrs.GetBool(ItemCoupon.IS_BLACKLIST);
+                        ITreeAttribute itemList = attrs.GetTreeAttribute(ItemCoupon.ITEM_LIST);
+                        int length = attrs.GetInt(ItemCoupon.ITEM_LIST_COUNT);
+
+                        // By setting this to isBlacklist, we are being clever and avoiding "if(!isValid && !isBlacklist)" at the end of the branch
+                        // Is this needed? No - probably not. Does it make me feel smart? Yes.
+                        bool isValid = isBlacklist;
+                        for (int i = 0; i < length; i++)
+                        {
+                            string itemCode = itemList.GetString(i.ToString());
+
+                            // Its on the black list, so it doesnt matter if its a valid shop - we can just return false
+                            // If we never return false here, isValid should be true, since isValid == isBlacklist.
+                            if (itemCode == desiredCode && isBlacklist)
+                                return false;
+
+                            // If this is a whitelist, we need to set isValid to true (since isValid would be false)
+                            if (itemCode == desiredCode && !isBlacklist)
+                            {
+                                isValid = true;
+                                break;
+                            }
+                        }
+
+                        if (!isValid)
+                            return false;
+                    }
+
+                    if (attrs.HasAttribute(ItemCoupon.APPLIED_SHOPS))
+                    {
+                        ITreeAttribute shopList = attrs.GetTreeAttribute(ItemCoupon.APPLIED_SHOPS);
+                        int length = attrs.GetInt(ItemCoupon.APPLIED_SHOPS_COUNT);
+                        bool isValid = false;
+                        for (int i = 0; i < length; i++)
+                        {
+                            int shopId = shopList.GetInt("ID-"+i);
+                            if (register.ID == shopId)
+                            {
+                                isValid = true;
+                                break;
+                            }
+                        }
+
+                        if (!isValid)
+                            return false;
+                    }
+                    else if (attrs.GetString(ItemCoupon.OWNER) != register.Owner)
+                    {
+                        return false;
+                    }
+
+                    return true;
+                }
+                
+            }
+
+            return false;
+        }
+
         public static AggregatedSlots GetAllValidSlotsFor(IPlayer customer, ItemSlot desiredItem)
         {
             return GetAllValidSlotsFor(customer, desiredItem.Itemstack);
@@ -345,11 +444,11 @@ namespace Viconomy.Trading
             return aggregatedSlots;
         }
 
-        public static bool isMatchingItem(ItemStack source, ItemStack payment, IWorldAccessor world)
+        public static bool isMatchingItem(ItemStack desired, ItemStack toCompare, IWorldAccessor world)
         {
-            return source != null
-                && payment != null
-                && source.Equals(world, payment, new string[] { "transitionstate", "temperature" });
+            return desired != null
+                && toCompare != null
+                && desired.Equals(world, toCompare, new string[] { "transitionstate", "temperature" });
         }
 
 

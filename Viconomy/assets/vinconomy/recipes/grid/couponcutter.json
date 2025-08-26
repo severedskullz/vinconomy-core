@@ -1,0 +1,20 @@
+{
+  "ingredientPattern": "__C,PPP",
+  "ingredients": {
+    "C": {
+      "type": "item",
+      "code": "game:cleaver-*"      
+    },
+    "P": {
+      "type": "item",
+      "code": "game:plank-*"
+    }
+  },
+  "recipeGroup": 1,
+  "width": 3,
+  "height": 2,
+  "output": {
+    "type": "block",
+    "code": "couponcutter-north"
+  }
+}

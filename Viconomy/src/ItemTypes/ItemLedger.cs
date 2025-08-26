@@ -1,6 +1,4 @@
-﻿using Viconomy.GUI;
-using Viconomy.Network;
-using Viconomy.Registry;
+﻿using Viconomy.Network;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -17,8 +15,10 @@ namespace Viconomy.ItemTypes
             if (this.api.Side == EnumAppSide.Client)
             {
                 ICoreClientAPI clientAPI = ((ICoreClientAPI)api);
+
+                IPlayer player = (byEntity as EntityPlayer).Player;
                 int shopID = slot.Itemstack.Attributes.GetInt("ShopId", -1);
-                if (shopID > 0)
+                if (shopID > 0 || player.WorldData.CurrentGameMode == EnumGameMode.Creative)
                 {
                     /*
                     if (ledgerGUI == null || (ledgerGUI != null && !ledgerGUI.IsOpened()))

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Viconomy.BlockEntities.Unfinished;
+using Viconomy.BlockEntities;
+using Viconomy.ItemTypes;
 using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Viconomy.GUI
 {
@@ -19,9 +19,6 @@ namespace Viconomy.GUI
 
         private ShopRegistration[] shops;
 
-
-
-        private int selectedShop;
 
         public GuiViconCouponCutter(string dialogTitle, InventoryBase inventory, BlockPos pos, ICoreClientAPI coreClientAPI) : base(dialogTitle, inventory,  pos, coreClientAPI)
         {
@@ -74,8 +71,9 @@ namespace Viconomy.GUI
 
                 ElementBounds appliedShopsLabel = ElementBounds.FixedSize(400, 20).FixedUnder(couponNameInput).WithFixedOffset(0, 10);
                 ElementBounds appliedShopsInput = ElementBounds.FixedSize(400, 30).FixedUnder(appliedShopsLabel).WithFixedOffset(0, 10);
+                ElementBounds appliedShopsNoteLabel = ElementBounds.FixedSize(400, 20).FixedUnder(appliedShopsInput);
 
-                ElementBounds couponValueLabel = ElementBounds.FixedSize(250, 20).FixedUnder(appliedShopsInput).WithFixedOffset(0, 10);
+                ElementBounds couponValueLabel = ElementBounds.FixedSize(250, 20).FixedUnder(appliedShopsNoteLabel).WithFixedOffset(0, 10);
                 ElementBounds couponValueInput = ElementBounds.FixedSize(80, 30).FixedUnder(couponValueLabel).WithFixedOffset(0, 10);
                 ElementBounds couponDiscountTypeInput = ElementBounds.FixedSize(100, 30).FixedUnder(couponValueLabel).FixedRightOf(couponValueInput).WithFixedOffset(10, 10);
                 ElementBounds couponBonusTypeInput = ElementBounds.FixedSize(200, 30).FixedUnder(couponValueLabel).FixedRightOf(couponDiscountTypeInput).WithFixedOffset(10, 10);
@@ -90,18 +88,18 @@ namespace Viconomy.GUI
 
                 ElementBounds itemInputLabel = ElementBounds.FixedSize(200, 20).FixedUnder(itemBlacklistInput).WithFixedOffset(0, 0);
                 ElementBounds itemInputBounds = ElementStdBounds.Slot().FixedUnder(itemInputLabel).WithFixedOffset(0, 10);
-                ElementBounds itemOutputLabel = ElementBounds.FixedSize(200, 20).FixedUnder(itemBlacklistInput).FixedRightOf(itemInputLabel);
-                ElementBounds itemOutputBounds = ElementStdBounds.Slot().FixedUnder(itemInputLabel).FixedRightOf(itemInputLabel).WithFixedOffset(0, 10);
+                //ElementBounds itemOutputLabel = ElementBounds.FixedSize(200, 20).FixedUnder(itemBlacklistInput).FixedRightOf(itemInputLabel);
+                //ElementBounds itemOutputBounds = ElementStdBounds.Slot().FixedUnder(itemInputLabel).FixedRightOf(itemInputLabel).WithFixedOffset(0, 10);
 
                 ElementBounds cutButton = ElementBounds.FixedSize(200, 20).FixedUnder(itemInputBounds).WithFixedOffset(100, 10);
 
                 //settingBounds.BothSizing = ElementSizing.FitToChildren;
                 bgBounds.WithChildren(couponNameLabel, couponNameInput,
-                    appliedShopsLabel, appliedShopsInput,
+                    appliedShopsLabel, appliedShopsNoteLabel, appliedShopsInput,
                     couponValueLabel, couponValueInput, couponDiscountTypeInput, couponBonusTypeInput,
                     consumeCouponInput, consumeCouponLabel,
                     itemWhitelistLabel, itemWhitelistBounds, itemBlacklistInput, itemBlacklistLabel,
-                    itemInputLabel, itemInputBounds, itemOutputLabel, itemOutputBounds,
+                    itemInputLabel, itemInputBounds, //itemOutputLabel, itemOutputBounds,
                     cutButton
                     );
 
@@ -117,13 +115,14 @@ namespace Viconomy.GUI
                     .AddStaticText(Lang.Get("vinconomy:gui-name"), labelFont, couponNameLabel)
                     .AddTextInput(couponNameInput, OnNameChanged, labelFont, "couponName")
 
-                    .AddStaticText(Lang.Get("vinconomy:gui-shop"), labelFont, appliedShopsLabel)
+                    .AddStaticText(Lang.Get("vinconomy:gui-whitelisted-shops"), labelFont, appliedShopsLabel)
+                    .AddStaticText(Lang.Get("vinconomy:gui-whitelisted-shops-note"), CairoFont.WhiteDetailText(), appliedShopsNoteLabel)
                     .AddMultiSelectDropDown(shopsKeys, shopsNames, -1, OnShopChanged, appliedShopsInput, "appliedShops")
 
                     .AddStaticText(Lang.Get("vinconomy:gui-coupon"), labelFont, couponValueLabel)
                     .AddNumberInput(couponValueInput, OnNumberValueChanged, labelFont, "couponValue")
-                    .AddDropDown(["Units", "Percent"], [Lang.Get("vinconomy:gui-units"), Lang.Get("vinconomy:gui-percent")], 0, OnChangeNumericType, couponDiscountTypeInput, "couponDiscountType")
-                    .AddDropDown(["Bonus", "Discount"], [Lang.Get("vinconomy:gui-bonus-product"), Lang.Get("vinconomy:gui-price-discount")], 0, OnChangeBonusType, couponBonusTypeInput, "couponBonusType")
+                    .AddDropDown([ItemCoupon.DISCOUNT_TYPE_UNIT, ItemCoupon.DISCOUNT_TYPE_PERCENT], [Lang.Get("vinconomy:gui-units"), Lang.Get("vinconomy:gui-percent")], 0, OnChangeNumericType, couponDiscountTypeInput, "couponDiscountType")
+                    .AddDropDown([ItemCoupon.BONUS_TYPE_PRODUCT, ItemCoupon.BONUS_TYPE_DISCOUNT], [Lang.Get("vinconomy:gui-bonus-product"), Lang.Get("vinconomy:gui-price-discount")], 0, OnChangeBonusType, couponBonusTypeInput, "couponBonusType")
 
                     .AddSwitch(OnToggleConsumeCoupon, consumeCouponInput, "consumeCoupon")
                     .AddStaticText(Lang.Get("vinconomy:gui-consume-coupon"), labelFont, consumeCouponLabel)
@@ -135,8 +134,8 @@ namespace Viconomy.GUI
 
                     .AddStaticText(Lang.Get("vinconomy:gui-paper"), labelFont, itemInputLabel)
                     .AddItemSlotGrid(inventory, SendInvPacket, 1, [0], itemInputBounds)
-                    .AddStaticText(Lang.Get("vinconomy:gui-output"), labelFont, itemOutputLabel)
-                    .AddItemSlotGrid(inventory, SendInvPacket, 1, [1], itemOutputBounds)
+                    //.AddStaticText(Lang.Get("vinconomy:gui-output"), labelFont, itemOutputLabel)
+                    //.AddItemSlotGrid(inventory, SendInvPacket, 1, [1], itemOutputBounds)
 
                     .AddButton("Cut", OnCut, cutButton);
 

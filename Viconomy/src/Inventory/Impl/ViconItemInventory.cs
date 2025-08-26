@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Viconomy.BlockEntities;
-using Viconomy.Config;
 using Viconomy.Inventory.StallSlots;
 using Viconomy.Inventory.Slots;
 using Vintagestory.API.Common;
@@ -14,7 +13,7 @@ namespace Viconomy.Inventory.Impl
 
         public ViconItemInventory(BEVinconBase stall, string inventoryID, ICoreAPI api, int numStalls, int numStacksPerStall) : base(stall, inventoryID, api, numStalls, numStacksPerStall)
         {
-          
+            InitializeStalls();
         }
 
         protected override void InitializeStalls()
@@ -22,7 +21,7 @@ namespace Viconomy.Inventory.Impl
             StallSlots = new ItemStallSlot[NumStalls];
             for (int i = 0; i < NumStalls; i++)
             {
-                StallSlots[i] = new ItemStallSlot(this, i, NumStacksPerStall);
+                StallSlots[i] = new ItemStallSlot(this, i, ProductStacksPerStall);
             }
         }
 
@@ -47,7 +46,7 @@ namespace Viconomy.Inventory.Impl
             int index = slotId - 1;
             int stallSlot = index / StallSlotSize;
             int itemSlot = slotId % StallSlotSize;
-            if (itemSlot == NumStacksPerStall)
+            if (itemSlot == ProductStacksPerStall)
             {
                 return new ViconCurrencySlot(this);
             }
@@ -66,32 +65,18 @@ namespace Viconomy.Inventory.Impl
 
         }
 
-
-
-
-
         public override void FromTreeAttributes(ITreeAttribute tree)
         {
             for (int i = 0; i < NumStalls; i++)
             {
                 ItemStallSlot stall = (ItemStallSlot)StallSlots[i];
                 ITreeAttribute stallTree = tree.GetOrAddTreeAttribute("stall" + i);
-                StallSlots[i].itemsPerPurchase = stallTree.GetInt("purchaseQuantity", 1);
-
-                stall.currency.Itemstack = stallTree.GetItemstack("currency");
-                for (int j = 0; j < NumStacksPerStall; j++)
-                {
-                    ItemStack itemStack = stallTree.GetItemstack("slot" + j);
-                    stall.slots[j].Itemstack = itemStack;
-
-                }
+                stall.FromTreeAttributes(stallTree);
             }
             ChiselDecoSlot.Itemstack = tree.GetItemstack("decoBlock");
 
             ResolveBlocksOrItems();
         }
-
-
 
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
@@ -100,26 +85,13 @@ namespace Viconomy.Inventory.Impl
             {
                 ItemStallSlot stall = (ItemStallSlot)StallSlots[i];
                 ITreeAttribute stallTree = tree.GetOrAddTreeAttribute("stall" + i);
-                stallTree.SetInt("purchaseQuantity", StallSlots[i].itemsPerPurchase);
-                if (stall.currency.Itemstack != null)
-                {
-                    stallTree.SetItemstack("currency", stall.currency.Itemstack.Clone());
-                }
-                for (int j = 0; j < NumStacksPerStall; j++)
-                {
-                    if (stall.slots[j].Itemstack != null)
-                    {
-                        stallTree.SetItemstack("slot" + j, stall.slots[j].Itemstack.Clone());
-                    }
-                }
+                stall.ToTreeAttributes(stallTree);
             }
             if (ChiselDecoSlot.Itemstack != null)
             {
                 tree.SetItemstack("decoBlock", ChiselDecoSlot.Itemstack.Clone());
             }
         }
-
-
 
         public override void DropAll(Vec3d pos, int maxStackSize = 0)
         {
@@ -152,7 +124,7 @@ namespace Viconomy.Inventory.Impl
 
         public int GetItemsPerPurchase(int stallSlot)
         {
-            return StallSlots[stallSlot].itemsPerPurchase;
+            return StallSlots[stallSlot].ItemsPerPurchase;
         }
 
         public void SetSlotBackground(int stallSlot, string background = null, string hexColor = null)

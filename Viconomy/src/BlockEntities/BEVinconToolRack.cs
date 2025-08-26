@@ -12,7 +12,7 @@ namespace Viconomy.BlockEntities
 
         public override void ConfigureInventory()
         {
-            ViconItemInventory inv = new ViconItemInventory(this, null, null, StallSlotCount, StacksPerSlot);
+            ViconItemInventory inv = new ViconItemInventory(this, null, null, StallSlotCount, ProductStacksPerSlot);
             for (int i = 0; i < StallSlotCount; i++)
             {
                 inv.SetSlotFilter(i, ViconomyFilters.IsToolOrWeapon);

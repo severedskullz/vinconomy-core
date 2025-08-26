@@ -14,6 +14,7 @@ namespace Viconomy.Inventory.Impl
         {
             PutLocked = true;
             TakeLocked = true;
+            InitializeStalls();
         }
 
         protected override void InitializeStalls()
@@ -21,7 +22,7 @@ namespace Viconomy.Inventory.Impl
             StallSlots = new MealStallSlot[NumStalls];
             for (int i = 0; i < NumStalls; i++)
             {
-                StallSlots[i] = new MealStallSlot(this, i, NumStacksPerStall);
+                StallSlots[i] = new MealStallSlot(this, i, ProductStacksPerStall);
             }
         }
 
@@ -35,7 +36,7 @@ namespace Viconomy.Inventory.Impl
 
             int index = slotId - 1;
             int itemSlot = index % StallSlotSize;
-            if (itemSlot == NumStacksPerStall)
+            if (itemSlot == ProductStacksPerStall)
             {
                 return new ViconCurrencySlot(this);
             }
@@ -50,15 +51,7 @@ namespace Viconomy.Inventory.Impl
             {
                 MealStallSlot stall = (MealStallSlot)StallSlots[i];
                 ITreeAttribute stallTree = tree.GetOrAddTreeAttribute("stall" + i);
-                StallSlots[i].itemsPerPurchase = stallTree.GetInt("purchaseQuantity", 1);
-
-                stall.currency.Itemstack = stallTree.GetItemstack("currency");
-                for (int j = 0; j < NumStacksPerStall; j++)
-                {
-                    ItemStack itemStack = stallTree.GetItemstack("slot" + j);
-                    stall.slots[j].Itemstack = itemStack;
-
-                }
+                stall.FromTreeAttributes(stallTree);
             }
             ChiselDecoSlot.Itemstack = tree.GetItemstack("decoBlock");
 
@@ -72,18 +65,7 @@ namespace Viconomy.Inventory.Impl
             {
                 MealStallSlot stall = (MealStallSlot)StallSlots[i];
                 ITreeAttribute stallTree = tree.GetOrAddTreeAttribute("stall" + i);
-                stallTree.SetInt("purchaseQuantity", StallSlots[i].itemsPerPurchase);
-                if (stall.currency.Itemstack != null)
-                {
-                    stallTree.SetItemstack("currency", stall.currency.Itemstack.Clone());
-                }
-                for (int j = 0; j < NumStacksPerStall; j++)
-                {
-                    if (stall.slots[j].Itemstack != null)
-                    {
-                        stallTree.SetItemstack("slot" + j, stall.slots[j].Itemstack.Clone());
-                    }
-                }
+                stall.ToTreeAttributes(stallTree);
             }
             if (ChiselDecoSlot.Itemstack != null)
             {

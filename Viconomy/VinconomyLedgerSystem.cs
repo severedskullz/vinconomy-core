@@ -67,6 +67,11 @@ namespace Viconomy
         }
         private void OnRecieveRequestToReadLedgerData(IServerPlayer player, LedgerReadRequestPacket packet)
         {
+            if (packet.shopId == -1 && player.WorldData.CurrentGameMode == EnumGameMode.Creative)
+            {
+                _serverChannel.SendPacket(new LedgerReadResponsePacket() { Id = -1, Name = "Admin Shops" }, new IServerPlayer[] { player });
+                return;
+            }
 
             ShopRegistration shop = _coreSystem.GetRegistry().GetShop(packet.shopId);
             if (shop != null)

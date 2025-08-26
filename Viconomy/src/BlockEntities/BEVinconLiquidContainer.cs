@@ -16,12 +16,12 @@ namespace Viconomy.BlockEntities
     public class BEVinconLiquidContainer : BEVinconContainer
     {
 
-        public override int StacksPerSlot => 4;
+        public override int ProductStacksPerSlot => 4;
         public override int BulkPurchaseAmount => 6;
 
         public override void ConfigureInventory()
         {
-            inventory = new ViconMealInventory(this, null, Api, StallSlotCount, StacksPerSlot);
+            inventory = new ViconMealInventory(this, null, Api, StallSlotCount, ProductStacksPerSlot);
         }
 
         public MeshData GenMesh(int stallSlot)
@@ -185,7 +185,7 @@ namespace Viconomy.BlockEntities
         {
 
             MealStallSlot stall = (MealStallSlot)inventory.StallSlots[stallSlot];
-            if (stall.currency.Itemstack == null)
+            if (stall.Currency.Itemstack == null)
             {
                 VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRICE);
                 return;
@@ -208,7 +208,7 @@ namespace Viconomy.BlockEntities
                 carryCapacity += containerSlot.StackSize * containerSlot.Itemstack.Block.Attributes["servingCapacity"].AsInt();
             }
             // if max servings is less than desired amount, reduce desired amount
-            numActualTrades = Math.Min(numActualTrades, carryCapacity / stall.itemsPerPurchase);
+            numActualTrades = Math.Min(numActualTrades, carryCapacity / stall.ItemsPerPurchase);
 
             // if max servings is < 1, return error
             if (numActualTrades < 1)
@@ -218,9 +218,9 @@ namespace Viconomy.BlockEntities
             }
 
             // Check if player has enough currency
-            AggregatedSlots currencySlots = TradingUtil.GetAllValidSlotsFor(player, stall.currency);
+            AggregatedSlots currencySlots = TradingUtil.GetAllValidSlotsFor(player, stall.Currency);
             // if not enough, reduce desired amount to what they can afford
-            numActualTrades = Math.Min(numActualTrades, currencySlots.TotalCount / stall.itemsPerPurchase);
+            numActualTrades = Math.Min(numActualTrades, currencySlots.TotalCount / stall.ItemsPerPurchase);
 
             // If purchaseAmount > 0, continue
             if (numActualTrades < 1) {
@@ -231,7 +231,7 @@ namespace Viconomy.BlockEntities
             // At this point we know can "afford" something
 
             // How many servings did we purchase from the stall
-            int totalServingsPurchased = numActualTrades * stall.itemsPerPurchase;
+            int totalServingsPurchased = numActualTrades * stall.ItemsPerPurchase;
             string recipeCode = stall.GetRecipeCode(Api);
 
             int totalServingsLeftToTransfer = totalServingsPurchased;
@@ -266,7 +266,7 @@ namespace Viconomy.BlockEntities
 
             //Take the money from the player.
             ItemStack paymentStack = null;
-            int currencyLeft = numActualTrades * stall.currency.StackSize;
+            int currencyLeft = numActualTrades * stall.Currency.StackSize;
             foreach (ItemSlot itemSlot in currencySlots.Slots)
             {
                 if (paymentStack == null)

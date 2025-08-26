@@ -19,6 +19,7 @@
         public static readonly string COULDNT_GET_REGISTER = "vinconomy:couldnt-find-register";
         public static readonly string NO_TOOL = "vinconomy:no-tool";
         public static readonly string NO_PASS = "vinconomy:no-trade-pass";
+        public static readonly string NO_STALL_SPACE = "vinconomy:no-stall-space";
     }
 
     public enum ToolType

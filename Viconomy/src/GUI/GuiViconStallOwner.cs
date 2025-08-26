@@ -47,7 +47,7 @@ namespace Viconomy.GUI
 
             registers = filteredRegisters.ToArray();
             stallSlotCount = stall.StallSlotCount;
-            stacksPerSlot = stall.StacksPerSlot;
+            stacksPerSlot = stall.ProductStacksPerSlot;
 
             this.isOwner = isOwner;
 
@@ -217,8 +217,8 @@ namespace Viconomy.GUI
 
                 SingleComposer.GetDropDown("shopSelection").Enabled = isOwner;
 
-                SingleComposer.GetTextInput("costQuantity").SetValue(stallSlot.currency.StackSize);
-                SingleComposer.GetTextInput("sellQuantity").SetValue(stallSlot.itemsPerPurchase);
+                SingleComposer.GetTextInput("costQuantity").SetValue(stallSlot.Currency.StackSize);
+                SingleComposer.GetTextInput("sellQuantity").SetValue(stallSlot.ItemsPerPurchase);
 
 
                 //.AddHorizontalTabs(tabs, tabBounds, new Action<int>(this.OnTabClicked), tabFont, tabFont.Clone().WithColor(GuiStyle.ActiveButtonTextColor), "tabs")
@@ -260,7 +260,7 @@ namespace Viconomy.GUI
             if (item != null)
             {
                 this.purchaseSlot.Itemstack = item.Itemstack.Clone();
-                this.purchaseSlot.Itemstack.StackSize = Math.Min(Math.Max(1, stallSlot.itemsPerPurchase), item.MaxSlotStackSize);
+                this.purchaseSlot.Itemstack.StackSize = Math.Min(Math.Max(1, stallSlot.ItemsPerPurchase), item.MaxSlotStackSize);
             }
             else
             {
@@ -302,9 +302,9 @@ namespace Viconomy.GUI
             int val = 1;
             Int32.TryParse(amount, out val);
 
-            if (val > 0 && val <= 1024 && val != stallSlot.itemsPerPurchase)
+            if (val > 0 && val <= 1024 && val != stallSlot.ItemsPerPurchase)
             {
-                stallSlot.itemsPerPurchase = val;
+                stallSlot.ItemsPerPurchase = val;
                 byte[] data;
                 using (MemoryStream ms = new MemoryStream())
                 {
@@ -345,7 +345,7 @@ namespace Viconomy.GUI
 
         private void SetCurrencySlot(object p)
         {
-            SingleComposer.GetTextInput("costQuantity").SetValue(stallSlot.currency.StackSize);
+            SingleComposer.GetTextInput("costQuantity").SetValue(stallSlot.Currency.StackSize);
             capi.Network.SendBlockEntityPacket(BlockEntityPosition.X, BlockEntityPosition.Y, BlockEntityPosition.Z, p);
         }
 

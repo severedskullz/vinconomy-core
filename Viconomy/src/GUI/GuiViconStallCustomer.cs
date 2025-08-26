@@ -39,6 +39,8 @@ namespace Viconomy.GUI
             this.DialogTitle = DialogTitle;
 
             this.inv = new DummyInventory(capi, 2);
+            inv.TakeLocked = true;
+            inv.PutLocked = true;
 
             purchaseSlot = new ViconPurchaseSlot(inv, 0);
             this.inv[0] = purchaseSlot;
@@ -63,13 +65,13 @@ namespace Viconomy.GUI
             if (purchaseItem != null)
             {
                 this.purchaseSlot.Itemstack = purchaseItem.Itemstack.Clone();
-                this.purchaseSlot.Itemstack.StackSize = stallSlot.itemsPerPurchase * quantity;
+                this.purchaseSlot.Itemstack.StackSize = stallSlot.ItemsPerPurchase * quantity;
             } else
             {
                 this.purchaseSlot.Itemstack = null;
             }
 
-            ItemSlot currencyItem = stallSlot.currency;
+            ItemSlot currencyItem = stallSlot.Currency;
 
             if (currencyItem != null && currencyItem.Itemstack != null)
             {

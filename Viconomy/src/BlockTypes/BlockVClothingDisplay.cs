@@ -67,14 +67,14 @@ namespace Viconomy.BlockTypes
 
                 if (be.Owner != forPlayer.PlayerUID)
                 {
-                    if (slot.currency.Itemstack != null && slot.FindFirstNonEmptyStockSlot() != null)
+                    if (slot.Currency.Itemstack != null && slot.FindFirstNonEmptyStockSlot() != null)
                     {
                         interactions.Add(new WorldInteraction
                         {
                             ActionLangCode = "vinconomy:stall-purchase-armor" + selectionIndex,
                             MouseButton = EnumMouseButton.Right,
                             HotKeyCode = "shift",
-                            Itemstacks = new ItemStack[] { slot.currency.Itemstack }
+                            Itemstacks = new ItemStack[] { slot.Currency.Itemstack }
 
                         });
                     }
