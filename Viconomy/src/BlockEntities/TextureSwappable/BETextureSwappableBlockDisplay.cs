@@ -145,6 +145,9 @@ namespace Viconomy.BlockEntities.TextureSwappable
 
         protected virtual string GetMeshCacheKey(ItemStack stack)
         {
+            if (stack == null)
+                return null;
+
             if (stack.Collectible is IContainedMeshSource containedMeshSource)
             {
                 return containedMeshSource.GetMeshCacheKey(stack);

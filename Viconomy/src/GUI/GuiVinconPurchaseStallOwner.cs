@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using Viconomy.BlockEntities;
 using Viconomy.Inventory.Impl;
-using Viconomy.Inventory.Slots;
 using Viconomy.Inventory.StallSlots;
 using Viconomy.Registry;
 using Viconomy.Util;
@@ -12,7 +11,6 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
-using Vintagestory.GameContent;
 
 namespace Viconomy.GUI
 {
@@ -57,28 +55,6 @@ namespace Viconomy.GUI
             this.DialogTitle = DialogTitle;
 
             Compose();
-        }
-
-        private void Compose2()
-        {
-            ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);//.WithFixedAlignmentOffset(-GuiStyle.DialogToScreenPadding, 0.0);
-            ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.DialogToScreenPadding);
-            bgBounds.BothSizing = ElementSizing.FitToChildren;
-
-            ViconItemPurchaseInventory vinInv = Inventory as ViconItemPurchaseInventory;
-            ElementBounds totalSlotGrid = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 20, 10, (int)Math.Ceiling(vinInv.Count / 10.0));
-            bgBounds.WithChildren(totalSlotGrid);
-
-            int[] totalSlots = new int[vinInv.Count];
-            for (int i = 0; i < totalSlots.Length; i++)
-            {
-                totalSlots[i] = i;
-            }
-
-            SingleComposer = capi.Gui.CreateCompo("ViconStallOwner", dialogBounds)
-            .AddShadedDialogBG(bgBounds)
-            .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked)
-            .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 10, totalSlots, totalSlotGrid, "tot").Compose();
         }
 
         private void Compose()

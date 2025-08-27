@@ -4,7 +4,6 @@ using System.Text;
 using Viconomy.Filters;
 using Viconomy.GUI;
 using Viconomy.Inventory.Impl;
-using Viconomy.Inventory.Slots;
 using Viconomy.Inventory.StallSlots;
 using Viconomy.Renderer;
 using Viconomy.Trading;
@@ -15,7 +14,6 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
-using Vintagestory.GameContent;
 
 namespace Viconomy.BlockEntities
 {
@@ -235,7 +233,7 @@ namespace Viconomy.BlockEntities
             if (isOwner && !VinconomyCoreSystem.ShouldForceCustomerScreen)
                 this.invDialog = new GuiViconStallOwner(dialogTitle, this.Inventory, isOwner, this.Pos, this.Api as ICoreClientAPI, stallSelection);
             else
-                this.invDialog = new GuiDialogViconStallCustomer<ViconItemSlot>(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+                this.invDialog = new GuiViconStallCustomer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
             //this.invDialog.OpenSound = this.OpenSound;
             //this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();

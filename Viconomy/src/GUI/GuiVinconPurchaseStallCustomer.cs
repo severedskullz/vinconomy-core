@@ -12,7 +12,7 @@ using Viconomy.Inventory.Impl;
 
 namespace Viconomy.GUI
 {
-    public class GuiViconStallCustomer : GuiDialogBlockEntity
+    public class GuiVinconPurchaseStallCustomer : GuiDialogBlockEntity
     {
         BEVinconContainer stall;
 
@@ -21,9 +21,9 @@ namespace Viconomy.GUI
         DummyInventory inv;
         ViconPurchaseSlot purchaseSlot;
         ViconPurchaseSlot currancySlot;
-        StallSlotBase stallSlot;
+        PurchaseStallSlot stallSlot;
 
-        public GuiViconStallCustomer(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
+        public GuiVinconPurchaseStallCustomer(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
 
@@ -35,7 +35,7 @@ namespace Viconomy.GUI
             {
                 return;
             }
-            //capi.World.Player.InventoryManager.OpenInventory(Inventory);
+
             this.DialogTitle = DialogTitle;
 
             this.inv = new DummyInventory(capi, 2);
@@ -58,9 +58,9 @@ namespace Viconomy.GUI
             ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.DialogToScreenPadding);
             bgBounds.BothSizing = ElementSizing.FitToChildren;
 
-            ViconBaseInventory vinInv = Inventory as ViconBaseInventory;
-            stallSlot = vinInv.StallSlots[curTab];
-            ItemSlot purchaseItem = stallSlot.FindFirstNonEmptyStockSlot();
+            ViconItemPurchaseInventory vinInv = Inventory as ViconItemPurchaseInventory;
+            stallSlot = vinInv.GetStall<PurchaseStallSlot>(curTab);
+            ItemSlot purchaseItem = stallSlot.Currency;
             
             if (purchaseItem != null)
             {
@@ -71,7 +71,7 @@ namespace Viconomy.GUI
                 this.purchaseSlot.Itemstack = null;
             }
 
-            ItemSlot currencyItem = stallSlot.Currency;
+            ItemSlot currencyItem = stallSlot.DesiredProduct;
 
             if (currencyItem != null && currencyItem.Itemstack != null)
             {

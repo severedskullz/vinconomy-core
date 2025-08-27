@@ -48,7 +48,7 @@ namespace Viconomy.Inventory.Impl
                 {
                     int stallSlot = GetStallForSlot(inventorySlotId);
                     int itemSlot = GetItemSlotForStall(inventorySlotId);
-                    PurchaseStallSlot stall = (PurchaseStallSlot)StallSlots[stallSlot];
+                    PurchaseStallSlot stall = GetStall< PurchaseStallSlot>(stallSlot);
 
                     if (itemSlot == GetStallTotalStallSlots() - 2)
                     {
@@ -166,7 +166,7 @@ namespace Viconomy.Inventory.Impl
 
         public override ViconCurrencySlot GetCurrencyForStallSlot(int stallSlot)
         {
-            return ((PurchaseStallSlot)StallSlots[stallSlot]).DesiredProduct;
+            return GetStall<PurchaseStallSlot>(stallSlot).DesiredProduct;
         }
 
     }

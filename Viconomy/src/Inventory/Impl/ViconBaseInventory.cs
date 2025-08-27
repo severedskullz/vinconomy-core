@@ -78,6 +78,11 @@ namespace Viconomy.Inventory.Impl
             return StallSlots[slot];
         }
 
+        public T GetStall<T>(int slot) where T : StallSlotBase
+        {
+            return (T)StallSlots[slot];
+        }
+
         public int GetStallForSlot(int slotId)
         {
             // Subtract 1 from slotId for the chisel decoration block first
