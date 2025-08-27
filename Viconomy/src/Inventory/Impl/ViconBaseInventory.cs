@@ -95,7 +95,7 @@ namespace Viconomy.Inventory.Impl
             return StallSlots[0].TotalSlots;
         }
 
-        public ViconCurrencySlot GetCurrencyForStallSlot(int stallSlot)
+        public virtual ViconCurrencySlot GetCurrencyForStallSlot(int stallSlot)
         {
             return StallSlots[stallSlot].Currency;
         }

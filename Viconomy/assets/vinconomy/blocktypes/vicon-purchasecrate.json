@@ -1,79 +1,169 @@
 {
     "code": "purchasecrate",
-    "class": "VinconContainer",
+    "class": "VinconPurchaseContainer",
     "entityClass": "BEVinconPurchaseContainer",
     "priorityInteract": true,
-    "creativeinventory": {},
     "creativeinventoryStacksByType": {
         "*-north": [
             {
                 "tabs": [ "vinconomy" ],
                 "stacks": [
-                    {
-                        "type": "block",
-                        "code": "purchasecrate-north",
-                        "attributes": { "PrimaryMaterial": "black" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "purchasecrate-north",
-                        "attributes": { "PrimaryMaterial": "blue" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "purchasecrate-north",
-                        "attributes": { "PrimaryMaterial": "brown" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "purchasecrate-north",
-                        "attributes": { "PrimaryMaterial": "gray" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "purchasecrate-north",
-                        "attributes": { "PrimaryMaterial": "green" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "purchasecrate-north",
-                        "attributes": { "PrimaryMaterial": "mordant" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "purchasecrate-north",
-                        "attributes": { "PrimaryMaterial": "orange" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "purchasecrate-north",
-                        "attributes": { "PrimaryMaterial": "pink" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "purchasecrate-north",
-                        "attributes": { "PrimaryMaterial": "plain" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "purchasecrate-north",
-                        "attributes": { "PrimaryMaterial": "purple" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "purchasecrate-north",
-                        "attributes": { "PrimaryMaterial": "red" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "purchasecrate-north",
-                        "attributes": { "PrimaryMaterial": "white" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "purchasecrate-north",
-                        "attributes": { "PrimaryMaterial": "yellow" }
-                    }
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "acacia", "SecondaryMaterial": "acacia" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "acacia", "SecondaryMaterial": "baldcypress" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "acacia", "SecondaryMaterial": "birch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "acacia", "SecondaryMaterial": "ebony" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "acacia", "SecondaryMaterial": "kapok" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "acacia", "SecondaryMaterial": "larch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "acacia", "SecondaryMaterial": "maple" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "acacia", "SecondaryMaterial": "oak" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "acacia", "SecondaryMaterial": "pine" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "acacia", "SecondaryMaterial": "purpleheart" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "acacia", "SecondaryMaterial": "redwood" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "acacia", "SecondaryMaterial": "walnut" }},
+
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "baldcypress", "SecondaryMaterial": "acacia" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "baldcypress", "SecondaryMaterial": "baldcypress" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "baldcypress", "SecondaryMaterial": "birch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "baldcypress", "SecondaryMaterial": "ebony" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "baldcypress", "SecondaryMaterial": "kapok" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "baldcypress", "SecondaryMaterial": "larch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "baldcypress", "SecondaryMaterial": "maple" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "baldcypress", "SecondaryMaterial": "oak" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "baldcypress", "SecondaryMaterial": "pine" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "baldcypress", "SecondaryMaterial": "purpleheart" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "baldcypress", "SecondaryMaterial": "redwood" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "baldcypress", "SecondaryMaterial": "walnut" }},
+
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "birch", "SecondaryMaterial": "acacia" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "birch", "SecondaryMaterial": "baldcypress" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "birch", "SecondaryMaterial": "birch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "birch", "SecondaryMaterial": "ebony" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "birch", "SecondaryMaterial": "kapok" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "birch", "SecondaryMaterial": "larch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "birch", "SecondaryMaterial": "maple" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "birch", "SecondaryMaterial": "oak" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "birch", "SecondaryMaterial": "pine" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "birch", "SecondaryMaterial": "purpleheart" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "birch", "SecondaryMaterial": "redwood" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "birch", "SecondaryMaterial": "walnut" }},
+
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "ebony", "SecondaryMaterial": "acacia" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "ebony", "SecondaryMaterial": "baldcypress" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "ebony", "SecondaryMaterial": "birch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "ebony", "SecondaryMaterial": "ebony" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "ebony", "SecondaryMaterial": "kapok" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "ebony", "SecondaryMaterial": "larch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "ebony", "SecondaryMaterial": "maple" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "ebony", "SecondaryMaterial": "oak" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "ebony", "SecondaryMaterial": "pine" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "ebony", "SecondaryMaterial": "purpleheart" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "ebony", "SecondaryMaterial": "redwood" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "ebony", "SecondaryMaterial": "walnut" }},
+
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "kapok", "SecondaryMaterial": "acacia" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "kapok", "SecondaryMaterial": "baldcypress" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "kapok", "SecondaryMaterial": "birch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "kapok", "SecondaryMaterial": "ebony" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "kapok", "SecondaryMaterial": "kapok" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "kapok", "SecondaryMaterial": "larch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "kapok", "SecondaryMaterial": "maple" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "kapok", "SecondaryMaterial": "oak" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "kapok", "SecondaryMaterial": "pine" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "kapok", "SecondaryMaterial": "purpleheart" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "kapok", "SecondaryMaterial": "redwood" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "kapok", "SecondaryMaterial": "walnut" }},
+
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "larch", "SecondaryMaterial": "acacia" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "larch", "SecondaryMaterial": "baldcypress" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "larch", "SecondaryMaterial": "birch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "larch", "SecondaryMaterial": "ebony" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "larch", "SecondaryMaterial": "kapok" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "larch", "SecondaryMaterial": "larch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "larch", "SecondaryMaterial": "maple" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "larch", "SecondaryMaterial": "oak" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "larch", "SecondaryMaterial": "pine" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "larch", "SecondaryMaterial": "purpleheart" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "larch", "SecondaryMaterial": "redwood" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "larch", "SecondaryMaterial": "walnut" }},
+
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "maple", "SecondaryMaterial": "acacia" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "maple", "SecondaryMaterial": "baldcypress" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "maple", "SecondaryMaterial": "birch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "maple", "SecondaryMaterial": "ebony" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "maple", "SecondaryMaterial": "kapok" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "maple", "SecondaryMaterial": "larch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "maple", "SecondaryMaterial": "maple" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "maple", "SecondaryMaterial": "oak" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "maple", "SecondaryMaterial": "pine" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "maple", "SecondaryMaterial": "purpleheart" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "maple", "SecondaryMaterial": "redwood" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "maple", "SecondaryMaterial": "walnut" }},
+
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "oak", "SecondaryMaterial": "acacia" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "oak", "SecondaryMaterial": "baldcypress" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "oak", "SecondaryMaterial": "birch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "oak", "SecondaryMaterial": "ebony" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "oak", "SecondaryMaterial": "kapok" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "oak", "SecondaryMaterial": "larch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "oak", "SecondaryMaterial": "maple" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "oak", "SecondaryMaterial": "oak" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "oak", "SecondaryMaterial": "pine" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "oak", "SecondaryMaterial": "purpleheart" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "oak", "SecondaryMaterial": "redwood" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "oak", "SecondaryMaterial": "walnut" }},
+
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "pine", "SecondaryMaterial": "acacia" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "pine", "SecondaryMaterial": "baldcypress" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "pine", "SecondaryMaterial": "birch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "pine", "SecondaryMaterial": "ebony" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "pine", "SecondaryMaterial": "kapok" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "pine", "SecondaryMaterial": "larch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "pine", "SecondaryMaterial": "maple" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "pine", "SecondaryMaterial": "oak" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "pine", "SecondaryMaterial": "pine" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "pine", "SecondaryMaterial": "purpleheart" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "pine", "SecondaryMaterial": "redwood" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "pine", "SecondaryMaterial": "walnut" }},
+
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "purpleheart", "SecondaryMaterial": "acacia" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "purpleheart", "SecondaryMaterial": "baldcypress" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "purpleheart", "SecondaryMaterial": "birch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "purpleheart", "SecondaryMaterial": "ebony" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "purpleheart", "SecondaryMaterial": "kapok" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "purpleheart", "SecondaryMaterial": "larch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "purpleheart", "SecondaryMaterial": "maple" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "purpleheart", "SecondaryMaterial": "oak" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "purpleheart", "SecondaryMaterial": "pine" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "purpleheart", "SecondaryMaterial": "purpleheart" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "purpleheart", "SecondaryMaterial": "redwood" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "purpleheart", "SecondaryMaterial": "walnut" }},
+
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "redwood", "SecondaryMaterial": "acacia" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "redwood", "SecondaryMaterial": "baldcypress" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "redwood", "SecondaryMaterial": "birch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "redwood", "SecondaryMaterial": "ebony" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "redwood", "SecondaryMaterial": "kapok" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "redwood", "SecondaryMaterial": "larch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "redwood", "SecondaryMaterial": "maple" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "redwood", "SecondaryMaterial": "oak" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "redwood", "SecondaryMaterial": "pine" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "redwood", "SecondaryMaterial": "purpleheart" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "redwood", "SecondaryMaterial": "redwood" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "redwood", "SecondaryMaterial": "walnut" }},
+
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "walnut", "SecondaryMaterial": "acacia" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "walnut", "SecondaryMaterial": "baldcypress" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "walnut", "SecondaryMaterial": "birch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "walnut", "SecondaryMaterial": "ebony" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "walnut", "SecondaryMaterial": "kapok" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "walnut", "SecondaryMaterial": "larch" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "walnut", "SecondaryMaterial": "maple" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "walnut", "SecondaryMaterial": "oak" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "walnut", "SecondaryMaterial": "pine" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "walnut", "SecondaryMaterial": "purpleheart" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "walnut", "SecondaryMaterial": "redwood" }},
+                    {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "walnut", "SecondaryMaterial": "walnut" }},
+                  
                 ]
             }
         ]
@@ -81,18 +171,13 @@
     "attributes": {
         "handbook": {
             "groupBy": [ "purchasecrate-north" ],
-            "extraSections": [
-                {
-                    "title": "",
-                    "text": "vinconomy:handbooktext-stall"
-                }
-            ]
+            "groupedName": "purchasecrate-north"            
         }
     },
     "behaviors": [ { "name": "HorizontalOrientable" } ],
     "heldTpIdleAnimation": "holdbothhandslarge",
     "heldTpUseAnimation": "twohandplaceblock",
-    "blockmaterial": "Cloth",
+    "blockmaterial": "Wood",
     "variantgroups": [
         {
             "code": "side",
@@ -100,40 +185,60 @@
         }
     ],
     "textures": {
-        "default": { "base": "game:block/cloth/linen/plain" },
+        "default": { "base": "game:block/wood/crate/acacia-sides" },
 
-        "black": { "base": "game:block/cloth/linen/black" },
-        "blue": { "base": "game:block/cloth/linen/blue" },
-        "brown": { "base": "game:block/cloth/linen/brown" },
-        "gray": { "base": "game:block/cloth/linen/gray" },
-        "green": { "base": "game:block/cloth/linen/green" },
-        "mordant": { "base": "game:block/cloth/linen/mordant" },
-        "orange": { "base": "game:block/cloth/linen/orange" },
-        "pink": { "base": "game:block/cloth/linen/pink" },
-        "plain": { "base": "game:block/cloth/linen/plain" },
-        "purple": { "base": "game:block/cloth/linen/purple" },
-        "red": { "base": "game:block/cloth/linen/red" },
-        "white": { "base": "game:block/cloth/linen/white" },
-        "yellow": { "base": "game:block/cloth/linen/yellow" }
+        "acacia-sides": { "base": "game:block/wood/crate/acacia-sides" },
+        "baldcypress-sides": { "base": "game:block/wood/crate/baldcypress-sides" },
+        "birch-sides": { "base": "game:block/wood/crate/birch-sides" },
+        "ebony-sides": { "base": "game:block/wood/crate/ebony-sides" },
+        "kapok-sides": { "base": "game:block/wood/crate/kapok-sides" },
+        "larch-sides": { "base": "game:block/wood/crate/larch-sides" },
+        "maple-sides": { "base": "game:block/wood/crate/maple-sides" },
+        "oak-sides": { "base": "game:block/wood/crate/oak-sides" },
+        "pine-sides": { "base": "game:block/wood/crate/pine-sides" },
+        "purpleheart-sides": { "base": "game:block/wood/crate/purpleheart-sides" },
+        "redwood-sides": { "base": "game:block/wood/crate/redwood-sides" },
+        "walnut-sides": { "base": "game:block/wood/crate/walnut-sides" },
+
+        "acacia": { "base": "game:block/wood/crate/acacia-inside" },
+        "baldcypress": { "base": "game:block/wood/crate/baldcypress-inside" },
+        "birch": { "base": "game:block/wood/crate/birch-inside" },
+        "ebony": { "base": "game:block/wood/crate/ebony-inside" },
+        "kapok": { "base": "game:block/wood/crate/kapok-inside" },
+        "larch": { "base": "game:block/wood/crate/larch-inside" },
+        "maple": { "base": "game:block/wood/crate/maple-inside" },
+        "oak": { "base": "game:block/wood/crate/oak-inside" },
+        "pine": { "base": "game:block/wood/crate/pine-inside" },
+        "purpleheart": { "base": "game:block/wood/crate/purpleheart-inside" },
+        "redwood": { "base": "game:block/wood/crate/redwood-inside" },
+        "walnut": { "base": "game:block/wood/crate/walnut-inside" }
     },
     "shapebytype": {
         "*-north": {
-            "base": "block/trademat",
+            "base": "block/purchasecrate",
             "rotateY": 0
         },
         "*-east": {
-            "base": "block/trademat",
+            "base": "block/purchasecrate",
             "rotateY": 270
         },
         "*-south": {
-            "base": "block/trademat",
+            "base": "block/purchasecrate",
             "rotateY": 180
         },
         "*-west": {
-            "base": "block/trademat",
+            "base": "block/purchasecrate",
             "rotateY": 90
         }
     },
+
+    "tpHandTransform": {
+        "translation": { "x": -2.1, "y": -1.8, "z": -1.25 },
+        "rotation": { "x": 65, "y": 21, "z": -77 }
+    },
+    "guiTransform": {
+		"rotation": { "x": -22.6, "y": -147, "z": 0 }
+	},
 
     "collisionboxes": [
         {
@@ -141,7 +246,7 @@
             "y1": 0,
             "z1": 0,
             "x2": 1,
-            "y2": 0.06,
+            "y2": 1,
             "z2": 1
         }
     ],
@@ -152,8 +257,8 @@
             "y1": 0,
             "z1": 0,
             "x2": 0.5,
-            "y2": 0.45,
-            "z2": 0.5,
+            "y2": 1,
+            "z2": 1,
             "rotateYByType": {
                 "*-north": 0,
                 "*-east": 270,
@@ -166,35 +271,7 @@
             "y1": 0,
             "z1": 0,
             "x2": 1,
-            "y2": 0.45,
-            "z2": 0.5,
-            "rotateYByType": {
-                "*-north": 0,
-                "*-east": 270,
-                "*-west": 90,
-                "*-south": 180
-            }
-        },
-        {
-            "x1": 0,
-            "y1": 0,
-            "z1": 0.5,
-            "x2": 0.5,
-            "y2": 0.45,
-            "z2": 1,
-            "rotateYByType": {
-                "*-north": 0,
-                "*-east": 270,
-                "*-west": 90,
-                "*-south": 180
-            }
-        },
-        {
-            "x1": 0.5,
-            "y1": 0,
-            "z1": 0.5,
-            "x2": 1,
-            "y2": 0.45,
+            "y2": 1,
             "z2": 1,
             "rotateYByType": {
                 "*-north": 0,
@@ -203,7 +280,6 @@
                 "*-south": 180
             }
         }
-
     ],
     "lightAbsorption": 0,
     "sidesolid": {

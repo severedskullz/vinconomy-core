@@ -1,6 +1,5 @@
 {
 	"editor": {
-		"collapsedPaths": "Root/Cube6,Root/PotNW,Root/PotNE,Root/PotSW,Root/PotSE",
 		"allAngles": false,
 		"entityTextureMode": false
 	},
@@ -9,9 +8,8 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"ceramic": "game:block/clay/pot-side",
-		"primary": "game:block/wood/planks/baldcypress3",
-		"secondary": "game:block/wood/planks/baldcypress3"
+		"primary": "game:block/wood/planks/oak1",
+		"ceramic": "game:block/clay/ceramic"
 	},
 	"elements": [
 		{
@@ -630,6 +628,41 @@
 						"west": { "texture": "#ceramic", "uv": [ 8.0, 0.0, 12.0, 1.0 ] },
 						"up": { "texture": "#ceramic", "uv": [ 9.0, 3.0, 10.0, 7.0 ] },
 						"down": { "texture": "#ceramic", "uv": [ 3.0, 3.0, 4.0, 7.0 ] }
+					}
+				}
+			]
+		},
+		{
+			"name": "Cube11",
+			"from": [ 1.0, 8.0, 0.0 ],
+			"to": [ 15.0, 15.0, 1.0 ],
+			"rotationOrigin": [ 1.0, 8.0, 0.0 ],
+			"faces": {
+				"north": { "texture": "#primary", "uv": [ 1.0, 1.0, 15.0, 8.0 ] },
+				"south": { "texture": "#primary", "uv": [ 1.0, 1.0, 15.0, 8.0 ] },
+				"down": { "texture": "#primary", "uv": [ 0.0, 0.0, 15.0, 1.0 ] }
+			},
+			"children": [
+				{
+					"name": "Cube12",
+					"from": [ 14.0, 0.0, 1.0 ],
+					"to": [ 15.0, 7.0, 15.0 ],
+					"rotationOrigin": [ 14.0, 0.0, 1.0 ],
+					"faces": {
+						"east": { "texture": "#primary", "uv": [ 1.0, 1.0, 15.0, 8.0 ] },
+						"west": { "texture": "#primary", "uv": [ 1.0, 1.0, 15.0, 8.0 ] },
+						"down": { "texture": "#primary", "uv": [ 0.0, 0.0, 15.0, 1.0 ] }
+					}
+				},
+				{
+					"name": "Cube13",
+					"from": [ -1.0, 0.0, 1.0 ],
+					"to": [ 0.0, 7.0, 15.0 ],
+					"rotationOrigin": [ -1.0, 0.0, 1.0 ],
+					"faces": {
+						"east": { "texture": "#primary", "uv": [ 1.0, 1.0, 15.0, 8.0 ] },
+						"west": { "texture": "#primary", "uv": [ 1.0, 1.0, 15.0, 8.0 ] },
+						"down": { "texture": "#primary", "uv": [ 0.0, 0.0, 15.0, 1.0 ] }
 					}
 				}
 			]

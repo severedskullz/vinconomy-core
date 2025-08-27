@@ -18,7 +18,7 @@ namespace Viconomy.GUI
 {
     public class GuiVinconPurchaseStallOwner : GuiDialogBlockEntity
     {
-        BEVinconBase stall;
+        BEVinconPurchaseContainer stall;
         ShopRegistration[] registers;
         ICoreClientAPI api;
         int stallSlotCount;
@@ -31,7 +31,7 @@ namespace Viconomy.GUI
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
             api = capi;
-            stall = capi.World.BlockAccessor.GetBlockEntity<BEVinconBase>(BlockEntityPosition);
+            stall = capi.World.BlockAccessor.GetBlockEntity<BEVinconPurchaseContainer>(BlockEntityPosition);
             curTab = stallSelection;
             VinconomyCoreSystem modSystem = capi.ModLoader.GetModSystem<VinconomyCoreSystem>();
             ShopRegistration[] allRegisters = modSystem.GetRegistry().GetShopsForOwner(stall.Owner);
@@ -225,10 +225,10 @@ namespace Viconomy.GUI
                     .AddNumberInput(quantitySelectionBounds, new Action<string>(this.onCostQuantityChanged), CairoFont.WhiteSmallText(), "returnedCurrencyQuantity")
 
                     .AddStaticText(Lang.Get("vinconomy:gui-register-fallback"), CairoFont.WhiteSmallText(), registerFallbackLabel)
-                    .AddSwitch(new Action<bool>(this.OnToggleAdminShop), registerFallbackBounds, "registerFallback")
+                    .AddSwitch(new Action<bool>(this.OnToggleRegisterFallback), registerFallbackBounds, "registerFallback")
 
                     .AddStaticText(Lang.Get("vinconomy:gui-limit-purchases"), CairoFont.WhiteSmallText(), limitPurchaseLabel)
-                    .AddSwitch(new Action<bool>(this.OnToggleAdminShop), limitPurchaseBounds, "limitPurchases")
+                    .AddSwitch(new Action<bool>(this.OnToggleLimitPurchases), limitPurchaseBounds, "limitPurchases")
 
                     .AddStaticText(Lang.Get("vinconomy:gui-purchases-left"), CairoFont.WhiteSmallText(), numPurchasesSelectionLabel)
                     .AddNumberInput(numPurchasesSelectionBounds, new Action<string>(this.onRemainingPurchasesQuantityChanged), CairoFont.WhiteSmallText(), "numPurchases")
@@ -241,7 +241,7 @@ namespace Viconomy.GUI
                         .AddStaticText(Lang.Get("vinconomy:gui-admin-shop"), CairoFont.WhiteSmallText(), adminShopLabel)
                         .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
                         .AddStaticText(Lang.Get("vinconomy:gui-discard-product"), CairoFont.WhiteSmallText(), discardProductLabel)
-                        .AddSwitch(new Action<bool>(this.OnToggleAdminShop), discardProductBounds, "discardProduct")
+                        .AddSwitch(new Action<bool>(this.OnToggleDiscardCurrency), discardProductBounds, "discardProduct")
                     .EndIf()
 
                 //.AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlotBounds, "purchase")
@@ -266,13 +266,20 @@ namespace Viconomy.GUI
                     SingleComposer.GetButton("nextPage").Enabled = false;
 
                 if (capi.World.Player.HasPrivilege("gamemode"))
+                {
                     SingleComposer.GetSwitch("admin").SetValue(stall.IsAdminShop);
+                    SingleComposer.GetSwitch("discardProduct").SetValue(stall.DiscardProduct);
+                }
+                    
 
                 SingleComposer.GetDropDown("shopSelection").Enabled = isOwner;
 
 
                 SingleComposer.GetTextInput("desiredProductQuantity").SetValue(stallSlot.DesiredProduct.StackSize);
                 SingleComposer.GetTextInput("returnedCurrencyQuantity").SetValue(stallSlot.Currency.StackSize);
+                SingleComposer.GetSwitch("registerFallback").SetValue(stall.RegisterFallback);
+                SingleComposer.GetSwitch("limitPurchases").SetValue(stallSlot.LimitedPurchases);
+                SingleComposer.GetTextInput("numPurchases").SetValue(stallSlot.NumTradesLeft);
 
 
                 //.AddHorizontalTabs(tabs, tabBounds, new Action<int>(this.OnTabClicked), tabFont, tabFont.Clone().WithColor(GuiStyle.ActiveButtonTextColor), "tabs")
@@ -302,13 +309,6 @@ namespace Viconomy.GUI
                     data = ms.ToArray();
                 }
                 capi.Network.SendBlockEntityPacket(BlockEntityPosition, VinConstants.SET_PURCHASES_REMAINING, data);
-
-                if (stallSlot.Currency.Itemstack != null)
-                {
-                    stallSlot.Currency.Itemstack.StackSize = val;
-                }
-
-            
         }
 
         private void onProductQuantityChanged(string txt)
@@ -381,10 +381,23 @@ namespace Viconomy.GUI
             using (MemoryStream ms = new MemoryStream())
             {
                 BinaryWriter writer = new BinaryWriter(ms);
+                writer.Write(curTab);
                 writer.Write(isToggled);
                 data = ms.ToArray();
             }
             capi.Network.SendBlockEntityPacket(BlockEntityPosition, VinConstants.SET_LIMITED_PURCHASES, data);
+        }
+
+        private void OnToggleDiscardCurrency(bool isToggled)
+        {
+            byte[] data;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BinaryWriter writer = new BinaryWriter(ms);
+                writer.Write(isToggled);
+                data = ms.ToArray();
+            }
+            capi.Network.SendBlockEntityPacket(BlockEntityPosition, VinConstants.SET_ADMIN_DISCARD_CURRENCY, data);
         }
 
         private void OnToggleAdminShop(bool isToggled)

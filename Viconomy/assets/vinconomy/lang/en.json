@@ -6,6 +6,7 @@
     "no-price": "This item does not yet have a price",
     "no-product": "There is nothing for sale for this slot",
     "no-register-space": "There is not enough space in the Shop's Register to recieve payment",
+    "no-stall-space": "There is not enough space in the Shop's Stall to recieve goods",
     "purchased-zero-quantity": "You must purchase atleast 1 item at a time.",
     "not-enough-money": "Not enough items in your hand to purchase this item.",
     "not-registered-with-shop": "This stall is not registered with a shop yet. Unable to make a purchase.",
@@ -147,6 +148,8 @@
     "block-sculpturepad*": "Shop Sculpture Stall",
     "block-gacha-*": "Shop Gacha Stall",
     "block-gachaloader-*": "Gacha Ball Loader",
+    "block-purchasecrate-*": "Shop Purchase Crate",
+    "block-mealtable-*": "Shop Meal Stall",
 
     "item-catalog": "Shop Catalog",
     "item-coupon": "Coupon",

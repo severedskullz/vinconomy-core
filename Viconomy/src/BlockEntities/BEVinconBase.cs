@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Viconomy.BlockEntities.TextureSwappable;
 using Viconomy.Inventory;
@@ -343,6 +344,108 @@ namespace Viconomy.BlockEntities
                 return false;
             }
             return reg.StallPermissions && reg.CanAccess(player);
+        }
+
+        public virtual WorldInteraction[] GetPlacedBlockInteractionHelp(BlockSelection selection, IPlayer forPlayer)
+        {
+            List<WorldInteraction> interactions = new List<WorldInteraction>();
+           
+                int index = GetStallSlotForSelectionIndex(selection.SelectionBoxIndex);
+                ItemStack product = FindFirstNonEmptyStockStack(index);
+                ItemSlot currency = GetCurrencyForStall(index);
+
+                //StallSlot slot = slots[selection.SelectionBoxIndex];
+
+                if (Owner != forPlayer.PlayerUID || VinconomyCoreSystem.ShouldForceCustomerScreen)
+                {
+                    if (currency.Itemstack != null && product != null)
+                    {
+                        interactions.Add(new WorldInteraction
+                        {
+                            ActionLangCode = "vinconomy:stall-purchase",
+                            MouseButton = EnumMouseButton.Right,
+                            HotKeyCode = "sneak",
+                            Itemstacks = [currency.Itemstack]
+
+                        });
+
+                        ItemStack fiveStack = currency.Itemstack.Clone();
+                        fiveStack.StackSize = 5 * fiveStack.StackSize;
+                        interactions.Add(new WorldInteraction
+                        {
+                            ActionLangCode = "vinconomy:stall-purchase-bulk",
+                            MouseButton = EnumMouseButton.Right,
+                            HotKeyCodes = ["sneak", "sprint"],
+                            Itemstacks = [fiveStack]
+                        });
+                    }
+                }
+                else
+                {
+                    ItemStack firstSlot = product;
+                    if (firstSlot != null)
+                    {
+                        ItemStack helpSlot = firstSlot.Clone();
+                        helpSlot.StackSize = 1;
+                        interactions.Add(new WorldInteraction
+                        {
+                            ActionLangCode = "vinconomy:stall-add",
+                            MouseButton = EnumMouseButton.Right,
+                            HotKeyCode = "sneak",
+                            Itemstacks = [helpSlot]
+                        });
+
+                        ItemStack helpSlotStack = helpSlot.Clone();
+                        helpSlotStack.StackSize = helpSlotStack.Collectible.MaxStackSize;
+                        interactions.Add(new WorldInteraction
+                        {
+                            ActionLangCode = "vinconomy:stall-add",
+                            MouseButton = EnumMouseButton.Right,
+                            HotKeyCodes = ["sneak", "sprint"],
+                            Itemstacks = [helpSlotStack]
+                        });
+
+                        if (currency.Itemstack != null)
+                        {
+                            interactions.Add(new WorldInteraction
+                            {
+                                ActionLangCode = "vinconomy:stall-purchase",
+                                MouseButton = EnumMouseButton.Right,
+                                HotKeyCode = "sneak",
+                                Itemstacks = [currency.Itemstack]
+
+                            });
+
+                            ItemStack fiveStack = currency.Itemstack.Clone();
+                            fiveStack.StackSize = 5 * fiveStack.StackSize;
+                            interactions.Add(new WorldInteraction
+                            {
+                                ActionLangCode = "vinconomy:stall-purchase-bulk",
+                                MouseButton = EnumMouseButton.Right,
+                                HotKeyCodes = ["sneak", "sprint"],
+                                Itemstacks = [fiveStack]
+                            });
+                        }
+                    }
+                    else
+                    {
+                        interactions.Add(new WorldInteraction
+                        {
+                            ActionLangCode = "vinconomy:stall-add",
+                            MouseButton = EnumMouseButton.Right,
+                            HotKeyCode = "sneak"
+                        });
+                    }
+                }
+
+                interactions.Add(new WorldInteraction
+                {
+                    ActionLangCode = "vinconomy:stall-open-menu",
+                    MouseButton = EnumMouseButton.Right,
+                    HotKeyCode = null
+                });
+
+            return interactions.ToArray();
         }
 
     }

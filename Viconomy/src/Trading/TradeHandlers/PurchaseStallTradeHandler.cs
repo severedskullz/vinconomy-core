@@ -20,22 +20,25 @@ namespace Viconomy.Trading.TradeHandlers
         public static bool StallHasRequiredCurrency(GenericTradeRequest req)
         {
             //Yes, this is the "DesiredProduct" in the sense of the GenericTradeRequest... dont get confused!
-            int productLeft = req.GetFinalProductNeededPerPurchase() * req.NumPurchases;
+            int productLeft = req.GetFinalProductNeededPerPurchase() * req.RequestedPurchases;
             bool hasEnough = false;
-            if (req.CurrencySourceSlots != null)
-                hasEnough = req.CurrencySourceSlots.TotalCount / req.GetFinalCurrencyNeededPerPurchase() > 0;
+            if (req.ProductSourceSlots != null)
+                hasEnough = req.ProductSourceSlots.TotalCount / req.GetFinalProductNeededPerPurchase() > 0;
 
             //Dont bother checking the register if we dont need to
             //If we have RegisterFallback set, add in the ShopRegister's matching slots to the Agregate and check again
             if (!hasEnough && req.ShopRegister != null && ((BEVinconPurchaseContainer)req.SellingEntity).RegisterFallback) { 
                 foreach (ItemSlot slot in req.ShopRegister.Inventory)
                 {
-                    if (TradingUtil.isMatchingItem(req.CurrencyStackNeeded, slot.Itemstack, req.Api.World))
+                    if (TradingUtil.isMatchingItem(req.ProductStackNeeded, slot.Itemstack, req.Api.World))
                     {
-                        req.CurrencySourceSlots.Add(slot);
+                        req.ProductSourceSlots.Add(slot);
                     }
                 }
-                hasEnough = req.CurrencySourceSlots.TotalCount / req.GetFinalCurrencyNeededPerPurchase() > 0;
+                hasEnough = req.ProductSourceSlots.TotalCount / req.GetFinalProductNeededPerPurchase() > 0;
+
+                //We modified the amount of currency slots available, so we need to rebuild the request to calculate max number of purchases
+                req.Build();
 
             }
 
@@ -61,6 +64,16 @@ namespace Viconomy.Trading.TradeHandlers
 
             VinconomyCoreSystem core = request.Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
             GenericTradeResult res = new GenericTradeResult(request, core);
+
+            BEVinconPurchaseContainer sellingEnt = (BEVinconPurchaseContainer)res.Request.SellingEntity;
+            PurchaseStallSlot slot = (PurchaseStallSlot)((ViconItemPurchaseInventory)sellingEnt.Inventory).StallSlots[res.Request.StallSlot];
+
+            // If we have a limited amount of purchases, grab whichever is fewer - the NumTradesLeft or the original amount.
+            if (slot.LimitedPurchases)
+            {
+                res.Request.NumPurchases = Math.Min(res.Request.NumPurchases, slot.NumTradesLeft);
+            }
+
             if (request.ShopRegister == null && !isAdminShop)
                 return GenericTradeHandler.SetErrorAndReturn(res, TradingConstants.NOT_REGISTERED);
 
@@ -71,9 +84,6 @@ namespace Viconomy.Trading.TradeHandlers
                 return GenericTradeHandler.SetErrorAndReturn(res, TradingConstants.NO_PRODUCT);
 
             if (!isAdminShop && !StallHasRequiredCurrency(request))
-                return GenericTradeHandler.SetErrorAndReturn(res, TradingConstants.NOT_ENOUGH_STOCK);
-
-            if (!isAdminShop && !GenericTradeHandler.StallHasRequiredProduct(request))
                 return GenericTradeHandler.SetErrorAndReturn(res, TradingConstants.NOT_ENOUGH_STOCK);
 
             if (!GenericTradeHandler.PlayerHasRequiredCurrency(request))
@@ -105,7 +115,10 @@ namespace Viconomy.Trading.TradeHandlers
 
             GenericTradeHandler.TryAddProductToPlayer(res);
 
-
+            if (slot.LimitedPurchases)
+            {
+                slot.NumTradesLeft = Math.Max(0,slot.NumTradesLeft-1);
+            }
 
             VinconomyCoreSystem.PrintClientMessage(res.Request.Customer, TradingConstants.PURCHASED_ITEMS, new object[] {
                 res.TransferedProductTotal,

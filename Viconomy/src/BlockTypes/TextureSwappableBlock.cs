@@ -51,7 +51,7 @@ namespace Viconomy.BlockTypes
          *  the game goes to access the "primary" texture code to figure out what it is, we return "oak" which will then map to the oak
          *  texture specified in the block's JSON instead of the default white linnen texture defined in the shape file.
          */
-        public TextureAtlasPosition this[string textureCode]
+        public virtual TextureAtlasPosition this[string textureCode]
         {
             get
             {
@@ -101,8 +101,12 @@ namespace Viconomy.BlockTypes
                 AssetLocation shapeloc = this.Shape.Base.CopyWithPathPrefixAndAppendixOnce("shapes/", ".json");
                 Shape shape = Vintagestory.API.Common.Shape.TryGet(capi, shapeloc);
                 MeshData mesh = this.GenMesh(capi, primary, secondary, deco, shape, null);
-                meshrefs[key] = capi.Render.UploadMultiTextureMesh(mesh);
-                meshref = meshrefs[key];
+
+                if (mesh != null) {
+                    meshrefs[key] = capi.Render.UploadMultiTextureMesh(mesh);
+                    meshref = meshrefs[key];
+                }
+
             }
             renderinfo.ModelRef = meshref;
             renderinfo.CullFaces = false;

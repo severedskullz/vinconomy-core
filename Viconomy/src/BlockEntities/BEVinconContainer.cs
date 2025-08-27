@@ -3,10 +3,10 @@ using System.IO;
 using System.Text;
 using Viconomy.Filters;
 using Viconomy.GUI;
-using Viconomy.Inventory.StallSlots;
-using Viconomy.Renderer;
 using Viconomy.Inventory.Impl;
 using Viconomy.Inventory.Slots;
+using Viconomy.Inventory.StallSlots;
+using Viconomy.Renderer;
 using Viconomy.Trading;
 using Viconomy.Util;
 using Vintagestory.API.Client;
@@ -15,12 +15,12 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.GameContent;
 
 namespace Viconomy.BlockEntities
 {
     public class BEVinconContainer : BEVinconBase
     {
-
         protected ViconBaseInventory inventory;
         protected bool bypassShelvableAttributes;
 
@@ -33,7 +33,6 @@ namespace Viconomy.BlockEntities
             ConfigureInventory();
             Inventory.SlotModified += Inventory_SlotModified;
         }
-
 
         protected void Inventory_SlotModified(int slot)
         {
@@ -58,7 +57,6 @@ namespace Viconomy.BlockEntities
             if (slotIndex < 0)
                 slotIndex = 0;
             
-            //Console.WriteLine("Calling OnPlayerRightClick from " + Api.Side);
             bool shiftMod = byPlayer.Entity.Controls.Sneak;
             bool ctrlMod = byPlayer.Entity.Controls.Sprint;
 
@@ -114,24 +112,17 @@ namespace Viconomy.BlockEntities
         protected virtual void TryPurchaseItem(IPlayer player, int stallSlot, int numPurchases)
         {
 
-
-
             if (numPurchases <= 0)
             {
-                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.PURCHASED_ZERO, null);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.PURCHASED_ZERO);
                 return;
             }
 
-            //Console.WriteLine(Api.Side + ": We tried to purchase item!");
-            //PrintClientMessage(player, Api.Side + ": We tried to purchase item!");
-
             ItemSlot currency = inventory.GetCurrencyForStallSlot(stallSlot);
-
 
             if (currency.Itemstack == null)
             {
-                //PrintClientMessage(player, "vinconomy:item-cost", new Object[] { currency.Itemstack.StackSize, currency.Itemstack.GetName() });
-                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRICE, null);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRICE);
                 return;
             }
 
@@ -165,7 +156,6 @@ namespace Viconomy.BlockEntities
             }
             if (purchaseSlot == null)
             {
-                //Console.WriteLine(Api.Side + ": Not enough stock to purchase item");
                 VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRODUCT);
                 return;
             }
@@ -184,7 +174,6 @@ namespace Viconomy.BlockEntities
             }
 
         }
-
 
         #region GUI
 
@@ -228,7 +217,7 @@ namespace Viconomy.BlockEntities
                 string name = reader.ReadString();
                 if (name.Length > 0)
                 {
-                    dialogTitle = Lang.Get("vinconomy:gui-stall-owner", new string[] { name });
+                    dialogTitle = Lang.Get("vinconomy:gui-stall-owner", [name]);
                 }
                 else
                 {
@@ -255,7 +244,6 @@ namespace Viconomy.BlockEntities
                 this.invDialog = null;
                 capi.Network.SendBlockEntityPacket(this.Pos, VinConstants.CLOSE_GUI, null);
             };
-            //Console.WriteLine(Api.Side + ": Attempted to open Shop GUI");
         }
 
         protected virtual void CloseGui(IClientWorldAccessor clientWorld)
@@ -341,6 +329,15 @@ namespace Viconomy.BlockEntities
                     SetItemPrice(player, stallSlot, amount);
                     break;
 
+                case VinConstants.SET_ADMIN_DISCARD_CURRENCY:
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
+                        BinaryReader reader = new BinaryReader(ms);
+                        isAdmin = reader.ReadBoolean();
+                    }
+                    SetDiscardProduct(player, isAdmin);
+                    break;
+
                 default:
                     if (packetid < 1000)
                     {
@@ -348,7 +345,7 @@ namespace Viconomy.BlockEntities
                         {
                             if (!((ICoreServerAPI)Api).Server.IsDedicated)
                             {
-                                VinconomyCoreSystem.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
+                                VinconomyCoreSystem.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.");
                             }
                             else
                             {
@@ -365,12 +362,30 @@ namespace Viconomy.BlockEntities
             }
         }
 
+        public virtual void SetDiscardProduct(IPlayer byPlayer, bool discard)
+        {
+            if (byPlayer.PlayerUID != this.Owner)
+            {
+                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN);
+                return;
+            }
+
+            if (!byPlayer.HasPrivilege("gamemode"))
+            {
+                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.NO_PRIVLEGE);
+                return;
+            }
+
+            this.DiscardProduct = discard;
+            this.MarkDirty();
+
+        }
 
         protected virtual void SetItemPrice(IPlayer byPlayer, int stallSlot, int price)
         {
             if (!CanAccess(byPlayer))
             {
-                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
+                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN);
                 return;
             }
 
@@ -387,7 +402,7 @@ namespace Viconomy.BlockEntities
         {
             if (!CanAccess(byPlayer))
             {
-                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
+                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN);
                 return;
             }
 
@@ -484,7 +499,7 @@ namespace Viconomy.BlockEntities
                     }
                     catch
                     {
-                        Console.WriteLine("Had some trouble rendering a mesh in a stall for item");
+                        modSystem.Mod.Logger.Error($"Had some trouble rendering  mesh in a stall @ {Pos.X} {Pos.Y} {Pos.Z} for slot {i}");
                     }
 
                 }

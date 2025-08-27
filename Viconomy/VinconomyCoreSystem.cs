@@ -13,6 +13,7 @@ using Viconomy.Map;
 using Viconomy.Network;
 using Viconomy.Registry;
 using Viconomy.Renderer;
+using Viconomy.src.BlockTypes;
 using Viconomy.Trading;
 using Viconomy.Util;
 using Vintagestory.API.Client;
@@ -66,6 +67,7 @@ namespace Viconomy
             // 5.0 Block Mappings
             api.RegisterBlockClass("VinconFoodContainer", typeof(BlockVFoodContainer));
             api.RegisterBlockClass("VinconCouponCutter", typeof(BlockVCouponCutter));
+            api.RegisterBlockClass("VinconPurchaseContainer", typeof(BlockVPurchaseContainer));
 
             // 5.0 Block Entity Mappings
             api.RegisterBlockEntityClass("BEVinconFoodContainer", typeof(BEVinconFoodContainer));
@@ -429,7 +431,7 @@ namespace Viconomy
 
             if (args == null)
             {
-                args = Array.Empty<object>();
+                args = [];
             }
             if (player is IServerPlayer)
             {

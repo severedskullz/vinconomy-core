@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using Viconomy.GUI;
 using Viconomy.Inventory.Impl;
@@ -29,7 +28,7 @@ namespace Viconomy.BlockEntities
         //Amount of Money available to pay to players
         public override int ProductStacksPerSlot => 20;
 
-        public override int StallSlotCount => 4;
+        public override int StallSlotCount => 2;
         protected override bool OverrideBaseShape => inventory.ChiselDecoSlot.Itemstack == null;
         public BEVinconPurchaseContainer() 
         {
@@ -41,23 +40,21 @@ namespace Viconomy.BlockEntities
         {
             inventory = new ViconItemPurchaseInventory(this, null, Api, StallSlotCount, ProductStacksPerSlot, PurchasedProductStacksPerSlot);
         }
+
+
  
         protected override void TryPurchaseItem(IPlayer player, int stallSlot, int numPurchases)
         {
             if (numPurchases <= 0)
             {
-                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.PURCHASED_ZERO, null);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.PURCHASED_ZERO);
                 return;
             }
-
-            //Console.WriteLine(Api.Side + ": We tried to purchase item!");
-            //PrintClientMessage(player, Api.Side + ": We tried to purchase item!");
 
             ItemSlot currency = inventory.GetCurrencyForStallSlot(stallSlot);
             if (currency.Itemstack == null)
             {
-                //PrintClientMessage(player, "vinconomy:item-cost", new Object[] { currency.Itemstack.StackSize, currency.Itemstack.GetName() });
-                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRICE, null);
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRICE);
                 return;
             }
 
@@ -91,7 +88,6 @@ namespace Viconomy.BlockEntities
             }
             if (purchaseSlot == null)
             {
-                //Console.WriteLine(Api.Side + ": Not enough stock to purchase item");
                 VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRODUCT);
                 return;
             }
@@ -201,7 +197,7 @@ namespace Viconomy.BlockEntities
                 string name = reader.ReadString();
                 if (name.Length > 0)
                 {
-                    dialogTitle = Lang.Get("vinconomy:gui-stall-owner", new string[] { name });
+                    dialogTitle = Lang.Get("vinconomy:gui-stall-owner",  [name] );
                 }
                 else
                 {
@@ -286,8 +282,13 @@ namespace Viconomy.BlockEntities
                 {
                     try
                     {
-                        ItemSlot slot = ((PurchaseStallSlot)inventory.StallSlots[i]).DesiredProduct;
-                        if (slot != null && !slot.Empty && tfMatrices != null)
+                        PurchaseStallSlot stall = (PurchaseStallSlot)inventory.StallSlots[i];
+                        ItemSlot slot = stall.DesiredProduct;
+
+                        bool isNotLimited = !stall.LimitedPurchases || stall.NumTradesLeft > 0;
+                        bool isNotEmpty = slot != null && !slot.Empty;
+
+                        if (isNotLimited && isNotEmpty && tfMatrices != null)
                         {
                             MeshData mesh = getOrCreateMesh(slot.Itemstack, i);
                             if (mesh != null)
@@ -298,7 +299,7 @@ namespace Viconomy.BlockEntities
                     }
                     catch
                     {
-                        Console.WriteLine("Had some trouble rendering a mesh in a stall for item");
+                        modSystem.Mod.Logger.Error($"Had some trouble rendering  mesh in a stall @ {Pos.X} {Pos.Y} {Pos.Z} for slot {i}");
                     }
 
                 }
@@ -320,7 +321,8 @@ namespace Viconomy.BlockEntities
             for (int index = 0; index < StallSlotCount; index++)
             {
                 float scale = 0.35f;
-                ItemSlot slot = ((PurchaseStallSlot)inventory.StallSlots[index]).DesiredProduct;
+                PurchaseStallSlot stall = (PurchaseStallSlot)inventory.StallSlots[index];
+                ItemSlot slot = stall.DesiredProduct;
                 if (slot?.Itemstack != null)
                 {
                     if (slot.Itemstack.Collectible.Code.Path.StartsWith("crock")
@@ -332,11 +334,11 @@ namespace Viconomy.BlockEntities
                     }
                 }
                 Cuboidf sb = Block.SelectionBoxes[index];
-                float left = .25f - (scale / 2);
-                float right = left + .5f;
+                float left = .265f - (scale / 2);
+                float right = left + .47f;
 
                 float x = (index % 2 == 0) ? left : right;
-                float y = sb.YSize <= .45f ? sb.MaxY - 0.37f + (.45f - sb.YSize) : sb.MaxY - 0.37f;
+                float y = 1;
                 float z = (index / 2 == 0) ? left : right;
                 Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(Block.Shape.rotateY).Translate(x, y, z).Translate(-0.5f, 0f, -0.5f).Scale(scale, scale, scale);
                 tfMatrices[index] = matrix.Values;
@@ -355,11 +357,11 @@ namespace Viconomy.BlockEntities
                 ItemSlot product = ps.DesiredProduct;
                 if (currency != null && currency.Itemstack != null && product != null && product.Itemstack != null)
                 {
-                    dsc.AppendLine(Lang.Get("vinconomy:for-purchase", new Object[] { i,  product.Itemstack.StackSize, slot.GetCurrencyName(Api), currency.Itemstack.StackSize, slot.GetProductName(Api), }));
+                    dsc.AppendLine(Lang.Get("vinconomy:for-purchase", [ i,  product.Itemstack.StackSize, slot.GetCurrencyName(Api), currency.Itemstack.StackSize, slot.GetProductName(Api) ]));
                 }
                 else
                 {
-                    dsc.AppendLine(Lang.Get("vinconomy:not-for-sale", new Object[] { i }));
+                    dsc.AppendLine(Lang.Get("vinconomy:not-for-sale", [ i ]));
                 }
 
             }
@@ -370,7 +372,7 @@ namespace Viconomy.BlockEntities
         {
             if (!CanAccess(byPlayer))
             {
-                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
+                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN);
                 return;
             }
 
@@ -387,7 +389,7 @@ namespace Viconomy.BlockEntities
         {
             if (!CanAccess(byPlayer))
             {
-                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
+                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN);
                 return;
             }
 
@@ -486,6 +488,7 @@ namespace Viconomy.BlockEntities
                         value = reader.ReadBoolean();
                     }
                     RegisterFallback = value;
+                    this.MarkDirty();
                     break;
                 case VinConstants.SET_LIMITED_PURCHASES:
                     using (MemoryStream ms = new MemoryStream(data))
@@ -496,6 +499,14 @@ namespace Viconomy.BlockEntities
                     }
                     SetLimitedPurchases(stallSlot, value);
                     break;
+                case VinConstants.SET_ADMIN_DISCARD_CURRENCY:
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
+                        BinaryReader reader = new BinaryReader(ms);
+                        isAdmin = reader.ReadBoolean();
+                    }
+                    SetDiscardProduct(player, isAdmin);
+                    break;
                 default:
                     if (packetid < 1000)
                     {
@@ -503,7 +514,7 @@ namespace Viconomy.BlockEntities
                         {
                             if (!((ICoreServerAPI)Api).Server.IsDedicated)
                             {
-                                VinconomyCoreSystem.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.", new object[] { });
+                                VinconomyCoreSystem.PrintClientMessage(player, "Nice Try, but that isn't yours... If this wasn't singleplayer, you would have been kicked.");
                             }
                             else
                             {
@@ -524,12 +535,146 @@ namespace Viconomy.BlockEntities
         {
             PurchaseStallSlot slot = (PurchaseStallSlot)((ViconItemPurchaseInventory)inventory).StallSlots[stallSlot];
             slot.LimitedPurchases = value;
+            this.MarkDirty();
         }
 
         private void SetPurchasesRemaining(int stallSlot, int amount)
         {
             PurchaseStallSlot slot = (PurchaseStallSlot)((ViconItemPurchaseInventory)inventory).StallSlots[stallSlot];
             slot.NumTradesLeft = amount;
+            this.MarkDirty();
+        }
+
+        public override WorldInteraction[] GetPlacedBlockInteractionHelp(BlockSelection selection, IPlayer forPlayer)
+        {
+            List<WorldInteraction> interactions = new List<WorldInteraction>();
+
+            int index = GetStallSlotForSelectionIndex(selection.SelectionBoxIndex);
+            PurchaseStallSlot slot = ((PurchaseStallSlot)inventory.StallSlots[index]);
+
+
+            ItemStack currency = slot.DesiredProduct.Itemstack;
+            ItemStack product = slot.Currency.Itemstack;
+
+            //StallSlot slot = slots[selection.SelectionBoxIndex];
+
+            if (Owner != forPlayer.PlayerUID || VinconomyCoreSystem.ShouldForceCustomerScreen)
+            {
+                if (currency != null && product != null)
+                {
+                    interactions.Add(new WorldInteraction
+                    {
+                        ActionLangCode = "vinconomy:stall-purchase",
+                        MouseButton = EnumMouseButton.Right,
+                        HotKeyCode = "sneak",
+                        Itemstacks = [currency]
+
+                    });
+
+                    ItemStack fiveStack = currency.Clone();
+                    fiveStack.StackSize = 5 * fiveStack.StackSize;
+                    interactions.Add(new WorldInteraction
+                    {
+                        ActionLangCode = "vinconomy:stall-purchase-bulk",
+                        MouseButton = EnumMouseButton.Right,
+                        HotKeyCodes = ["sneak", "sprint"],
+                        Itemstacks = [fiveStack]
+                    });
+                }
+            }
+            else
+            {
+                if (product != null)
+                {
+                    ItemStack helpSlot = product.Clone();
+                    helpSlot.StackSize = 1;
+                    interactions.Add(new WorldInteraction
+                    {
+                        ActionLangCode = "vinconomy:stall-add",
+                        MouseButton = EnumMouseButton.Right,
+                        HotKeyCode = "sneak",
+                        Itemstacks = [helpSlot]
+                    });
+
+                    ItemStack helpSlotStack = helpSlot.Clone();
+                    helpSlotStack.StackSize = helpSlotStack.Collectible.MaxStackSize;
+                    interactions.Add(new WorldInteraction
+                    {
+                        ActionLangCode = "vinconomy:stall-add",
+                        MouseButton = EnumMouseButton.Right,
+                        HotKeyCodes = ["sneak", "sprint"],
+                        Itemstacks = [helpSlotStack]
+                    });
+
+                    if (currency != null)
+                    {
+                        interactions.Add(new WorldInteraction
+                        {
+                            ActionLangCode = "vinconomy:stall-purchase",
+                            MouseButton = EnumMouseButton.Right,
+                            HotKeyCode = "sneak",
+                            Itemstacks = [currency]
+
+                        });
+
+                        ItemStack fiveStack = currency.Clone();
+                        fiveStack.StackSize = 5 * fiveStack.StackSize;
+                        interactions.Add(new WorldInteraction
+                        {
+                            ActionLangCode = "vinconomy:stall-purchase-bulk",
+                            MouseButton = EnumMouseButton.Right,
+                            HotKeyCodes = ["sneak", "sprint"],
+                            Itemstacks = [fiveStack]
+                        });
+                    }
+                }
+                else
+                {
+                    interactions.Add(new WorldInteraction
+                    {
+                        ActionLangCode = "vinconomy:stall-add",
+                        MouseButton = EnumMouseButton.Right,
+                        HotKeyCode = "sneak"
+                    });
+                }
+            }
+
+            interactions.Add(new WorldInteraction
+            {
+                ActionLangCode = "vinconomy:stall-open-menu",
+                MouseButton = EnumMouseButton.Right,
+                HotKeyCode = null
+            });
+
+            return interactions.ToArray();
+        }
+
+        protected override bool TryAddItemToStall(ItemSlot activeSlot, int stallSlot, bool bulk)
+        {
+            ItemSlot[] slots = inventory.GetSlotsForStallSlot(stallSlot);
+            int amountItem = bulk ? activeSlot.Itemstack.StackSize : 1;
+            bool movedItems = false;
+
+            for (int i = 0; i < ProductStacksPerSlot; i++)
+            {
+                if (activeSlot.Itemstack != null)
+                {
+                    int moved = activeSlot.TryPutInto(this.Api.World, slots[i], amountItem);
+                    amountItem -= moved;
+                    if (moved > 0)
+                    {
+                        movedItems = true;
+                        activeSlot.MarkDirty();
+                        slots[i].MarkDirty();
+                    }
+
+                    if (amountItem <= 0)
+                    {
+                        break;
+                    }
+                }
+            }
+            return movedItems;
         }
     }
 }

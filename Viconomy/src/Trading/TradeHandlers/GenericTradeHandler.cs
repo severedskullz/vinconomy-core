@@ -25,7 +25,7 @@ namespace Viconomy.Trading.TradeHandlers
 
         public static bool StallHasRequiredProduct(GenericTradeRequest req)
         {
-            if (req.CurrencySourceSlots != null)
+            if (req.ProductSourceSlots != null)
                 return req.ProductSourceSlots.TotalCount / req.GetFinalProductNeededPerPurchase() > 0;
             return false;
         }
@@ -193,6 +193,9 @@ namespace Viconomy.Trading.TradeHandlers
         public static void TryConsumeTools(GenericTradeResult res)
         {
             if (res.Request.SellingEntity.ConsumeTool(res))
+            {
+                // Not implemented yet
+            } else
             {
                 AuditLogError(res, "Error consuming tools for trade.");
             }

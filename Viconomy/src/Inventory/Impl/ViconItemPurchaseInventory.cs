@@ -164,5 +164,10 @@ namespace Viconomy.Inventory.Impl
             }
         }
 
+        public override ViconCurrencySlot GetCurrencyForStallSlot(int stallSlot)
+        {
+            return ((PurchaseStallSlot)StallSlots[stallSlot]).DesiredProduct;
+        }
+
     }
 }

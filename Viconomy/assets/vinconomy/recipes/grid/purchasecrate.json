@@ -1,0 +1,314 @@
+[
+    {
+      "ingredientPattern": "_WW,WOW,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-*",
+          "name": "wood",
+          "allowedVariants": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:crate",
+          "attributes": { "type": "wood-acacia" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "purchasecrate-north",
+        "attributes": {
+            "PrimaryMaterial": "acacia",
+            "SecondaryMaterial": "{wood}"
+        }
+      }
+    },
+    {
+      "ingredientPattern": "_WW,WOW,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-*",
+          "name": "wood",
+          "allowedVariants": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:crate",
+          "attributes": { "type": "wood-baldcypress" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "purchasecrate-north",
+        "attributes": {
+            "PrimaryMaterial": "baldcypress",
+            "SecondaryMaterial": "{wood}"
+        }
+      }
+    },
+    {
+      "ingredientPattern": "_WW,WOW,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-*",
+          "name": "wood",
+          "allowedVariants": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:crate",
+          "attributes": { "type": "wood-birch" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "purchasecrate-north",
+        "attributes": {
+            "PrimaryMaterial": "birch",
+            "SecondaryMaterial": "{wood}"
+        }
+      }
+    },
+    {
+      "ingredientPattern": "_WW,WOW,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-*",
+          "name": "wood",
+          "allowedVariants": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:crate",
+          "attributes": { "type": "wood-ebony" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "purchasecrate-north",
+        "attributes": {
+            "PrimaryMaterial": "ebony",
+            "SecondaryMaterial": "{wood}"
+        }
+      }
+    },
+    {
+      "ingredientPattern": "_WW,WOW,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-*",
+          "name": "wood",
+          "allowedVariants": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:crate",
+          "attributes": { "type": "wood-kapok" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "purchasecrate-north",
+        "attributes": {
+            "PrimaryMaterial": "kapok",
+            "SecondaryMaterial": "{wood}"
+        }
+      }
+    },
+    {
+      "ingredientPattern": "_WW,WOW,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-*",
+          "name": "wood",
+          "allowedVariants": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:crate",
+          "attributes": { "type": "wood-larch" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "purchasecrate-north",
+        "attributes": {
+            "PrimaryMaterial": "larch",
+            "SecondaryMaterial": "{wood}"
+        }
+      }
+    },
+    {
+      "ingredientPattern": "_WW,WOW,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-*",
+          "name": "wood",
+          "allowedVariants": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:crate",
+          "attributes": { "type": "wood-maple" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "purchasecrate-north",
+        "attributes": {
+            "PrimaryMaterial": "maple",
+            "SecondaryMaterial": "{wood}"
+        }
+      }
+    },
+                                {
+      "ingredientPattern": "_WW,WOW,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-*",
+          "name": "wood",
+          "allowedVariants": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:crate",
+          "attributes": { "type": "wood-oak" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "purchasecrate-north",
+        "attributes": {
+            "PrimaryMaterial": "oak",
+            "SecondaryMaterial": "{wood}"
+        }
+      }
+    },
+    {
+      "ingredientPattern": "_WW,WOW,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-*",
+          "name": "wood",
+          "allowedVariants": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:crate",
+          "attributes": { "type": "wood-pine" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "purchasecrate-north",
+        "attributes": {
+            "PrimaryMaterial": "pine",
+            "SecondaryMaterial": "{wood}"
+        }
+      }
+    },
+    {
+      "ingredientPattern": "_WW,WOW,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-*",
+          "name": "wood",
+          "allowedVariants": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:crate",
+          "attributes": { "type": "wood-purpleheart" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "purchasecrate-north",
+        "attributes": {
+            "PrimaryMaterial": "purpleheart",
+            "SecondaryMaterial": "{wood}"
+        }
+      }
+    },
+    {
+      "ingredientPattern": "_WW,WOW,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-*",
+          "name": "wood",
+          "allowedVariants": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:crate",
+          "attributes": { "type": "wood-redwood" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "purchasecrate-north",
+        "attributes": {
+            "PrimaryMaterial": "redwood",
+            "SecondaryMaterial": "{wood}"
+        }
+      }
+    },
+    {
+      "ingredientPattern": "_WW,WOW,WWW",
+      "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-*",
+          "name": "wood",
+          "allowedVariants": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+        },
+        "O": {
+          "type": "block",
+          "code": "game:crate",
+          "attributes": { "type": "wood-walnut" }
+        }
+      },
+      "width": 3,
+      "height": 3,
+      "output": {
+        "type": "block",
+        "code": "purchasecrate-north",
+        "attributes": {
+            "PrimaryMaterial": "walnut",
+            "SecondaryMaterial": "{wood}"
+        }
+      }
+    }
+]
