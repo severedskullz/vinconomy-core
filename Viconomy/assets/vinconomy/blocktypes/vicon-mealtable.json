@@ -11,62 +11,62 @@
                 "stacks": [
                     {
                         "type": "block",
-                        "code": "mealtable-east",
+                        "code": "mealtable-north",
                         "attributes": { "PrimaryMaterial": "acacia" }
                     },
                     {
                         "type": "block",
-                        "code": "mealtable-east",
+                        "code": "mealtable-north",
                         "attributes": { "PrimaryMaterial": "baldcypress" }
                     },
                     {
                         "type": "block",
-                        "code": "mealtable-east",
+                        "code": "mealtable-north",
                         "attributes": { "PrimaryMaterial": "birch" }
                     },
                     {
                         "type": "block",
-                        "code": "mealtable-east",
+                        "code": "mealtable-north",
                         "attributes": { "PrimaryMaterial": "ebony" }
                     },
                     {
                         "type": "block",
-                        "code": "mealtable-east",
+                        "code": "mealtable-north",
                         "attributes": { "PrimaryMaterial": "kapok" }
                     },
                     {
                         "type": "block",
-                        "code": "mealtable-east",
+                        "code": "mealtable-north",
                         "attributes": { "PrimaryMaterial": "larch" }
                     },
                     {
                         "type": "block",
-                        "code": "mealtable-east",
+                        "code": "mealtable-north",
                         "attributes": { "PrimaryMaterial": "maple" }
                     },
                     {
                         "type": "block",
-                        "code": "mealtable-east",
+                        "code": "mealtable-north",
                         "attributes": { "PrimaryMaterial": "oak" }
                     },
                     {
                         "type": "block",
-                        "code": "mealtable-east",
+                        "code": "mealtable-north",
                         "attributes": { "PrimaryMaterial": "pine" }
                     },
                     {
                         "type": "block",
-                        "code": "mealtable-east",
+                        "code": "mealtable-north",
                         "attributes": { "PrimaryMaterial": "purpleheart" }
                     },
                     {
                         "type": "block",
-                        "code": "mealtable-east",
+                        "code": "mealtable-north",
                         "attributes": { "PrimaryMaterial": "redwood" }
                     },
                     {
                         "type": "block",
-                        "code": "mealtable-east",
+                        "code": "mealtable-north",
                         "attributes": { "PrimaryMaterial": "walnut" }
                     }
                 ]
@@ -75,7 +75,7 @@
     },
     "attributes": {
         "handbook": {
-            "groupBy": [ "mealtable-east" ],
+            "groupBy": [ "mealtable-north" ],
             "extraSections": [
                 {
                     "title": "",

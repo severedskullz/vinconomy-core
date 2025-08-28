@@ -1,0 +1,27 @@
+{
+  "ingredientPattern": "WWW,WCW,W_W",
+  "ingredients": {
+    "W": {
+      "type": "item",
+      "code": "game:plank-*",
+      "name": "wood",
+      "allowedVariants": [ "birch", "oak", "maple", "pine", "acacia", "kapok", "baldcypress", "larch", "redwood", "ebony", "walnut", "purpleheart" ]
+    },
+    "C": {
+      "type": "block",
+      "code": "game:claypot-*-fired",
+      "quantity": 4
+
+    }
+  },
+  "recipeGroup": 1,
+  "width": 3,
+  "height": 3,
+  "output": {
+    "type": "block",
+    "code": "mealtable-north",
+        "attributes": {
+            "PrimaryMaterial": "{wood}"
+        }
+  }
+}
