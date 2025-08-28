@@ -155,6 +155,7 @@ namespace Viconomy.BlockEntities
 
         #region GUI
 
+        /*
         protected override void OpenShopForPlayer(IPlayer byPlayer, int selectedStall)
         {
 
@@ -181,6 +182,9 @@ namespace Viconomy.BlockEntities
             }
         }
 
+
+
+        
         protected override void OpenShopGui(byte[] data)
         {
             TreeAttribute tree = new TreeAttribute();
@@ -223,6 +227,17 @@ namespace Viconomy.BlockEntities
                 capi.Network.SendBlockEntityPacket(this.Pos, VinConstants.CLOSE_GUI, null);
             };
             //Console.WriteLine(Api.Side + ": Attempted to open Shop GUI");
+        }
+        */
+
+        protected override GuiDialogBlockEntity GetCustomerGui(string dialogTitle, int stallSelection)
+        {
+            return new GuiVinconPurchaseStallCustomer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+        }
+
+        protected override GuiDialogBlockEntity GetOwnerGui(string dialogTitle, bool isOwner, int stallSelection)
+        {
+            return new GuiVinconPurchaseStallOwner(dialogTitle, this.Inventory, isOwner, this.Pos, this.Api as ICoreClientAPI, stallSelection);
         }
         #endregion
 

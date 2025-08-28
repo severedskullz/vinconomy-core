@@ -22,11 +22,12 @@ namespace Viconomy.GUI
         ICoreClientAPI api;
         int stallSlotCount;
         private int stacksPerSlot;
-        int curTab;
-        bool isOwner;
-        DummyInventory inv;
-        ViconPurchaseSlot purchaseSlot;
-        StallSlotBase stallSlot;
+        protected bool isOwner;
+        protected int curTab;
+        protected DummyInventory inv;
+        protected ViconPurchaseSlot purchaseSlot;
+        protected ViconPurchaseSlot currancySlot;
+        protected StallSlotBase stallSlot;
 
         public GuiViconStallOwner(string DialogTitle, InventoryBase Inventory, bool isOwner,  BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
@@ -58,13 +59,18 @@ namespace Viconomy.GUI
             capi.World.Player.InventoryManager.OpenInventory(Inventory);
             this.DialogTitle = DialogTitle;
 
+            InitializeInventory();
+
+            Compose();
+        }
+
+        public virtual void InitializeInventory()
+        {
             inv = new DummyInventory(capi);
             purchaseSlot = new ViconPurchaseSlot(inv, 0);
             inv.TakeLocked = true;
             inv.PutLocked = true;
             inv[0] = purchaseSlot;
-
-            Compose();
         }
 
         private void Compose()
@@ -252,7 +258,7 @@ namespace Viconomy.GUI
 
         }
 
-        private void UpdatePurchaseSlot()
+        public virtual void UpdatePurchaseSlot()
         {
             ItemSlot item = stallSlot.FindFirstNonEmptyStockSlot();
 

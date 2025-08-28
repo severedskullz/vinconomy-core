@@ -344,6 +344,32 @@ namespace Viconomy.Util
             return stack;
         }
 
+        public static bool IsMealContainer(ItemStack stack, ICoreAPI api)
+        {
+            if (stack == null)
+                return false;
+
+            if (stack.Block is IBlockMealContainer meal)
+                return true;
+
+            // Cooking Pot - always empty, block type changes when it is turned into claypot-cooked
+            if (stack.Block is BlockCookingContainer pot)
+                return true;
+
+            if (stack.Block is BlockContainer container && stack?.Block?.Attributes["mealContainer"]?.AsBool() == true)
+                return true;
+
+            return false;
+        }
+
+        public static float GetMealContainerServings(ItemStack stack, ICoreAPI api)
+        {
+            if (stack?.Block is IBlockMealContainer meal)
+                return meal.GetQuantityServings(api.World, stack);
+
+            return 0;
+        }
+
         public static bool IsEmptyContainer(ItemStack stack, ICoreAPI api)
         {
             if (stack == null)
@@ -362,9 +388,23 @@ namespace Viconomy.Util
             return false;
         }
 
+        public static ItemStack[] GetContainerContents(ItemStack stack, ICoreAPI api)
+        {
+            if (stack == null)
+                return null;
+
+            if (stack.Block is IBlockMealContainer meal)
+                return meal.GetNonEmptyContents(api.World, stack);
+
+            if (stack.Block is BlockContainer container)
+                return container.GetNonEmptyContents(api.World, stack);
+
+            return null;
+        }
+
         public static bool IsMergableContents(ItemStack[] source, ItemStack[] compareTo)
         {
-            if (source.Length == 0 || compareTo.Length == 0) return true;
+            if (source == null || compareTo == null ||  source.Length == 0 || compareTo.Length == 0) return true;
 
             return IsMatchingContents(source, compareTo);
         }

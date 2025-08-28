@@ -9,6 +9,7 @@
     "no-stall-space": "There is not enough space in the Shop's Stall to recieve goods",
     "purchased-zero-quantity": "You must purchase atleast 1 item at a time.",
     "not-enough-money": "Not enough items in your hand to purchase this item.",
+    "not-enough-capacity": "Not enough container capacity to purchase this item.",
     "not-registered-with-shop": "This stall is not registered with a shop yet. Unable to make a purchase.",
     "couldnt-find-register": "Unable to find the register block for shop - is it in an unloaded chunk?",
     "item-cost": "This item costs {0}x {1}. Please have payment in your hand.",

@@ -97,7 +97,7 @@ namespace Viconomy.Inventory.Impl
             int toTransfer = Math.Min(amount, (int)servings);
             if (contents != null)
             {
-                MealStallSlot slot = (MealStallSlot)StallSlots[stall];
+                MealStallSlot slot = GetStall< MealStallSlot>(stall);
 
                 ItemStack[] ingSlots = slot.GetMealStacks();
                 // check if ingredient count matches
@@ -161,6 +161,19 @@ namespace Viconomy.Inventory.Impl
             }
             
             return false;
+        }
+
+        public ItemStack[] GetMealContents(int stallSlot)
+        {
+            StallSlotBase stall = GetStall<MealStallSlot >(stallSlot);
+            ItemStack[] stacks = new ItemStack[4];
+
+            for (int i = 0; i < stacks.Length; i++)
+            {
+                stacks[i] = stall[i].Itemstack?.Clone();
+            }
+
+            return stacks;
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using Viconomy.Filters;
@@ -175,6 +176,16 @@ namespace Viconomy.BlockEntities
 
         #region GUI
 
+        protected virtual GuiDialogBlockEntity GetCustomerGui(string dialogTitle, int stallSelection)
+        {
+            return new GuiViconStallCustomer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+        }
+
+        protected virtual GuiDialogBlockEntity GetOwnerGui(string dialogTitle, bool isOwner, int stallSelection)
+        {
+            return new GuiViconStallOwner(dialogTitle, this.Inventory, isOwner, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+        }
+
         protected virtual void OpenShopForPlayer(IPlayer byPlayer, int selectedStall)
         {
 
@@ -231,9 +242,9 @@ namespace Viconomy.BlockEntities
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
             if (isOwner && !VinconomyCoreSystem.ShouldForceCustomerScreen)
-                this.invDialog = new GuiViconStallOwner(dialogTitle, this.Inventory, isOwner, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+                this.invDialog = GetOwnerGui(dialogTitle, isOwner, stallSelection);
             else
-                this.invDialog = new GuiViconStallCustomer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+                this.invDialog = GetCustomerGui(dialogTitle, stallSelection);
             //this.invDialog.OpenSound = this.OpenSound;
             //this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();

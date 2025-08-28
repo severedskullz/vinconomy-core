@@ -159,7 +159,7 @@ namespace Viconomy.Inventory.StallSlots
                 if (foodSlot.Itemstack != null)
                 {
                     foodSlot.Itemstack.StackSize -= amount;
-                    if (foodSlot.StackSize < 0)
+                    if (foodSlot.StackSize <= 0)
                     {
                         foodSlot.Itemstack = null;
                     }

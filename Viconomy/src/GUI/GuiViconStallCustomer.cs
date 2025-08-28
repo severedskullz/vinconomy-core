@@ -16,12 +16,12 @@ namespace Viconomy.GUI
     {
         BEVinconContainer stall;
 
-        int curTab;
-        int quantity = 1;
-        DummyInventory inv;
-        ViconPurchaseSlot purchaseSlot;
-        ViconPurchaseSlot currancySlot;
-        StallSlotBase stallSlot;
+        protected int curTab;
+        protected int quantity = 1;
+        protected DummyInventory inv;
+        protected ViconPurchaseSlot purchaseSlot;
+        protected ViconPurchaseSlot currancySlot;
+        protected StallSlotBase stallSlot;
 
         public GuiViconStallCustomer(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
@@ -51,22 +51,18 @@ namespace Viconomy.GUI
             this.Compose();
         }
 
-        private void Compose()
+        public virtual void InitializeInventory()
         {
-            ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
-
-            ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.DialogToScreenPadding);
-            bgBounds.BothSizing = ElementSizing.FitToChildren;
-
             ViconBaseInventory vinInv = Inventory as ViconBaseInventory;
             stallSlot = vinInv.StallSlots[curTab];
             ItemSlot purchaseItem = stallSlot.FindFirstNonEmptyStockSlot();
-            
+
             if (purchaseItem != null)
             {
                 this.purchaseSlot.Itemstack = purchaseItem.Itemstack.Clone();
                 this.purchaseSlot.Itemstack.StackSize = stallSlot.ItemsPerPurchase * quantity;
-            } else
+            }
+            else
             {
                 this.purchaseSlot.Itemstack = null;
             }
@@ -82,6 +78,16 @@ namespace Viconomy.GUI
             {
                 this.currancySlot.Itemstack = null;
             }
+        }
+
+        private void Compose()
+        {
+            ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
+
+            ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.DialogToScreenPadding);
+            bgBounds.BothSizing = ElementSizing.FitToChildren;
+
+            InitializeInventory();
 
             ElementBounds settingBounds = ElementBounds.FixedSize(250, 200).WithFixedOffset(0,GuiStyle.TitleBarHeight);
             

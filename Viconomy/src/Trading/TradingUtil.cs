@@ -511,21 +511,6 @@ namespace Viconomy.Trading
         }
     }
 
-    public class MealAggregatedSlots : AggregatedSlots
-    {
-        public override void Add(ItemSlot item)
-        {
-            Slots.Add(item);
-            if (Slots.Count == 0)
-            {
-                TotalCount = item.StackSize;
-            } else
-            {
-                TotalCount = Math.Min(TotalCount, item.StackSize);
-            }
-        }
-    }
-
     public class AggregatedSlots
     {
         public ICoreAPI Api; // This is rediculous Tyron - just to get meal contents?
