@@ -163,7 +163,7 @@ namespace Viconomy
 
                 ShopRegistration shop = _coreSystem.GetRegistry().GetShop(update.shopId);
                 //TODO: For now Ill just hardcode it for Discord to prevent abuse. Without some custom JSON format, itll be pointless to have all webhooks have the same discord limitations.
-                if (shop != null && shop.WebHook != null && shop.WebHook.StartsWith("https://discord.com"))
+                if (shop != null && shop.WebHook != null)
                 {
                     DiscordMessage shopMessage = new DiscordMessage();
                     //message.content = "## :coin: The following shops have had sales recently:";
@@ -211,7 +211,7 @@ namespace Viconomy
             {
                 shopId = reg.ID;
                 shopName = reg.Name;
-                url = "https://mods.vintagestory.at/files/asset/8379/Vinconomy-2.0.jpg";
+                url = "https://moddbcdn.vintagestory.at/Vinconomy-ModDBLogo2_aeba5d3e4663861032893d1cb56bf714.jpg";
                 //url = reg.imageUrl;
                 //discordWebhook = reg.webhook;
             }
