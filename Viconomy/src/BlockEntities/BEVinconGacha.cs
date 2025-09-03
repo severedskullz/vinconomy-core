@@ -18,12 +18,12 @@ namespace Viconomy.BlockEntities
     public class BEVinconGacha : BEVinconBase
     {
         protected ViconGachaInventory inventory;
-        private MeshData[] meshes;
+        //private MeshData[] meshes;
         public bool useTotalRandomizer { get; private set; }
 
         public override InventoryBase Inventory { get { return this.inventory; } }
 
-        public override int DisplayedItems => StallSlotCount;
+        public override int DisplayedItems => 0;
 
         public BEVinconGacha()
         {
@@ -80,8 +80,6 @@ namespace Viconomy.BlockEntities
 
         private void TryPurchaseItem(IPlayer player, byte[] data) {
 
-           
-
             //Console.WriteLine(Api.Side + ": We tried to purchase item!");
             //PrintClientMessage(player, Api.Side + ": We tried to purchase item!");
             
@@ -122,10 +120,6 @@ namespace Viconomy.BlockEntities
             }
 
         }
-
-
-
-      
 
         #region GUI
 
@@ -210,7 +204,6 @@ namespace Viconomy.BlockEntities
         }
 
         #endregion
-
 
         #region Networking
 
@@ -331,7 +324,7 @@ namespace Viconomy.BlockEntities
                 ICoreClientAPI coreClientAPI = this.Api as ICoreClientAPI;
                 if (coreClientAPI != null)
                 {
-                    coreClientAPI.Network.SendBlockEntityPacket(this.Pos.X, this.Pos.Y, this.Pos.Z, VinConstants.PURCHASE_ITEMS, null);
+                    coreClientAPI.Network.SendBlockEntityPacket(this.Pos, VinConstants.PURCHASE_ITEMS, null);
                     coreClientAPI.World.Player.TriggerFpAnimation(EnumHandInteract.HeldItemInteract);
                 }
             }
@@ -346,17 +339,6 @@ namespace Viconomy.BlockEntities
         protected override void UpdateMesh(int index)
         {
             //Do nothing.
-        }
-        public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
-        {
-            
-            if (this.inventory[0].Itemstack == null)
-            {
-                return false;
-            }
-            //mesher.AddMeshData(this.meshes[this.inventory[0].StackSize], 1);
-
-            return false;
         }
 
         public override void OnBlockUnloaded()
@@ -378,21 +360,20 @@ namespace Viconomy.BlockEntities
         public override void OnBlockRemoved()
         {
             base.OnBlockRemoved();
-            GuiDialogBlockEntity guiDialogBlockEntity = this.invDialog;
-            if (guiDialogBlockEntity != null && guiDialogBlockEntity.IsOpened())
+            if (invDialog != null)
             {
-                GuiDialogBlockEntity guiDialogBlockEntity2 = this.invDialog;
-                if (guiDialogBlockEntity2 != null)
+                if (invDialog.IsOpened())
                 {
-                    guiDialogBlockEntity2.TryClose();
+                    invDialog.TryClose();
                 }
             }
-            GuiDialogBlockEntity guiDialogBlockEntity3 = this.invDialog;
-            if (guiDialogBlockEntity3 == null)
+
+            if (invDialog != null)
             {
-                return;
+                invDialog.Dispose();
             }
-            guiDialogBlockEntity3.Dispose();
+
+            invDialog = null;
         }
 
        
@@ -434,7 +415,7 @@ namespace Viconomy.BlockEntities
         public override ItemSlot[] GetSlotsForStall(int stallSlot)
         {
 
-            return new ItemSlot[] { inventory[stallSlot] };
+            return [ inventory[stallSlot] ];
         }
 
         public override ItemSlot GetCurrencyForStall(int stallSlot)

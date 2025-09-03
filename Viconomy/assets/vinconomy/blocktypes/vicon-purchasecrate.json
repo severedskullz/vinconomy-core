@@ -6,7 +6,7 @@
     "creativeinventoryStacksByType": {
         "*-north": [
             {
-                "tabs": [ "vinconomy" ],
+                "tabs": [ "vinconomy", "general" ],
                 "stacks": [
                     {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "acacia", "SecondaryMaterial": "acacia" }},
                     {"type": "block","code": "purchasecrate-north","attributes": { "PrimaryMaterial": "acacia", "SecondaryMaterial": "baldcypress" }},

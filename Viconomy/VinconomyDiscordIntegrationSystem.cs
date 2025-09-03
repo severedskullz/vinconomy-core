@@ -72,7 +72,7 @@ namespace Viconomy
             _coreSystem = api.ModLoader.GetModSystem<VinconomyCoreSystem>();
             httpClient = new HttpClient();
             //httpClient.BaseAddress = new Uri("https://discord.com");
-            PostAsync();
+            //PostAsync();
             //Task.Run(PostAsync);
 
             _coreSystem.OnPurchasedItem += EnquePurchase;
@@ -178,6 +178,8 @@ namespace Viconomy
                     httpClient.PostAsync(shop.WebHook, shopJsonContent);
                 }
             }
+
+            //TODO: Noticed small bug - will only send the firs 10 shops updated here. Need a For Loop instead of Take(10)... Discord is limited to 10 embeds, so thats why it was there
             if (Config.PurchasesWebhook != null )
             {
                 DiscordMessage message = new DiscordMessage();

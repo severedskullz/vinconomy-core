@@ -1,17 +1,24 @@
 [
   {
-    "ingredientPattern": "HH,OC",
+    "ingredientPattern": "PP,GC,SS",
     "ingredients": {
 
-        "H": {
-            "type": "block",
-            "code": "game:hopper"
-        },
-        "O": {
+        "P": {
             "type": "item",
             "code": "game:metalplate-*",
-            "name": "outermetal",
+            "name": "primary",
             "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "silver", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "S": {
+            "type": "item",
+            "code": "game:metalplate-*",
+            "name": "secondary",
+            "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "silver", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "G": {
+            "type": "block",
+            "code": "game:glass-*",
+            "name": "deco"
         },
         "C": {
             "type": "block",
@@ -20,10 +27,15 @@
         }
     },
     "width": 2,
-    "height": 2,
+    "height": 3,
     "output": {
       "type": "block",
-      "code": "gachaloader-east"
+      "code": "gacha-north",
+          "attributes": {
+                "PrimaryMaterial": "{primary}",
+                "SecondaryMaterial": "{secondary}",
+                "DecoMaterial": "{deco}"
+          }
     }
   }
 ]

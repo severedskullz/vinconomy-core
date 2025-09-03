@@ -3,11 +3,10 @@
     "class": "VinconContainer",
     "entityClass": "BEVinconHelmetStand",
     "priorityInteract": true,
-    "creativeinventory": {},
     "creativeinventoryStacksByType": {
         "*-north": [
             {
-                "tabs": [ "vinconomy" ],
+                "tabs": [ "vinconomy", "general" ],
                 "stacks": [
                     {
                         "type": "block",

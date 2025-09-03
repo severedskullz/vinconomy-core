@@ -3,7 +3,7 @@
   "class": "VinconCouponCutter",
   "entityClass": "BEVinconCouponCutter",
   "priorityInteract": true,
-  "creativeinventory": { "vinconomy": [ "*-north" ] },
+  "creativeinventory": { "vinconomy": [ "*-north" ], "general": [ "*-north" ] },
     "attributes": {
         "handbook": {
             "groupBy": [ "couponcutter-north" ]

@@ -8,7 +8,7 @@
     "creativeinventoryStacksByType": {
         "*-north": [
             {
-                "tabs": [ "vinconomy" ],
+                "tabs": [ "vinconomy", "general" ],
                 "stacks": [
                     { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "black","SecondaryMaterial": "acacia"}},
                     { "type": "block", "code": "matdouble-north", "attributes": {"PrimaryMaterial": "blue","SecondaryMaterial": "acacia"}},

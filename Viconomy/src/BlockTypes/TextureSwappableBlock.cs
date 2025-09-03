@@ -62,24 +62,24 @@ namespace Viconomy.BlockTypes
 
                 if (textureCode == "primary")
                 {
-                    return this.tmpTextureSource[this.PrimaryMaterial];
+                    return tmpTextureSource[PrimaryMaterial];
                 }
                 if (textureCode == "secondary")
                 {
-                    return this.tmpTextureSource[this.SecondaryMaterial];
+                    return tmpTextureSource[SecondaryMaterial];
                 }
                 if (textureCode == "deco")
                 {
-                    return this.tmpTextureSource[this.DecoMaterial];
+                    return tmpTextureSource[DecoMaterial];
                 }
 
-                if (this.tmpTextureSource[textureCode] != null)
+                if (tmpTextureSource[textureCode] != null)
                 {
-                    return this.tmpTextureSource[textureCode];
+                    return tmpTextureSource[textureCode];
                 }
                 else
                 {
-                    return this.tmpTextureSource["default"];
+                    return tmpTextureSource["default"];
                 }
             }
         }

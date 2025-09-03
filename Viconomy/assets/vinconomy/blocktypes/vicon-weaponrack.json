@@ -7,7 +7,7 @@
     "creativeinventoryStacksByType": {
         "*-north": [
             {
-                "tabs": [ "vinconomy" ],
+                "tabs": [ "vinconomy", "general" ],
                 "stacks": [
                     {
                         "type": "block",

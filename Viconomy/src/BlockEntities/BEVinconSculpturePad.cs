@@ -25,7 +25,7 @@ namespace Viconomy.BlockEntities
         protected InventoryBase inventory;
         int sizeXZ = 3;
         int sizeY = 3;
-        int maxSizeXZ =3;
+        int maxSizeXZ = 3;
         int maxSizeY = 3;
         string sculptureName;
         public override InventoryBase Inventory { get { return this.inventory; } }

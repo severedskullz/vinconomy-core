@@ -3,7 +3,7 @@
     "class": "VinconGachaLoader",
     "entityClass": "BEVinconGachaLoader",
     "priorityInteract": true,
-    "creativeinventory": { "vinconomy": [ "*-east" ] },
+    "creativeinventory": { "vinconomy": [ "*-east" ], "general": [ "*-east" ] },
     "attributes": {
         "handbook": {
             "groupBy": [ "gachaloader-east" ],

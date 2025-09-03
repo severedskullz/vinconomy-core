@@ -7,7 +7,7 @@
     "creativeinventoryStacksByType": {
         "*-north": [
             {
-                "tabs": [ "vinconomy" ],
+                "tabs": [ "vinconomy", "general" ],
                 "stacks": [
                     { "type": "block", "code": "tellermachine-north", "attributes": {"PrimaryMaterial": "bismuth","SecondaryMaterial": "acacia"}},
                     { "type": "block", "code": "tellermachine-north", "attributes": {"PrimaryMaterial": "bismuthbronze","SecondaryMaterial": "acacia"}},

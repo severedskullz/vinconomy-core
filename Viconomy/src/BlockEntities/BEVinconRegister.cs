@@ -180,16 +180,16 @@ namespace Viconomy.BlockEntities
                             handSlot.MarkDirty();
                             VinconomyCoreSystem modSystem = Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
                             ShopRegistration shop = modSystem.GetRegistry().GetShop(ID);
-                            player.SendMessage(0, Lang.Get("vinconomy:ledger-set", new object[] { shop.Name }), EnumChatType.OwnMessage);
+                            player.SendMessage(0, Lang.Get("vinconomy:ledger-set", [ shop.Name ]), EnumChatType.OwnMessage);
                         }
                         else
                         {
-                            player.SendMessage(0, Lang.Get("vinconomy:ledger-already-set", new object[0]), EnumChatType.OwnMessage);
+                            player.SendMessage(0, Lang.Get("vinconomy:ledger-already-set", []), EnumChatType.OwnMessage);
                         }
                     }
                     else
                     {
-                        player.SendMessage(0, Lang.Get("vinconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
+                        player.SendMessage(0, Lang.Get("vinconomy:doesnt-own", []), EnumChatType.OwnMessage);
                     }
                 }
             }
@@ -202,7 +202,7 @@ namespace Viconomy.BlockEntities
             {
                 if (Api.Side == EnumAppSide.Server)
                 {
-                    ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("vinconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
+                    ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("vinconomy:doesnt-own", []), EnumChatType.OwnMessage);
                 }
                
             }
@@ -225,7 +225,7 @@ namespace Viconomy.BlockEntities
                     {
                         writer.Write(register.Name);
                     } else if (OwnerName != null) {
-                         writer.Write(Lang.Get("vinconomy:gui-shop-owner", new string[] { OwnerName }));
+                         writer.Write(Lang.Get("vinconomy:gui-shop-owner", [ OwnerName ]));
                     } else {
                         writer.Write(Lang.Get("vinconomy:gui-shop-unowned"));    
                     }
@@ -283,7 +283,7 @@ namespace Viconomy.BlockEntities
                         }
                         else
                         {
-                            ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
+                            ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:doesnt-own", []), EnumChatType.OwnMessage);
                         }
                     }
                     break;
@@ -301,7 +301,7 @@ namespace Viconomy.BlockEntities
                         }
                         else
                         {
-                            ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
+                            ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:doesnt-own", []), EnumChatType.OwnMessage);
                         }
                     }
                     break;
@@ -325,12 +325,12 @@ namespace Viconomy.BlockEntities
 
                             } else
                             {
-                                ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:player-not-found", new object[] { playerName }), EnumChatType.OwnMessage);
+                                ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:player-not-found", [ playerName ]), EnumChatType.OwnMessage);
                             }
                         }
                         else
                         {
-                            ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
+                            ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:doesnt-own", []), EnumChatType.OwnMessage);
                         }
                     }
                     break;
@@ -352,7 +352,7 @@ namespace Viconomy.BlockEntities
                         }
                         else
                         {
-                            ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
+                            ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:doesnt-own", []), EnumChatType.OwnMessage);
                         }
                     }
                     break;
@@ -374,7 +374,7 @@ namespace Viconomy.BlockEntities
                         }
                         else
                         {
-                            ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:doesnt-own", new object[0]), EnumChatType.OwnMessage);
+                            ((IServerPlayer)player).SendMessage(0, Lang.Get("viconomy:doesnt-own", []), EnumChatType.OwnMessage);
                         }
                     }
                     break;
