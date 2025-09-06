@@ -48,7 +48,7 @@ namespace Viconomy.ItemTypes
 
             string couponTypeStr = consume ? Lang.Get("vinconomy:gui-single-use") : Lang.Get("vinconomy:gui-reusable");
             string discountTypeStr = discountType == DISCOUNT_TYPE_UNIT ? Lang.Get("vinconomy:gui-units") : Lang.Get("vinconomy:gui-percent");
-            string bonusTypeStr = bonusType == BONUS_TYPE_DISCOUNT ? Lang.Get("vinconomy:gui-bonus-product") : Lang.Get("vinconomy:gui-price-discount");
+            string bonusTypeStr = bonusType == BONUS_TYPE_PRODUCT ? Lang.Get("vinconomy:gui-bonus-product") : Lang.Get("vinconomy:gui-price-discount");
 
 
             dsc.AppendLine(Lang.Get("vinconomy:gui-f-coupon-text", [couponTypeStr, value, discountTypeStr, bonusTypeStr]));

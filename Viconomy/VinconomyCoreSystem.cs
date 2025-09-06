@@ -549,9 +549,14 @@ namespace Viconomy
         public void PurchasedItem(TradeResult result, ItemStack product, ItemStack payment)
         {
             GenericTradeRequest req = new GenericTradeRequest(result.coreApi, result.customer);
+            req.WithShop(result.shopRegister, result.sellingEntity, 0, result.sellingEntity.IsAdminShop);
+            req.WithProduct(product, null, 0);
+            req.WithCurrency(payment, null, 0);
             GenericTradeResult res = new GenericTradeResult(req, this);
             res.TransferedProductTotal = product.StackSize;
             res.TransferedCurrencyTotal = payment.StackSize;
+            res.TransferedProduct.Add(product);
+            res.TransferedCurrency.Add(payment);
             PurchasedItem(res);
         }
 

@@ -6,6 +6,8 @@
         public int MessageIntervalMinutes { get; set; } = 10;
         public string PurchasesWebhook { get; set; }
 
+        public string EmbedImageURL { get; set; }
+
 
 
     }

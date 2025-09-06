@@ -57,6 +57,7 @@ namespace Viconomy
         public VinconIntegrationConfig ResetModConfig()
         {
             VinconIntegrationConfig config = new VinconIntegrationConfig();
+            config.EmbedImageURL = "https://moddbcdn.vintagestory.at/Vinconomy-ModDBLogo2_aeba5d3e4663861032893d1cb56bf714.jpg";
             return config;
         }
 
@@ -77,7 +78,6 @@ namespace Viconomy
 
             _coreSystem.OnPurchasedItem += EnquePurchase;
             _coreServerAPI.Event.Timer(PostAsync, Config.MessageIntervalMinutes * 60);
-
         }
 
         private void EnquePurchase(GenericTradeResult result, ItemStack product, ItemStack payment)
@@ -138,9 +138,9 @@ namespace Viconomy
             {
                 Embed embed = new Embed();
                 embed.title = update.shopName;
-                if (update.url != null)
+                if (Config.EmbedImageURL != null)
                 {
-                    embed.thumbnail = new Thumbnail(update.url);
+                    embed.thumbnail = new Thumbnail(Config.EmbedImageURL);
                 }
 
                 StringBuilder sb = new StringBuilder();
@@ -167,7 +167,7 @@ namespace Viconomy
 
                 ShopRegistration shop = _coreSystem.GetRegistry().GetShop(update.shopId);
                 //TODO: For now Ill just hardcode it for Discord to prevent abuse. Without some custom JSON format, itll be pointless to have all webhooks have the same discord limitations.
-                if (shop != null && shop.WebHook != null)
+                if (shop != null && shop.WebHook != null && (shop.WebHook.StartsWith("http://") || shop.WebHook.StartsWith("https://")))
                 {
                     DiscordMessage shopMessage = new DiscordMessage();
                     //message.content = "## :coin: The following shops have had sales recently:";
@@ -209,7 +209,7 @@ namespace Viconomy
             internal string shopName { get; set; }
             internal string discordWebhook { get; set; }
             internal bool isAdminShop { get; set; }
-            internal string url { get; set; }
+            //internal string url { get; set; }
             //internal Dictionary<string, PurchaseList>  productsPurchased {get;set;} = new Dictionary<string, PurchaseList>();
             internal Dictionary<string, CustomerPurchaseList> customers { get; set; } = new Dictionary<string, CustomerPurchaseList>();
 
@@ -217,13 +217,6 @@ namespace Viconomy
             {
                 shopId = reg.ID;
                 shopName = reg.Name;
-<<<<<<< HEAD
-                //url = "https://mods.vintagestory.at/files/asset/8379/Vinconomy-2.0.jpg";
-=======
-                url = "https://moddbcdn.vintagestory.at/Vinconomy-ModDBLogo2_aeba5d3e4663861032893d1cb56bf714.jpg";
->>>>>>> 1f8bcdc3604b563cef1ebb49e08fb215a36b3194
-                //url = reg.imageUrl;
-                //discordWebhook = reg.webhook;
             }
 
             internal void AddPurchase(GenericTradeResult result, ItemStack product, ItemStack payment)
