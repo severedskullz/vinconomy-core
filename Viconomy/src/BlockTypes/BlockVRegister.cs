@@ -82,26 +82,6 @@ namespace Viconomy.BlockTypes
             return new ItemStack[] { stack };
         }
 
-        public override void OnBlockBroken(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
-        {
-            if (byPlayer == null)
-                return;
-
-            BEVinconRegister vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEVinconRegister;
-            if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID || byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative)
-            {
-                VinconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
-                if (modSystem != null && !modSystem.BlockBroken(this.Code, world, pos, byPlayer, dropQuantityMultiplier))
-                {
-                    return;
-                }
-                base.OnBlockBroken(world, pos, byPlayer, dropQuantityMultiplier);
-            }
-
-            else if (api.Side == EnumAppSide.Server)
-                ((IServerPlayer)byPlayer).SendMessage(0, Lang.Get("vinconomy:doesnt-own", new object[0]), EnumChatType.CommandError, null);
-        }
-
         public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
         {
             ITreeAttribute attrs = inSlot.Itemstack.Attributes;
