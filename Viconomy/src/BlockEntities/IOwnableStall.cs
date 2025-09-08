@@ -5,6 +5,8 @@ namespace Viconomy.BlockEntities
     public interface IOwnableStall
     {
         public string Owner { get; }
+        public string OwnerName { get; }
+        public bool IsAdminShop { get; }
         public void SetOwner(IPlayer owner);
         public void SetOwner(string playerUUID, string playerName);
         public void SetRegisterID(int registerID);
