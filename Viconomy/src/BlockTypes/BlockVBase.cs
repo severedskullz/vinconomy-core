@@ -14,7 +14,7 @@ namespace Viconomy.BlockTypes
             if (byPlayer == null)
                 return;
 
-            IOwnableStall vEntity = world.BlockAccessor.GetBlockEntity(pos) as IOwnableStall;
+            IOwnable vEntity = world.BlockAccessor.GetBlockEntity(pos) as IOwnable;
             if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID || byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative)
             {
                 VinconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<VinconomyCoreSystem>();

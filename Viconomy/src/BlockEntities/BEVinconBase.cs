@@ -13,7 +13,7 @@ using Vintagestory.API.Datastructures;
 
 namespace Viconomy.BlockEntities
 {
-    public abstract class BEVinconBase : BETextureSwappableBlockDisplay, IOwnableStall
+    public abstract class BEVinconBase : BETextureSwappableBlockDisplay, IOwnableStall, IInteractableStall
     {
         protected VinconomyCoreSystem modSystem;
         protected GuiDialogBlockEntity invDialog;

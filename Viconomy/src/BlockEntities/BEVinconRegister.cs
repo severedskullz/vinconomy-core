@@ -15,7 +15,7 @@ using System.Collections.Generic;
 
 namespace Viconomy.BlockEntities
 {
-    public class BEVinconRegister : BETextureSwappableBlockContainer, IOwnableStall
+    public class BEVinconRegister : BETextureSwappableBlockContainer, IOwnable
     {
 
         private ViconRegisterInventory inventory;
@@ -29,7 +29,6 @@ namespace Viconomy.BlockEntities
 
         public override string InventoryClassName => "ViconomyRegisteryInventory";
 
-        public bool IsAdminShop => false;
 
         public BEVinconRegister()
         {
@@ -534,24 +533,15 @@ namespace Viconomy.BlockEntities
             //Console.WriteLine(Api.Side + ": Attempted to close GUI");
         }
 
-        public void SetOwner(IPlayer owner)
+        public void SetOwner(IPlayer player)
         {
-            throw new System.NotImplementedException();
+            Owner = player.PlayerUID;
+            OwnerName = player.PlayerName;
         }
-
         public void SetOwner(string playerUUID, string playerName)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetRegisterID(int registerID)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetIsAdminShop(bool isAdminShop)
-        {
-            throw new System.NotImplementedException();
+            Owner = playerUUID;
+            OwnerName = playerName;
         }
     }
 
