@@ -2,7 +2,9 @@ using Cake.Common;
 using Cake.Common.IO;
 using Cake.Common.Tools.DotNet;
 using Cake.Common.Tools.DotNet.Clean;
+using Cake.Common.Tools.DotNet.MSBuild;
 using Cake.Common.Tools.DotNet.Publish;
+using Cake.Common.Tools.MSBuild;
 using Cake.Core;
 using Cake.Frosting;
 using Cake.Json;
@@ -79,10 +81,14 @@ public sealed class BuildTask : FrostingTask<BuildContext>
             });
 
 
+
         context.DotNetPublish($"../{BuildContext.ProjectName}/{BuildContext.ProjectName}.csproj",
             new DotNetPublishSettings
             {
-                Configuration = context.BuildConfiguration
+                Configuration = context.BuildConfiguration,
+                MSBuildSettings = new DotNetMSBuildSettings()
+                .SetVersion(context.Version)
+
             });
     }
 }

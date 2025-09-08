@@ -4,8 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>bin\$(Configuration)\Mods\mod</OutputPath>
-	<Optimize>false</Optimize>
-	<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+	<Authors>SeveredSkullz</Authors>
+	<Copyright>Copyright © SeveredSkullz 2023</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

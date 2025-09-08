@@ -19,20 +19,17 @@ namespace Viconomy.GUI
     {
         BEVinconBase stall;
         ShopRegistration[] registers;
-        ICoreClientAPI api;
         int stallSlotCount;
         private int stacksPerSlot;
         protected bool isOwner;
         protected int curTab;
         protected DummyInventory inv;
         protected ViconPurchaseSlot purchaseSlot;
-        protected ViconPurchaseSlot currancySlot;
         protected StallSlotBase stallSlot;
 
         public GuiViconStallOwner(string DialogTitle, InventoryBase Inventory, bool isOwner,  BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
-            api = capi;
             stall = capi.World.BlockAccessor.GetBlockEntity<BEVinconBase>(BlockEntityPosition);
             curTab = stallSelection;
             VinconomyCoreSystem modSystem = capi.ModLoader.GetModSystem<VinconomyCoreSystem>();
@@ -180,7 +177,7 @@ namespace Viconomy.GUI
                 SingleComposer.BeginChildElements(settingBounds)
                     .AddStaticText(Lang.Get("vinconomy:gui-shop"), CairoFont.WhiteSmallText(), shopSelectionLabel)
                     .AddDropDown(shopsKeys, shopsNames, selectedIndex, new SelectionChangedDelegate(this.onSelectionChanged), shopSelectBounds, "shopSelection")
-                    .AddIf(api.World.Player.HasPrivilege("gamemode"))
+                    .AddIf(capi.World.Player.HasPrivilege("gamemode"))
                         .AddStaticText(Lang.Get("vinconomy:gui-admin-shop"), CairoFont.WhiteSmallText(), adminShopLabel)
                         .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
                     .EndIf()
@@ -198,7 +195,7 @@ namespace Viconomy.GUI
                     //.AddPassiveItemSlot(purchaseSlotBounds, inv, purchaseSlot, true)
 
                     .AddStaticText(Lang.Get("vinconomy:gui-decoration-block"), CairoFont.WhiteSmallText(), chiselLabel )
-                    .AddItemSlotGrid(vinInv, new Action<object>(this.SetCurrencySlot), 1, new int[] { 0 }, chiselSlotBounds, "chisel")
+                    .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { 0 }, chiselSlotBounds, "chisel")
 
                 //.AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlotBounds, "purchase")
                 //.AddPassiveItemSlot(outputSlotBounds, Inventory, )
@@ -208,7 +205,7 @@ namespace Viconomy.GUI
                     .AddButton("<", new ActionConsumable(this.PreviousPage), pagePrev, EnumButtonStyle.Small, "prevPage")
                     .AddDynamicText(labelText, labelTextFont, pageLabel, "pageLabel")
                     .AddButton(">", new ActionConsumable(this.NextPage), pageNext, EnumButtonStyle.Small, "nextPage")
-                    .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), (int)Math.Ceiling(Math.Sqrt(uiSlots.Length)), uiSlots, slotGrid, "inventory")
+                    .AddItemSlotGrid(vinInv, new Action<object>(this.SendProductSlot), (int)Math.Ceiling(Math.Sqrt(uiSlots.Length)), uiSlots, slotGrid, "inventory")
                 .EndChildElements();
 
 
@@ -345,14 +342,19 @@ namespace Viconomy.GUI
 
         private void SendInvPacket(object p)
         {
-            UpdatePurchaseSlot();
             capi.Network.SendBlockEntityPacket(BlockEntityPosition.X, BlockEntityPosition.Y, BlockEntityPosition.Z, p);
+        }
+
+        private void SendProductSlot(object p)
+        {
+            UpdatePurchaseSlot();
+            SendInvPacket(p);
         }
 
         private void SetCurrencySlot(object p)
         {
             SingleComposer.GetTextInput("costQuantity").SetValue(stallSlot.Currency.StackSize);
-            capi.Network.SendBlockEntityPacket(BlockEntityPosition.X, BlockEntityPosition.Y, BlockEntityPosition.Z, p);
+            SendInvPacket(p);
         }
 
         private void OnTitleBarCloseClicked()

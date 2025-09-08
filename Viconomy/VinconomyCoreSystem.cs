@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Viconomy.BlockEntities;
+using Viconomy.BlockEntities.Unfinished;
 using Viconomy.BlockTypes;
 using Viconomy.Config;
 using Viconomy.Database;
@@ -65,11 +66,13 @@ namespace Viconomy
             api.RegisterItemClass("VinconCoupon", typeof(ItemCoupon));
 
             // 5.0 Block Mappings
+            api.RegisterBlockClass("VinconGeneric", typeof(BlockVGeneric));
             api.RegisterBlockClass("VinconFoodContainer", typeof(BlockVFoodContainer));
             api.RegisterBlockClass("VinconCouponCutter", typeof(BlockVCouponCutter));
             api.RegisterBlockClass("VinconPurchaseContainer", typeof(BlockVPurchaseContainer));
 
             // 5.0 Block Entity Mappings
+            api.RegisterBlockEntityClass("BEVinconResidence", typeof(BEVinconResidence));
             api.RegisterBlockEntityClass("BEVinconFoodContainer", typeof(BEVinconFoodContainer));
             api.RegisterBlockEntityClass("BEVinconCouponCutter", typeof(BEVinconCouponCutter));
             api.RegisterBlockEntityClass("BEVinconPurchaseContainer", typeof(BEVinconPurchaseContainer));
@@ -140,7 +143,6 @@ namespace Viconomy
                 .RegisterMessageType(typeof(TenretniPacket))
                 .RegisterMessageType(typeof(ShopCatalogRequestPacket))
                 .RegisterMessageType(typeof(ShopCatalogResponsePacket));
-
         }
 
         public override void StartPre(ICoreAPI api)
@@ -166,6 +168,16 @@ namespace Viconomy
 
             base.StartPre(api);
         }
+
+        public override void Dispose()
+        {
+           if (_coreServerAPI != null)
+            {
+                _coreServerAPI.Event.SaveGameLoaded -= OnSaveGameLoading;
+                _coreServerAPI.Event.PlayerNowPlaying -= SendAllPublicRegisters;
+                _coreServerAPI.Event.OnTestBlockAccess -= TestAccess;
+            }
+        }
        
         public override void StartServerSide(ICoreServerAPI api)
         {
@@ -175,7 +187,7 @@ namespace Viconomy
             _serverChannel.SetMessageHandler(new NetworkClientMessageHandler<ShopCatalogRequestPacket>(this.OnRecieveShopCatalogRequest));
 
             api.Event.SaveGameLoaded += OnSaveGameLoading;
-            api.Event.PlayerJoin += SendAllPublicRegisters;
+            api.Event.PlayerNowPlaying += SendAllPublicRegisters;
 
             var parsers = api.ChatCommands.Parsers;
             api.ChatCommands.GetOrCreate("vinconomy")
@@ -944,22 +956,6 @@ namespace Viconomy
         }
 
         #endregion Callbacks
-
-        /*
-        public RayTraceResults DoPlayerRaytrace(IClientPlayer player)
-        {
-            BlockSelection blockSelection = null;
-            EntitySelection entitySelection = null;
-
-            Vec3d camPos = new Vec3d(player.Entity.SidedPos.X, player.Entity.SidedPos.Y + player.Entity.LocalEyePos.Y, player.Entity.SidedPos.Z);
-
-            _coreClientAPI.World.RayTraceForSelection(camPos, player.CameraPitch, player.CameraYaw, 300f, ref blockSelection, ref entitySelection, null, null);
-
-            return new RayTraceResults(blockSelection, entitySelection);
-
-        }
-        */
     }
-
 
 }

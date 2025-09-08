@@ -469,7 +469,7 @@ namespace Viconomy.BlockEntities
         }
 
          public override void OnReceivedClientPacket(IPlayer player, int packetid, byte[] data)
-        {
+         {
             IPlayerInventoryManager inventoryManager = player.InventoryManager;
             int stallSlot;
             int amount;
