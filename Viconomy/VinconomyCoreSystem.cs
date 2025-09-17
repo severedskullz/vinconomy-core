@@ -39,13 +39,14 @@ namespace Viconomy
         private Dictionary<EnumItemClass, List<IItemRenderer>> renderers;
         private bool isRegisteringRenderers;
         public ShopMapLayer ShopMapLayer { get; set; }
+        private GuiDialogGeneric ShopCatalogGui;
+        public static bool ShouldForceCustomerScreen;
 
         //Server Variables
         private ICoreServerAPI _coreServerAPI;
         private IServerNetworkChannel _serverChannel;
         public ViconDatabase DB;
-        private GuiDialogGeneric ShopCatalogGui;
-        public static bool ShouldForceCustomerScreen;
+
 
         //Shared Variables
         public ViconConfig Config { get; internal set; }

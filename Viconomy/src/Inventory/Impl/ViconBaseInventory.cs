@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using Viconomy.BlockEntities;
-using Viconomy.Inventory.StallSlots;
-using Viconomy.Inventory.Slots;
-using Vintagestory.API.Common;
 using Viconomy.Config;
+using Viconomy.Inventory.Slots;
+using Viconomy.Inventory.StallSlots;
+using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
 namespace Viconomy.Inventory.Impl
@@ -198,6 +199,35 @@ namespace Viconomy.Inventory.Impl
         public override ItemSlot GetAutoPullFromSlot(BlockFacing atBlockFace)
         {
             return null;
+        }
+
+        public override void DropAll(Vec3d pos, int maxStackSize = 0)
+        {
+            using IEnumerator<ItemSlot> enumerator = GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                ItemSlot current = enumerator.Current;
+                if (current.Itemstack == null || current is ViconCurrencySlot)
+                {
+                    continue;
+                }
+
+                if (maxStackSize > 0)
+                {
+                    while (current.StackSize > 0)
+                    {
+                        ItemStack itemstack = current.TakeOut(GameMath.Clamp(current.StackSize, 1, maxStackSize));
+                        Api.World.SpawnItemEntity(itemstack, pos);
+                    }
+                }
+                else
+                {
+                    Api.World.SpawnItemEntity(current.Itemstack, pos);
+                }
+
+                current.Itemstack = null;
+                current.MarkDirty();
+            }
         }
     }
 }

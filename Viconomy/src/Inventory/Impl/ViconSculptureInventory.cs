@@ -61,35 +61,6 @@ namespace Viconomy.Inventory.Impl
 
         }
 
-        public override void DropAll(Vec3d pos, int maxStackSize = 0)
-        {
-            using IEnumerator<ItemSlot> enumerator = GetEnumerator();
-            while (enumerator.MoveNext())
-            {
-                ItemSlot current = enumerator.Current;
-                if (current.Itemstack == null || current is ViconCurrencySlot)
-                {
-                    continue;
-                }
-
-                if (maxStackSize > 0)
-                {
-                    while (current.StackSize > 0)
-                    {
-                        ItemStack itemstack = current.TakeOut(GameMath.Clamp(current.StackSize, 1, maxStackSize));
-                        Api.World.SpawnItemEntity(itemstack, pos);
-                    }
-                }
-                else
-                {
-                    Api.World.SpawnItemEntity(current.Itemstack, pos);
-                }
-
-                current.Itemstack = null;
-                current.MarkDirty();
-            }
-        }
-
         public override void FromTreeAttributes(ITreeAttribute tree)
         {
             slots = SlotsFromTreeAttributes(tree, slots, null);

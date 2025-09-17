@@ -9,8 +9,6 @@ namespace Viconomy.GUI
 {
     public class GuiVinconPurchaseStallCustomer : GuiViconStallCustomer
     {
-        BEVinconContainer stall;
-
         public GuiVinconPurchaseStallCustomer(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi, stallSelection)
         {
@@ -23,7 +21,7 @@ namespace Viconomy.GUI
             PurchaseStallSlot stallSlot = vinInv.GetStall<PurchaseStallSlot>(curTab);
             ItemSlot purchaseItem = stallSlot.Currency;
 
-            if (purchaseItem != null)
+            if (purchaseItem != null && purchaseItem.Itemstack != null)
             {
                 this.purchaseSlot.Itemstack = purchaseItem.Itemstack.Clone();
                 this.purchaseSlot.Itemstack.StackSize = stallSlot.ItemsPerPurchase * quantity;

@@ -130,7 +130,7 @@ namespace Viconomy.Inventory.Impl
                     ItemSlot fromSlot = new DummySlot(ing);
                     ItemSlot toSlot = slot.GetSlot(i);
                     int amountMoved = fromSlot.TryPutInto(Api.World, toSlot, ing.StackSize);
-                    // In almost every case, this should *ALWAYS* be leftover because you cant have a meal with different amounts of ingredients, but *JUST* to be sure.
+                    // In almost every case, this should *ALWAYS* be the same because you cant have a meal with different amounts of ingredients, but *JUST* to be sure.
                     servingsTransfered = Math.Max(servingsTransfered, amountMoved);
                     toSlot.MarkDirty();
                         
