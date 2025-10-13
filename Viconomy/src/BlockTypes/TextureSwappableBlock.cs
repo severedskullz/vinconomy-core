@@ -224,15 +224,15 @@ namespace Viconomy.BlockTypes
             string deco = attrs.GetString("DecoMaterial");
             if (primary != null)
             {
-                dsc.AppendLine("Primary: " + Lang.Get("material-" + primary, Array.Empty<object>()));
+                dsc.AppendLine(Lang.Get("vinconomy:gui-primary")+ " " +Lang.Get("material-" + primary, Array.Empty<object>()));
             }
             if (secondary != null)
             {
-                dsc.AppendLine("Secondary: " + Lang.Get("material-" + secondary, Array.Empty<object>()));
+                dsc.AppendLine(Lang.Get("vinconomy:gui-secondary") + " " + Lang.Get("material-" + secondary, Array.Empty<object>()));
             }
             if (deco != null)
             {
-                dsc.AppendLine("Decoration: " + Lang.Get("material-" + deco, Array.Empty<object>()));
+                dsc.AppendLine(Lang.Get("vinconomy:gui-decoration") + " " + Lang.Get("material-" + deco, Array.Empty<object>()));
             }
             base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
 

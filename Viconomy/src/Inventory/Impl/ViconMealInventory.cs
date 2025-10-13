@@ -143,7 +143,7 @@ namespace Viconomy.Inventory.Impl
                 {
                     // Check if its a BlockCookedContainer (AKA Cooking Pot) first, because cooking pot does not have `eatenBlock` attribute
                     //TODO: Could probably reverse this logic and just check for eatenBlock first and convert item, otherwise just set contents
-                    if ( meal.Block is BlockCookedContainer)
+                    if ( meal.Block is BlockCookedContainerBase)
                     {
                         container.SetContents(null, meal, null, 0);
                     } else

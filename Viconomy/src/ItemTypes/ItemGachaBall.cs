@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 
 namespace Viconomy.ItemTypes
@@ -28,10 +29,10 @@ namespace Viconomy.ItemTypes
             ITreeAttribute attrs = itemStack.Attributes;
             if (attrs.GetTreeAttribute("Contents") != null)
             {
-                return attrs.GetString("Name", "Gacha Ball");
+                return attrs.GetString("Name", Lang.Get("vinconomy:item-gacha"));
             } else
             {
-                return "Empty Gacha Ball";
+                return Lang.Get("vinconomy:item-gacha-empty");
             }
 
         }

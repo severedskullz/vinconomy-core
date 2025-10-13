@@ -28,7 +28,7 @@
     "cover": { "base": "game:item/lore/normal-brickred" }
   },
   "creativeinventory": {
-    "vinconomy": [ "*" ]
+    "vinconomy": [ "*" ], "general": [ "*" ]
   },
   "guiTransform": {
     "translation": {

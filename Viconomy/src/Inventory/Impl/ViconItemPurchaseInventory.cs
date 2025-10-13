@@ -104,7 +104,7 @@ namespace Viconomy.Inventory.Impl
             ViconItemSlot[] filteredSlots = (ViconItemSlot[]) StallSlots[slot].GetSlots();
             foreach (var itemSlot in filteredSlots)
             {
-                itemSlot.setFilter(filter);
+                itemSlot.SetFilter(filter);
             }
 
         }

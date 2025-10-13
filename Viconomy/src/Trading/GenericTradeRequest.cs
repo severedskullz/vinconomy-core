@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Viconomy.BlockEntities;
 using Viconomy.ItemTypes;
 using Vintagestory.API.Common;
@@ -99,7 +98,7 @@ namespace Viconomy.Trading
                 {
                     CouponStackNeeded = couponSlot.Itemstack;
                     //TODO: Kinda pointless if we only want to ever have 1 coupon applied at at time. Should see about refactoring this.
-                    AggregatedSlots couponSlots = new AggregatedSlots();
+                    AggregatedSlots couponSlots = new AggregatedSlots(Api);
                     couponSlots.Add(couponSlot);
                     CouponSlots = couponSlots;
 

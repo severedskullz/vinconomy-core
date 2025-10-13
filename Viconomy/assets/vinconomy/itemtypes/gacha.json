@@ -5,7 +5,7 @@
 
     "shape": { "base": "item/gachaball" },
     "creativeinventory": {
-        "vinconomy": [ "*" ]
+        "vinconomy": [ "*" ], "general": [ "*" ]
     },
     "guiTransform": {
         "translation": {

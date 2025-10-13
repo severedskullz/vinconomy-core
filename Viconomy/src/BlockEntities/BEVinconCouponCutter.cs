@@ -8,6 +8,7 @@ using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
@@ -43,7 +44,7 @@ namespace Viconomy.BlockEntities
             if (slotId == 0)
             {
                 ViconItemSlot slot = new ViconItemSlot(self, 0, slotId);
-                slot.setFilter(IsPaper);
+                slot.SetFilter(IsPaper);
                 slot.BackgroundIcon = "vicon-paper";
                 return slot;
             }
@@ -230,7 +231,7 @@ namespace Viconomy.BlockEntities
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
            
-            this.invDialog = new GuiViconCouponCutter("Coupon Cutter", this.Inventory, this.Pos, this.Api as ICoreClientAPI);
+            this.invDialog = new GuiViconCouponCutter(Lang.Get("vinconomy:gui-coupon-cutter"), this.Inventory, this.Pos, this.Api as ICoreClientAPI);
             //this.invDialog.OpenSound = this.OpenSound;
             //this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();

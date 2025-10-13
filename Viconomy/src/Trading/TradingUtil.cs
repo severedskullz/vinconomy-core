@@ -308,7 +308,7 @@ namespace Viconomy.Trading
 
         public static AggregatedSlots GetCouponsSlotsFor(IPlayer customer, ItemStack desiredItem, BEVinconRegister register)
         {
-            AggregatedSlots aggregatedSlots = new AggregatedSlots();
+            AggregatedSlots aggregatedSlots = new AggregatedSlots(customer.Entity.Api);
             if (desiredItem == null)
             {
                 return aggregatedSlots;
@@ -410,13 +410,19 @@ namespace Viconomy.Trading
 
         public static AggregatedSlots GetAllValidSlotsFor(IPlayer customer, ItemStack desiredItem)
         {
-            AggregatedSlots aggregatedSlots = new AggregatedSlots();
+            AggregatedSlots aggregatedSlots = new AggregatedSlots(customer.Entity.Api);
             if (desiredItem == null)
             {
                 return aggregatedSlots;
             }
 
             ItemSlot handItem = customer.InventoryManager.ActiveHotbarSlot;
+            if (isMatchingItem(desiredItem, handItem.Itemstack, customer.Entity.World))
+            {
+                aggregatedSlots.Add(handItem);
+            }
+
+            ItemSlot offhandItem = customer.InventoryManager.OffhandHotbarSlot;
             if (isMatchingItem(desiredItem, handItem.Itemstack, customer.Entity.World))
             {
                 aggregatedSlots.Add(handItem);
@@ -448,7 +454,7 @@ namespace Viconomy.Trading
         {
             return desired != null
                 && toCompare != null
-                && desired.Equals(world, toCompare, new string[] { "transitionstate", "temperature" });
+                && desired.Equals(world, toCompare, GlobalConstants.IgnoredStackAttributes);
         }
 
 
@@ -481,6 +487,10 @@ namespace Viconomy.Trading
     //TODO: Figure out how to get durabilty for tools. For now we can just manually set it
     public class DurabilityAggregatedSlots : AggregatedSlots
     {
+        public DurabilityAggregatedSlots(ICoreAPI api) : base(api)
+        {
+        }
+
         public int TotalDurability { get; set; }
         public override void Add(ItemSlot item)
         {
@@ -492,14 +502,24 @@ namespace Viconomy.Trading
 
     public class ServingCapacityAggregatedSlots : AggregatedSlots
     {
+
+        public ServingCapacityAggregatedSlots(ICoreAPI api) :base(api)
+        {
+
+        }
+
         public int TotalCapacity { get; set; }
         public override void Add(ItemSlot item)
         {
+            int curServings = 0;
+
             Slots.Add(item);
             TotalCount += item.StackSize;
 
             IBlockMealContainer meal = item.Itemstack.Block as IBlockMealContainer;
-            int curServings = (int) Math.Ceiling(meal.GetQuantityServings(Api.World, item.Itemstack)); //We assume it can merge, anyway...
+            if (meal != null)
+                curServings = (int) Math.Ceiling(meal.GetQuantityServings(Api.World, item.Itemstack)); //We assume it can merge, anyway...
+            
             JsonObject attr = item.Itemstack.Block.Attributes;
 
             int capacity = 0;
@@ -513,6 +533,12 @@ namespace Viconomy.Trading
 
     public class AggregatedSlots
     {
+
+        public AggregatedSlots(ICoreAPI api)
+        {
+            Api = api;
+        }
+
         public ICoreAPI Api; // This is rediculous Tyron - just to get meal contents?
 
         public List<ItemSlot> Slots { get; set; } = new List<ItemSlot>();

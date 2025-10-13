@@ -8,12 +8,10 @@ namespace Viconomy.GUI
     {
         private ElementBounds clipBounds;
         private GuiElementRichtext textElem;
-        CairoFont font;
         private string BookText;
 
         public GuiViconTenretniWritten(string DialogTitle, string bookText, ICoreClientAPI capi) : base(DialogTitle, capi)
         {
-
             BookText = bookText;
             //this.OnClosed += GuiViconLedger_OnClosed;
             Compose();
@@ -29,45 +27,29 @@ namespace Viconomy.GUI
 
                 ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
 
-
                 ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.DialogToScreenPadding);
                 bgBounds.BothSizing = ElementSizing.FitToChildren;
-
 
                 ElementBounds settingBounds = ElementBounds.FixedSize(400, 200).WithFixedOffset(0, GuiStyle.TitleBarHeight);
                 settingBounds.BothSizing = ElementSizing.FitToChildren;
 
-                ElementBounds buttonBounds = ElementBounds.FixedSize(120, 25).WithFixedOffset(w - 95, GuiStyle.TitleBarHeight);
-
-                ElementBounds textBounds = ElementBounds.Fixed(0, 0, w, h)
-                    //.FixedUnder(buttonBounds)
-                    .WithFixedOffset(0, 2);
+                ElementBounds textBounds = ElementBounds.Fixed(0, 0, w, h).WithFixedOffset(0, 2);
                 clipBounds = textBounds.ForkBoundingParent(0.0, 0.0, 0.0, 0.0);
-                ElementBounds insetBounds = textBounds.FlatCopy().FixedGrow(3.0).WithFixedOffset(-2.0, -2.0);
 
-                ElementBounds scrollbarBounds = ElementStdBounds.VerticalScrollbar(textBounds)
-                    //.FixedUnder(buttonBounds)
-                    .WithFixedOffset(0, 2);
+                ElementBounds insetBounds = textBounds.FlatCopy().FixedGrow(3.0).WithFixedOffset(-2.0, -2.0);
+                ElementBounds scrollbarBounds = ElementStdBounds.VerticalScrollbar(textBounds).WithFixedOffset(0, 2);
 
                 settingBounds.WithChildren(scrollbarBounds);
-                //settingBounds.verticalSizing = ElementSizing.FitToChildren;
+                bgBounds.WithChildren(settingBounds);
 
-
-                bgBounds.WithChildren(buttonBounds, settingBounds);
-
-                font = CairoFont.WhiteSmallText().WithOrientation(EnumTextOrientation.Center);
-
-                // Lastly, create the dialog
                 SingleComposer = capi.Gui.CreateCompo("ViconLedger", dialogBounds)
                     .AddShadedDialogBG(bgBounds)
                     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);
 
                 SingleComposer.BeginChildElements(settingBounds)
-                    //.AddButton("Refresh", RefreshText, buttonBounds)
                     .BeginClip(clipBounds)
-                    .AddInset(insetBounds)
-                    .AddRichtext(BookText, CairoFont.WhiteSmallText(), textBounds.WithFixedPadding(5.0).WithFixedSize(w - 10,h - 10), "tenretni")
-
+                        .AddInset(insetBounds)
+                        .AddRichtext(BookText, CairoFont.WhiteSmallText(), textBounds.WithFixedPadding(5.0).WithFixedSize(w - 10,h - 10), "tenretni")
                     .EndClip()
                     .AddVerticalScrollbar(onScrollbarValueChanged, scrollbarBounds, "scrollbar")
                 .EndChildElements();
@@ -84,8 +66,6 @@ namespace Viconomy.GUI
             {
                 Console.WriteLine(e.ToString());
             }
-
-
         }
 
         private bool ViewText()

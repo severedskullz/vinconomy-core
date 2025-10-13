@@ -13,6 +13,13 @@ namespace Viconomy.Inventory.Slots
         {
             this.stallSlot = stallSlot;
             this.itemSlot = itemSlot;
+            this.StorageType = EnumItemStorageFlags.General
+                | EnumItemStorageFlags.Metallurgy
+                | EnumItemStorageFlags.Jewellery
+                | EnumItemStorageFlags.Alchemy
+                | EnumItemStorageFlags.Agriculture
+                | EnumItemStorageFlags.Outfit
+                | EnumItemStorageFlags.Backpack;
             //this.HexBackgroundColor = "#65d934";
         }
 
@@ -62,7 +69,7 @@ namespace Viconomy.Inventory.Slots
             return false;
         }
 
-        public void setFilter(Func<ItemSlot, bool> filter)
+        public void SetFilter(Func<ItemSlot, bool> filter)
         {
             slotFilter = filter;
         }

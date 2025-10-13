@@ -678,38 +678,43 @@ namespace Viconomy.BlockEntities
                 return modeldata;
             }
 
-
-            IContainedMeshSource containedMeshSource = stack.Collectible as IContainedMeshSource;
-            if (containedMeshSource != null)
-            {
-                return containedMeshSource.GenMesh(stack, capi.BlockTextureAtlas, Pos);
-            }
-
             IItemRenderer renderer = modSystem.GetRenderer(stack);
             if (renderer != null)
             {
                 modeldata = renderer.createMesh(this, stack, index);
-
+                ModelTransform modelTransform = null;
+                // pick our preselected Attribute Transform Code
                 if (stack.Collectible.Attributes?[AttributeTransformCode].Exists ?? false)
                 {
-                    ModelTransform modelTransform = stack.Collectible.Attributes?[AttributeTransformCode].AsObject<ModelTransform>();
+                    modelTransform = stack.Collectible.Attributes?[AttributeTransformCode].AsObject<ModelTransform>();
+                }
+                else if (stack.Block is IShelvable)
+                {
+                    modelTransform = (stack.Block as IShelvable).GetOnShelfTransform(stack);
+                }
+                else if (stack.Collectible.Attributes?["onDisplayTransform"].Exists ?? false)
+                {
+                    modelTransform = stack.Collectible.Attributes?["onDisplayTransform"].AsObject<ModelTransform>();
+
+                }
+                else if (stack.Collectible.Attributes?["groundStorageTransform"].Exists ?? false)
+                {
+                    modelTransform = stack.Collectible.Attributes?["groundStorageTransform"].AsObject<ModelTransform>();
+
+                }
+
+                if (modelTransform != null)
+                {
                     modelTransform.EnsureDefaultValues();
                     modeldata.ModelTransform(modelTransform);
-                }
-                else if (AttributeTransformCode == "onshelfTransform" && (stack.Collectible.Attributes?["onDisplayTransform"].Exists ?? false))
-                {
-                    ModelTransform modelTransform2 = stack.Collectible.Attributes?["onDisplayTransform"].AsObject<ModelTransform>();
-                    modelTransform2.EnsureDefaultValues();
-                    modeldata.ModelTransform(modelTransform2);
                 }
 
                 if (stack.Class == EnumItemClass.Item && (stack.Item.Shape == null || stack.Item.Shape.VoxelizeTexture))
                 {
                     modeldata.Rotate(new Vec3f(0.5f, 0.5f, 0.5f), MathF.PI / 2f, 0f, 0f);
-                    modeldata.Scale(new Vec3f(0.5f, 0.5f, 0.5f), 0.33f, 0.33f, 0.33f);
+                    modeldata.Scale(new Vec3f(0.5f, 0.5f, 0.5f), 0.35f, 0.35f, 0.35f);
                     modeldata.Translate(0f, -15f / 32f, 0f);
                 }
-
 
                 if (renderer.shouldCache(stack))
                 {
@@ -721,6 +726,19 @@ namespace Viconomy.BlockEntities
 
 
             return modeldata;
+        }
+
+        protected override string GetMeshCacheKey(ItemStack stack)
+        {
+            if (stack == null)
+                return null;
+
+            if (stack.Collectible is IContainedMeshSource containedMeshSource)
+            {
+                return containedMeshSource.GetMeshCacheKey(stack);
+            }
+
+            return "sculpturepad-"+stack.Collectible.Code.ToString();
         }
 
         #endregion

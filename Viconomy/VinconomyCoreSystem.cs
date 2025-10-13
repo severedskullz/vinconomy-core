@@ -71,6 +71,7 @@ namespace Viconomy
             api.RegisterBlockClass("VinconPurchaseContainer", typeof(BlockVPurchaseContainer));
 
             // 5.0 Block Entity Mappings
+            api.RegisterBlockEntityClass("BEVinconLiquidContainer", typeof(BEVinconLiquidContainer));
             api.RegisterBlockEntityClass("BEVinconFoodContainer", typeof(BEVinconFoodContainer));
             api.RegisterBlockEntityClass("BEVinconCouponCutter", typeof(BEVinconCouponCutter));
             api.RegisterBlockEntityClass("BEVinconPurchaseContainer", typeof(BEVinconPurchaseContainer));
@@ -427,6 +428,9 @@ namespace Viconomy
 
         public static void PrintClientMessage(IPlayer player, string message, object[] args = null)
         {
+            if (message == null)
+                return;
+
             if (player == null)
                 return;
 
@@ -574,6 +578,13 @@ namespace Viconomy
         {
             ItemStack product = result.GetTotalTransferedProduct();
             ItemStack payment = result.GetTotalTransferedCurrency();
+
+            if (payment == null && result.Request.GetFinalCurrencyNeededPerPurchase() == 0 && result.Request.CouponStackNeeded != null)
+            {
+                ItemStack couponStack = result.Request.CouponStackNeeded.Clone();
+                couponStack.StackSize = result.Request.NumPurchases;
+                payment = couponStack;
+            }
 
             if (OnPurchasedItem != null)
             {

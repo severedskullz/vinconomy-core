@@ -45,7 +45,7 @@ namespace Viconomy.Inventory.Impl
             else
             {
                 ViconItemSlot slot = new ViconItemSlot(this, 0, id);
-                slot.setFilter(ViconomyFilters.IsFilledGachaSlot);
+                slot.SetFilter(ViconomyFilters.IsFilledGachaSlot);
                 slot.BackgroundIcon = "vicon-general";
                 return slot;
             }

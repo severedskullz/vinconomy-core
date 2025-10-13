@@ -370,6 +370,16 @@ namespace Viconomy.Util
             return 0;
         }
 
+        public static bool IsLiquidContainer(ItemStack stack)
+        {
+            return stack?.Block is BlockLiquidContainerBase container;
+        }
+
+        public static bool IsEmptyLiquidContainer(ItemStack stack)
+        {
+            return IsLiquidContainer(stack) && ((BlockLiquidContainerBase)stack.Block).GetCurrentLitres(stack) == 0;
+        }
+
         public static bool IsEmptyContainer(ItemStack stack, ICoreAPI api)
         {
             if (stack == null)

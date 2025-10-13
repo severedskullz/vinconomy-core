@@ -137,7 +137,7 @@ namespace Viconomy.GUI
                     //.AddStaticText(Lang.Get("vinconomy:gui-output"), labelFont, itemOutputLabel)
                     //.AddItemSlotGrid(inventory, SendInvPacket, 1, [1], itemOutputBounds)
 
-                    .AddButton("Cut", OnCut, cutButton);
+                    .AddButton(Lang.Get("vinconomy:gui-cut"), OnCut, cutButton);
 
                 SingleComposer.GetTextInput("couponName").SetValue(CouponPrinter.CouponName);
 

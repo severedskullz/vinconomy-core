@@ -292,7 +292,7 @@ namespace Viconomy.Trading.TradeHandlers
 
             if (productLeft > 0)
             {
-                AuditLogError(res, $"Error collecting payment for trade. Needed {requestedProduct} but is missing {productLeft}");
+                AuditLogError(res, $"Error collecting product for trade. Needed {requestedProduct} but is missing {productLeft}");
             }
 
             return productLeft;

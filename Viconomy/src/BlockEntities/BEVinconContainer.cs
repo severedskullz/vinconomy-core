@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using System.Text;
 using Viconomy.Filters;
@@ -15,6 +14,7 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.GameContent;
 
 namespace Viconomy.BlockEntities
 {
@@ -540,26 +540,14 @@ namespace Viconomy.BlockEntities
             float[][] tfMatrices = new float[StallSlotCount][];
             for (int index = 0; index < StallSlotCount; index++)
             {
-                float scale = 0.35f;
-                ItemSlot slot = inventory.FindFirstNonEmptyStockSlot(index);
-                if (slot != null)
-                {
-                    if (slot.Itemstack.Collectible.Code.Path.StartsWith("crock")
-                        || slot.Itemstack.Collectible.Code.Path.StartsWith("bowl")
-                        || slot.Itemstack.Collectible.Code.Path.StartsWith("claypot")
-                        || slot.Itemstack.Class != EnumItemClass.Block)
-                    {
-                        scale = .85f;
-                    }
-                }
                 Cuboidf sb = Block.SelectionBoxes[index];
-                float left = .25f - (scale / 2);
+                float left = -.25f;
                 float right = left + .5f;
 
                 float x = (index % 2 == 0) ? left : right;
-                float y = sb.YSize <= .45f ? sb.MaxY - 0.37f + (.45f - sb.YSize) : sb.MaxY - 0.37f;
+                float y = sb.YSize <= .45f ? sb.MaxY - 0.39f + (.45f - sb.YSize) : sb.MaxY - 0.39f;
                 float z = (index / 2 == 0) ? left : right;
-                Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(Block.Shape.rotateY).Translate(x, y, z).Translate(-0.5f, 0f, -0.5f).Scale(scale, scale, scale);
+                Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(Block.Shape.rotateY).Translate(x, y, z).Translate(-0.5f, 0f, -0.5f);
                 tfMatrices[index] = matrix.Values;
             }
             return tfMatrices;
@@ -663,23 +651,40 @@ namespace Viconomy.BlockEntities
                 //Bypass the Display and Shelvable transforms for Armor Stands, where we want the model coordinates to match the character, not the zero'd positions.
                 if (!bypassShelvableAttributes)
                 {
+                    ModelTransform modelTransform = null;
                     // pick our preselected Attribute Transform Code
                     if (stack.Collectible.Attributes?[AttributeTransformCode].Exists ?? false)
                     {
-                        ModelTransform modelTransform = stack.Collectible.Attributes?[AttributeTransformCode].AsObject<ModelTransform>();
+                        modelTransform = stack.Collectible.Attributes?[AttributeTransformCode].AsObject<ModelTransform>();
+                    }
+                    else if (stack.Block is IShelvable)
+                    {
+                        modelTransform = (stack.Block as IShelvable).GetOnShelfTransform(stack);
+                    }
+                    else if (stack.Collectible.Attributes?["onDisplayTransform"].Exists ?? false)
+                    {
+                        modelTransform = stack.Collectible.Attributes?["onDisplayTransform"].AsObject<ModelTransform>();
+
+                    } else if (stack.Collectible.Attributes?["groundStorageTransform"].Exists ?? false)
+                    {
+                        modelTransform = stack.Collectible.Attributes?["groundStorageTransform"].AsObject<ModelTransform>();
+
+                    }
+
+                    if (modelTransform != null)
+                    {
                         modelTransform.EnsureDefaultValues();
                         modeldata.ModelTransform(modelTransform);
                     }
-                    else if (AttributeTransformCode == "onShelfTransform" && (stack.Collectible.Attributes?["onDisplayTransform"].Exists ?? false))
+
+
+                    // Should be handled by IShelvable, but I still see it in the JSON
+                    else if (stack.Collectible.Attributes?["shelvable"].Exists ?? false)
                     {
-                        ModelTransform modelTransform2 = stack.Collectible.Attributes?["onDisplayTransform"].AsObject<ModelTransform>();
-                        modelTransform2.EnsureDefaultValues();
-                        modeldata.ModelTransform(modelTransform2);
-                    } else if (stack.Collectible.Attributes?["groundStorageTransform"].Exists ?? false)
+                        modeldata.Scale(new Vec3f(0.5f, 0.0f, 0.5f), 0.85f, 0.85f, 0.85f);
+                    } else
                     {
-                        ModelTransform modelTransform = stack.Collectible.Attributes?["groundStorageTransform"].AsObject<ModelTransform>();
-                        modelTransform.EnsureDefaultValues();
-                        modeldata.ModelTransform(modelTransform);
+                        modeldata.Scale(new Vec3f(0.5f, 0.0f, 0.5f), 0.35f, 0.35f, 0.35f);
                     }
 
                 }
@@ -687,7 +692,7 @@ namespace Viconomy.BlockEntities
                 if (stack.Class == EnumItemClass.Item && (stack.Item.Shape == null || stack.Item.Shape.VoxelizeTexture))
                 {
                     modeldata.Rotate(new Vec3f(0.5f, 0.5f, 0.5f), MathF.PI / 2f, 0f, 0f);
-                    modeldata.Scale(new Vec3f(0.5f, 0.5f, 0.5f), 0.33f, 0.33f, 0.33f);
+                    modeldata.Scale(new Vec3f(0.5f, 0.5f, 0.5f), 0.35f, 0.35f, 0.35f);
                     modeldata.Translate(0f, -15f / 32f, 0f);
                 }
 

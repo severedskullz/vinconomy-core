@@ -29,7 +29,7 @@ namespace Viconomy.GUI
 
             if (purchaseItem != null)
             {
-                this.purchaseSlot.Itemstack = GenerateMealStack(stall.GetRecipeCode(capi), stall.GetMealStacks(), Math.Min(quantity, stall.GetProductQuantity()), capi);
+                this.purchaseSlot.Itemstack = stall.GenerateMealStack(capi);
                 this.purchaseSlot.Itemstack.StackSize = stall.ItemsPerPurchase * quantity;
             }
             else
@@ -48,17 +48,6 @@ namespace Viconomy.GUI
             {
                 this.currancySlot.Itemstack = null;
             }
-        }
-
-
-        public static ItemStack GenerateMealStack(string recipe, ItemStack[] contents, int servings, ICoreClientAPI capi)
-        {
-
-            Block mealblock = capi.World.GetBlock("game:claypot-blue-cooked");
-            IBlockMealContainer meal = mealblock as IBlockMealContainer;
-            ItemStack stack = new ItemStack(mealblock);
-            meal.SetContents(recipe, stack, contents, servings);
-            return stack;
         }
     }
 }

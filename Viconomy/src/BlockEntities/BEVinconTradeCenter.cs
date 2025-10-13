@@ -77,6 +77,7 @@ namespace Viconomy.BlockEntities
             string apiKey = config.GetAPIKey(this.Api.World.SavegameIdentifier);
             if (apiKey == null)
             {
+                VinconomyCoreSystem.PrintClientMessage(fromPlayer, "Server not registered");
                 return;
             }
 
@@ -153,7 +154,7 @@ namespace Viconomy.BlockEntities
             else
             {
                 SpringErrorMessage error = VinUtils.DeserializeFromJson<SpringErrorMessage>(args.Response);
-                _coreSystem.Mod.Logger.Error("There was an error retrieving search results: {0} {1} - {2}", new object[] { error.status, error.error, error.message });
+                _coreSystem.Mod.Logger.Error("There was an error retrieving search results: {0} {1} - {2}", [error.status, error.error, error.message]);
                 VinconomyCoreSystem.PrintClientMessage(args.RequestingPlayer, "There was an error retrieving search results");
             }
         }
@@ -170,8 +171,8 @@ namespace Viconomy.BlockEntities
             else
             {
                 SpringErrorMessage error = VinUtils.DeserializeFromJson<SpringErrorMessage>(args.Response);
-                _coreSystem.Mod.Logger.Error("There was an error retrieving search results: {0} {1} - {2}" , new object[]{ error.status, error.error, error.message});
-                VinconomyCoreSystem.PrintClientMessage(args.RequestingPlayer, "There was an error retrieving search results");
+                _coreSystem.Mod.Logger.Error("There was an error retrieving search results: {0} {1} - {2}" , [error.status, error.error, error.message]);
+                VinconomyCoreSystem.PrintClientMessage(args.RequestingPlayer, "There was an error retrieving search results: " + error.message);
             }
         }
 

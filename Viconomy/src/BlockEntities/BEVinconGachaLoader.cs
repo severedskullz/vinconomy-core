@@ -39,7 +39,7 @@ namespace Viconomy.BlockEntities
                 return new ItemSlotOutput(self);
             } else if (slotId == 1) {
                 ViconItemSlot slot = new ViconItemSlot(self, 0, slotId);
-                slot.setFilter(Filters.ViconomyFilters.IsEmptyGachaSlot);
+                slot.SetFilter(Filters.ViconomyFilters.IsEmptyGachaSlot);
                 slot.BackgroundIcon = "vicon-general2";
                 return slot;
             } else

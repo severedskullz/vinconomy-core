@@ -143,7 +143,7 @@ namespace Viconomy.BlockEntities
         protected override AggregatedSlots GetAggregateProductSlots(int stallSlot)
         {
             ItemStack desired = inventory.GetStall<PurchaseStallSlot>(stallSlot).Currency.Itemstack;
-            AggregatedSlots slots = new AggregatedSlots();
+            AggregatedSlots slots = new AggregatedSlots(Api);
             foreach (ItemSlot slot in GetSlotsForStall(stallSlot))
             {
                 if (TradingUtil.isMatchingItem(desired, slot.Itemstack, Api.World))
@@ -346,45 +346,18 @@ namespace Viconomy.BlockEntities
             float[][] tfMatrices = new float[StallSlotCount*4][];
             for (int index = 0; index < StallSlotCount; index++)
             {
-                float scale = 0.35f;
-                PurchaseStallSlot stall = inventory.GetStall<PurchaseStallSlot>(index);
-                ItemSlot currencySlot = stall.DesiredProduct;
-                if (currencySlot?.Itemstack != null)
-                {
-                    if (currencySlot.Itemstack.Collectible.Code.Path.StartsWith("crock")
-                        || currencySlot.Itemstack.Collectible.Code.Path.StartsWith("bowl")
-                        || currencySlot.Itemstack.Collectible.Code.Path.StartsWith("claypot")
-                        || currencySlot.Itemstack.Class != EnumItemClass.Block)
-                    {
-                        scale = .85f; // Scale * 2.42
-                    }
-                }
+                float scale = 1;// 0.35f;
                 Cuboidf sb = Block.SelectionBoxes[index];
-                float left = .265f - (scale / 2);
+                float left = -.235f;
                 float right = left + .47f;
 
                 float x = (index % 2 == 0) ? left : right;
                 float y = 1;
                 float z = (index / 2 == 0) ? left : right;
-                Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(Block.Shape.rotateY).Translate(x, y, z).Translate(-0.5f, 0f, -0.5f).Scale(scale, scale, scale);
+                Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(Block.Shape.rotateY).Translate(x, y, z).Translate(-0.5f, 0f, -0.5f);
                 tfMatrices[index*4] = matrix.Values;
 
-                ItemSlot productSlot = stall.Currency;
-                if (productSlot?.Itemstack != null)
-                {
-                    if (productSlot.Itemstack.Collectible.Code.Path.StartsWith("crock")
-                        || productSlot.Itemstack.Collectible.Code.Path.StartsWith("bowl")
-                        || productSlot.Itemstack.Collectible.Code.Path.StartsWith("claypot")
-                        || productSlot.Itemstack.Class != EnumItemClass.Block)
-                    {
-                        scale = 0.51f; // Scale * 1.48
-                    } else
-                    {
-                        //Reset the scale to original value since it mightve been modified by the currency slot
-                        scale = 0.21f;
-                    }
-                }
-
+                scale = .70f;
                 float[] xvals = [-0.075f, 0.095f, -0.01f];
                 left = .265f - (scale / 2);
                 right = left + .47f;

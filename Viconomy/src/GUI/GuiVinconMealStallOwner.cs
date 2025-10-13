@@ -34,7 +34,7 @@ namespace Viconomy.GUI
 
             if (purchaseItem != null)
             {
-                this.purchaseSlot.Itemstack = GuiVinconMealStallCustomer.GenerateMealStack(stall.GetRecipeCode(capi), stall.GetMealStacks(), stall.ItemsPerPurchase, capi);
+                this.purchaseSlot.Itemstack = stall.GenerateMealStack(capi);
                 this.purchaseSlot.Itemstack.StackSize = 1;
             }
             else

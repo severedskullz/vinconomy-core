@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Viconomy.BlockEntities.TextureSwappable;
 using Viconomy.Inventory;
+using Viconomy.Inventory.StallSlots;
 using Viconomy.Registry;
 using Viconomy.Renderer;
 using Viconomy.Trading;
@@ -146,7 +147,7 @@ namespace Viconomy.BlockEntities
         public abstract ItemSlot[] GetSlotsForStall(int stallSlot);
         
         public abstract ItemSlot GetCurrencyForStall(int stallSlot);
-        
+
         public abstract int GetNumItemsPerPurchaseForStall(int stallSlot);
 
         public virtual ItemStack FindFirstNonEmptyStockStack(int stallSlot)
@@ -266,12 +267,17 @@ namespace Viconomy.BlockEntities
 
         protected virtual AggregatedSlots GetAggregateProductSlots(int stallSlot)
         {
-            AggregatedSlots slots = new AggregatedSlots();
+            AggregatedSlots slots = new AggregatedSlots(Api);
             foreach (ItemSlot slot in GetSlotsForStall(stallSlot))
             {
                 slots.Add(slot);
             }
             return slots;
+        }
+
+        public virtual ItemStack GetProductOutputStack(int stallSlot)
+        {
+            return TradingUtil.GetItemStackClone(FindFirstNonEmptyStockStack(stallSlot), 1);
         }
 
         public virtual void PurchaseItem(IPlayer player, int stallSlot, int numPurchases, BEVinconRegister shopRegister)
@@ -282,7 +288,7 @@ namespace Viconomy.BlockEntities
             request.WithShop(shopRegister, this, stallSlot, IsAdminShop);
             request.WithPurchases(numPurchases);
             request.WithCurrency(currencyStack, TradingUtil.GetAllValidSlotsFor(player, currencyStack), currencyStack.StackSize);
-            request.WithProduct(TradingUtil.GetItemStackClone(FindFirstNonEmptyStockStack(stallSlot), 1), GetAggregateProductSlots(stallSlot), GetNumItemsPerPurchaseForStall(stallSlot));
+            request.WithProduct(GetProductOutputStack(stallSlot), GetAggregateProductSlots(stallSlot), GetNumItemsPerPurchaseForStall(stallSlot));
 
             AggregatedSlots coupons = TradingUtil.GetCouponsSlotsFor(player, request.ProductStackNeeded, shopRegister);
             if (coupons.Slots.Count > 0)
@@ -290,7 +296,7 @@ namespace Viconomy.BlockEntities
                 request.WithCoupons(coupons.Slots[0]);
             }
             
-            //request.WithTools(null, 1);
+            request.WithTools(GetRequiredTools(player, stallSlot), 1);
             if (shopRegister != null)
             {
                 ItemStack tradePass = shopRegister.Inventory[0].Itemstack;
@@ -303,7 +309,7 @@ namespace Viconomy.BlockEntities
 
             request.Build();
 
-            GenericTradeResult result = GenericTradeHandler.TryPurchaseItem(request);
+            GenericTradeResult result = PurchaseItem(request);
             if (result.Error != null)
             {
                 VinconomyCoreSystem.PrintClientMessage(player, result.Error);
@@ -314,12 +320,15 @@ namespace Viconomy.BlockEntities
             }
         }
 
-        public virtual ItemStack GetProductForStall(int stallSlot)
+        public virtual GenericTradeResult PurchaseItem(GenericTradeRequest request)
         {
-            return TradingUtil.GetItemStackClone(FindFirstNonEmptyStockStack(stallSlot), GetNumItemsPerPurchaseForStall(stallSlot)); ;
+            return GenericTradeHandler.TryPurchaseItem(request);
         }
 
-
+        public virtual AggregatedSlots GetRequiredTools(IPlayer player, int stallSlot)
+        {
+            return null;
+        }
 
         /// <summary>
         /// Consumes any tools needed to perform this trade. For Durability-based tools, it should subtract durability from the tool.

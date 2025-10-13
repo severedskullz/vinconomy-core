@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Viconomy.Inventory.Slots;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
@@ -163,6 +164,7 @@ namespace Viconomy.Inventory.StallSlots
                     {
                         foodSlot.Itemstack = null;
                     }
+                    foodSlot.MarkDirty();
                 }
             }
         }
@@ -194,6 +196,16 @@ namespace Viconomy.Inventory.StallSlots
                 slots[j].Itemstack = tree.GetItemstack("slot" + j);
 
             }
+        }
+
+        public ItemStack GenerateMealStack(ICoreAPI api)
+        {
+            Block mealblock = api.World.GetBlock("game:claypot-gray-cooked");
+            IBlockMealContainer meal = mealblock as IBlockMealContainer;
+            ItemStack stack = new ItemStack(mealblock);
+            meal.SetContents(GetRecipeCode(api), stack, GetMealStacks(), ItemsPerPurchase);
+            stack.StackSize = ItemsPerPurchase;
+            return stack;
         }
     }
 }

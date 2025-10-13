@@ -1,4 +1,5 @@
-﻿using Viconomy.Inventory.Slots;
+﻿
+using Viconomy.Inventory.Slots;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
@@ -95,5 +96,6 @@ namespace Viconomy.Inventory.StallSlots
             }
         }
 
+        
     }
 }
