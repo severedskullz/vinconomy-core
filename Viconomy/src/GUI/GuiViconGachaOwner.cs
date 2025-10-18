@@ -200,7 +200,7 @@ namespace Viconomy.GUI
                     SingleComposer.BeginChildElements(settingBounds)
                         .AddStaticText(Lang.Get("vinconomy:gui-shop"), CairoFont.WhiteSmallText(), shopSelectionLabel)
                         .AddDropDown(shopsKeys, shopsNames, selectedIndex, new SelectionChangedDelegate(this.onSelectionChanged), shopSelectBounds)
-                        .AddIf(api.World.Player.HasPrivilege("gamemode"))
+                        .AddIf(stall.IsAdminShop || VinUtils.IsCreativePlayer(api.World.Player)) 
                             .AddStaticText(Lang.Get("vinconomy:gui-admin-shop"), CairoFont.WhiteSmallText(), adminShopLabel)
                             .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
                         .EndIf()
@@ -228,7 +228,7 @@ namespace Viconomy.GUI
 
                 SingleComposer.EndChildElements();
 
-                if (capi.World.Player.HasPrivilege("gamemode")) 
+                if (stall.IsAdminShop || VinUtils.IsCreativePlayer(api.World.Player)) 
                    SingleComposer.GetSwitch("admin").SetValue(stall.IsAdminShop);
 
                 SingleComposer.GetSwitch("absolutePick").SetValue(useTotalRandomizer);

@@ -5,12 +5,16 @@ using Vintagestory.API.MathTools;
 
 namespace Viconomy.Network.Api
 {
-    public class ShopProducts : Dictionary<BlockPos, ShopStall>
+    public class ShopUpdate : Dictionary<BlockPos, ShopStall>
     {
         int ShopId;
+        public string Name;
+        public string Owner;
+        public string Description;
+
         bool RemoveAll;
 
-        public ShopProducts(int shopId)
+        public ShopUpdate(int shopId)
         {
             ShopId = shopId;
         }
@@ -25,14 +29,14 @@ namespace Viconomy.Network.Api
             this[pos].AddStallUpdate(stallSlot, product, numItemsPerPurchase, currency);
         }
 
-        public static ShopProducts FromJson(JsonObject obj)
+        public static ShopUpdate FromJson(JsonObject obj)
         {
             obj.TryGetPropertyValue("id", out JsonNode id);
             if (id == null)
             {
                 throw new System.Exception("Shop must have an ID");
             }
-            ShopProducts products = new ShopProducts(id.GetValue<int>());
+            ShopUpdate products = new ShopUpdate(id.GetValue<int>());
             return products;
         }
 
@@ -42,6 +46,9 @@ namespace Viconomy.Network.Api
             JsonObject json = new JsonObject
             {
                 { "id", ShopId },
+                { "name", Name },
+                { "owner", Owner },
+                { "description", Description },
                 { "removeAll", RemoveAll }
             };
 

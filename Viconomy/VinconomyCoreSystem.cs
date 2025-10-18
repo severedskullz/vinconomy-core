@@ -422,9 +422,37 @@ namespace Viconomy
             if (_coreServerAPI != null)
             {
                 BroadcastShopUpdate(iD);
+                UpdateShopDelegates(reg);
             }
+
             return reg;
         }
+
+        public void UpdateShopConfig(int iD, string desc, string shortDesc, string webHook)
+        {
+            ShopRegistration reg = ShopRegistry.UpdateShopConfig(iD, desc, shortDesc, webHook);
+            if (_coreServerAPI != null)
+            {
+                BroadcastShopUpdate(iD);
+                UpdateShopDelegates(reg);
+            }
+        }
+
+        public void SendShopOwnerUpdate(ShopRegistration shop, IServerPlayer player)
+        {
+            ShopUpdatePacket update;
+            if (shop == null)
+            {
+                update = new ShopUpdatePacket(shop.ID);
+            }
+            else
+            {
+                update = new ShopUpdatePacket(shop, true);
+            }
+
+            _serverChannel.SendPacket(update, player);
+        }
+
 
         public static void PrintClientMessage(IPlayer player, string message, object[] args = null)
         {
@@ -505,21 +533,7 @@ namespace Viconomy
             }
         }
 
-        public void SendShopOwnerUpdate(ShopRegistration shop, IServerPlayer player)
-        {
-            ShopUpdatePacket update;
-            if (shop == null)
-            {
-                update = new ShopUpdatePacket(shop.ID);
-            }
-            else
-            {
-                update = new ShopUpdatePacket(shop, true);
-            }
 
-            _serverChannel.SendPacket(update, player);
-        }
-        
         private void SendAllPublicRegisters(IServerPlayer player)
         {
             List<ShopRegistration> shops = this.ShopRegistry.GetAllShops();
@@ -537,18 +551,7 @@ namespace Viconomy
             _serverChannel.SendPacket(new RegistryUpdatePacket(updates), player);
         }
         
-        public void UpdateShopConfig(int iD, string desc, string shortDesc, string webHook)
-        {
-            ShopRegistration reg = ShopRegistry.UpdateShopConfig(iD, desc, shortDesc, webHook);
-            if (_coreServerAPI != null)
-            {
-                BroadcastShopUpdate(iD);
-            }
-        }
-
         #region Event Delegates
-
- 
 
         //Deprecated until I convert everything over.
         public void PurchasedItem(TradeResult result, ItemStack product, ItemStack payment)
@@ -729,7 +732,27 @@ namespace Viconomy
             else return response;
         }
         public event OnTestAccessDelegate OnTestAccess;
-        
+
+        public void UpdateShopDelegates(ShopRegistration shop)
+        {
+            if (OnUpdateShop != null)
+            {
+                Delegate[] delegates = OnUpdateShop.GetInvocationList();
+                foreach (Delegate delegator in delegates)
+                {
+                    try
+                    {
+                        ((OnUpdateShopDelegate)delegator).Invoke(shop);
+                    }
+                    catch (Exception e)
+                    {
+                        this.Mod.Logger.Error(e);
+                    }
+                }
+            }
+        }
+        public event OnUpdateShopDelegate OnUpdateShop;
+
         #endregion Event Delegates
 
         public EnumWorldAccessResponse AllowStallUse(IPlayer player, BlockSelection blockSelection, EnumBlockAccessFlags accessType, string claimant, EnumWorldAccessResponse response)
@@ -768,8 +791,6 @@ namespace Viconomy
 
             UpdateShopProduct(shopId, pos, stallSlot, product, numItemsPerPurchase, currency);
         }
-
-
 
         public ShopCatalog RequestShopCatalog(ShopRegistration shop, bool includeProductList)
         {

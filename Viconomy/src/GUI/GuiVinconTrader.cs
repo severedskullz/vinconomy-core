@@ -150,8 +150,8 @@ namespace Viconomy.GUI
                 SingleComposer = capi.Gui.CreateCompo("GuiVinconTraderCatalog", dialogBounds)
                .AddShadedDialogBG(bgBounds)
                .AddDialogTitleBar(this.DialogTitle, OnTitleBarCloseClicked)
-               .AddStaticText(Lang.Get("vinconomy:gui-owner") + Shop.Owner, CairoFont.WhiteSmallText(), descLabelBounds)
-               .AddStaticText(Lang.Get("vinconomy:gui-server") + Shop.ServerName, CairoFont.WhiteSmallText(), serverLabelBounds)
+               .AddStaticText(Lang.Get("vinconomy:gui-f-owner", [Shop.Owner]), CairoFont.WhiteSmallText(), descLabelBounds)
+               .AddStaticText(Lang.Get("vinconomy:gui-f-server", [Shop.ServerName]), CairoFont.WhiteSmallText(), serverLabelBounds)
 
 
 
@@ -198,7 +198,7 @@ namespace Viconomy.GUI
             if (amount == 1)
             {
                 return;
-            } else if (amount * SelectedProduct.Product.StackSize > SelectedProduct.TotalStock)
+            } else if (SelectedProduct != null && amount * SelectedProduct.Product.StackSize > SelectedProduct.TotalStock)
             {
                 GuiElementNumberInput quantity = SingleComposer.GetNumberInput("quantity");
 

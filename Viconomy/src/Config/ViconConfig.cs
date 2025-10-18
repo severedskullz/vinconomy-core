@@ -15,7 +15,7 @@ namespace Viconomy.Config
         public string tradingNetworkUrl { get; set; }
         public Dictionary<string, string> networkAPIKeys { get; set; } = new Dictionary<string, string>();
         public bool tradingNetworkEnabled { get; set; } = true;
-
+        public int syncIntervalMinutes { get; set; } = 10;
 
         public string GetAPIKey(string guid)
         {

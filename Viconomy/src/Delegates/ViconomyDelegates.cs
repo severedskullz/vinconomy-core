@@ -1,5 +1,6 @@
 ﻿using Viconomy.BlockEntities;
 using Viconomy.Inventory;
+using Viconomy.Registry;
 using Viconomy.TradeNetwork.Api;
 using Viconomy.Trading;
 using Vintagestory.API.Common;
@@ -7,6 +8,8 @@ using Vintagestory.API.MathTools;
 
 namespace Viconomy.Delegates
 {
+
+
     /*
      *  Called whenever an item is purchased from a stall, regardless if it is assoicated with a Register (Nullable)
      */
@@ -26,8 +29,9 @@ namespace Viconomy.Delegates
     public delegate bool OnBlockBrokenDelegate(AssetLocation code, IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier);
     public delegate void OnBlockPlacedDelegate(AssetLocation code, IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack);
     public delegate EnumWorldAccessResponse OnTestAccessDelegate(IPlayer player, BlockSelection blockSelection, EnumBlockAccessFlags accessType, string claimant, EnumWorldAccessResponse response);
-    
-    
+
+    public delegate void OnUpdateShopDelegate(ShopRegistration shop);
+
     public delegate void OnTradeSelectedDelegate(VinconNetworkItemSlot product);
 
     public delegate void OnUpdateShopProductDelegate(int shopId, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency);

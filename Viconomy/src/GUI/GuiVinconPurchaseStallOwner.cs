@@ -127,22 +127,25 @@ namespace Viconomy.GUI
                 ElementBounds quantitySelectionLabel = ElementBounds.FixedSize(170, 30).FixedUnder(costSelectionLabel).WithFixedOffset(0, 15);
                 ElementBounds quantitySelectionBounds = ElementBounds.FixedSize(75, 30).FixedUnder(costSelectionLabel).FixedRightOf(quantitySelectionLabel).WithFixedOffset(5, 10);
 
-                ElementBounds registerFallbackLabel = ElementBounds.FixedSize(200, 25).FixedUnder(quantitySelectionLabel).WithFixedOffset(0, 15);
+                ElementBounds registerFallbackLabel = ElementBounds.FixedSize(210, 25).FixedUnder(quantitySelectionLabel).WithFixedOffset(0, 15);
                 ElementBounds registerFallbackBounds = ElementBounds.FixedSize(40, 40).FixedUnder(quantitySelectionLabel).FixedRightOf(registerFallbackLabel).WithFixedOffset(10, 10);
 
-                ElementBounds limitPurchaseLabel = ElementBounds.FixedSize(200, 25).FixedUnder(registerFallbackLabel).WithFixedOffset(0, 15);
-                ElementBounds limitPurchaseBounds = ElementBounds.FixedSize(40, 40).FixedUnder(registerFallbackLabel).FixedRightOf(limitPurchaseLabel).WithFixedOffset(10, 10);
-                
+                ElementBounds fuzzyMatchingLabel = ElementBounds.FixedSize(210, 25).FixedUnder(registerFallbackLabel).WithFixedOffset(0, 15);
+                ElementBounds fuzzyMatchingBounds = ElementBounds.FixedSize(40, 40).FixedUnder(registerFallbackLabel).FixedRightOf(fuzzyMatchingLabel).WithFixedOffset(10, 10);
+
+                ElementBounds limitPurchaseLabel = ElementBounds.FixedSize(210, 25).FixedUnder(fuzzyMatchingLabel).WithFixedOffset(0, 15);
+                ElementBounds limitPurchaseBounds = ElementBounds.FixedSize(40, 40).FixedUnder(fuzzyMatchingLabel).FixedRightOf(limitPurchaseLabel).WithFixedOffset(10, 10);
+               
                 ElementBounds numPurchasesSelectionLabel = ElementBounds.FixedSize(170, 30).FixedUnder(limitPurchaseLabel).WithFixedOffset(0, 15);
                 ElementBounds numPurchasesSelectionBounds = ElementBounds.FixedSize(75, 30).FixedUnder(limitPurchaseLabel).FixedRightOf(numPurchasesSelectionLabel).WithFixedOffset(5, 10);
 
                 ElementBounds chiselLabel = ElementBounds.FixedSize(200, 25).FixedUnder(numPurchasesSelectionLabel).WithFixedOffset(0, 15);
                 ElementBounds chiselSlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).FixedUnder(chiselLabel);
 
-                ElementBounds adminShopLabel = ElementBounds.FixedSize(200, 25).FixedUnder(chiselSlotBounds).WithFixedOffset(0, 15);
+                ElementBounds adminShopLabel = ElementBounds.FixedSize(210, 25).FixedUnder(chiselSlotBounds).WithFixedOffset(0, 15);
                 ElementBounds adminShopBounds = ElementBounds.FixedSize(40, 40).FixedUnder(chiselSlotBounds).FixedRightOf(adminShopLabel).WithFixedOffset(10, 10);
 
-                ElementBounds discardProductLabel = ElementBounds.FixedSize(200, 25).FixedUnder(adminShopLabel).WithFixedOffset(0, 15);
+                ElementBounds discardProductLabel = ElementBounds.FixedSize(210, 25).FixedUnder(adminShopLabel).WithFixedOffset(0, 15);
                 ElementBounds discardProductBounds = ElementBounds.FixedSize(40, 40).FixedUnder(adminShopLabel).FixedRightOf(discardProductLabel).WithFixedOffset(10, 10);
 
                 settingBounds.WithChildren(shopSelectBounds, shopSelectionLabel, quantitySelectionBounds, quantitySelectionLabel, desiredProductLabel, desiredProductSlotBounds, purchaseSlotBounds, adminShopBounds, adminShopLabel);
@@ -206,6 +209,9 @@ namespace Viconomy.GUI
                     .AddStaticText(Lang.Get("vinconomy:gui-limit-purchases"), CairoFont.WhiteSmallText(), limitPurchaseLabel)
                     .AddSwitch(new Action<bool>(this.OnToggleLimitPurchases), limitPurchaseBounds, "limitPurchases")
 
+                    .AddStaticText(Lang.Get("vinconomy:gui-fuzzy-matching"), CairoFont.WhiteSmallText(), fuzzyMatchingLabel)
+                    .AddSwitch(new Action<bool>(this.OnToggleFuzzyMatching), fuzzyMatchingBounds, "fuzzyMatching")
+
                     .AddStaticText(Lang.Get("vinconomy:gui-purchases-left"), CairoFont.WhiteSmallText(), numPurchasesSelectionLabel)
                     .AddNumberInput(numPurchasesSelectionBounds, new Action<string>(this.onRemainingPurchasesQuantityChanged), CairoFont.WhiteSmallText(), "numPurchases")
 
@@ -213,7 +219,7 @@ namespace Viconomy.GUI
                   
                     .AddStaticText(Lang.Get("vinconomy:gui-decoration-block"), CairoFont.WhiteSmallText(), chiselLabel )
                     .AddItemSlotGrid(vInventory, new Action<object>(this.SendInvPacket), 1, new int[] {0}, chiselSlotBounds, "chisel")
-                    .AddIf(api.World.Player.HasPrivilege("gamemode"))
+                    .AddIf(stall.IsAdminShop || VinUtils.IsCreativePlayer(api.World.Player))
                         .AddStaticText(Lang.Get("vinconomy:gui-admin-shop"), CairoFont.WhiteSmallText(), adminShopLabel)
                         .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
                         .AddStaticText(Lang.Get("vinconomy:gui-discard-product"), CairoFont.WhiteSmallText(), discardProductLabel)
@@ -241,7 +247,7 @@ namespace Viconomy.GUI
                 if (curTab == stallSlotCount - 1)
                     SingleComposer.GetButton("nextPage").Enabled = false;
 
-                if (capi.World.Player.HasPrivilege("gamemode"))
+                if (stall.IsAdminShop || VinUtils.IsCreativePlayer(api.World.Player))
                 {
                     SingleComposer.GetSwitch("admin").SetValue(stall.IsAdminShop);
                     SingleComposer.GetSwitch("discardProduct").SetValue(stall.DiscardProduct);
@@ -339,16 +345,14 @@ namespace Viconomy.GUI
             }
         }
 
+        private void OnToggleFuzzyMatching(bool isToggled)
+        {
+            VinUtils.SendSingleBool(capi, BlockEntityPosition, VinConstants.SET_FUZZY_MATCHING, isToggled);
+        }
+
         private void OnToggleRegisterFallback(bool isToggled)
         {
-            byte[] data;
-            using (MemoryStream ms = new MemoryStream())
-            {
-                BinaryWriter writer = new BinaryWriter(ms);
-                writer.Write(isToggled);
-                data = ms.ToArray();
-            }
-            capi.Network.SendBlockEntityPacket(BlockEntityPosition, VinConstants.SET_REGISTER_FALLBACK, data);
+            VinUtils.SendSingleBool(capi, BlockEntityPosition, VinConstants.SET_REGISTER_FALLBACK, isToggled);
         }
 
         private void OnToggleLimitPurchases(bool isToggled)
@@ -366,27 +370,12 @@ namespace Viconomy.GUI
 
         private void OnToggleDiscardCurrency(bool isToggled)
         {
-            byte[] data;
-            using (MemoryStream ms = new MemoryStream())
-            {
-                BinaryWriter writer = new BinaryWriter(ms);
-                writer.Write(isToggled);
-                data = ms.ToArray();
-            }
-            capi.Network.SendBlockEntityPacket(BlockEntityPosition, VinConstants.SET_ADMIN_DISCARD_CURRENCY, data);
+            VinUtils.SendSingleBool(capi, BlockEntityPosition, VinConstants.SET_ADMIN_DISCARD_CURRENCY, isToggled);
         }
 
         private void OnToggleAdminShop(bool isToggled)
         {
-            byte[] data;
-            using (MemoryStream ms = new MemoryStream())
-            {
-                BinaryWriter writer = new BinaryWriter(ms);
-                writer.Write(isToggled);
-                data = ms.ToArray();
-            }
-            capi.Network.SendBlockEntityPacket(BlockEntityPosition, VinConstants.SET_ADMIN_SHOP, data);
-
+            VinUtils.SendSingleBool(capi, BlockEntityPosition, VinConstants.SET_ADMIN_SHOP, isToggled);
         }
 
         private bool PreviousPage()

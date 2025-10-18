@@ -201,7 +201,7 @@ namespace Viconomy.Trading
                     }
                     else
                     {
-                        if (isMatchingItem(itemSlot.Itemstack, request.currencyNeeded, request.coreApi.World))
+                        if (isMatchingItem(itemSlot.Itemstack, request.currencyNeeded, request.coreApi.World, false))
                         {
                             qntyLeft -= maxStackSize - itemSlot.StackSize;
                         }
@@ -225,15 +225,15 @@ namespace Viconomy.Trading
             return true;
         }
 
-        public static bool CanAfford(IPlayer player, ItemStack currencyNeeded)
+        public static bool CanAfford(IPlayer player, ItemStack currencyNeeded, bool isFuzzy)
         {
-            AggregatedSlots validCurrency = GetAllValidSlotsFor(player, currencyNeeded);
+            AggregatedSlots validCurrency = GetAllValidSlotsFor(player, currencyNeeded, isFuzzy);
             return validCurrency.TotalCount < currencyNeeded.StackSize; ;
         }
 
-        public static bool CanAfford(IPlayer player, ItemStack currencyNeeded, TradeResult purchaseResult = null)
+        public static bool CanAfford(IPlayer player, ItemStack currencyNeeded, TradeResult purchaseResult = null, bool isFuzzy = false)
         {
-            AggregatedSlots validCurrency = GetAllValidSlotsFor(player, currencyNeeded);
+            AggregatedSlots validCurrency = GetAllValidSlotsFor(player, currencyNeeded, isFuzzy);
             if (purchaseResult != null)
             {
                 purchaseResult.currencySourceSlots = validCurrency.Slots;
@@ -254,7 +254,7 @@ namespace Viconomy.Trading
         }
 
 
-        public static bool CanAfford(TradeRequest request, TradeResult purchaseResult)
+        public static bool CanAfford(TradeRequest request, TradeResult purchaseResult, bool isFuzzy = false)
         {
             bool populatePurchaseResult = purchaseResult != null;
             int currencyRequired = request.currencyNeeded.StackSize;
@@ -268,7 +268,7 @@ namespace Viconomy.Trading
 
 
             // Count the amount of currency that the player has to see if it covers the cost
-            AggregatedSlots validCurrency = GetAllValidSlotsFor(request.customer, request.currencyNeeded);
+            AggregatedSlots validCurrency = GetAllValidSlotsFor(request.customer, request.currencyNeeded, isFuzzy);
             if (populatePurchaseResult)
             {
                 purchaseResult.currencySourceSlots = validCurrency.Slots;
@@ -403,12 +403,12 @@ namespace Viconomy.Trading
             return false;
         }
 
-        public static AggregatedSlots GetAllValidSlotsFor(IPlayer customer, ItemSlot desiredItem)
+        public static AggregatedSlots GetAllValidSlotsFor(IPlayer customer, ItemSlot desiredItem, bool isFuzzy = false)
         {
-            return GetAllValidSlotsFor(customer, desiredItem.Itemstack);
+            return GetAllValidSlotsFor(customer, desiredItem.Itemstack, isFuzzy);
         }
 
-        public static AggregatedSlots GetAllValidSlotsFor(IPlayer customer, ItemStack desiredItem)
+        public static AggregatedSlots GetAllValidSlotsFor(IPlayer customer, ItemStack desiredItem, bool isFuzzy = false)
         {
             AggregatedSlots aggregatedSlots = new AggregatedSlots(customer.Entity.Api);
             if (desiredItem == null)
@@ -417,13 +417,13 @@ namespace Viconomy.Trading
             }
 
             ItemSlot handItem = customer.InventoryManager.ActiveHotbarSlot;
-            if (isMatchingItem(desiredItem, handItem.Itemstack, customer.Entity.World))
+            if (isMatchingItem(desiredItem, handItem.Itemstack, customer.Entity.World, isFuzzy))
             {
                 aggregatedSlots.Add(handItem);
             }
 
             ItemSlot offhandItem = customer.InventoryManager.OffhandHotbarSlot;
-            if (isMatchingItem(desiredItem, handItem.Itemstack, customer.Entity.World))
+            if (isMatchingItem(desiredItem, handItem.Itemstack, customer.Entity.World, isFuzzy))
             {
                 aggregatedSlots.Add(handItem);
             }
@@ -432,7 +432,7 @@ namespace Viconomy.Trading
             foreach (ItemSlot itemSlot in hotbarInv)
             {
                 if (handItem == itemSlot || itemSlot.Itemstack == null) { continue; }
-                if (isMatchingItem(desiredItem, itemSlot.Itemstack, customer.Entity.World))
+                if (isMatchingItem(desiredItem, itemSlot.Itemstack, customer.Entity.World, isFuzzy))
                 {
                     aggregatedSlots.Add(itemSlot);
                 }
@@ -442,7 +442,7 @@ namespace Viconomy.Trading
             foreach (ItemSlot itemSlot in characterInv)
             {
                 if (handItem == itemSlot) { continue; }
-                if (isMatchingItem(desiredItem, itemSlot.Itemstack, customer.Entity.World))
+                if (isMatchingItem(desiredItem, itemSlot.Itemstack, customer.Entity.World, isFuzzy))
                 {
                     aggregatedSlots.Add(itemSlot);
                 }
@@ -450,11 +450,14 @@ namespace Viconomy.Trading
             return aggregatedSlots;
         }
 
-        public static bool isMatchingItem(ItemStack desired, ItemStack toCompare, IWorldAccessor world)
+        public static bool isMatchingItem(ItemStack desired, ItemStack toCompare, IWorldAccessor world, bool isFuzzy = false)
         {
-            return desired != null
-                && toCompare != null
-                && desired.Equals(world, toCompare, GlobalConstants.IgnoredStackAttributes);
+            if (desired == null || toCompare == null) return false;
+
+            if ( isFuzzy )
+                return desired.Collectible.Code.Equals(toCompare.Collectible.Code);    
+            else
+                return desired.Equals(world, toCompare, GlobalConstants.IgnoredStackAttributes);
         }
 
 

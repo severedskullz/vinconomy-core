@@ -14,12 +14,14 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.GameContent;
 
 namespace Viconomy.BlockEntities
 {
     public class BEVinconPurchaseContainer : BEVinconContainer
     {
         public bool RegisterFallback;
+        public bool FuzzyMatching;
 
         //Amount of purchased product from users
         private int PurchasedProductStacksPerSlot = 30;
@@ -101,7 +103,7 @@ namespace Viconomy.BlockEntities
             ItemStack desiredProduct = GetDesiredProductForStall(stallSlot).Itemstack;
             request.WithShop(shopRegister, this, stallSlot, IsAdminShop);
             request.WithPurchases(numPurchases);
-            request.WithCurrency(desiredProduct, TradingUtil.GetAllValidSlotsFor(player, desiredProduct), desiredProduct.StackSize);
+            request.WithCurrency(desiredProduct, TradingUtil.GetAllValidSlotsFor(player, desiredProduct, FuzzyMatching), desiredProduct.StackSize);
             request.WithProduct(returnedCurrency, GetAggregateProductSlots(stallSlot), returnedCurrency.StackSize);
 
             AggregatedSlots coupons = TradingUtil.GetCouponsSlotsFor(player, request.ProductStackNeeded, shopRegister);
@@ -433,12 +435,14 @@ namespace Viconomy.BlockEntities
         {
             base.ToTreeAttributes(tree);
             tree.SetBool("RegisterFallback", RegisterFallback);
+            tree.SetBool("FuzzyMatching", FuzzyMatching);
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor world)
         {
             base.FromTreeAttributes(tree, world);
             RegisterFallback = tree.GetBool("RegisterFallback");
+            FuzzyMatching = tree.GetBool("FuzzyMatching");
         }
 
          public override void OnReceivedClientPacket(IPlayer player, int packetid, byte[] data)
@@ -487,6 +491,15 @@ namespace Viconomy.BlockEntities
                         isAdmin = reader.ReadBoolean();
                     }
                     SetAdminShop(player, isAdmin);
+                    break;
+                case VinConstants.SET_FUZZY_MATCHING:
+                    bool fuzzyMatching = false;
+                    using (MemoryStream ms = new MemoryStream(data))
+                    {
+                        BinaryReader reader = new BinaryReader(ms);
+                        fuzzyMatching = reader.ReadBoolean();
+                    }
+                    SetFuzzyMatching(player, fuzzyMatching);
                     break;
 
                 case VinConstants.SET_ITEM_PRICE:
@@ -555,6 +568,16 @@ namespace Viconomy.BlockEntities
                     }
                     break;
             }
+        }
+
+        private void SetFuzzyMatching(IPlayer byPlayer, bool fuzzyMatching)
+        {
+            if (!CanAccess(byPlayer))
+            {
+                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN);
+                return;
+            }
+            FuzzyMatching = fuzzyMatching;
         }
 
         private void SetLimitedPurchases(int stallSlot, bool value)

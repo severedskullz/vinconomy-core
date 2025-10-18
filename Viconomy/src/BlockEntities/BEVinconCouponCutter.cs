@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Viconomy.GUI;
+using Viconomy.Inventory.Impl;
 using Viconomy.Inventory.Slots;
 using Viconomy.ItemTypes;
 using Viconomy.Registry;
@@ -17,7 +18,7 @@ namespace Viconomy.BlockEntities
 {
     public class BEVinconCouponCutter : BlockEntityContainer
     {
-        private InventoryGeneric inventory;
+        private VinconGenericInventory inventory;
         private GuiViconCouponCutter invDialog;
         public string BonusType { get; private set; }
         public string DiscountType { get; private set; }
@@ -35,7 +36,8 @@ namespace Viconomy.BlockEntities
 
         public BEVinconCouponCutter()
         {
-            this.inventory = new InventoryGeneric(11, null, Api, onNewSlot);
+            this.inventory = new VinconGenericInventory(11, null, Api, onNewSlot);
+            
             AppliedShops = [];
         }
 
@@ -428,5 +430,6 @@ namespace Viconomy.BlockEntities
                 return defaultVal;
             return val;
         }
+
     }
 }   

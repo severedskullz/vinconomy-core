@@ -245,7 +245,7 @@ namespace Viconomy.GUI
                         .AddDropDown(sculptureSizeHKeys, sculptureSizeHNames, sculptureHSelectionIndex, new SelectionChangedDelegate(this.onYSelectionChanged), sizeSelectHBounds)
                         .AddStaticText(Lang.Get("vinconomy:gui-sculpture-name"), CairoFont.WhiteSmallText(), nameLabel)
                         .AddTextInput(nameBounds, OnTextChanged, CairoFont.WhiteSmallText(), "sculptureName")
-                        .AddIf(api.World.Player.HasPrivilege("gamemode"))
+                        .AddIf(stall.IsAdminShop || VinUtils.IsCreativePlayer(api.World.Player)) 
                             .AddStaticText(Lang.Get("vinconomy:gui-admin-shop"), CairoFont.WhiteSmallText(), adminShopLabel)
                             .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
                         .EndIf()
@@ -301,7 +301,7 @@ namespace Viconomy.GUI
                 if (curTab == sizeY-1)
                     SingleComposer.GetButton("nextPage").Enabled = false;
 
-                if (capi.World.Player.HasPrivilege("gamemode")) 
+                if (stall.IsAdminShop || VinUtils.IsCreativePlayer(api.World.Player)) 
                     SingleComposer.GetSwitch("admin").SetValue(stall.IsAdminShop);
 
                 GuiElementTextInput sculptureInput = SingleComposer.GetTextInput("sculptureName");

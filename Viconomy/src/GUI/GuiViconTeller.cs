@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using Viconomy.BlockEntities;
-using Viconomy.Inventory;
 using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
@@ -147,7 +146,7 @@ namespace Viconomy.GUI
                 {
                     sc.AddStaticText(Lang.Get("vinconomy:gui-shop"), CairoFont.WhiteSmallText(), shopSelectionLabel)
                      .AddDropDown(shopsKeys, shopsNames, selectedIndex, new SelectionChangedDelegate(this.onSelectionChanged), shopSelectBounds)
-                     .AddIf(api.World.Player.HasPrivilege("gamemode"))
+                     .AddIf(teller.IsAdminShop || VinUtils.IsCreativePlayer(api.World.Player))
                          .AddStaticText(Lang.Get("vinconomy:gui-admin-shop"), CairoFont.WhiteSmallText(), adminShopLabel)
                          .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
                      .EndIf();
@@ -181,7 +180,7 @@ namespace Viconomy.GUI
 
                 sc.EndChildElements();
 
-                if (capi.World.Player.HasPrivilege("gamemode") && isOwner)
+                if (teller.IsAdminShop || VinUtils.IsCreativePlayer(api.World.Player))
                     sc.GetSwitch("admin").SetValue(teller.IsAdminShop);
 
                 //.AddHorizontalTabs(tabs, tabBounds, new Action<int>(this.OnTabClicked), tabFont, tabFont.Clone().WithColor(GuiStyle.ActiveButtonTextColor), "tabs")
@@ -205,7 +204,7 @@ namespace Viconomy.GUI
                    writer.Write(currencySlot);
                    data = ms.ToArray();
                }
-               this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.CURRENCY_CONVERSION, data);
+               this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.CURRENCY_CONVERSION, data);
                return true; 
            });
         }
@@ -222,15 +221,7 @@ namespace Viconomy.GUI
 
         private void OnToggleAdminShop(bool isToggled)
         {
-            byte[] data;
-            using (MemoryStream ms = new MemoryStream())
-            {
-                BinaryWriter writer = new BinaryWriter(ms);
-                writer.Write(isToggled);
-                data = ms.ToArray();
-            }
-            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_ADMIN_SHOP, data);
-
+            VinUtils.SendSingleBool(capi, BlockEntityPosition, VinConstants.SET_ADMIN_SHOP, isToggled);
         }
 
 
@@ -248,7 +239,7 @@ namespace Viconomy.GUI
                 writer.Write(Int32.Parse(code));
                 data = ms.ToArray();
             }
-            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_REGISTER_ID, data);
+            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.SET_REGISTER_ID, data);
 
         }
 

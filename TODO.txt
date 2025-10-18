@@ -3,8 +3,3 @@ Gacha balls
 
 Clothing Stand:
 	Add dedicated "Shoulder" slot to stand
-
-admin ledger - Show trades that do not have a Shop associated with it. Log register ID as -1.
-Selling stall
-
-fix coinage as product

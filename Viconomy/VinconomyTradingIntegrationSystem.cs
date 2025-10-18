@@ -44,8 +44,11 @@ namespace Viconomy
             _coreServerAPI = api;
             _coreSystem = api.ModLoader.GetModSystem<VinconomyCoreSystem>();
 
+            _coreSystem.OnUpdateShop += UpdateShopInfo;
             _coreSystem.OnUpdateShopProduct += UpdateShopProductForNetwork;
-            //_coreServerAPI.Event.Timer(SyncTradeNetwork, 1 * 60);
+            
+            int syncTimer = Math.Max(1, _coreSystem.Config.syncIntervalMinutes);
+            _coreServerAPI.Event.Timer(SyncTradeNetwork, syncTimer * 60);
 
             var parsers = api.ChatCommands.Parsers;
             api.ChatCommands.GetOrCreate("vinconomy")
@@ -61,7 +64,9 @@ namespace Viconomy
                         .EndSubCommand()
                         .BeginSubCommand("join")
                             .WithDescription("Joins a Trade Network")
-                            .WithArgs(parsers.Word("Join Key", new string[] { "GLOBAL" }), parsers.OptionalWord("Username"), parsers.OptionalWord("Password"))
+                            .WithArgs(  parsers.Word("Join Key", new string[] { "GLOBAL" }),
+                                        parsers.OptionalWord("Username"),
+                                        parsers.OptionalWord("Password"))
                             .HandleWith(JoinNetwork)
                         .EndSubCommand()
                         .BeginSubCommand("register")
@@ -81,6 +86,8 @@ namespace Viconomy
 
             
         }
+
+
 
         private TextCommandResult SyncNetwork(TextCommandCallingArgs args)
         {
@@ -115,7 +122,7 @@ namespace Viconomy
                 //TODO: Change for one POST instead of multiple?
                 foreach (int shopId in TradeNetworkUpdates.Keys)
                 {
-                    ShopProducts shop = TradeNetworkUpdates[shopId];
+                    ShopUpdate shop = TradeNetworkUpdates[shopId];
                     string payload = shop.ToJsonString();
                     VinUtils.PatchAsync($"{config.tradingNetworkUrl}/api/shop/products/{shopId}", payload, OnNetworkShopUpdatesResponse, apiKey);
                 }
@@ -347,13 +354,30 @@ namespace Viconomy
             return TextCommandResult.Success("Success");
         }
 
-        private void UpdateShopProductForNetwork(int shopId, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
+        private void UpdateShopInfo(ShopRegistration shop)
         {
             if (_coreSystem.Config.tradingNetworkEnabled && _coreSystem.Config.networkAPIKeys != null)
             {
                 if (TradeNetworkUpdates == null)
                 {
-                    TradeNetworkUpdates = new TradeNetworkShopUpdate();
+                    TradeNetworkUpdates = new TradeNetworkShopUpdate(_coreSystem.GetRegistry());
+                }
+                TradeNetworkUpdates.AddShopUpdate(shop);
+                this.Mod.Logger.Log(EnumLogType.Event, $"Added a new shop product update. Queue now has {TradeNetworkUpdates.GetUpdateCount()}");
+            }
+        }
+
+        private void UpdateShopProductForNetwork(int shopId, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
+        {
+            //TODO: I have a feeling we are missing cleanup on shops being set to a register, then unset or changed to a different register. Verify that is working correctly.
+            if (shopId == -1)
+                return;
+
+            if (_coreSystem.Config.tradingNetworkEnabled && _coreSystem.Config.networkAPIKeys != null)
+            {
+                if (TradeNetworkUpdates == null)
+                {
+                    TradeNetworkUpdates = new TradeNetworkShopUpdate(_coreSystem.GetRegistry());
                 }
                 TradeNetworkUpdates.AddShopUpdate(shopId, pos, stallSlot, product, numItemsPerPurchase, currency);
                 this.Mod.Logger.Log(EnumLogType.Event, $"Added a new shop product update. Queue now has {TradeNetworkUpdates.GetUpdateCount()}");

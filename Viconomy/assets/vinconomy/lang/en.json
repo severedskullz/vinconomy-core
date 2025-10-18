@@ -54,7 +54,8 @@
     "gui-discard-product": "Discard Product:",
 	"gui-error-parsing": "There was a problem loading RichText. Perhaps there is a problem with the source document",
 	"gui-error-tell-the-dev": "There was a problem loading - Please forward this to the developer so he can fix it: ",
-	"gui-gacha": "Gacha",
+	"gui-fuzzy-matching" : "Fuzzy Matching:",
+    "gui-gacha": "Gacha",
     "gui-gacha-ball" :  "Gacha Ball",
     "gui-gacha-loader" :  "Gacha Loader",
 	"gui-icon": "Icon:",
@@ -110,6 +111,7 @@
     "gui-stall-access" : "Stall Access",
     "gui-stall-owner" :  "{0}'s Stall",
     "gui-stall-unowned" :  "Unowned Stall",
+    "gui-summon-trader" :  "Summon Trader",
     "gui-teller-owner" :  "{0}'s Teller Machine",
     "gui-teller-unowned" :  "Unowned Teller Machine",
 	"gui-test": "Test",
@@ -241,5 +243,7 @@
     "game:material-purple" : "Purple",
     "game:material-red" : "Red",
     "game:material-white" : "White",
-    "game:material-yellow" : "Yellow"
+    "game:material-yellow" : "Yellow",
+
+     "game:tradingwindow-vincon-trader" : "Trade Network Merchant"
 }

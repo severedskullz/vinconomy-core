@@ -33,7 +33,6 @@
         public const int SET_TOTAL_RANDOMIZER = 2011;
         public const int SET_ITEM_PRICE = 2012;
 
-
         public const int ADD_PLAYER_PERMISSION = 2013;
         public const int REMOVE_PLAYER_PERMISSION = 2014;
         public const int SET_STALL_PERMISSION = 2015;
@@ -42,7 +41,7 @@
         public const int SET_PURCHASES_REMAINING = 2017;
         public const int SET_REGISTER_FALLBACK = 2018;
         public const int SET_LIMITED_PURCHASES = 2019;
-
+        public const int SET_FUZZY_MATCHING = 2020;
 
         // Customer Packets
         public const int PURCHASE_ITEMS = 3002;

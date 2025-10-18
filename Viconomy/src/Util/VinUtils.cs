@@ -7,9 +7,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Viconomy.Network.Common;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.Common;
 using Vintagestory.GameContent;
@@ -437,6 +439,23 @@ namespace Viconomy.Util
                 }
             }
             return true;
+        }
+
+        public static void SendSingleBool(ICoreClientAPI capi, BlockPos BlockEntityPosition, int packetId, bool isToggled)
+        {
+            byte[] data;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BinaryWriter writer = new BinaryWriter(ms);
+                writer.Write(isToggled);
+                data = ms.ToArray();
+            }
+            capi.Network.SendBlockEntityPacket(BlockEntityPosition, packetId, data);
+        }
+
+        public static bool IsCreativePlayer(IPlayer player)
+        {
+            return player.WorldData.CurrentGameMode == EnumGameMode.Creative && player.HasPrivilege("gamemode");
         }
 
     }
