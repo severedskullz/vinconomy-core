@@ -261,6 +261,7 @@ namespace Viconomy.GUI
                 SingleComposer.GetTextInput("returnedCurrencyQuantity").SetValue(stallSlot.Currency.StackSize);
                 SingleComposer.GetSwitch("registerFallback").SetValue(stall.RegisterFallback);
                 SingleComposer.GetSwitch("limitPurchases").SetValue(stallSlot.LimitedPurchases);
+                SingleComposer.GetSwitch("fuzzyMatching").SetValue(stallSlot.FuzzyMatching);
                 SingleComposer.GetTextInput("numPurchases").SetValue(stallSlot.NumTradesLeft);
 
 
@@ -347,7 +348,15 @@ namespace Viconomy.GUI
 
         private void OnToggleFuzzyMatching(bool isToggled)
         {
-            VinUtils.SendSingleBool(capi, BlockEntityPosition, VinConstants.SET_FUZZY_MATCHING, isToggled);
+            byte[] data;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BinaryWriter writer = new BinaryWriter(ms);
+                writer.Write(curTab);
+                writer.Write(isToggled);
+                data = ms.ToArray();
+            }
+            capi.Network.SendBlockEntityPacket(BlockEntityPosition, VinConstants.SET_FUZZY_MATCHING, data);
         }
 
         private void OnToggleRegisterFallback(bool isToggled)

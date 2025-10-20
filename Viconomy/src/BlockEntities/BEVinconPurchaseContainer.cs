@@ -21,7 +21,6 @@ namespace Viconomy.BlockEntities
     public class BEVinconPurchaseContainer : BEVinconContainer
     {
         public bool RegisterFallback;
-        public bool FuzzyMatching;
 
         //Amount of purchased product from users
         private int PurchasedProductStacksPerSlot = 30;
@@ -98,12 +97,12 @@ namespace Viconomy.BlockEntities
         public override void PurchaseItem(IPlayer player, int stallSlot, int numPurchases, BEVinconRegister shopRegister)
         {
             GenericTradeRequest request = new GenericTradeRequest(Api, player);
-
+            PurchaseStallSlot slot = inventory.GetStall<PurchaseStallSlot>(stallSlot);
             ItemStack returnedCurrency = GetCurrencyForStall(stallSlot).Itemstack;
             ItemStack desiredProduct = GetDesiredProductForStall(stallSlot).Itemstack;
             request.WithShop(shopRegister, this, stallSlot, IsAdminShop);
             request.WithPurchases(numPurchases);
-            request.WithCurrency(desiredProduct, TradingUtil.GetAllValidSlotsFor(player, desiredProduct, FuzzyMatching), desiredProduct.StackSize);
+            request.WithCurrency(desiredProduct, TradingUtil.GetAllValidSlotsFor(player, desiredProduct, slot.FuzzyMatching), desiredProduct.StackSize);
             request.WithProduct(returnedCurrency, GetAggregateProductSlots(stallSlot), returnedCurrency.StackSize);
 
             AggregatedSlots coupons = TradingUtil.GetCouponsSlotsFor(player, request.ProductStackNeeded, shopRegister);
@@ -435,14 +434,12 @@ namespace Viconomy.BlockEntities
         {
             base.ToTreeAttributes(tree);
             tree.SetBool("RegisterFallback", RegisterFallback);
-            tree.SetBool("FuzzyMatching", FuzzyMatching);
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor world)
         {
             base.FromTreeAttributes(tree, world);
             RegisterFallback = tree.GetBool("RegisterFallback");
-            FuzzyMatching = tree.GetBool("FuzzyMatching");
         }
 
          public override void OnReceivedClientPacket(IPlayer player, int packetid, byte[] data)
@@ -497,9 +494,10 @@ namespace Viconomy.BlockEntities
                     using (MemoryStream ms = new MemoryStream(data))
                     {
                         BinaryReader reader = new BinaryReader(ms);
+                        stallSlot = reader.ReadInt32();
                         fuzzyMatching = reader.ReadBoolean();
                     }
-                    SetFuzzyMatching(player, fuzzyMatching);
+                    SetFuzzyMatching(player, stallSlot, fuzzyMatching);
                     break;
 
                 case VinConstants.SET_ITEM_PRICE:
@@ -570,14 +568,15 @@ namespace Viconomy.BlockEntities
             }
         }
 
-        private void SetFuzzyMatching(IPlayer byPlayer, bool fuzzyMatching)
+        private void SetFuzzyMatching(IPlayer byPlayer, int stallSlot, bool fuzzyMatching)
         {
             if (!CanAccess(byPlayer))
             {
                 VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN);
                 return;
             }
-            FuzzyMatching = fuzzyMatching;
+            
+            inventory.GetStall<PurchaseStallSlot>(stallSlot).FuzzyMatching = fuzzyMatching;
         }
 
         private void SetLimitedPurchases(int stallSlot, bool value)

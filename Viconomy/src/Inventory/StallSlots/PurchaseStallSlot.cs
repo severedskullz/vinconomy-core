@@ -14,6 +14,7 @@ namespace Viconomy.Inventory.StallSlots
         public int PurchasedItemStacksPerStall { get; private set; }
         public int NumTradesLeft;
         public bool LimitedPurchases;
+        public bool FuzzyMatching;
 
         public override int StallSlots => ProductStacksPerStall + PurchasedItemStacksPerStall ;
         public override int TotalSlots => StallSlots + 2; // Currency and DesiredProduct
@@ -141,6 +142,7 @@ namespace Viconomy.Inventory.StallSlots
         {
             tree.SetInt("numTradesLeft", NumTradesLeft);
             tree.SetBool("limitedPurchases", LimitedPurchases);
+            tree.SetBool("FuzzyMatching", FuzzyMatching);
             if (Currency.Itemstack != null)
             {
                 tree.SetItemstack("currency", Currency.Itemstack.Clone());
@@ -172,6 +174,7 @@ namespace Viconomy.Inventory.StallSlots
             LimitedPurchases = tree.GetBool("limitedPurchases", true);
             Currency.Itemstack = tree.GetItemstack("currency");
             DesiredProduct.Itemstack = tree.GetItemstack("desiredProduct");
+            FuzzyMatching = tree.GetBool("FuzzyMatching");
             for (int i = 0; i < ProductStacksPerStall; i++)
             {
                 CurrencySlots[i].Itemstack = tree.GetItemstack("slot" + i);
