@@ -75,6 +75,7 @@ namespace Viconomy.BlockEntities
                 modeldata.Rotate(origin, 0, 90 * GameMath.DEG2RAD, 0);
                 modeldata.Rotate(origin, 90 * GameMath.DEG2RAD,0,0);
                 modeldata.Rotate(origin, 0, 0, 225 * GameMath.DEG2RAD);
+                modeldata.Translate(0.25f, 0.25f, 0);
             } else if (index == 1) // Shield
             {
                 modeldata.Rotate(origin, 95*GameMath.DEG2RAD, 0, 0);
@@ -84,6 +85,7 @@ namespace Viconomy.BlockEntities
                 modeldata.Rotate(origin, 0, 270 * GameMath.DEG2RAD, 0);
                 modeldata.Rotate(origin, -90 * GameMath.DEG2RAD, 0, 0);
                 modeldata.Rotate(origin, 0, 0, 135 * GameMath.DEG2RAD);
+                modeldata.Translate(-0.25f, 0.25f, 0);
             }
 
             //string meshCacheKey = GetMeshCacheKey(stack) + index;

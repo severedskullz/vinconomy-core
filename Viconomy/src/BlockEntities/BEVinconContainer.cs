@@ -507,9 +507,9 @@ namespace Viconomy.BlockEntities
                             }
                         }
                     }
-                    catch
+                    catch (Exception e)
                     {
-                        modSystem.Mod.Logger.Error($"Had some trouble rendering  mesh in a stall @ {Pos.X} {Pos.Y} {Pos.Z} for slot {i}");
+                        modSystem.Mod.Logger.Error($"Had some trouble rendering mesh in a stall @ {Pos.X} {Pos.Y} {Pos.Z} for slot {i}. Exception was {e.Message}");
                     }
 
                 }
@@ -648,11 +648,10 @@ namespace Viconomy.BlockEntities
             if (renderer != null)
             {
                 modeldata = renderer.createMesh(this, stack, index);
-
                 if (modeldata == null)
                 {
-                    // Dont crash, please!
-                    return modeldata;
+                    //Don't crash if we couldnt get the model for some reason
+                    return null;
                 }
 
                 //Bypass the Display and Shelvable transforms for Armor Stands, where we want the model coordinates to match the character, not the zero'd positions.
@@ -683,8 +682,6 @@ namespace Viconomy.BlockEntities
                         modelTransform.EnsureDefaultValues();
                         modeldata.ModelTransform(modelTransform);
                     }
-
-
                     // Should be handled by IShelvable, but I still see it in the JSON
                     else if (stack.Collectible.Attributes?["shelvable"].Exists ?? false)
                     {
