@@ -69,22 +69,17 @@ namespace Viconomy.BlockEntities
                 ItemSlot slot = inventory.FindFirstNonEmptyStockSlot(i);
                 if (slot != null && slot.Itemstack != null)
                 { 
-                    if (ViconomyFilters.IsWaistSlot(slot))
+                    if (!ViconomyFilters.IsWaistSlot(slot))
                     {
-                        matrix.RotateYDeg(Block.Shape.rotateY - 90);
-                        matrix.Translate(-0.05f, 0.10f, -0.0125f);
+                        matrix.Translate(0, 0.05f, 0);
+                        
                     }
-                    else if (ViconomyFilters.IsBootsSlot(slot))
+                    else 
                     {
-                        matrix.RotateYDeg(Block.Shape.rotateY + 90);
-                        matrix.Translate(-0.05f, 0.10f, -0.0125f);
-                    }
-                    else
-                    {
-                        matrix.RotateYDeg(Block.Shape.rotateY + 90);
-                        matrix.Translate(0f, 0.050f, -0.01250f);
+                        matrix.Translate(0f, 0.05f, 0f);
                     }
                 }
+                matrix.RotateYDeg(Block.Shape.rotateY + 90);
                 matrix.Translate(-0.5f, 0f, -0.5f);
                 tfMatrices[i] = matrix.Values;
             }

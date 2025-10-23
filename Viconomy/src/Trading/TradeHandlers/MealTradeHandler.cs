@@ -154,6 +154,7 @@ namespace Viconomy.Trading.TradeHandlers
 
                 servingsToTransfer = Math.Min(servings, capacity - currentServings);
                 meal.SetContents(recipe, containerSlot.Itemstack, mealStacks, currentServings + servingsToTransfer);
+                containerSlot.Itemstack.Attributes.RemoveAttribute("sealed");
 
                 player.InventoryManager.NotifySlot(player, containerSlot);
                 containerSlot.MarkDirty();

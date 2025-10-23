@@ -3,3 +3,5 @@ Gacha balls
 
 Clothing Stand:
 	Add dedicated "Shoulder" slot to stand
+
+Envelopes mod doesnt display items and crashes. MeshData is coming as null with exception saying it couldnt find the shape .json file. No idea why.

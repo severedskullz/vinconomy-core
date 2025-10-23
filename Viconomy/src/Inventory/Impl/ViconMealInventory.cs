@@ -139,6 +139,7 @@ namespace Viconomy.Inventory.Impl
                 if (servings > 0)
                 {
                     container.SetQuantityServings(Api.World, meal, servings);
+                    meal.Attributes?.RemoveAttribute("sealed");
                 } else
                 {
                     // Check if its a BlockCookedContainer (AKA Cooking Pot) first, because cooking pot does not have `eatenBlock` attribute
@@ -146,6 +147,7 @@ namespace Viconomy.Inventory.Impl
                     if ( meal.Block is BlockCookedContainerBase)
                     {
                         container.SetContents(null, meal, null, 0);
+                        meal.Attributes?.RemoveAttribute("sealed");
                     } else
                     {
                         string code = meal.Block.Attributes["eatenBlock"].AsString();

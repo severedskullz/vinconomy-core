@@ -1,0 +1,33 @@
+{
+  "ingredientPattern": "W,C,P",
+  "ingredients": {
+    "W": {
+      "type": "item",
+      "code": "game:plank-*",
+      "name": "wood",
+      "allowedVariants": [ "birch", "oak", "maple", "pine", "acacia", "kapok", "baldcypress", "larch", "redwood", "ebony", "walnut", "purpleheart" ]
+    },
+    "C": {
+      "type": "block",
+      "code": "game:chest-east",
+      "attributes": { "type": "normal-generic" }
+    },
+    "P": {
+        "type": "item",
+        "code": "game:metalplate-*",
+        "name": "metal",
+        "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "silver", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+    },
+  },
+  "recipeGroup": 1,
+  "width": 1,
+  "height": 3,
+  "output": {
+    "type": "block",
+    "code": "helmetstand-north",
+        "attributes": {
+            "PrimaryMaterial": "{metal}",
+            "SecondaryMaterial": "{wood}"
+        }
+  }
+}

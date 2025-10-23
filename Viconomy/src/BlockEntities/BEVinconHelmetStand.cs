@@ -1,6 +1,7 @@
-﻿using Vintagestory.API.Client;
-using Viconomy.Filters;
+﻿using Viconomy.Filters;
 using Viconomy.Inventory.Impl;
+using Vintagestory.API.Client;
+using Vintagestory.API.Common;
 
 namespace Viconomy.BlockEntities
 {
@@ -9,6 +10,11 @@ namespace Viconomy.BlockEntities
         public override int StallSlotCount => 1;
 
         public BEVinconHelmetStand()
+        {
+            bypassShelvableAttributes = true;
+        }
+
+        public override void ConfigureInventory()
         {
             ViconItemInventory inv = new ViconItemInventory(this, null, null, StallSlotCount, ProductStacksPerSlot);
             inv.SlotModified += base.Inventory_SlotModified;
@@ -19,9 +25,15 @@ namespace Viconomy.BlockEntities
 
         protected override float[][] GenTransformationMatrices()
         {
-            float[][] tfMatrices = new float[1][];
-            Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(Block.Shape.rotateY + 90).Translate(0, -1.1f, 0).Translate(-0.5f, 0f, -0.5f);
-            tfMatrices[0] = matrix.Values;
+            float[][] tfMatrices = new float[StallSlotCount][];
+            for (int i = 0; i < StallSlotCount; i++)
+            {
+                Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f);
+                matrix.RotateYDeg(Block.Shape.rotateY + 90);
+                matrix.Translate(-0.5f, -1.1f, -0.5f);
+                tfMatrices[i] = matrix.Values;
+            }
+
             return tfMatrices;
         }
     }

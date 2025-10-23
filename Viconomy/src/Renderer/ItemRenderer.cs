@@ -44,7 +44,7 @@ namespace Viconomy.Renderer
                     stall.SetNowTesselatingShape(coreClientAPI.TesselatorManager.GetCachedShape(stack.Item.Shape.Base));
                 }
 
-                coreClientAPI.Tesselator.TesselateItem(stack.Item, out modeldata, stall);
+                coreClientAPI.Tesselator.TesselateItem(stack.Item, out modeldata);
                 modeldata.RenderPassesAndExtraBits.Fill((short)2);
             } catch (Exception e)
             {

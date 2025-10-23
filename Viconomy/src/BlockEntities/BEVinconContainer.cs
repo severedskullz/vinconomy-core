@@ -649,6 +649,12 @@ namespace Viconomy.BlockEntities
             {
                 modeldata = renderer.createMesh(this, stack, index);
 
+                if (modeldata == null)
+                {
+                    // Dont crash, please!
+                    return modeldata;
+                }
+
                 //Bypass the Display and Shelvable transforms for Armor Stands, where we want the model coordinates to match the character, not the zero'd positions.
                 if (!bypassShelvableAttributes)
                 {

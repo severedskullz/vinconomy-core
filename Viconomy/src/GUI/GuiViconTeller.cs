@@ -180,7 +180,7 @@ namespace Viconomy.GUI
 
                 sc.EndChildElements();
 
-                if (teller.IsAdminShop || VinUtils.IsCreativePlayer(api.World.Player))
+                if (isOwner && (teller.IsAdminShop || VinUtils.IsCreativePlayer(api.World.Player)))
                     sc.GetSwitch("admin").SetValue(teller.IsAdminShop);
 
                 //.AddHorizontalTabs(tabs, tabBounds, new Action<int>(this.OnTabClicked), tabFont, tabFont.Clone().WithColor(GuiStyle.ActiveButtonTextColor), "tabs")

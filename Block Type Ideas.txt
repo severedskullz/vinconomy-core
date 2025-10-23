@@ -7,19 +7,8 @@ Shipment Delivery Block
 
 Shipment Request Block
 	
-Request Board
-	Request items for money
-
 "Roleplay" Mode
 	Allow stalls to "queue" items to trade? That way it requires the players to be there at the stall if they are online, otherwise allows offline trading.
 
 Bank Teller:
 	Zolgrim was forgetting to "inject" currency into the economy for players. Perhaps a config that allows players to get "starting money" by interacting with the banker.
-
-
-Catalogue Book:
-	Reveals where the shop is for a given catalogue
-		Hidden behind config where you have to have picked up the catalogue first? If Disabled, always viewable
-		Shops can have a button to show/hide on world map?
-		Displays location on World Map?
-	Shows what is for sale at the given shop, how much, etc.

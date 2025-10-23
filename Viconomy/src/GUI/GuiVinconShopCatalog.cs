@@ -95,7 +95,6 @@ namespace Viconomy.GUI
                .BeginChildElements()
                    .AddInset(descInsetBounds, insetDepth)
                    .BeginClip(descClipBounds);
-                        //.AddContainer(containerBounds, "scroll-content")
                         try
                         {
                             SingleComposer.AddRichtext(Catalog.Description != null ? Catalog.Description : "", CairoFont.WhiteDetailText(), descContainerBounds, "description");

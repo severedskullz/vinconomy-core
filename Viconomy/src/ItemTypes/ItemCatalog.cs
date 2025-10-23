@@ -42,16 +42,12 @@ namespace Viconomy.ItemTypes
             int shopID = inSlot.Itemstack.Attributes.GetInt("ShopId", -1);
             if (shopID > 0)
             {
-                if (modSystem == null)
+                string shopName = inSlot.Itemstack?.Attributes?.GetString("ShopName");
+                if (shopName != null)
                 {
-                    modSystem = api.ModLoader.GetModSystem<VinconomyCoreSystem>();
+                    dsc.AppendLine(Lang.Get("vinconomy:gui-f-shop", [shopName]));
                 }
-
-                ShopRegistration shop = modSystem.GetRegistry().GetShop(inSlot.Itemstack.Attributes.GetInt("ShopId"));
-                dsc.AppendLine("Bound to shop: " + shop.Name);
             }
-            
-
             base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
 
             

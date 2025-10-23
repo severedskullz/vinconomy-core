@@ -176,12 +176,14 @@ namespace Viconomy.BlockEntities
                     {
                         if (handSlot.Itemstack.Attributes.GetInt("ShopId", -1) <= 0)
                         {
-                            handSlot.Itemstack.Attributes.SetInt("ShopId", ID);
-                            handSlot.Itemstack.Attributes.SetString("Owner", Owner);
-                            handSlot.MarkDirty();
                             VinconomyCoreSystem modSystem = Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
                             ShopRegistration shop = modSystem.GetRegistry().GetShop(ID);
-                            player.SendMessage(0, Lang.Get("vinconomy:ledger-set", [ shop.Name ]), EnumChatType.OwnMessage);
+                            player.SendMessage(0, Lang.Get("vinconomy:ledger-set", [shop.Name]), EnumChatType.OwnMessage);
+                            handSlot.Itemstack.Attributes.SetInt("ShopId", ID);
+                            handSlot.Itemstack.Attributes.SetString("Owner", Owner);
+                            handSlot.Itemstack.Attributes.SetString("ShopName", shop.Name);
+                            handSlot.MarkDirty();
+
                         }
                         else
                         {

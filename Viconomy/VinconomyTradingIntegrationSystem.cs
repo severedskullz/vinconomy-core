@@ -64,7 +64,7 @@ namespace Viconomy
                         .EndSubCommand()
                         .BeginSubCommand("join")
                             .WithDescription("Joins a Trade Network")
-                            .WithArgs(  parsers.Word("Join Key", new string[] { "GLOBAL" }),
+                            .WithArgs(  new WordArgParser("Join Key", false,  ["GLOBAL"]),
                                         parsers.OptionalWord("Username"),
                                         parsers.OptionalWord("Password"))
                             .HandleWith(JoinNetwork)
@@ -318,8 +318,11 @@ namespace Viconomy
             string jsonData = VinUtils.SerializeToJson(data);
             IServerPlayer player = args.Caller.Player as IServerPlayer;
 
-            VinUtils.PutAsync($"{_coreSystem.Config.tradingNetworkUrl}/api/network/node", jsonData, OnRegisterNetworkResponse, _coreSystem.Config.GetAPIKey(data.guid));
-            return TextCommandResult.Success("Requested - Check Console for updates");
+            VinUtils.PutAsync($"{_coreSystem.Config.tradingNetworkUrl}/api/network/node", jsonData, 
+                (completionArgs) => {
+                    OnRegisterNetworkResponse(args.Caller.Player, completionArgs); 
+                }, _coreSystem.Config.GetAPIKey(data.guid));
+            return TextCommandResult.Deferred;
         }
 
         private TextCommandResult JoinNetwork(TextCommandCallingArgs args)
@@ -338,20 +341,23 @@ namespace Viconomy
             data.serverName = _coreServerAPI.WorldManager.CurrentWorldName;
             data.guid = _coreServerAPI.World.SavegameIdentifier;
             data.networkAccessKey = (string) args[0];
+
+            if (data.networkAccessKey == null)
+                data.networkAccessKey = "GLOBAL";
+
             string jsonData = VinUtils.SerializeToJson(data);
 
 
-            VinUtils.PostAsync($"{_coreSystem.Config.tradingNetworkUrl}/api/network/join", jsonData, (completionArgs) => {
-                OnRegisterNetworkResponse(completionArgs);
-                VinconomyCoreSystem.PrintClientMessage(args.Caller.Player, completionArgs.Response);
-
-            }, _coreSystem.Config.GetAPIKey(data.guid));
-            return TextCommandResult.Success("Requested - Check Console for updates");
+            VinUtils.PostAsync($"{_coreSystem.Config.tradingNetworkUrl}/api/network/join", jsonData, 
+                (completionArgs) => {
+                    OnJoinNetworkResponse(args.Caller.Player, completionArgs);
+                }, _coreSystem.Config.GetAPIKey(data.guid));
+            return TextCommandResult.Deferred;
         }
 
         private TextCommandResult LeaveNetwork(TextCommandCallingArgs args)
         {
-            return TextCommandResult.Success("Success");
+            return TextCommandResult.Deferred;
         }
 
         private void UpdateShopInfo(ShopRegistration shop)
@@ -385,23 +391,52 @@ namespace Viconomy
 
         }
 
-        private void OnRegisterNetworkResponse(CompletedArgs args)
+        private void OnJoinNetworkResponse(IPlayer player, CompletedArgs args)
         {
             if (args.StatusCode == 200)
             {
-                TradeNetworkNode node = TradeNetworkNode.FromJson(args.Response);
-                if (_coreSystem.Config.networkAPIKeys == null)
-                {
-                    _coreSystem.Config.networkAPIKeys = new Dictionary<string, string>();
-                }
-                _coreSystem.Config.networkAPIKeys.Add(_coreServerAPI.World.SavegameIdentifier, node.apiKey);
-                _coreServerAPI.StoreModConfig(_coreSystem.Config, VinconomyCoreSystem.CONFIG_NAME);
+                TradeNetworkJoinResult req = TradeNetworkJoinResult.FromJson(args.Response);
+                
+                PersistApiKey(req.apiKey);
 
-                Mod.Logger.Notification("Completed registration of Trade Network Node. Api Key written to config!");
+                string response = $"Trade Network Join Request Status: {req.status}";
+                Mod.Logger.Notification(response);
+                VinconomyCoreSystem.PrintClientMessage(player, response);
             }
             else
             {
                 Mod.Logger.Error($"Failed registration of Trade Network Node. Error: {args.StatusCode} : {args.ErrorMessage}");
+            }
+        }
+
+
+        private void OnRegisterNetworkResponse(IPlayer player, CompletedArgs args)
+        {
+            if (args.StatusCode == 200)
+            {
+                TradeNetworkNode node = TradeNetworkNode.FromJson(args.Response);
+                PersistApiKey(node.apiKey, true);
+                VinconomyCoreSystem.PrintClientMessage(player, "Completed registration of Trade Network Node. Api Key written to config!");
+            }
+            else
+            {
+                Mod.Logger.Error($"Failed registration of Trade Network Node. Error: {args.StatusCode} : {args.ErrorMessage}");
+                VinconomyCoreSystem.PrintClientMessage(player, $"Failed registration of Trade Network Node. Error: {args.ErrorMessage}");
+            }
+        }
+
+        private void PersistApiKey(string apiKey, bool forceUpdate=false)
+        {
+            if (_coreSystem.Config.networkAPIKeys == null)
+            {
+                _coreSystem.Config.networkAPIKeys = new Dictionary<string, string>();
+            }
+
+            if (!_coreSystem.Config.networkAPIKeys.ContainsKey(_coreServerAPI.World.SavegameIdentifier) || forceUpdate)
+            {
+                _coreSystem.Config.networkAPIKeys[_coreServerAPI.World.SavegameIdentifier] = apiKey;
+                _coreServerAPI.StoreModConfig(_coreSystem.Config, VinconomyCoreSystem.CONFIG_NAME);
+                Mod.Logger.Notification($"Persisted API Key apiKey {apiKey} for {_coreServerAPI.World.SavegameIdentifier} to Config");
             }
         }
 

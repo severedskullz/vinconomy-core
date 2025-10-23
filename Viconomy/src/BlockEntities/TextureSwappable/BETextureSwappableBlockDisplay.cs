@@ -13,7 +13,7 @@ namespace Viconomy.BlockEntities.TextureSwappable
     {
         protected CollectibleObject nowTesselatingObj;
 
-        protected Shape nowTesselatingShape;
+        public Shape nowTesselatingShape;
 
         protected ICoreClientAPI capi;
 
