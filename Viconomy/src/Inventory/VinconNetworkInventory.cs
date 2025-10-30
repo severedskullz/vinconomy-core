@@ -15,7 +15,7 @@ namespace Viconomy.Inventory
         VinconNetworkItemSlot[] Slots;
         public VinconNetworkInventory(TradeNetworkShop shop, ICoreAPI api) : base(shop.NodeId + shop.Id, api)
         {
-            Slots = new VinconNetworkItemSlot[shop.Products.Count];
+            Slots = new VinconNetworkItemSlot[0];
             Init(shop);
         }
 
@@ -45,7 +45,7 @@ namespace Viconomy.Inventory
 
         public void Init(TradeNetworkShop shop)
         {
-            int index = 0;
+            List<VinconNetworkItemSlot> products = new List<VinconNetworkItemSlot>(shop.Products.Count);
             //Add our Product and Currency to each inventory. Catch JSON errors on attributes, cuz Quotes in descriptions got me once already
             foreach (ShopProduct product in shop.Products)
             {
@@ -54,21 +54,29 @@ namespace Viconomy.Inventory
                 ItemStack productStack = VinUtils.DeserializeProduct(Api, product.ProductCode, Math.Clamp(product.ProductQuantity, 0, 999), product.ProductAttributes);
                 ItemStack currencyStack = VinUtils.DeserializeProduct(Api, product.CurrencyCode, product.CurrencyQuantity, product.CurrencyAttributes);
 
-                slot.Product = productStack;
-                slot.Currency = currencyStack;
-                if (productStack != null) { 
+                if (productStack != null && currencyStack != null)
+                {
+                    slot.Product = productStack;
+                    slot.Currency = currencyStack;
+
                     slot.Itemstack = slot.Product.Clone();
                     slot.Itemstack.StackSize = product.TotalStock;
+                    
+                    slot.X = product.Id.X;
+                    slot.Y = product.Id.Y;
+                    slot.Z = product.Id.Z;
+
+                    slot.StallSlot = product.Id.StallSlot;
+                    slot.TotalStock = product.TotalStock;
+
+                    KeyedSlots.Add(product.Id.ToKey(), slot);
+                    products.Add(slot);
                 }
-                slot.X = product.Id.X;
-                slot.Y = product.Id.Y;
-                slot.Z = product.Id.Z;
-                slot.StallSlot = product.Id.StallSlot;
-                slot.TotalStock = product.TotalStock;
-                KeyedSlots.Add(product.Id.ToKey(), slot);
-                Slots[index] = slot;
-                index++;
+
+
             }
+
+            Slots = products.ToArray();
         }
 
         public VinconNetworkItemSlot GetProductById(string key)

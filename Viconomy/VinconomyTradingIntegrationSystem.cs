@@ -12,6 +12,7 @@ using Viconomy.TradeNetwork.Api;
 using Viconomy.Trading;
 using Viconomy.Util;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.Common;
@@ -103,6 +104,11 @@ namespace Viconomy
                 return;
             }
 
+            if (string.IsNullOrEmpty(config.tradingNetworkUrl))
+            {
+                return;
+            }
+
             string apiKey = config.GetAPIKey(_coreServerAPI.World.SavegameIdentifier);
             if (apiKey == null)
             {
@@ -112,23 +118,17 @@ namespace Viconomy
             this.Mod.Logger.Event("Attempting to sync Trade Network Updates");
 
 
-            // Trade Network - Shop Updates
+            // Trade Network - Shop Product Updates (And Name)
+            // Tell API server of new shop name, info, and what stall inventory updates have happened
             if (TradeNetworkUpdates != null)
             {
-                if (string.IsNullOrEmpty(apiKey)) return;
-                if (!config.tradingNetworkEnabled) return;
-                if (string.IsNullOrEmpty(config.tradingNetworkUrl)) return;
-
-                //TODO: Change for one POST instead of multiple?
-                foreach (int shopId in TradeNetworkUpdates.Keys)
-                {
-                    ShopUpdate shop = TradeNetworkUpdates[shopId];
-                    string payload = shop.ToJsonString();
-                    VinUtils.PatchAsync($"{config.tradingNetworkUrl}/api/shop/products/{shopId}", payload, OnNetworkShopUpdatesResponse, apiKey);
-                }
+                string payload = TradeNetworkUpdates.ToJsonString();
+                VinUtils.PatchAsync($"{config.tradingNetworkUrl}/api/shop/products", payload, OnNetworkShopUpdatesResponse, apiKey);
+                
             }
 
             //Trade Network - Outgoing Purchase Updates
+            // Tell the API server of any new purchases from other Nodes that we have processed, canceled, or rejected
             if (TradeNetworkPurchaseUpdates.Count > 0)
             {
                 string payload = TradeNetworkPurchaseUpdates.ToJsonString();
@@ -136,6 +136,7 @@ namespace Viconomy
             }
 
             //Trade Network - Incoming Purchase Updates
+            // Get any new purchases made by other Nodes from this node so we can process them
             VinUtils.GetAsync($"{config.tradingNetworkUrl}/api/market/purchases/pending", OnNetworkIncomingPurchaseUpdatesResponse, apiKey);
 
 
@@ -163,10 +164,17 @@ namespace Viconomy
             {
                 HashSet<string> playersToNotify = new HashSet<string>();
 
-                this.Mod.Logger.Event("got response");
+                this.Mod.Logger.Event("Processing Incoming Purchases...");
                 List<ShopTradeUpdate> tradeUpdates = VinUtils.DeserializeFromJson<List<ShopTradeUpdate>>(args.Response);
                 List<ShopTradeUpdate> updateResults = new List<ShopTradeUpdate>();
 
+                if (tradeUpdates.Count == 0 )
+                {
+                    this.Mod.Logger.Event("No new purchases from other nodes to process");
+                    return;
+                }
+
+                int numUpdatesProcessed = 0;
                 foreach (ShopTradeUpdate update in tradeUpdates)
                 {
                     this.Mod.Logger.Debug($"Processing update of shop {update.ShopId} and stall {update.X}-{update.Y}-{update.Z}-{update.StallSlot} with {update.Amount}x purchases from {update.RequestingNode}");
@@ -249,32 +257,40 @@ namespace Viconomy
                                     }
                                 });
                             }
-                           
+
+                            numUpdatesProcessed++;
+                            // This is not an Async method, so count the number of times we ran this callback and if it is the same amount as the number of updates then we have run all of them.
+                            // Once we have, we can update the trade processing states and notify the players.
+                            if (numUpdatesProcessed >= tradeUpdates.Count)
+                            {
+                                if (updateResults.Count > 0)
+                                {
+                                    string jsonString = VinUtils.SerializeToJson(updateResults);
+                                    ViconConfig config = _coreSystem.Config;
+                                    string apiKey = config.GetAPIKey(_coreServerAPI.World.SavegameIdentifier);
+                                    VinUtils.PostAsync($"{config.tradingNetworkUrl}/api/market/purchases/pending", jsonString, null, apiKey);
+                                }
+
+                                if (playersToNotify.Count > 0)
+                                {
+                                    foreach (string playerId in playersToNotify)
+                                    {
+                                        IPlayer player = _coreServerAPI.World.PlayerByUid(playerId);
+                                        if (player != null && player.ClientId != 0)
+                                        {
+                                            _coreServerAPI.SendMessage(player, 0, "You recieved sales for cross-server trades", EnumChatType.OwnMessage);
+                                        }
+
+                                    }
+                                }
+                            }
+                            
                         });
                     }
                     
                 }
 
-                if (updateResults.Count > 0)
-                {
-                    string jsonString = VinUtils.SerializeToJson(updateResults);
-                    ViconConfig config = _coreSystem.Config;
-                    string apiKey = config.GetAPIKey(_coreServerAPI.World.SavegameIdentifier);
-                    VinUtils.PostAsync($"{config.tradingNetworkUrl}/api/market/purchases/pending", jsonString, null, apiKey);
-                }
-
-                if (playersToNotify.Count > 0)
-                {
-                    foreach(string playerId in playersToNotify)
-                    {
-                        IPlayer player = _coreServerAPI.World.PlayerByUid(playerId);
-                        if (player != null && player.ClientId != 0)
-                        {
-                            _coreServerAPI.SendMessage(player, 0, "You recieved sales for cross-server trades", EnumChatType.OwnMessage);
-                        }
-
-                    }
-                }
+                
 
 
             }
@@ -369,12 +385,15 @@ namespace Viconomy
                     TradeNetworkUpdates = new TradeNetworkShopUpdate(_coreSystem.GetRegistry());
                 }
                 TradeNetworkUpdates.AddShopUpdate(shop);
-                this.Mod.Logger.Log(EnumLogType.Event, $"Added a new shop product update. Queue now has {TradeNetworkUpdates.GetUpdateCount()}");
+                this.Mod.Logger.Log(EnumLogType.Debug, $"Added a new shop product update. Queue now has {TradeNetworkUpdates.GetUpdateCount()}");
             }
         }
 
-        private void UpdateShopProductForNetwork(int shopId, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
+        private void UpdateShopProductForNetwork(BEVinconBase stall, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
         {
+            int shopId = stall.RegisterID;
+            BlockPos pos = stall.Pos;
+
             //TODO: I have a feeling we are missing cleanup on shops being set to a register, then unset or changed to a different register. Verify that is working correctly.
             if (shopId == -1)
                 return;
@@ -385,8 +404,8 @@ namespace Viconomy
                 {
                     TradeNetworkUpdates = new TradeNetworkShopUpdate(_coreSystem.GetRegistry());
                 }
-                TradeNetworkUpdates.AddShopUpdate(shopId, pos, stallSlot, product, numItemsPerPurchase, currency);
-                this.Mod.Logger.Log(EnumLogType.Event, $"Added a new shop product update. Queue now has {TradeNetworkUpdates.GetUpdateCount()}");
+                TradeNetworkUpdates.AddShopUpdate(stall, stallSlot, product, numItemsPerPurchase, currency);
+                this.Mod.Logger.Log(EnumLogType.Debug, $"Added a new shop product update. Queue now has {TradeNetworkUpdates.GetUpdateCount()}");
             }
 
         }
@@ -477,9 +496,9 @@ namespace Viconomy
             } 
         }
 
-        public bool PurchaseFromNetworkShop(IPlayer customer, string nodeId, long shopId, TradeNetworkPurchasePacket purchase)
+        public bool PurchaseFromNetworkShop(IPlayer customer, string nodeGuid, long shopId, TradeNetworkPurchasePacket purchase)
         {
-            TradeNetworkShop shop = TradeNetworkCache.GetShop(nodeId, shopId);
+            TradeNetworkShop shop = TradeNetworkCache.GetShop(nodeGuid, shopId);
             if (shop == null) {
                 return false;
             }
@@ -546,7 +565,7 @@ namespace Viconomy
             ShopPurchaseUpdate update = new ShopPurchaseUpdate()
             {
                 StallSlot = purchase.StallSlot,
-                NodeId = nodeId,
+                NodeGuid = nodeGuid,
                 ShopId = shopId,
                 X = purchase.X,
                 Y = purchase.Y,
@@ -558,7 +577,7 @@ namespace Viconomy
 
 
 
-            TradeNetworkPurchaseUpdates.AddPurchaseUpdate(nodeId, shopId, update);
+            TradeNetworkPurchaseUpdates.AddPurchaseUpdate(nodeGuid, shopId, update);
 
             Block block = productStack.Block;
             AssetLocation assetLocation = null;

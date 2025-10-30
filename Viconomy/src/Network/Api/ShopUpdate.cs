@@ -12,7 +12,7 @@ namespace Viconomy.Network.Api
         public string Owner;
         public string Description;
 
-        bool RemoveAll;
+        public bool RemoveAll;
 
         public ShopUpdate(int shopId)
         {
@@ -41,7 +41,7 @@ namespace Viconomy.Network.Api
         }
 
 
-        public string ToJsonString()
+        public JsonObject ToJson()
         {
             JsonObject json = new JsonObject
             {
@@ -53,12 +53,18 @@ namespace Viconomy.Network.Api
             };
 
             JsonArray stalls = new JsonArray();
-            foreach (ShopStall stallUpdate in this.Values) {
+            foreach (ShopStall stallUpdate in this.Values)
+            {
                 stalls.Add(stallUpdate.ToJsonString());
             }
             json.Add("stalls", stalls);
 
-            return json.ToString();
+            return json;
+        }
+
+        public string ToJsonString()
+        {
+            return ToJson().ToString();
         }
     }
 }

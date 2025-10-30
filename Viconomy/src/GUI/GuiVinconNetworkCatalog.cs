@@ -356,16 +356,27 @@ namespace Viconomy.GUI
         public void LoadShopResults(TradeNetworkShop result)
         {
             isLoading = false;
-            ProductInventory = new DummyInventory(capi, result.Products.Count);
+           
+
+
+            List<ItemStack> products = new List<ItemStack>(result.Products.Count);
+            foreach (ShopProduct product in result.Products)
+            {
+                ItemStack prod = VinUtils.DeserializeProduct(capi, product.ProductCode, product.TotalStock, product.ProductAttributes);
+                ItemStack curr = VinUtils.DeserializeProduct(capi, product.CurrencyCode, product.CurrencyQuantity, product.CurrencyAttributes);
+                if (prod != null && curr != null)
+                {
+                    products.Add(prod);
+                }
+            }
+
+            ProductInventory = new DummyInventory(capi,products.Count);
             ProductInventory.TakeLocked = true;
             ProductInventory.PutLocked = true;
             ProductInventory.OnAcquireTransitionSpeed += NoDecay;
-
-            int index = 0;
-            foreach (ShopProduct product in result.Products)
+            for (int i = 0; i < products.Count; i++)
             {
-                ProductInventory[index].Itemstack = VinUtils.DeserializeProduct(capi, product.ProductCode, product.TotalStock, product.ProductAttributes);
-                index++;
+                ProductInventory.Slots[i].Itemstack = products[i];
             }
             Compose();
 

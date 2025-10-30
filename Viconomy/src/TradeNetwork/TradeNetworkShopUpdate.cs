@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Nodes;
+using Viconomy.BlockEntities;
 using Viconomy.Network.Api;
 using Viconomy.Registry;
 using Vintagestory.API.Common;
@@ -18,11 +20,22 @@ namespace Viconomy.TradeNetwork
             this.shopRegistry = shopRegistry;
         }
 
-        public void AddShopUpdate(int shopId, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
+        public void AddShopUpdate(BEVinconBase stall, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
         {
+            int shopId = stall.RegisterID;
+            BlockPos pos = stall.Pos;
+
             //Ignore Admin shops not connected to a register
             if (shopId < 0)
                 return;
+
+            //If it is an admin shop, we want to remove the products entirely
+            if (stall.IsAdminShop)
+            {
+                this[shopId].RemoveAll = true;
+                this[shopId].Clear();
+                return;
+            }
 
             ShopRegistration reg = shopRegistry.GetShop(shopId);
             if (reg == null)
@@ -57,6 +70,17 @@ namespace Viconomy.TradeNetwork
         {
             // TODO: Actually loop over values and get the size of each update?
             return Keys.Count;
+        }
+
+        public string ToJsonString()
+        {
+            JsonArray shops = new JsonArray();
+            foreach (ShopUpdate shopUpdate in this.Values)
+            {
+                shops.Add(shopUpdate.ToJson());
+            }
+
+            return shops.ToString();
         }
     }
 }

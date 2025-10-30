@@ -21,6 +21,8 @@ namespace Viconomy.BlockEntities
 
         public string Owner { get; protected set; }
         public string OwnerName { get; protected set; }
+
+        //TODO: Rename to ShopID
         public int RegisterID { get; protected set; } = -1;
         public bool IsAdminShop { get; protected set; }
         public bool DiscardProduct { get; protected set; }
@@ -98,7 +100,7 @@ namespace Viconomy.BlockEntities
                 }
 
                 ItemStack currency = inv.GetCurrencyForStallSlot(stallSlot).Itemstack;
-                modSystem.UpdateStallProductForStall(this.RegisterID, this.Pos, stallSlot,  product, GetNumItemsPerPurchaseForStall(stallSlot), currency);
+                modSystem.UpdateStallProductForStall(this, stallSlot,  product, GetNumItemsPerPurchaseForStall(stallSlot), currency);
             }
         }
 

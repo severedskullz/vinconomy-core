@@ -16,7 +16,7 @@ namespace Viconomy.TradeNetwork
             {
                 ShopPurchaseUpdate update = new ShopPurchaseUpdate();
                 update.StallSlot = stallSlot;
-                update.NodeId = nodeId;
+                update.NodeGuid = nodeId;
                 update.ShopId = shopId;
                 update.X = pos.X;
                 update.Y = pos.Y;
@@ -37,7 +37,7 @@ namespace Viconomy.TradeNetwork
             {
                 ShopPurchaseUpdate update = new ShopPurchaseUpdate();
                 update.StallSlot = purchase.StallSlot;
-                update.NodeId = nodeId;
+                update.NodeGuid = nodeId;
                 update.ShopId = shopId;
                 update.X = purchase.X;
                 update.Y = purchase.Y;

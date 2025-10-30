@@ -423,9 +423,9 @@ namespace Viconomy.Trading
             }
 
             ItemSlot offhandItem = customer.InventoryManager.OffhandHotbarSlot;
-            if (isMatchingItem(desiredItem, handItem.Itemstack, customer.Entity.World, isFuzzy))
+            if (isMatchingItem(desiredItem, offhandItem.Itemstack, customer.Entity.World, isFuzzy))
             {
-                aggregatedSlots.Add(handItem);
+                aggregatedSlots.Add(offhandItem);
             }
 
             IInventory hotbarInv = customer.InventoryManager.GetHotbarInventory();

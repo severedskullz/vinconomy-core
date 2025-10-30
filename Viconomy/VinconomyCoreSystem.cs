@@ -651,7 +651,7 @@ namespace Viconomy
         }
         public event TryPlaceBlockDelegate OnTryPlaceBlock;
 
-        public void UpdateShopProduct(int shopId, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
+        public void UpdateShopProduct(BEVinconBase stall, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
         {
             if (OnUpdateShopProduct != null)
             {
@@ -660,7 +660,7 @@ namespace Viconomy
                 {
                     try
                     {
-                        ((OnUpdateShopProductDelegate)delegator).Invoke(shopId, pos, stallSlot, product, numItemsPerPurchase, currency);
+                        ((OnUpdateShopProductDelegate)delegator).Invoke(stall, stallSlot, product, numItemsPerPurchase, currency);
                     }
                     catch (Exception e)
                     {
@@ -780,8 +780,11 @@ namespace Viconomy
             return response;
         }
 
-        public void UpdateStallProductForStall(int shopId, BlockPos pos, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
+        public void UpdateStallProductForStall(BEVinconBase stall, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
         {
+            int shopId = stall.RegisterID;
+            BlockPos pos = stall.Pos;
+
             if (shopId <= 0 || product == null || currency == null) {
                 DB.DeleteShopProduct(pos,stallSlot);
             } else
@@ -789,7 +792,7 @@ namespace Viconomy
                 DB.UpdateShopProduct(shopId,pos,stallSlot,product,numItemsPerPurchase,currency);
             }
 
-            UpdateShopProduct(shopId, pos, stallSlot, product, numItemsPerPurchase, currency);
+            UpdateShopProduct(stall, stallSlot, product, numItemsPerPurchase, currency);
         }
 
         public ShopCatalog RequestShopCatalog(ShopRegistration shop, bool includeProductList)

@@ -8,7 +8,7 @@ namespace Viconomy.Network.Api
         public string Name { get; set; }
         public string PlayerGuid { get; set; }
         public long ShopId { get; set; }
-        public string NodeId { get; set; }
+        public string NodeGuid { get; set; }
         public int Amount { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
@@ -22,7 +22,7 @@ namespace Viconomy.Network.Api
                 { "name", Name },
                 { "playerGuid", PlayerGuid },
                 { "shopId", ShopId },
-                { "nodeId", NodeId },
+                { "nodeGuid", NodeGuid },
                 { "amount", Amount },
                 { "x", X },
                 { "y", Y },

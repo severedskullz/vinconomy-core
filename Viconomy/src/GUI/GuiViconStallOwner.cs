@@ -116,10 +116,6 @@ namespace Viconomy.GUI
 
                 ElementBounds settingBounds = ElementBounds.FixedSize(250, 200).WithFixedOffset(0, GuiStyle.TitleBarHeight);
 
-                //settingBounds.BothSizing = ElementSizing.FitToChildren;
-
-                // Auto-sized dialog at the center of the screen
-                //ElementBounds dialogBounds = ElementStdBounds.AutosizedMainDialog.WithAlignment(EnumDialogArea.CenterMiddle);
                 ElementBounds shopSelectionLabel = ElementBounds.Fixed(0, 0, 75, 30);
                 ElementBounds shopSelectBounds = shopSelectionLabel.BelowCopy().WithFixedWidth(250);
 
@@ -145,17 +141,13 @@ namespace Viconomy.GUI
                 settingBounds.WithChildren(shopSelectBounds, shopSelectionLabel, quantitySelectionBounds, quantitySelectionLabel, currencyLabel, currencySlotBounds, purchaseSlotBounds, adminShopBounds, adminShopLabel);
                 settingBounds.verticalSizing = ElementSizing.FitToChildren;
 
-                // Background boundaries. Again, just make it fit it's child elements, then add the text as a child element
-                //ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.ElementToDialogPadding);
-
                 ElementBounds itemPage = ElementBounds.FixedSize(200, 10).FixedRightOf(settingBounds).WithFixedOffset(25, GuiStyle.TitleBarHeight);
                 itemPage.BothSizing = ElementSizing.FitToChildren;
 
 
                 ElementBounds pagePrev = ElementBounds.FixedSize(30, 30).WithFixedPosition(0, 0);
-                //ElementBounds pageLabel = ElementBounds.FixedSize(50, 20).WithAlignment(EnumDialogArea.CenterTop).WithFixedAlignmentOffset(0,15).WithFixedPadding(75,0);
                 ElementBounds pageLabel = ElementBounds.FixedSize(50, 25).WithFixedAlignmentOffset(0, 10).FixedRightOf(pagePrev, 10);
-                //ElementBounds pageNext = ElementBounds.FixedSize(50, 50).WithAlignment(EnumDialogArea.RightTop);
+               
                 CairoFont labelTextFont = CairoFont.WhiteSmallText().WithOrientation(EnumTextOrientation.Center);
                 string labelText = Lang.Get("vinconomy:gui-slot", new object[] { curTab + 1, stall.StallSlotCount });
                 labelTextFont.AutoBoxSize(labelText, pageLabel, true);
@@ -170,9 +162,6 @@ namespace Viconomy.GUI
 
                 bgBounds.WithChildren(itemPage, settingBounds);
 
-                //IconUtil.DrawArrowRight
-
-                // Lastly, create the dialog
                 SingleComposer = capi.Gui.CreateCompo("ViconStallOwner", dialogBounds)
                     .AddShadedDialogBG(bgBounds)
                     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);
@@ -189,19 +178,14 @@ namespace Viconomy.GUI
 
                     .AddStaticText(Lang.Get("vinconomy:gui-items-per-purchase"), CairoFont.WhiteSmallText(), quantitySelectionLabel)
                     .AddNumberInput(quantitySelectionBounds, new Action<string>(this.onSellQuantityChanged), CairoFont.WhiteSmallText(), "sellQuantity")
-                    //.AddButton("Save", new ActionConsumable(this.onSave),saveButtonBounds, EnumButtonStyle.Small, "save")
                     .AddStaticText(Lang.Get("vinconomy:gui-price"), CairoFont.WhiteSmallText(), currencyLabel)
                     .AddItemSlotGrid(vinInv, new Action<object>(this.SetCurrencySlot), 1, new int[] { offset + stacksPerSlot }, currencySlotBounds, "currency")
 
                     .AddStaticText(Lang.Get("vinconomy:gui-product"), CairoFont.WhiteSmallText(), purchaseLabel)
                     .AddItemSlotGrid(inv,null,1,purchaseSlotBounds)
-                    //.AddPassiveItemSlot(purchaseSlotBounds, inv, purchaseSlot, true)
 
                     .AddStaticText(Lang.Get("vinconomy:gui-decoration-block"), CairoFont.WhiteSmallText(), chiselLabel )
                     .AddItemSlotGrid(vinInv, new Action<object>(this.SetCurrencySlot), 1, new int[] { 0 }, chiselSlotBounds, "chisel")
-
-                //.AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlotBounds, "purchase")
-                //.AddPassiveItemSlot(outputSlotBounds, Inventory, )
                 .EndChildElements();
 
                 SingleComposer.BeginChildElements(itemPage)
