@@ -15,7 +15,7 @@ namespace Viconomy.GUI
 
         }
 
-        public override void InitializeInventory()
+        public override void InitializeInventoryDisplaySlots()
         {
             ViconItemPurchaseInventory vinInv = Inventory as ViconItemPurchaseInventory;
             PurchaseStallSlot stallSlot = vinInv.GetStall<PurchaseStallSlot>(curTab);
@@ -24,7 +24,7 @@ namespace Viconomy.GUI
             if (purchaseItem != null && purchaseItem.Itemstack != null)
             {
                 this.purchaseSlot.Itemstack = purchaseItem.Itemstack.Clone();
-                this.purchaseSlot.Itemstack.StackSize = stallSlot.ItemsPerPurchase * quantity;
+                this.purchaseSlot.Itemstack.StackSize = purchaseItem.StackSize * quantity;
             }
             else
             {
@@ -36,7 +36,7 @@ namespace Viconomy.GUI
             if (currencyItem != null && currencyItem.Itemstack != null)
             {
                 this.currancySlot.Itemstack = currencyItem.Itemstack.Clone();
-                this.currancySlot.Itemstack.StackSize = currencyItem.Itemstack.StackSize * quantity;
+                this.currancySlot.Itemstack.StackSize = currencyItem.StackSize * quantity;
             }
             else
             {

@@ -695,7 +695,7 @@ namespace Viconomy.BlockEntities
             return interactions.ToArray();
         }
 
-        protected override bool TryAddItemToStall(ItemSlot activeSlot, int stallSlot, bool bulk)
+        protected override bool TryAddItemToStall(IPlayer byPlayer, ItemSlot activeSlot, int stallSlot, bool bulk)
         {
             ItemSlot[] slots = inventory.GetSlotsForStallSlot(stallSlot);
             int amountItem = bulk ? activeSlot.Itemstack.StackSize : 1;

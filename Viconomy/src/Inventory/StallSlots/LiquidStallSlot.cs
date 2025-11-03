@@ -1,7 +1,7 @@
 ﻿using System;
 using Viconomy.Inventory.Slots;
+using Viconomy.Trading.TradeHandlers;
 using Vintagestory.API.Common;
-using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 
 namespace Viconomy.Inventory.StallSlots
@@ -13,53 +13,52 @@ namespace Viconomy.Inventory.StallSlots
         public LiquidStallSlot(InventoryBase inventory, int stallSlot, float literCapacity) : base(inventory, stallSlot, 1)
         {
             slots = new ViconItemSlot[1];
-            slots[0] = new ViconItemSlot(inventory, stallSlot, 0);
+            slots[0] = new VinconLockedItemSlot(inventory, stallSlot, 0);
             this.literCapacity = literCapacity;
         }
 
-        public void RemoveLiters(int litres)
+        public ItemStack RemoveLiters(float liters)
         {
-            ItemStack stack = slots[0].Itemstack;
 
-            WaterTightContainableProps contentProps = GetContainableProps(slots[0].Itemstack);
+            int totalItems = LiquidTradeHandler.ConvertLitersToStack(slots[0].Itemstack, liters);
+            ItemStack stack = slots[0].TakeOut(totalItems);
+            slots[0].MarkDirty();
+            return stack;
+        }
+
+        public float GetLiters()
+        {
+            return LiquidTradeHandler.ConvertStackToLiters(slots[0].Itemstack);
+        }
+
+        public float AddLiters(ItemStack containerStack, float litres)
+        {
+
+            WaterTightContainableProps contentProps = BlockLiquidContainerBase.GetContainableProps(containerStack);
             if (contentProps == null)
             {
-                return;
+                return 0;
             }
-            stack.StackSize -= (int)(litres * contentProps.ItemsPerLitre);
-            slots[0].MarkDirty();
-        }
+            int toAdd = (int)(litres * contentProps.ItemsPerLitre);
+            int maxCapacity = (int)(literCapacity * contentProps.ItemsPerLitre);
 
-        public void AddLiters(float litres)
-        {
             ItemStack stack = slots[0].Itemstack;
-
-            WaterTightContainableProps contentProps = GetContainableProps(slots[0].Itemstack);
-            if (contentProps == null)
+            if (stack != null)
             {
-                return;
+                toAdd = Math.Min(toAdd, maxCapacity - stack.StackSize);
+                stack.StackSize += toAdd;
+            } else
+            {
+                ItemStack newStack = containerStack.Clone();
+                newStack.StackSize = toAdd;
+                slots[0].Itemstack = newStack;
             }
-            stack.StackSize += (int)(litres * contentProps.ItemsPerLitre);
+
             slots[0].MarkDirty();
+            return toAdd / contentProps.ItemsPerLitre;
         }
 
 
-        public static WaterTightContainableProps GetContainableProps(ItemStack stack)
-        {
-            try
-            {
-                JsonObject jsonObject = stack?.ItemAttributes?["waterTightContainerProps"];
-                if (jsonObject != null && jsonObject.Exists)
-                {
-                    return jsonObject.AsObject<WaterTightContainableProps>(null, stack.Collectible.Code.Domain);
-                }
 
-                return null;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
     }
 }

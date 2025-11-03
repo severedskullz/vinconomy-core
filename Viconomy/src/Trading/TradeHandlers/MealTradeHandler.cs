@@ -40,17 +40,17 @@ namespace Viconomy.Trading.TradeHandlers
             if (!GenericTradeHandler.PlayerHasRequiredCurrency(request))
                 return GenericTradeHandler.SetErrorAndReturn(res, TradingConstants.NOT_ENOUGH_MONEY);
 
-            if (request.NumPurchases <= 0)
-                return GenericTradeHandler.SetErrorAndReturn(res, TradingConstants.PURCHASED_ZERO);
-
             if (!GenericTradeHandler.HasRequiredTools(request))
                 return GenericTradeHandler.SetErrorAndReturn(res, TradingConstants.NOT_ENOUGH_CAPACITY);
+
+            if (request.NumPurchases <= 0)
+                return GenericTradeHandler.SetErrorAndReturn(res, TradingConstants.PURCHASED_ZERO);
 
             if (!GenericTradeHandler.HasRequiredTradePass(request))
                 return GenericTradeHandler.SetErrorAndReturn(res, TradingConstants.NO_PASS);
 
             if (request.ShopRegister != null && !GenericTradeHandler.CanFitPaymentInRegister(request))
-                return GenericTradeHandler. SetErrorAndReturn(res, TradingConstants.NO_REGISTER_SPACE);
+                return GenericTradeHandler.SetErrorAndReturn(res, TradingConstants.NO_REGISTER_SPACE);
 
             // Extract all relevant items from their containers
             GenericTradeHandler.TryConsumeCoupons(res);

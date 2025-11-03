@@ -51,9 +51,14 @@ namespace Viconomy.Inventory.StallSlots
                 else if (slotId == TotalSlots - 2)
                 {
                     DesiredProduct = (ViconCurrencySlot)value;
+
                 }
                 else
+                {
                     Currency = (ViconCurrencySlot)value;
+                    ItemsPerPurchase = value == null ? 0 : value.StackSize;
+                }
+                    
             }
         }
 

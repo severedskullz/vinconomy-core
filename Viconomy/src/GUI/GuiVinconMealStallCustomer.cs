@@ -21,10 +21,11 @@ namespace Viconomy.GUI
 
         }
 
-        public override void InitializeInventory()
+        public override void InitializeInventoryDisplaySlots()
         {
             ViconMealInventory vinInv = Inventory as ViconMealInventory;
             MealStallSlot stall = vinInv.GetStall<MealStallSlot>(curTab);
+            stallSlot = stall;
             ItemSlot purchaseItem = stall.FindFirstNonEmptyStockSlot();
 
             if (purchaseItem != null)

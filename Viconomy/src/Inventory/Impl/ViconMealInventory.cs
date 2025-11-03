@@ -12,8 +12,6 @@ namespace Viconomy.Inventory.Impl
     {
         public ViconMealInventory(BEVinconBase stall, string inventoryID, ICoreAPI api, int numStalls, int numStacksPerStall) : base(stall, inventoryID, api, numStalls, numStacksPerStall)
         {
-            PutLocked = true;
-            TakeLocked = true;
             InitializeStalls();
         }
 
@@ -35,12 +33,15 @@ namespace Viconomy.Inventory.Impl
             }
 
             int index = slotId - 1;
-            int itemSlot = index % StallSlotSize;
+
+            int stallSlot = index / StallSlotSize;
+            int itemSlot = slotId % StallSlotSize;
+
             if (itemSlot == ProductStacksPerStall)
             {
                 return new ViconCurrencySlot(this);
             }
-            return new ItemSlot(this);
+            return new VinconLockedItemSlot(this,stallSlot,itemSlot);
         }
 
 
@@ -77,9 +78,9 @@ namespace Viconomy.Inventory.Impl
         {
             // Look, I dont feel like trying to manually manipulate item stacks just so players cant add/remove from the inventory manually.
             // There really needs to be a way to distinguish between PLAYERS adding/removing items and CODE.
-            PutLocked = false;
+            //PutLocked = false;
             bool result = AddMealToStallRaw(stall, mealSlot, amount);
-            PutLocked = true;
+            //PutLocked = true;
             return result;
         }
 

@@ -14,10 +14,17 @@ namespace Viconomy.Trading.TradeHandlers
             //TODO: Possibly switch this from specific "total" variables to just use TotalCount instead?
             else if (req.ToolSourceSlots is ServingCapacityAggregatedSlots servings) {
                 return servings.TotalCapacity / req.GetFinalProductNeededPerPurchase() > 0;
-            } else if (req.ToolSourceSlots is DurabilityAggregatedSlots durability)
+            }
+            else if (req.ToolSourceSlots is DurabilityAggregatedSlots durability)
             {
                 return durability.TotalDurability / req.GetFinalProductNeededPerPurchase() > 0;
-            } else
+            }
+            else if (req.ToolSourceSlots is LiquidCapacityAggregatedSlots capacity)
+            {
+                float litersNeeded = LiquidTradeHandler.ConvertStackToLiters(req.ProductStackNeeded, req.GetFinalProductNeededPerPurchase());
+                return (int)(capacity.TotalCapacity / litersNeeded) > 0;
+            }
+            else
             {
                 return req.ToolSourceSlots.TotalCount / req.GetFinalProductNeededPerPurchase() > 0;
             }

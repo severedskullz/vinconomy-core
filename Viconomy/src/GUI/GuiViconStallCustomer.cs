@@ -51,10 +51,10 @@ namespace Viconomy.GUI
             this.Compose();
         }
 
-        public virtual void InitializeInventory()
+        public virtual void InitializeInventoryDisplaySlots()
         {
             ViconBaseInventory vinInv = Inventory as ViconBaseInventory;
-            stallSlot = vinInv.StallSlots[curTab];
+            stallSlot = vinInv.GetStall(curTab);
             ItemSlot purchaseItem = stallSlot.FindFirstNonEmptyStockSlot();
 
             if (purchaseItem != null)
@@ -87,7 +87,7 @@ namespace Viconomy.GUI
             ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.DialogToScreenPadding);
             bgBounds.BothSizing = ElementSizing.FitToChildren;
 
-            InitializeInventory();
+            InitializeInventoryDisplaySlots();
 
             ElementBounds settingBounds = ElementBounds.FixedSize(250, 200).WithFixedOffset(0,GuiStyle.TitleBarHeight);
             
@@ -189,13 +189,27 @@ namespace Viconomy.GUI
 
         private void onQuantityChanged(string amount)
         {
-            int val = 1;
-            Int32.TryParse(amount, out val);
+            Int32.TryParse(amount, out int val);
             quantity = Math.Max(0,val);
 
-            Compose();
+            if (purchaseSlot.Itemstack != null)
+            {
+                this.purchaseSlot.Itemstack.StackSize = stallSlot.ItemsPerPurchase * quantity;
+            }
+            else
+            {
+                this.purchaseSlot.Itemstack = null;
+            }
 
-            
+            if (currancySlot.Itemstack != null )
+            {
+                this.currancySlot.Itemstack.StackSize = stallSlot.Currency.Itemstack.StackSize * quantity;
+            }
+            else
+            {
+                this.currancySlot.Itemstack = null;
+            }
+
         }
 
         private void OnTitleBarCloseClicked()

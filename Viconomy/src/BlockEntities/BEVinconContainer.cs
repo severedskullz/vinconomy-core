@@ -78,13 +78,13 @@ namespace Viconomy.BlockEntities
                         }
                         else
                         {
-                            TryPut(hotbarslot, slotIndex, ctrlMod);
+                            TryPut(byPlayer, hotbarslot, slotIndex, ctrlMod);
                         }
                     }
                     else
                     {
                         //Add items to slot
-                        TryPut(hotbarslot, slotIndex, ctrlMod);
+                        TryPut(byPlayer, hotbarslot, slotIndex, ctrlMod);
                     }
                 }
                 else
@@ -554,7 +554,7 @@ namespace Viconomy.BlockEntities
             return tfMatrices;
         }
 
-        protected virtual bool TryAddItemToStall(ItemSlot activeSlot, int stallSlot, bool bulk)
+        protected virtual bool TryAddItemToStall(IPlayer byPlayer, ItemSlot activeSlot, int stallSlot, bool bulk)
         {
             ItemSlot[] slots = inventory.GetSlotsForStallSlot(stallSlot);
             int amountItem = bulk ? activeSlot.Itemstack.StackSize : 1;
@@ -582,14 +582,14 @@ namespace Viconomy.BlockEntities
             return movedItems;
         }
 
-        protected bool TryPut(ItemSlot slot, int stallSlot, bool bulk)
+        protected bool TryPut(IPlayer byPlayer, ItemSlot slot, int stallSlot, bool bulk)
         {
             if (slot?.Itemstack == null)
             {
                 return false;
             }
 
-            if (TryAddItemToStall(slot, stallSlot, bulk))
+            if (TryAddItemToStall(byPlayer, slot, stallSlot, bulk))
             {
                 MarkDirty(true, null);
                 ICoreClientAPI coreClientAPI = this.Api as ICoreClientAPI;

@@ -1,6 +1,7 @@
 ﻿using System;
 using Viconomy.BlockEntities;
 using Viconomy.ItemTypes;
+using Viconomy.Trading.TradeHandlers;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
@@ -140,9 +141,24 @@ namespace Viconomy.Trading
         public int GetAffordablePurchases()
         {
             int totalTrades = RequestedPurchases;
-            if (ToolSourceSlots != null && ToolUsesNeededPerTrade > 0)
+
+            int currencyNeeded = GetFinalCurrencyNeededPerPurchase();
+            if (currencyNeeded > 0)
+                totalTrades = Math.Min(totalTrades, CurrencySourceSlots.TotalCount / currencyNeeded);
+
+            int productNeeded = GetFinalProductNeededPerPurchase();
+            if (productNeeded > 0 && !IsAdminShop)
+                totalTrades = Math.Min(totalTrades, ProductSourceSlots.TotalCount / productNeeded);
+
+            if (ToolSourceSlots != null)
             {
-                totalTrades = Math.Min(totalTrades, ToolSourceSlots.TotalCount / ToolUsesNeededPerTrade);
+                
+                if (ToolSourceSlots is LiquidCapacityAggregatedSlots liquid) {
+                    float neededCapacity = LiquidTradeHandler.ConvertStackToLiters(this.ProductStackNeeded, productNeeded);
+                    totalTrades = Math.Min(totalTrades, (int)(liquid.TotalCapacity / neededCapacity));
+                }
+                else if (ToolUsesNeededPerTrade > 0)
+                    totalTrades = Math.Min(totalTrades, ToolSourceSlots.TotalCount / ToolUsesNeededPerTrade);
             }
 
             if (CouponSlots != null)
@@ -159,13 +175,7 @@ namespace Viconomy.Trading
                 }
             }
 
-            int currencyNeeded = GetFinalCurrencyNeededPerPurchase();
-            if (currencyNeeded > 0)
-                totalTrades = Math.Min(totalTrades, CurrencySourceSlots.TotalCount / currencyNeeded);
 
-            int productNeeded = GetFinalProductNeededPerPurchase();
-            if (productNeeded > 0 && !IsAdminShop)
-                totalTrades = Math.Min(totalTrades, ProductSourceSlots.TotalCount / productNeeded);
 
             return totalTrades;
 

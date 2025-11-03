@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Viconomy.Inventory.Slots;
-using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
@@ -19,7 +18,7 @@ namespace Viconomy.Inventory.StallSlots
             slots = new ItemSlot[numSlots];
             for (int i = 0; i < numSlots; i++)
             {
-                slots[i] = new ViconItemSlot(inventory, stallSlot, i);
+                slots[i] = new VinconLockedItemSlot(inventory, stallSlot, i);
 
             }
         }

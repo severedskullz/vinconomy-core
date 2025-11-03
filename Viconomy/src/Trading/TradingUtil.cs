@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Cairo.Freetype;
+using System;
 using System.Collections.Generic;
 using Viconomy.BlockEntities;
 using Viconomy.ItemTypes;
+using Viconomy.Trading.TradeHandlers;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
@@ -254,6 +256,8 @@ namespace Viconomy.Trading
         }
 
 
+
+
         public static bool CanAfford(TradeRequest request, TradeResult purchaseResult, bool isFuzzy = false)
         {
             bool populatePurchaseResult = purchaseResult != null;
@@ -500,6 +504,31 @@ namespace Viconomy.Trading
             Slots.Add(item);
             TotalCount += item.StackSize;
             //TotalDurability += item.Durability ????
+        }
+    }
+
+    public class LiquidCapacityAggregatedSlots : AggregatedSlots
+    {
+
+        public LiquidCapacityAggregatedSlots(ICoreAPI api) : base(api)
+        {
+
+        }
+
+        public float TotalCapacity { get; set; }
+        public override void Add(ItemSlot item)
+        {
+            Slots.Add(item);
+            TotalCount += item.StackSize;
+
+            BlockLiquidContainerBase container = item.Itemstack.Block as BlockLiquidContainerBase;
+            //ItemStack containerContent = null;
+            //if (container != null)
+            //    containerContent = container.GetContent(item.Itemstack);
+
+            float capacity = container.CapacityLitres;
+            float curLiters = container.GetCurrentLitres(item.Itemstack);
+            TotalCapacity += Math.Max(0, (capacity - curLiters) * item.StackSize);
         }
     }
 

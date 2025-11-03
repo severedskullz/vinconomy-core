@@ -66,6 +66,7 @@ namespace Viconomy
             api.RegisterItemClass("VinconCoupon", typeof(ItemCoupon));
 
             // 5.0 Block Mappings
+            api.RegisterBlockClass("VinconLiquidContainer", typeof(BlockVLiquidContainer));
             api.RegisterBlockClass("VinconFoodContainer", typeof(BlockVFoodContainer));
             api.RegisterBlockClass("VinconCouponCutter", typeof(BlockVCouponCutter));
             api.RegisterBlockClass("VinconPurchaseContainer", typeof(BlockVPurchaseContainer));

@@ -21,7 +21,7 @@ namespace Viconomy.Inventory.Slots
             {
                 if (collectible is BlockMicroBlock)
                 {
-                    return base.CanHold(sourceSlot);
+                    return true;
                 }
             }
 

@@ -1,24 +1,23 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using Viconomy.BlockTypes;
 using Viconomy.Inventory.Impl;
 using Viconomy.Inventory.StallSlots;
 using Viconomy.Trading;
+using Viconomy.Trading.TradeHandlers;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
-using Vintagestory.API.Datastructures;
-using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
 namespace Viconomy.BlockEntities
 {
     public class BEVinconLiquidContainer : BEVinconContainer
     {
-
+        public override int StallSlotCount => 1;
         public override int ProductStacksPerSlot => 1;
-        public override int BulkPurchaseAmount => 5;
+        public override int BulkPurchaseAmount => 10;
 
         public override void ConfigureInventory()
         {
@@ -32,28 +31,39 @@ namespace Viconomy.BlockEntities
 
             ItemStack stacks = stall.GetSlot(0).Itemstack;
 
-            return null;
+            BlockVLiquidContainer ownBlock = Block as BlockVLiquidContainer;
+            if (ownBlock == null) return null;
+
+            MeshData mesh = ownBlock.GenMesh(null, stacks, false, Pos);
+
+            
+            if (mesh?.CustomInts != null)
+            {
+                int[] CustomInts = mesh.CustomInts.Values;
+                int count = mesh.CustomInts.Count;
+                for (int i = 0; i < CustomInts.Length; i++)
+                {
+                    if (i >= count) break;
+                    CustomInts[i] |= VertexFlags.LiquidWeakWaveBitMask  // Enable weak water wavy
+                                    | VertexFlags.LiquidWeakFoamBitMask;  // Enabled weak foam
+                }
+            }
+
+            return mesh;
         }
 
         protected override void TesselateDisplayedItems(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
         {
-            Vec3f origin = new Vec3f(0.5f, 0.5f, 0.5f);
-            float y = inventory.ChiselDecoSlot.Itemstack != null ? 1 - (4.79f / 16f) : 0;
-            for (int i = 0; i < 4; i++)
+
+            Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(Block.Shape.rotateY).Translate(-0.5f, 0f, -0.5f);
+
+            MeshData data = GenMesh(0);
+            if (data != null)
             {
-                float x = (i % 2 == 0) ? -.25f : .25f;
-                float z = (i >= 2) ? .25f : -.25f;
-                Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(Block.Shape.rotateY).Translate(x, y, z).Translate(-0.5f, 0f, -0.5f);
-
-                MeshData data = GenMesh(i);
-                if (data != null)
-                {
-                    data = data.Clone(); //TODO: Figure out why this affects pot meshes when I dont clone.
-                    data.Rotate(origin, 0, GameMath.DEG2RAD * i * 90, 0);
-                    mesher.AddMeshData(data, matrix.Values);
-                }
-
+                mesher.AddMeshData(data, matrix.Values);
             }
+
+            
         }
 
         private bool CanMergeContents(ItemSlot handSlot, int stallSlot)
@@ -71,7 +81,7 @@ namespace Viconomy.BlockEntities
             return false;
         }
 
-        private int TransferContentsFromStall(ItemSlot source, int stallSlot, int amount)
+        private float TransferContentsFromStall(IPlayer byPlayer, ItemSlot source, int stallSlot, int amount)
         {
             Block block = source?.Itemstack?.Block;
             if (block == null) {
@@ -80,15 +90,17 @@ namespace Viconomy.BlockEntities
 
             if (block is BlockLiquidContainerBase container)
             {
-                float curLiters = (float)Math.Ceiling( container.GetCurrentLitres(source.Itemstack)); // Only transfer whole liters, so count 1.3 servings as 2, for sake of math
+                float curLiters = container.GetCurrentLitres(source.Itemstack);
                 float capacity = container.CapacityLitres;
 
-                int toTransfer = Math.Min(amount, (int)(capacity - curLiters));
-                ((LiquidStallSlot)inventory.StallSlots[stallSlot]).RemoveLiters(toTransfer);
+                LiquidStallSlot slot = inventory.GetStall<LiquidStallSlot>(stallSlot);
+                float toTransfer = Math.Min( Math.Min(amount, (capacity - curLiters)), slot.GetLiters());
+                ItemStack removedContents = slot.RemoveLiters(toTransfer);
 
-                ItemStack item = source.Itemstack;
-
-                container.SetCurrentLitres(source.Itemstack, curLiters + toTransfer);
+                int movedStacks = LiquidTradeHandler.TransferToLiquidContainer(byPlayer, source, removedContents);
+                if (movedStacks > 0)
+                    source.MarkDirty();
+                
 
                 return toTransfer;
             }
@@ -111,7 +123,7 @@ namespace Viconomy.BlockEntities
                 // If we are holding an empty food container, and sneaking => take from stall
                 if (VinUtils.IsEmptyLiquidContainer(hotbarslot.Itemstack) && sneakMod)
                 {
-                    TransferContentsFromStall(hotbarslot, slotIndex, sprintMod ? BulkPurchaseAmount : 1);
+                    TransferContentsFromStall(byPlayer, hotbarslot, slotIndex, sprintMod ? BulkPurchaseAmount : 1);
                 }
 
                 // If we are holding a filled container, and it matches
@@ -119,10 +131,10 @@ namespace Viconomy.BlockEntities
                     // if we are holding Sneak, take from stall
                     if (sneakMod)
                     {
-                        TransferContentsFromStall(hotbarslot, slotIndex, sprintMod ? BulkPurchaseAmount : 1);
+                        TransferContentsFromStall(byPlayer, hotbarslot, slotIndex, sprintMod ? BulkPurchaseAmount : 1);
                     } else
                     {
-                        TryPut(hotbarslot, slotIndex, sprintMod);
+                        TryPut(byPlayer, hotbarslot, slotIndex, sprintMod);
                     }
                 } else if (sneakMod && TradingUtil.isMatchingItem(inventory.GetCurrencyForStallSlot(slotIndex).Itemstack, hotbarslot.Itemstack, Api.World)) {
                     RequestPurchaseItem(slotIndex, sprintMod ? BulkPurchaseAmount : 1);
@@ -146,16 +158,29 @@ namespace Viconomy.BlockEntities
             return true;
         }
 
-        protected override bool TryAddItemToStall(ItemSlot activeSlot, int stallSlot, bool bulk)
+        protected override bool TryAddItemToStall(IPlayer byPlayer, ItemSlot activeSlot, int stallSlot, bool bulk)
         {
-
+            bool result = false;
             if (activeSlot.Itemstack?.Block is BlockLiquidContainerBase)
             {
-                return ((ViconLiquidInventory)inventory).AddLiquidToStall(stallSlot, activeSlot, bulk ? BulkPurchaseAmount : 1);
+                if (activeSlot.StackSize == 1)
+                {
+                    result = ((ViconLiquidInventory)inventory).AddLiquidToStall(stallSlot, activeSlot.Itemstack, bulk ? BulkPurchaseAmount : 1) > 0;
+                } else
+                {
+                    ItemStack taken = activeSlot.TakeOut(1);
+                    ((ViconLiquidInventory)inventory).AddLiquidToStall(stallSlot, taken, bulk ? BulkPurchaseAmount : 1);
+                    byPlayer.InventoryManager.TryGiveItemstack(taken);
+                }
             }
-            return false;
+
+            if (result) 
+                activeSlot.MarkDirty();
+
+            return result;
         }
 
+        /*
         public override void PurchaseItem(IPlayer player, int stallSlot, int numPurchases, BEVinconRegister shopRegister)
         {
             LiquidStallSlot stall = inventory.GetStall<LiquidStallSlot>(stallSlot);
@@ -292,14 +317,15 @@ namespace Viconomy.BlockEntities
             this.MarkDirty(true, null);
             this.UpdateMeshes();
         }
+        */
 
-        private ItemSlot[] GetContainerSlots(IPlayer player)
+        public override AggregatedSlots GetRequiredTools(IPlayer player, int stallSlot)
         {
-            List<ItemSlot> aggregatedSlots = new List<ItemSlot>();
-
+            ItemStack desiredStack = inventory.GetStall<LiquidStallSlot>(stallSlot).FindFirstNonEmptyStockSlot()?.Itemstack;
+            LiquidCapacityAggregatedSlots aggregatedSlots = new LiquidCapacityAggregatedSlots(Api);
 
             ItemSlot handItem = player.InventoryManager.ActiveHotbarSlot;
-            if (VinUtils.IsEmptyLiquidContainer(handItem.Itemstack))
+            if (LiquidTradeHandler.CanHoldLiquid(handItem.Itemstack, desiredStack))
             {
                 aggregatedSlots.Add(handItem);
             }
@@ -308,7 +334,7 @@ namespace Viconomy.BlockEntities
             foreach (ItemSlot itemSlot in hotbarInv)
             {
                 if (handItem == itemSlot || itemSlot.Itemstack == null) { continue; }
-                if (VinUtils.IsEmptyLiquidContainer(itemSlot.Itemstack))
+                if (LiquidTradeHandler.CanHoldLiquid(itemSlot.Itemstack, desiredStack))
                 {
                     aggregatedSlots.Add(itemSlot);
                 }
@@ -318,58 +344,18 @@ namespace Viconomy.BlockEntities
             foreach (ItemSlot itemSlot in characterInv)
             {
                 if (handItem == itemSlot) { continue; }
-                if (VinUtils.IsEmptyLiquidContainer(itemSlot.Itemstack))
+                if (LiquidTradeHandler.CanHoldLiquid(itemSlot.Itemstack, desiredStack))
                 {
                     aggregatedSlots.Add(itemSlot);
                 }
             }
-            return aggregatedSlots.ToArray();
+            return aggregatedSlots;
         }
+        
 
-        public override int GetStallSlotForSelectionIndex(int index)
+        public override GenericTradeResult PurchaseItem(GenericTradeRequest request)
         {
-            if (index > 0 && index < 5) return index-1;
-            return 0;
+            return LiquidTradeHandler.TryPurchaseItem(request);
         }
-
-        private int TransferToMealBlock(IPlayer player, ItemSlot containerSlot, string recipe, ItemStack[] mealStacks, int servings)
-        {
-
-            JsonObject attr = containerSlot.Itemstack.Block.Attributes;
-            string code = attr["mealBlockCode"]?.AsString();
-            if (code == null) return 0;
-
-            int capacity = 0;
-            if (attr.KeyExists("servingCapacity"))
-            {
-                capacity = attr["servingCapacity"].AsInt(); ;
-            }
-            if (capacity <= 0)
-            {
-                return 0;
-            }
-           
-
-            Block mealblock = Api.World.GetBlock(new AssetLocation(code));
-            IBlockMealContainer meal = mealblock as IBlockMealContainer;
-            int servingsToTransfer = Math.Min(servings, capacity);
-            ItemStack stack = new ItemStack(mealblock);
-            meal.SetContents(recipe, stack, mealStacks, servingsToTransfer);
-
-            containerSlot.TakeOut(1);
-            containerSlot.MarkDirty();
-
-            player.InventoryManager.TryGiveItemstack(stack, true);
-            if (!player.InventoryManager.TryGiveItemstack(stack, true))
-            {
-                Api.World.SpawnItemEntity(stack, player.Entity.ServerPos.XYZ.AddCopy(0.5, 0.5, 0.5), null);
-            }
-            return servingsToTransfer;
-        }
-
-
-
-
-
     }
 }

@@ -1,78 +1,196 @@
 {
     "code": "liquidbarrel",
-    "class": "VinconContainer",
-    "enabled" :  false,
+    "class": "VinconLiquidContainer",
     "entityClass": "BEVinconLiquidContainer",
     "priorityInteract": true,
     "creativeinventoryStacksByType": {
-        "*-disabled": [
-            {
-                "tabs": [ "vinconomy", "general" ],
-                "stacks": [
-                    {
-                        "type": "block",
-                        "code": "liquidbarrel-north",
-                        "attributes": { "PrimaryMaterial": "acacia" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "liquidbarrel-north",
-                        "attributes": { "PrimaryMaterial": "baldcypress" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "liquidbarrel-north",
-                        "attributes": { "PrimaryMaterial": "birch" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "liquidbarrel-north",
-                        "attributes": { "PrimaryMaterial": "ebony" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "liquidbarrel-north",
-                        "attributes": { "PrimaryMaterial": "kapok" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "liquidbarrel-north",
-                        "attributes": { "PrimaryMaterial": "larch" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "liquidbarrel-north",
-                        "attributes": { "PrimaryMaterial": "maple" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "liquidbarrel-north",
-                        "attributes": { "PrimaryMaterial": "oak" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "liquidbarrel-north",
-                        "attributes": { "PrimaryMaterial": "pine" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "liquidbarrel-north",
-                        "attributes": { "PrimaryMaterial": "purpleheart" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "liquidbarrel-north",
-                        "attributes": { "PrimaryMaterial": "redwood" }
-                    },
-                    {
-                        "type": "block",
-                        "code": "liquidbarrel-north",
-                        "attributes": { "PrimaryMaterial": "walnut" }
-                    }
-                ]
-            }
-        ]
-    },
+		"*-north": [
+			{
+				"tabs": [ "vinconomy", "general" ],
+				"stacks": [
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuth",			"PrimaryMaterial": "acacia"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuthbronze",	"PrimaryMaterial": "acacia"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "blackbronze",		"PrimaryMaterial": "acacia"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "brass",			"PrimaryMaterial": "acacia"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "copper",			"PrimaryMaterial": "acacia"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "gold",				"PrimaryMaterial": "acacia"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "silver",			"PrimaryMaterial": "acacia"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "iron",				"PrimaryMaterial": "acacia"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "lead",				"PrimaryMaterial": "acacia"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "meteoriciron",		"PrimaryMaterial": "acacia"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tinbronze",		"PrimaryMaterial": "acacia"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tin",				"PrimaryMaterial": "acacia"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "uranium",			"PrimaryMaterial": "acacia"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "zinc",				"PrimaryMaterial": "acacia"}},
+
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuth","PrimaryMaterial": "baldcypress"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuthbronze","PrimaryMaterial": "baldcypress"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "blackbronze","PrimaryMaterial": "baldcypress"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "brass","PrimaryMaterial": "baldcypress"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "copper","PrimaryMaterial": "baldcypress"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "gold","PrimaryMaterial": "baldcypress"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "silver","PrimaryMaterial": "baldcypress"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "iron","PrimaryMaterial": "baldcypress"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "lead","PrimaryMaterial": "baldcypress"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "meteoriciron","PrimaryMaterial": "baldcypress"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tinbronze","PrimaryMaterial": "baldcypress"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tin","PrimaryMaterial": "baldcypress"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "uranium","PrimaryMaterial": "baldcypress"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "zinc","PrimaryMaterial": "baldcypress"}},
+
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuth","PrimaryMaterial": "birch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuthbronze","PrimaryMaterial": "birch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "blackbronze","PrimaryMaterial": "birch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "brass","PrimaryMaterial": "birch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "copper","PrimaryMaterial": "birch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "gold","PrimaryMaterial": "birch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "silver","PrimaryMaterial": "birch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "iron","PrimaryMaterial": "birch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "lead","PrimaryMaterial": "birch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "meteoriciron","PrimaryMaterial": "birch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tinbronze","PrimaryMaterial": "birch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tin","PrimaryMaterial": "birch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "uranium","PrimaryMaterial": "birch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "zinc","PrimaryMaterial": "birch"}},
+
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuth","PrimaryMaterial": "ebony"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuthbronze","PrimaryMaterial": "ebony"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "blackbronze","PrimaryMaterial": "ebony"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "brass","PrimaryMaterial": "ebony"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "copper","PrimaryMaterial": "ebony"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "gold","PrimaryMaterial": "ebony"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "silver","PrimaryMaterial": "ebony"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "iron","PrimaryMaterial": "ebony"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "lead","PrimaryMaterial": "ebony"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "meteoriciron","PrimaryMaterial": "ebony"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tinbronze","PrimaryMaterial": "ebony"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tin","PrimaryMaterial": "ebony"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "uranium","PrimaryMaterial": "ebony"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "zinc","PrimaryMaterial": "ebony"}},
+
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuth","PrimaryMaterial": "kapok"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuthbronze","PrimaryMaterial": "kapok"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "blackbronze","PrimaryMaterial": "kapok"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "brass","PrimaryMaterial": "kapok"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "copper","PrimaryMaterial": "kapok"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "gold","PrimaryMaterial": "kapok"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "silver","PrimaryMaterial": "kapok"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "iron","PrimaryMaterial": "kapok"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "lead","PrimaryMaterial": "kapok"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "meteoriciron","PrimaryMaterial": "kapok"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tinbronze","PrimaryMaterial": "kapok"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tin","PrimaryMaterial": "kapok"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "uranium","PrimaryMaterial": "kapok"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "zinc","PrimaryMaterial": "kapok"}},
+
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuth","PrimaryMaterial": "larch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuthbronze","PrimaryMaterial": "larch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "blackbronze","PrimaryMaterial": "larch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "brass","PrimaryMaterial": "larch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "copper","PrimaryMaterial": "larch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "gold","PrimaryMaterial": "larch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "silver","PrimaryMaterial": "larch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "iron","PrimaryMaterial": "larch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "lead","PrimaryMaterial": "larch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "meteoriciron","PrimaryMaterial": "larch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tinbronze","PrimaryMaterial": "larch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tin","PrimaryMaterial": "larch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "uranium","PrimaryMaterial": "larch"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "zinc","PrimaryMaterial": "larch"}},
+
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuth","PrimaryMaterial": "maple"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuthbronze","PrimaryMaterial": "maple"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "blackbronze","PrimaryMaterial": "maple"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "brass","PrimaryMaterial": "maple"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "copper","PrimaryMaterial": "maple"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "gold","PrimaryMaterial": "maple"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "silver","PrimaryMaterial": "maple"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "iron","PrimaryMaterial": "maple"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "lead","PrimaryMaterial": "maple"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "meteoriciron","PrimaryMaterial": "maple"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tinbronze","PrimaryMaterial": "maple"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tin","PrimaryMaterial": "maple"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "uranium","PrimaryMaterial": "maple"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "zinc","PrimaryMaterial": "maple"}},
+
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuth","PrimaryMaterial": "oak"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuthbronze","PrimaryMaterial": "oak"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "blackbronze","PrimaryMaterial": "oak"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "brass","PrimaryMaterial": "oak"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "copper","PrimaryMaterial": "oak"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "gold","PrimaryMaterial": "oak"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "silver","PrimaryMaterial": "oak"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "iron","PrimaryMaterial": "oak"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "lead","PrimaryMaterial": "oak"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "meteoriciron","PrimaryMaterial": "oak"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tinbronze","PrimaryMaterial": "oak"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tin","PrimaryMaterial": "oak"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "uranium","PrimaryMaterial": "oak"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "zinc","PrimaryMaterial": "oak"}},
+
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuth","PrimaryMaterial": "pine"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuthbronze","PrimaryMaterial": "pine"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "blackbronze","PrimaryMaterial": "pine"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "brass","PrimaryMaterial": "pine"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "copper","PrimaryMaterial": "pine"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "gold","PrimaryMaterial": "pine"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "silver","PrimaryMaterial": "pine"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "iron","PrimaryMaterial": "pine"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "lead","PrimaryMaterial": "pine"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "meteoriciron","PrimaryMaterial": "pine"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tinbronze","PrimaryMaterial": "pine"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tin","PrimaryMaterial": "pine"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "uranium","PrimaryMaterial": "pine"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "zinc","PrimaryMaterial": "pine"}},
+
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuth","PrimaryMaterial": "purpleheart"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuthbronze","PrimaryMaterial": "purpleheart"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "blackbronze","PrimaryMaterial": "purpleheart"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "brass","PrimaryMaterial": "purpleheart"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "copper","PrimaryMaterial": "purpleheart"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "gold","PrimaryMaterial": "purpleheart"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "silver","PrimaryMaterial": "purpleheart"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "iron","PrimaryMaterial": "purpleheart"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "lead","PrimaryMaterial": "purpleheart"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "meteoriciron","PrimaryMaterial": "purpleheart"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tinbronze","PrimaryMaterial": "purpleheart"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tin","PrimaryMaterial": "purpleheart"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "uranium","PrimaryMaterial": "purpleheart"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "zinc","PrimaryMaterial": "purpleheart"}},
+
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuth","PrimaryMaterial": "redwood"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuthbronze","PrimaryMaterial": "redwood"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "blackbronze","PrimaryMaterial": "redwood"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "brass","PrimaryMaterial": "redwood"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "copper","PrimaryMaterial": "redwood"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "gold","PrimaryMaterial": "redwood"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "silver","PrimaryMaterial": "redwood"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "iron","PrimaryMaterial": "redwood"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "lead","PrimaryMaterial": "redwood"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "meteoriciron","PrimaryMaterial": "redwood"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tinbronze","PrimaryMaterial": "redwood"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tin","PrimaryMaterial": "redwood"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "uranium","PrimaryMaterial": "redwood"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "zinc","PrimaryMaterial": "redwood"}},
+
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuth","PrimaryMaterial": "walnut"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "bismuthbronze","PrimaryMaterial": "walnut"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "blackbronze","PrimaryMaterial": "walnut"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "brass","PrimaryMaterial": "walnut"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "copper","PrimaryMaterial": "walnut"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "gold","PrimaryMaterial": "walnut"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "silver","PrimaryMaterial": "walnut"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "iron","PrimaryMaterial": "walnut"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "lead","PrimaryMaterial": "walnut"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "meteoriciron","PrimaryMaterial": "walnut"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tinbronze","PrimaryMaterial": "walnut"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "tin","PrimaryMaterial": "walnut"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "uranium","PrimaryMaterial": "walnut"}},
+					{"type": "block","code": "liquidbarrel-north","attributes": {"SecondaryMaterial": "zinc","PrimaryMaterial": "walnut"}}
+				]
+			}
+		]
+	},
     "attributes": {
         "handbook": {
             "groupBy": [ "liquidbarrel-north" ],
@@ -95,9 +213,23 @@
         }
     ],
     "textures": {
-        "default": { "base": "game:block/clay/ceramic" },
+        "default": { "base": "game:block/wood/planks/oak1" },
 
-        "ceramic": { "base": "game:block/clay/ceramic" },
+        "bismuth": { "base": "game:block/metal/plate/bismuth" },
+        "bismuthbronze": { "base": "game:block/metal/plate/bismuthbronze" },
+        "blackbronze": { "base": "game:block/metal/plate/blackbronze" },
+        "brass": { "base": "game:block/metal/plate/brass" },
+        "copper": { "base": "game:block/metal/plate/copper" },
+        "silver": { "base": "game:block/metal/plate/silver" },
+        "gold": { "base": "game:block/metal/plate/gold" },
+        "iron": { "base": "game:block/metal/plate/iron" },
+        "lead": { "base": "game:block/metal/plate/lead" },
+        "meteoriciron": { "base": "game:block/metal/plate/meteoriciron" },
+        "tinbronze": { "base": "game:block/metal/plate/tinbronze" },
+        "steel": { "base": "game:block/metal/plate/steel" },
+        "tin": { "base": "game:block/metal/plate/tin" },
+        "uranium": { "base": "game:block/metal/plate/uranium" },
+        "zinc": { "base": "game:block/metal/plate/zinc" },
 
         "acacia": { "base": "game:block/wood/planks/acacia1" },
         "baldcypress": { "base": "game:block/wood/planks/baldcypress1" },
@@ -114,19 +246,19 @@
     },
     "shapeByType": {
         "*-north": {
-            "base": "block/mealtable",
+            "base": "block/barrel",
             "rotateY": 0
         },
         "*-east": {
-            "base": "block/mealtable",
+            "base": "block/barrel",
             "rotateY": 270
         },
         "*-south": {
-            "base": "block/mealtable",
+            "base": "block/barrel",
             "rotateY": 180
         },
         "*-west": {
-            "base": "block/mealtable",
+            "base": "block/barrel",
             "rotateY": 90
         }
     },
@@ -148,71 +280,13 @@
 
     "selectionBoxes": [
 		{
-            "x1": 0,
-            "y1": 0,
+            "x1": 0.05,
+            "y1": 0.05,
             "z1": 0,
-            "x2": 1,
-            "y2": 1,
-            "z2": 1
-        },
-        {
-            "x1": 0.05,
-            "y1": 0.5,
-            "z1": 0.05,
-            "x2": 0.45,
-            "y2": 1.05,
-            "z2": 0.45,
-            "rotateYByType": {
-                "*-north": 0,
-                "*-east": 270,
-                "*-west": 90,
-                "*-south": 180
-            }
-        },
-		{
-            "x1": 0.55,
-            "y1": 0.5,
-            "z1": 0.05,
             "x2": 0.95,
-            "y2": 1.05,
-            "z2": 0.45,
-            "rotateYByType": {
-                "*-north": 0,
-                "*-east": 270,
-                "*-west": 90,
-                "*-south": 180
-            }
-        },
-		{
-            "x1": 0.05,
-            "y1": 0.5,
-            "z1": 0.55,
-            "x2": 0.45,
-            "y2": 1.05,
-            "z2": 0.95,
-            "rotateYByType": {
-                "*-north": 0,
-                "*-east": 270,
-                "*-west": 90,
-                "*-south": 180
-            }
-        },
-		{
-            "x1": 0.55,
-            "y1": 0.5,
-            "z1": 0.55,
-            "x2": 0.95,
-            "y2": 1.05,
-            "z2": 0.95,
-            "rotateYByType": {
-                "*-north": 0,
-                "*-east": 270,
-                "*-west": 90,
-                "*-south": 180
-            }
-        },
-        
-
+            "y2": 0.95,
+            "z2": 0.95
+        }
     ],
     "lightAbsorption": 0,
     "sidesolid": {

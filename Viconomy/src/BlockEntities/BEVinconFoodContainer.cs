@@ -35,7 +35,7 @@ namespace Viconomy.BlockEntities
             ItemStack[] stacks = stall.GetMealStacks();
             
             CookingRecipe recipe = stall.GetMatchingCookingRecipe(Api);
-            Block potBlock = Api.World.GetBlock(new AssetLocation("game:claypot-cooked"));
+            Block potBlock = Api.World.GetBlock(new AssetLocation("game:claypot-blue-fired"));
             if (inventory.ChiselDecoSlot.Itemstack != null)
             {
                 return Api.ModLoader.GetModSystem<MealMeshCache>().GenMealInContainerMesh(potBlock, recipe, stacks, new Vec3f(0, 2.5f / 16f, 0));
@@ -125,7 +125,7 @@ namespace Viconomy.BlockEntities
                         TransferContentsFromStall(hotbarslot, slotIndex, sprintMod ? BulkPurchaseAmount : 1);
                     } else
                     {
-                        TryPut(hotbarslot, slotIndex, sprintMod);
+                        TryPut(byPlayer, hotbarslot, slotIndex, sprintMod);
                     }
                 } else if (sneakMod && TradingUtil.isMatchingItem(inventory.GetCurrencyForStallSlot(slotIndex).Itemstack, hotbarslot.Itemstack, Api.World)) {
                     RequestPurchaseItem(slotIndex, sprintMod ? BulkPurchaseAmount : 1);
@@ -177,7 +177,7 @@ namespace Viconomy.BlockEntities
             }
         }
 
-        protected override bool TryAddItemToStall(ItemSlot activeSlot, int stallSlot, bool bulk)
+        protected override bool TryAddItemToStall(IPlayer byPlayer, ItemSlot activeSlot, int stallSlot, bool bulk)
         {
 
             if (activeSlot.Itemstack?.Block is IBlockMealContainer)
@@ -230,41 +230,6 @@ namespace Viconomy.BlockEntities
         {
             return VinUtils.IsMealContainer(dest, Api) 
                 && VinUtils.IsMergableContents(mealStacks, VinUtils.GetContainerContents(dest, Api));
-        }
-
-        private ItemSlot[] GetContainerSlots(IPlayer player, int stallSlot)
-        {
-            List<ItemSlot> aggregatedSlots = new List<ItemSlot>();
-
-            ItemStack[] mealStacks = inventory.GetStall<MealStallSlot>(stallSlot).GetMealStacks();
-
-
-            ItemSlot handItem = player.InventoryManager.ActiveHotbarSlot;
-            if (CanHoldMeal(mealStacks,handItem.Itemstack))
-            {
-                aggregatedSlots.Add(handItem);
-            }
-
-            IInventory hotbarInv = player.InventoryManager.GetHotbarInventory();
-            foreach (ItemSlot itemSlot in hotbarInv)
-            {
-                if (handItem == itemSlot || itemSlot.Itemstack == null) { continue; }
-                if (CanHoldMeal(mealStacks, itemSlot.Itemstack))
-                {
-                    aggregatedSlots.Add(itemSlot);
-                }
-            }
-
-            IInventory characterInv = player.InventoryManager.GetOwnInventory(GlobalConstants.backpackInvClassName);
-            foreach (ItemSlot itemSlot in characterInv)
-            {
-                if (handItem == itemSlot) { continue; }
-                if (CanHoldMeal(mealStacks, itemSlot.Itemstack))
-                {
-                    aggregatedSlots.Add(itemSlot);
-                }
-            }
-            return aggregatedSlots.ToArray();
         }
 
         public override int GetStallSlotForSelectionIndex(int index)
