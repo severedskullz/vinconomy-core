@@ -158,6 +158,8 @@
     "block-gachaloader-*": "Gacha Ball Loader",
     "block-purchasecrate-*": "Shop Purchase Crate",
     "block-mealtable-*": "Shop Meal Stall",
+    "block-liquidbarrel-*": "Shop Liquid Stall",
+    "block-liquiddispenser-*": "Shop Drink Dispenser",
 
     "item-catalog": "Shop Catalog",
     "item-coupon": "Coupon",
