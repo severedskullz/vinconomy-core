@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
 namespace Viconomy.BlockTypes
 {
-    public class BlockVLiquidContainer : BlockVContainer
+    public class BlockVDualLiquidContainer : BlockVLiquidContainer
     {
-        public virtual AssetLocation liquidContentsShape { get; protected set; } = AssetLocation.Create("shapes/block/wood/barrel/liquidcontents.json");
+        public override AssetLocation liquidContentsShape { get; protected set; } = AssetLocation.Create("shapes/block/basic/cube.json");
 
         #region Mesh generation
-        public virtual MeshData GenMesh(ItemStack contentStack, ItemStack liquidContentStack, bool issealed, BlockPos forBlockPos = null)
+        public override MeshData GenMesh(ItemStack contentStack, ItemStack liquidContentStack, bool issealed, BlockPos forBlockPos = null)
         {
             ICoreClientAPI capi = api as ICoreClientAPI;
            
@@ -23,21 +21,7 @@ namespace Viconomy.BlockTypes
             return contentMesh;
         }
 
-        protected MeshData getContentMeshLiquids(ItemStack contentStack, ItemStack liquidContentStack, BlockPos forBlockPos, JsonObject containerProps)
-        {
-            bool isopaque = containerProps?["isopaque"].AsBool(false) == true;
-            bool isliquid = containerProps?.Exists == true;
-            if (liquidContentStack != null && (isliquid || contentStack == null))
-            {
-                AssetLocation shapefilepath = liquidContentsShape;
-
-                return getContentMesh(liquidContentStack, forBlockPos, shapefilepath);
-            }
-
-            return null;
-        }
-
-        protected virtual MeshData getContentMesh(ItemStack stack, BlockPos forBlockPos, AssetLocation shapefilepath)
+        protected override MeshData getContentMesh(ItemStack stack, BlockPos forBlockPos, AssetLocation shapefilepath)
         {
             if (stack == null) return null;
             ICoreClientAPI capi = api as ICoreClientAPI;
@@ -51,7 +35,7 @@ namespace Viconomy.BlockTypes
                 if (props.Texture == null) return null;
 
                 contentSource = new ContainerTextureSource(capi, stack, props.Texture);
-                fillHeight = GameMath.Min(1f, stack.StackSize / props.ItemsPerLitre / Math.Max(50, props.MaxStackSize)) * 10f / 16f;
+                //fillHeight = GameMath.Min(1f, stack.StackSize / props.ItemsPerLitre / Math.Max(50, props.MaxStackSize)) * 10f / 16f;
             }
             else
             {
@@ -69,7 +53,7 @@ namespace Viconomy.BlockTypes
                 }
                 capi.Tesselator.TesselateShape("barrel", shape, out MeshData contentMesh, contentSource, new Vec3f(Shape.rotateX, Shape.rotateY, Shape.rotateZ), props?.GlowLevel ?? 0);
 
-                contentMesh.Translate(0, fillHeight, 0);
+                //contentMesh.Translate(0, fillHeight, 0);
 
                 if (props?.ClimateColorMap != null)
                 {
@@ -104,49 +88,6 @@ namespace Viconomy.BlockTypes
             }
 
             return null;
-        }
-
-
-        public static ITexPositionSource getContentTexture(ICoreClientAPI capi, ItemStack stack, out float fillHeight)
-        {
-            ITexPositionSource contentSource = null;
-            fillHeight = 0;
-
-            JsonObject obj = stack?.ItemAttributes?["inContainerTexture"];
-            if (obj != null && obj.Exists)
-            {
-                contentSource = new ContainerTextureSource(capi, stack, obj.AsObject<CompositeTexture>());
-                fillHeight = GameMath.Min(12 / 16f, 0.7f * stack.StackSize / stack.Collectible.MaxStackSize);
-            }
-            else
-            {
-                if (stack?.Block != null && (stack.Block.DrawType == EnumDrawType.Cube || stack.Block.Shape.Base.Path.Contains("basic/cube")) && capi.BlockTextureAtlas.GetPosition(stack.Block, "up", true) != null)
-                {
-                    contentSource = new BlockTopTextureSource(capi, stack.Block);
-                    fillHeight = GameMath.Min(12 / 16f, 0.7f * stack.StackSize / stack.Collectible.MaxStackSize);
-                }
-                else if (stack != null)
-                {
-
-                    if (stack.Class == EnumItemClass.Block)
-                    {
-                        if (stack.Block.Textures.Count > 1) return null;
-
-                        contentSource = new ContainerTextureSource(capi, stack, stack.Block.Textures.FirstOrDefault().Value);
-                    }
-                    else
-                    {
-                        if (stack.Item.Textures.Count > 1) return null;
-
-                        contentSource = new ContainerTextureSource(capi, stack, stack.Item.FirstTexture);
-                    }
-
-
-                    fillHeight = GameMath.Min(12 / 16f, 0.7f * stack.StackSize / stack.Collectible.MaxStackSize);
-                }
-            }
-
-            return contentSource;
         }
 
         #endregion

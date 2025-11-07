@@ -76,12 +76,17 @@ namespace Viconomy.Inventory.Impl
         
         public StallSlotBase GetStall(int slot)
         {
+            if (slot >= StallSlots.Length || slot < 0)
+            {
+                return null;
+            }
+
             return StallSlots[slot];
         }
 
         public T GetStall<T>(int slot) where T : StallSlotBase
         {
-            return (T)StallSlots[slot];
+            return (T)GetStall(slot);
         }
 
         public int GetStallForSlot(int slotId)
@@ -98,22 +103,22 @@ namespace Viconomy.Inventory.Impl
 
         public int GetStallTotalStallSlots()
         {
-            return StallSlots[0].TotalSlots;
+            return GetStall(0).TotalSlots;
         }
 
         public virtual ViconCurrencySlot GetCurrencyForStallSlot(int stallSlot)
         {
-            return StallSlots[stallSlot].Currency;
+            return GetStall(stallSlot)?.Currency;
         }
 
         public ItemSlot[] GetSlotsForStallSlot(int stallSlot)
         {
-            return StallSlots[stallSlot].GetSlots();
+            return GetStall(stallSlot)?.GetSlots();
         }
 
         public ItemSlot FindFirstNonEmptyStockSlot(int stallSlot)
         {
-            return StallSlots[stallSlot].FindFirstNonEmptyStockSlot();
+            return GetStall(stallSlot)?.FindFirstNonEmptyStockSlot();
         }
 
         public override float GetTransitionSpeedMul(EnumTransitionType transType, ItemStack stack)

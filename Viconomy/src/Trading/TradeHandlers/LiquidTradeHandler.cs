@@ -1,14 +1,13 @@
-﻿using System;
-using Viconomy.BlockEntities;
-using Viconomy.Inventory.Impl;
+﻿using Viconomy.Inventory.Impl;
 using Viconomy.Inventory.StallSlots;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 
 namespace Viconomy.Trading.TradeHandlers
 {
-    public class LiquidTradeHandler
+    public static class LiquidTradeHandler
     {
+        public static AssetLocation fillSound = new AssetLocation("sounds/effect/water-fill.ogg");
         public static bool StallHasRequiredProduct(GenericTradeRequest req)
         {
             ViconLiquidInventory inv = (ViconLiquidInventory)req.SellingEntity.Inventory;
@@ -68,7 +67,7 @@ namespace Viconomy.Trading.TradeHandlers
                 GenericTradeHandler.TryAddCouponsToRegister(res);
             }
 
-            TryGiveLiquids(res);
+            TryAddProductToPlayer(res);
 
             VinconomyCoreSystem.PrintClientMessage(res.Request.Customer, TradingConstants.PURCHASED_ITEMS, [
                 res.TransferedProductTotal,
@@ -80,8 +79,13 @@ namespace Viconomy.Trading.TradeHandlers
             return res;
         }
 
-        public static void TryGiveLiquids(GenericTradeResult res)
+        public static void TryAddProductToPlayer(GenericTradeResult res)
         {
+            if (res.TransferedProduct?.Count == 0)
+            {
+                GenericTradeHandler.AuditLogError(res, "Tried to give player products, but has nothing to give");
+            }
+
             IPlayer player = res.Request.Customer;
             foreach (ItemStack item in res.TransferedProduct)
             {
@@ -109,6 +113,8 @@ namespace Viconomy.Trading.TradeHandlers
 
                 }
             }
+
+            res.Request.Api.World.PlaySoundAt(fillSound, player.Entity, player, true, 16f, 1f);
         }
 
         public static int TransferLiquidToItemStack(ItemStack containerStack, ItemStack liquidStacks)
@@ -155,36 +161,6 @@ namespace Viconomy.Trading.TradeHandlers
                 return moved;
 
             }
-        }
-
-        public static void TryAddProductToPlayer(GenericTradeResult res)
-        {
-            if (res.TransferedProduct?.Count == 0)
-            {
-                GenericTradeHandler.AuditLogError(res, "Tried to give player products, but has nothing to give");
-            }
-
-            IPlayer customer = res.Request.Customer;
-
-            foreach (ItemStack item in res.TransferedProduct)
-            {
-                res.Request.Customer.InventoryManager.TryGiveItemstack(item, true);
-                if (item.StackSize > 0)
-                {
-                    res.Request.Api.World.SpawnItemEntity(item, customer.Entity.Pos.XYZ.AddCopy(0.5, 0.5, 0.5), null);
-                }
-            }
-
-            Block block = res.Request.ProductStackNeeded.Block;
-            AssetLocation assetLocation = null;
-            if (block != null)
-            {
-                BlockSounds sounds = block.Sounds;
-                assetLocation = ((sounds != null) ? sounds.Place : null);
-            }
-            AssetLocation sound = assetLocation;
-            res.Request.Api.World.PlaySoundAt((sound != null) ? sound : new AssetLocation("sounds/player/build"), customer.Entity, customer, true, 16f, 1f);
-
         }
 
         public static float ConvertStackToLiters(ItemStack stack)

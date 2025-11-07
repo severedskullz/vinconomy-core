@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Viconomy.BlockTypes;
 using Viconomy.Inventory.Impl;
 using Viconomy.Inventory.StallSlots;
@@ -24,7 +23,7 @@ namespace Viconomy.BlockEntities
             inventory = new ViconLiquidInventory(this, null, Api, StallSlotCount, ProductStacksPerSlot);
         }
 
-        public MeshData GenMesh(int stallSlot)
+        public virtual MeshData GenMesh(int stallSlot)
         {
             if (Block == null) return null;
             LiquidStallSlot stall = (LiquidStallSlot)inventory.StallSlots[stallSlot];
@@ -54,16 +53,12 @@ namespace Viconomy.BlockEntities
 
         protected override void TesselateDisplayedItems(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
         {
-
             Matrixf matrix = new Matrixf().Translate(0.5f, 0f, 0.5f).RotateYDeg(Block.Shape.rotateY).Translate(-0.5f, 0f, -0.5f);
-
             MeshData data = GenMesh(0);
             if (data != null)
             {
                 mesher.AddMeshData(data, matrix.Values);
             }
-
-            
         }
 
         private bool CanMergeContents(ItemSlot handSlot, int stallSlot)
@@ -90,18 +85,21 @@ namespace Viconomy.BlockEntities
 
             if (block is BlockLiquidContainerBase container)
             {
+                
                 float curLiters = container.GetCurrentLitres(source.Itemstack);
                 float capacity = container.CapacityLitres;
 
                 LiquidStallSlot slot = inventory.GetStall<LiquidStallSlot>(stallSlot);
+                WaterTightContainableProps props = container.GetContentProps(slot.FindFirstNonEmptyStockSlot()?.Itemstack);
                 float toTransfer = Math.Min( Math.Min(amount, (capacity - curLiters)), slot.GetLiters());
                 ItemStack removedContents = slot.RemoveLiters(toTransfer);
 
                 int movedStacks = LiquidTradeHandler.TransferToLiquidContainer(byPlayer, source, removedContents);
                 if (movedStacks > 0)
+                {
                     source.MarkDirty();
-                
-
+                    Api.World.PlaySoundAt((props?.FillSound != null) ? props.FillSound : new AssetLocation("sounds/effect/water-fill.ogg"), byPlayer.Entity, byPlayer, true, 16f, 1f);
+                }
                 return toTransfer;
             }
             return 0;
@@ -161,8 +159,10 @@ namespace Viconomy.BlockEntities
         protected override bool TryAddItemToStall(IPlayer byPlayer, ItemSlot activeSlot, int stallSlot, bool bulk)
         {
             bool result = false;
-            if (activeSlot.Itemstack?.Block is BlockLiquidContainerBase)
+            if (activeSlot.Itemstack?.Block is BlockLiquidContainerBase container)
             {
+                WaterTightContainableProps props = container.GetContentProps(activeSlot.Itemstack);
+
                 if (activeSlot.StackSize == 1)
                 {
                     result = ((ViconLiquidInventory)inventory).AddLiquidToStall(stallSlot, activeSlot.Itemstack, bulk ? BulkPurchaseAmount : 1) > 0;
@@ -172,6 +172,7 @@ namespace Viconomy.BlockEntities
                     ((ViconLiquidInventory)inventory).AddLiquidToStall(stallSlot, taken, bulk ? BulkPurchaseAmount : 1);
                     byPlayer.InventoryManager.TryGiveItemstack(taken);
                 }
+                Api.World.PlaySoundAt((props?.PourSound != null) ? props.PourSound : new AssetLocation("sounds/effect/water-pour.ogg"), byPlayer.Entity, byPlayer, true, 16f, 1f);
             }
 
             if (result) 
@@ -179,145 +180,6 @@ namespace Viconomy.BlockEntities
 
             return result;
         }
-
-        /*
-        public override void PurchaseItem(IPlayer player, int stallSlot, int numPurchases, BEVinconRegister shopRegister)
-        {
-            LiquidStallSlot stall = inventory.GetStall<LiquidStallSlot>(stallSlot);
-            if (stall.Currency.Itemstack == null)
-            {
-                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NO_PRICE);
-                return;
-            }
-
-            int numActualTrades = Math.Min(numPurchases, stall.GetNumPurchasesRemaining());
-
-            // if NumPurchasesRemaining is < 1, return error
-            if (numActualTrades < 1)
-            {
-                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_ENOUGH_STOCK);
-                return;
-            }
-
-            // Get all empty bowls and cooking pots in inventory
-            ItemSlot[] containerSlots = GetContainerSlots(player);
-            int carryCapacity = 0;
-            foreach (ItemSlot containerSlot in containerSlots) {
-                // add up max servings
-                carryCapacity += containerSlot.StackSize * containerSlot.Itemstack.Block.Attributes["servingCapacity"].AsInt();
-            }
-            // if max servings is less than desired amount, reduce desired amount
-            numActualTrades = Math.Min(numActualTrades, carryCapacity / stall.ItemsPerPurchase);
-
-            // if max servings is < 1, return error
-            if (numActualTrades < 1)
-            {
-                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_ENOUGH_CAPACITY);
-                return;
-            }
-
-            // Check if player has enough currency
-            AggregatedSlots currencySlots = TradingUtil.GetAllValidSlotsFor(player, stall.Currency);
-            // if not enough, reduce desired amount to what they can afford
-            numActualTrades = Math.Min(numActualTrades, currencySlots.TotalCount / stall.ItemsPerPurchase);
-
-            // If purchaseAmount > 0, continue
-            if (numActualTrades < 1) {
-                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_ENOUGH_MONEY);
-                return;
-            }
-
-            // At this point we know can "afford" something
-
-            // How many servings did we purchase from the stall
-            int totalServingsPurchased = numActualTrades * stall.ItemsPerPurchase;
-            //string recipeCode = stall.GetRecipeCode(Api);
-
-            int totalServingsLeftToTransfer = totalServingsPurchased;
-            // loop through player's containers and convert to meal blocks
-            foreach (ItemSlot containerSlot in containerSlots)
-            {
-                // Save stacksize as variable. We will be taking items OUT of this stack, so it would exit the loop early.
-                // Eg. Had 2 bowls, loop ran, took one out, 'i' is now 1, and stack size is 1, so loop terminates and doesnt run on second bowl.
-                int numAttempts = containerSlot.StackSize; 
-                for (int i = 0; i < numAttempts; i++)
-                {
-                    int capacity = containerSlot.Itemstack.Block.Attributes["servingCapacity"].AsInt();
-                    int servingsToTransfer = Math.Min(totalServingsLeftToTransfer, capacity);
-                    //int left = TransferToMealBlock(player, containerSlot, recipeCode, stall.GetMealStacks(), totalServingsLeftToTransfer);
-                    //totalServingsLeftToTransfer -= left;
-                    if (totalServingsLeftToTransfer <= 0)
-                        break;
-                }
-                if (totalServingsLeftToTransfer <= 0)
-                    break;
-
-            }
-
-            if (totalServingsLeftToTransfer > 0)
-            {
-                modSystem.Mod.Logger.Error("Somehow allowed purchase of " + totalServingsLeftToTransfer + " extra servings even though we didnt have enough containers");
-            }
-
-            //Take food out of the stall
-            //stall.RemoveServings(totalServingsLeftToTransfer);
-
-
-            //Take the money from the player.
-            ItemStack paymentStack = null;
-            int currencyLeft = numActualTrades * stall.Currency.StackSize;
-            foreach (ItemSlot itemSlot in currencySlots.Slots)
-            {
-                if (paymentStack == null)
-                {
-                    paymentStack = itemSlot.TakeOut(currencyLeft);
-                    currencyLeft -= paymentStack.StackSize;
-                }
-                else
-                {
-                    ItemStack takenStack = itemSlot.TakeOut(currencyLeft);
-                    currencyLeft -= takenStack.StackSize;
-                    paymentStack.StackSize += takenStack.StackSize;
-                }
-                itemSlot.MarkDirty();
-                if (currencyLeft <= 0) break;
-            }
-
-            ItemStack paymentStackClone = paymentStack.Clone();
-            // Add the payment to the register
-            if (shopRegister != null)
-            {
-                shopRegister.AddItem(paymentStack, paymentStack.StackSize);
-            }
-
-            //purchaseResult.purchasedItems = productStackClone;
-            //purchaseResult.purchasedCurrencyUsed = paymentStackClone;
-            TradeResult res = new TradeResult();
-            res.sellingEntity = this;
-            res.customer = player;
-            res.coreApi = Api;
-
-
-            ItemStack fakeStack = VinUtils.ResolveBlockOrItem(Api, "game:bowl-meal", numActualTrades);
-            //(fakeStack.Block as BlockMeal).SetContents(recipeCode, fakeStack, stall.GetMealStacks(),1);
-
-            res.purchasedItems = fakeStack;
-            res.purchasedCurrencyUsed = paymentStackClone;
-
-            modSystem.PurchasedItem(res, fakeStack, paymentStackClone);
-
-            //Tell the player they purchased items
-            VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.PURCHASED_ITEMS, new object[] {
-                fakeStack.StackSize,
-                fakeStack.GetName(),
-                paymentStackClone.StackSize,
-                paymentStackClone.GetName()
-            });
-
-            this.MarkDirty(true, null);
-            this.UpdateMeshes();
-        }
-        */
 
         public override AggregatedSlots GetRequiredTools(IPlayer player, int stallSlot)
         {

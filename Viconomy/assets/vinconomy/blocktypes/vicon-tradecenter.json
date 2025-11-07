@@ -3,12 +3,42 @@
   "class": "VinconTradeCenter",
   "entityClass": "BEVinconTradeCenter",
   "priorityInteract": true,
-  "creativeinventory": { "vinconomy": [ "*" ] },
+  "creativeinventory": { "vinconomy": [ "*-north" ] },
+  "behaviors": [
+    {
+      "name": "HorizontalOrientable",
+      "properties": { "dropBlockFace": "north" }
+    }
+  ],
 
   "heldTpIdleAnimation": "holdbothhandslarge",
   "heldTpUseAnimation": "twohandplaceblock",
   "blockmaterial": "Metal",
-  "shape": {"base": "game:block"},
+  "variantgroups": [
+        {
+            "code": "side",
+            "loadFromProperties": "abstract/horizontalorientation"
+        }
+  ],
+
+  "shapeByType": {
+        "*-north": {
+            "base": "block/register",
+            "rotateY": 0
+        },
+        "*-east": {
+            "base": "block/register",
+            "rotateY": 270
+        },
+        "*-south": {
+            "base": "block/register",
+            "rotateY": 180
+        },
+        "*-west": {
+            "base": "block/register",
+            "rotateY": 90
+        }
+    },
 
   "collisionSelectionBoxes": [
     {

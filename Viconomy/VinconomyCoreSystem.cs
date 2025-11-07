@@ -67,12 +67,14 @@ namespace Viconomy
 
             // 5.0 Block Mappings
             api.RegisterBlockClass("VinconLiquidContainer", typeof(BlockVLiquidContainer));
+            api.RegisterBlockClass("VinconDualLiquidContainer", typeof(BlockVDualLiquidContainer));
             api.RegisterBlockClass("VinconFoodContainer", typeof(BlockVFoodContainer));
             api.RegisterBlockClass("VinconCouponCutter", typeof(BlockVCouponCutter));
             api.RegisterBlockClass("VinconPurchaseContainer", typeof(BlockVPurchaseContainer));
 
             // 5.0 Block Entity Mappings
             api.RegisterBlockEntityClass("BEVinconLiquidContainer", typeof(BEVinconLiquidContainer));
+            api.RegisterBlockEntityClass("BEVinconDualLiquidContainer", typeof(BEVinconDualLiquidContainer));
             api.RegisterBlockEntityClass("BEVinconFoodContainer", typeof(BEVinconFoodContainer));
             api.RegisterBlockEntityClass("BEVinconCouponCutter", typeof(BEVinconCouponCutter));
             api.RegisterBlockEntityClass("BEVinconPurchaseContainer", typeof(BEVinconPurchaseContainer));
@@ -219,6 +221,7 @@ namespace Viconomy
                .WithAlias("vincon")
                .RequiresPrivilege(Privilege.chat)
                .BeginSubCommand("forcecustomer")
+                   .WithAlias("fc")
                    .WithDescription("Forces display of Customer UIs even if they are the Owner")
                    .WithArgs(parsers.Bool("Enabled"))
                    .HandleWith(SetForcedCustomer)
@@ -228,6 +231,7 @@ namespace Viconomy
             RegisterRenderer(new BlockRenderer());
             RegisterRenderer(new ItemRenderer());
             RegisterRenderer(new ClutterBlockRenderer());
+            RegisterRenderer(new CoinItemRenderer());
             RegisterRenderer(new MicroBlockRenderer());
             EndRendererRegistration();
 

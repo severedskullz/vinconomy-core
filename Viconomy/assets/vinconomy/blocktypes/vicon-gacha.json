@@ -25,12 +25,13 @@
             "loadFromProperties": "abstract/horizontalorientation"
         }
     ],
+    "creativeinventory": {},
     "creativeinventoryStacksByType": {
         "*-north": [
             {
                 "tabs": [ "general", "vinconomy" ],
                 "stacks": [
-                    {"type": "block","code": "gacha-north","attributes": {"PrimaryMaterial": "bismuth","SecondaryMaterial": "bismuth", "DecoMaterial" :  "plain", "DecoMaterial" :  "plain"}},
+                    {"type": "block","code": "gacha-north","attributes": {"PrimaryMaterial": "bismuth","SecondaryMaterial": "bismuth", "DecoMaterial" :  "plain"}},
                     {"type": "block","code": "gacha-north","attributes": {"PrimaryMaterial": "bismuth","SecondaryMaterial": "bismuthbronze", "DecoMaterial" :  "plain"}},
                     {"type": "block","code": "gacha-north","attributes": {"PrimaryMaterial": "bismuth","SecondaryMaterial": "blackbronze", "DecoMaterial" :  "plain"}},
                     {"type": "block","code": "gacha-north","attributes": {"PrimaryMaterial": "bismuth","SecondaryMaterial": "brass", "DecoMaterial" :  "plain"}},

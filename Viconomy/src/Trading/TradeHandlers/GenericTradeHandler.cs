@@ -5,6 +5,7 @@ namespace Viconomy.Trading.TradeHandlers
 {
     public static class GenericTradeHandler
     {
+        public static AssetLocation tradeSound = new AssetLocation("sounds/player/build");
         public static bool HasRequiredTools(GenericTradeRequest req)
         {
             if (req.ToolSourceSlots == null)
@@ -58,6 +59,7 @@ namespace Viconomy.Trading.TradeHandlers
 
             VinconomyCoreSystem core = request.Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
             GenericTradeResult res = new GenericTradeResult(request, core);
+
             if (request.ShopRegister == null && !isAdminShop)
                 return SetErrorAndReturn(res, TradingConstants.NOT_REGISTERED);
 
@@ -157,14 +159,8 @@ namespace Viconomy.Trading.TradeHandlers
             }
 
             Block block = res.Request.ProductStackNeeded.Block;
-            AssetLocation assetLocation = null;
-            if (block != null)
-            {
-                BlockSounds sounds = block.Sounds;
-                assetLocation = ((sounds != null) ? sounds.Place : null);
-            }
-            AssetLocation sound = assetLocation;
-            res.Request.Api.World.PlaySoundAt((sound != null) ? sound : new AssetLocation("sounds/player/build"), customer.Entity, customer, true, 16f, 1f);
+            AssetLocation sound = block?.Sounds?.Place;
+            res.Request.Api.World.PlaySoundAt((sound != null) ? sound : tradeSound, customer.Entity, customer, true, 16f, 1f);
 
         }
 

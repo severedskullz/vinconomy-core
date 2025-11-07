@@ -493,14 +493,16 @@ namespace Viconomy.BlockEntities
 
             if (shouldRenderInventory)
             {
+                MeshData mesh = null;
+                ItemSlot slot = null;
                 for (int i = 0; i < StallSlotCount; i++)
                 {
                     try
                     {
-                        ItemSlot slot = inventory.FindFirstNonEmptyStockSlot(i);
+                        slot = inventory.FindFirstNonEmptyStockSlot(i);
                         if (slot != null && !slot.Empty && tfMatrices != null)
                         {
-                            MeshData mesh = getOrCreateMesh(slot.Itemstack, i);
+                            mesh = getOrCreateMesh(slot.Itemstack, i);
                             if (mesh != null)
                             {
                                 mesher.AddMeshData(mesh, tfMatrices[i]);
@@ -537,7 +539,6 @@ namespace Viconomy.BlockEntities
 
         protected override float[][] GenTransformationMatrices()
         {
-
             float[][] tfMatrices = new float[StallSlotCount][];
             for (int index = 0; index < StallSlotCount; index++)
             {
@@ -720,17 +721,17 @@ namespace Viconomy.BlockEntities
 
         public override ItemSlot GetCurrencyForStall(int stallSlot)
         {
-            return inventory.StallSlots[stallSlot].Currency;
+            return inventory.GetStall(stallSlot)?.Currency;
         }
 
         public override int GetNumItemsPerPurchaseForStall(int stallSlot)
         {
-            return inventory.StallSlots[stallSlot].ItemsPerPurchase;
+            return inventory.GetStall(stallSlot).ItemsPerPurchase;
         }
 
         public override ItemStack FindFirstNonEmptyStockStack(int stallSlot)
         {
-            return inventory.StallSlots[stallSlot].FindFirstNonEmptyStockSlot()?.Itemstack;
+            return inventory.GetStall(stallSlot)?.FindFirstNonEmptyStockSlot()?.Itemstack;
         }
     }
 }

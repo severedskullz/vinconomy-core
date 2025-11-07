@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using Viconomy.BlockEntities.TextureSwappable;
 using Viconomy.Inventory;
-using Viconomy.Inventory.StallSlots;
 using Viconomy.Registry;
 using Viconomy.Renderer;
 using Viconomy.Trading;

@@ -12,7 +12,6 @@ using Viconomy.TradeNetwork.Api;
 using Viconomy.Trading;
 using Viconomy.Util;
 using Vintagestory.API.Common;
-using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.Common;

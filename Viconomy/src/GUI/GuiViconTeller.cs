@@ -41,8 +41,23 @@ namespace Viconomy.GUI
             }
 
             registers = filteredRegisters.ToArray();
-            vinInv = Inventory;      
-            reverseTrade = new bool[length];
+            
+            if (!this.isOwner)
+            {
+                vinInv = new DummyInventory(capi, Inventory.Count);
+                for (int i = 0; i < Inventory.Count; i++)
+                {
+                    vinInv[i] = new ItemSlot(vinInv);
+                    vinInv[i].Itemstack = Inventory[i].Itemstack?.Clone();
+                }
+
+                vinInv.TakeLocked = true;
+                vinInv.PutLocked = true;
+            } else
+            {
+                vinInv = Inventory;
+            }
+                reverseTrade = new bool[length];
             
             if (base.IsDuplicate)
             {
@@ -160,7 +175,8 @@ namespace Viconomy.GUI
                     if (isOwner) { 
                         sc.AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { i * 2 }, currencyBounds[i, 1]);
                     } else {
-                        sc.AddPassiveItemSlot(currencyBounds[i, 1], vinInv, vinInv[i * 2], true);
+                        sc.AddItemSlotGrid(vinInv, doNothing, 1, new int[] { i * 2 }, currencyBounds[i, 1]);
+                        //sc.AddPassiveItemSlot(currencyBounds[i, 1], vinInv, vinInv[i * 2], true);
                     }
                     sc.AddButton(reverseTrade[i] ? "<-" : "->", ReverseTradeFor(i), currencyBounds[i, 2], EnumButtonStyle.Small, "convertDirection" + i);
                     if (isOwner)
@@ -169,7 +185,8 @@ namespace Viconomy.GUI
                     }
                     else
                     {
-                        sc.AddPassiveItemSlot(currencyBounds[i, 3], vinInv, vinInv[(i * 2) + 1], true);
+                        sc.AddItemSlotGrid(vinInv, doNothing, 1, new int[] { (i * 2) + 1 }, currencyBounds[i, 3]); ;
+                        //sc.AddPassiveItemSlot(currencyBounds[i, 3], vinInv, vinInv[(i * 2) + 1], true);
                     }
                     //sc.AddStaticText("Converts To", labelTextFont, currencyBounds[i, 2]);
                     sc.AddButton(Lang.Get("vinconomy:gui-deal"), MakeConsumableFor((i * 2)+1), currencyBounds[i, 4], EnumButtonStyle.Small, "currency" + i + "-2");
@@ -192,6 +209,11 @@ namespace Viconomy.GUI
 
             
 
+        }
+
+        private void doNothing(object obj)
+        {
+            
         }
 
         private ActionConsumable MakeConsumableFor(int currencySlot)

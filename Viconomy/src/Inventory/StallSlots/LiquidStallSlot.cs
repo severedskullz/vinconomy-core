@@ -9,12 +9,12 @@ namespace Viconomy.Inventory.StallSlots
     public class LiquidStallSlot : ItemStallSlot
     {
 
-        float literCapacity;
+        public float LiterCapacity { get; protected set; }
         public LiquidStallSlot(InventoryBase inventory, int stallSlot, float literCapacity) : base(inventory, stallSlot, 1)
         {
             slots = new ViconItemSlot[1];
             slots[0] = new VinconLockedItemSlot(inventory, stallSlot, 0);
-            this.literCapacity = literCapacity;
+            this.LiterCapacity = literCapacity;
         }
 
         public ItemStack RemoveLiters(float liters)
@@ -40,7 +40,7 @@ namespace Viconomy.Inventory.StallSlots
                 return 0;
             }
             int toAdd = (int)(litres * contentProps.ItemsPerLitre);
-            int maxCapacity = (int)(literCapacity * contentProps.ItemsPerLitre);
+            int maxCapacity = (int)(LiterCapacity * contentProps.ItemsPerLitre);
 
             ItemStack stack = slots[0].Itemstack;
             if (stack != null)

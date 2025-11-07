@@ -130,11 +130,6 @@ namespace Viconomy.Trading.TradeHandlers
             return res;
         }
 
-
-       
-
-      
-
         public static void TryAddDesiredProductToStall(GenericTradeResult res)
         {
             if (res.Request.SellingEntity.IsAdminShop && res.Request.SellingEntity.DiscardProduct)
