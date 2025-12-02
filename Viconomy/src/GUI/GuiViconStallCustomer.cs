@@ -194,7 +194,7 @@ namespace Viconomy.GUI
 
             if (purchaseSlot.Itemstack != null)
             {
-                this.purchaseSlot.Itemstack.StackSize = stallSlot.ItemsPerPurchase * quantity;
+                this.purchaseSlot.Itemstack.StackSize = stallSlot.ProductPerPurchase * quantity;
             }
             else
             {
@@ -203,7 +203,7 @@ namespace Viconomy.GUI
 
             if (currancySlot.Itemstack != null )
             {
-                this.currancySlot.Itemstack.StackSize = stallSlot.Currency.Itemstack.StackSize * quantity;
+                this.currancySlot.Itemstack.StackSize = stallSlot.CostPerPurchase * quantity;
             }
             else
             {

@@ -16,6 +16,9 @@ namespace Viconomy.Inventory.StallSlots
         public bool LimitedPurchases;
         public bool FuzzyMatching;
 
+        public override int CostPerPurchase => DesiredProduct.StackSize;
+        public override int ProductPerPurchase => Currency.StackSize;
+
         public override int StallSlots => ProductStacksPerStall + PurchasedItemStacksPerStall ;
         public override int TotalSlots => StallSlots + 2; // Currency and DesiredProduct
 

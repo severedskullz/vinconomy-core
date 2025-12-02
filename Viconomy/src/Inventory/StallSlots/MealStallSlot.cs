@@ -18,7 +18,7 @@ namespace Viconomy.Inventory.StallSlots
             slots = new ItemSlot[numSlots];
             for (int i = 0; i < numSlots; i++)
             {
-                slots[i] = new VinconLockedItemSlot(inventory, stallSlot, i);
+                slots[i] = new ViconItemSlot(inventory, stallSlot, i);
 
             }
         }

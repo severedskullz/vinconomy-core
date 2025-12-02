@@ -1,0 +1,35 @@
+[
+  {
+    "ingredientPattern": "G_G,WWW,WIW",
+    "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-*",
+          "name": "primary",
+          "allowedVariants": [ "birch", "oak", "maple", "pine", "acacia", "kapok", "baldcypress", "larch", "redwood", "ebony", "walnut", "purpleheart" ]
+        },
+        "I": {
+            "type": "item",
+            "code": "game:ingot-*",
+            "name": "secondary",
+            "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "silver", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "G": {
+            "type": "block",
+            "code": "game:glassslab-*-down-free",
+            "name": "deco"
+        }
+    },
+    "width": 3,
+    "height": 3,
+    "output": {
+      "type": "block",
+      "code": "liquiddispenser-north",
+          "attributes": {
+                "PrimaryMaterial": "{primary}",
+                "SecondaryMaterial": "{secondary}",
+                "DecoMaterial": "{deco}"
+          }
+    }
+  }
+]

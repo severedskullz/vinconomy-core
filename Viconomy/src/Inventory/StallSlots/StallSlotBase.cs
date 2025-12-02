@@ -15,6 +15,8 @@ namespace Viconomy.Inventory.StallSlots
         public virtual int StallSlots => ProductStacksPerStall;
         public virtual int TotalSlots => StallSlots + 1;
 
+        public virtual int ProductPerPurchase => ItemsPerPurchase;
+        public virtual int CostPerPurchase => Currency.StackSize;
 
         public StallSlotBase(InventoryBase inventory, int numStacksPerStall)
         {

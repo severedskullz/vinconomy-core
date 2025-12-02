@@ -115,14 +115,14 @@ namespace Viconomy.GUI
                 ElementBounds shopSelectionLabel = ElementBounds.Fixed(0, 0, 75, 30);
                 ElementBounds shopSelectBounds = shopSelectionLabel.BelowCopy().WithFixedWidth(250);
 
-                ElementBounds desiredProductLabel = ElementBounds.FixedSize(100, 25).FixedUnder(shopSelectBounds).WithFixedOffset(0, 15);
+                ElementBounds desiredProductLabel = ElementBounds.FixedSize(250, 25).FixedUnder(shopSelectBounds).WithFixedOffset(0, 15);
                 ElementBounds desiredProductSlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).FixedUnder(desiredProductLabel);
 
-                ElementBounds purchaseLabel = ElementBounds.FixedSize(100, 25).FixedUnder(shopSelectBounds).WithFixedOffset(125, 15);
-                ElementBounds purchaseSlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).FixedUnder(purchaseLabel).WithFixedOffset(125, 00);
+                ElementBounds purchaseLabel = ElementBounds.FixedSize(250, 25).FixedUnder(desiredProductSlotBounds).WithFixedOffset(0, 5);
+                ElementBounds purchaseSlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).FixedUnder(purchaseLabel).WithFixedOffset(0, 0);
 
-                ElementBounds costSelectionLabel = ElementBounds.FixedSize(170, 30).FixedUnder(desiredProductSlotBounds).WithFixedOffset(0, 15);
-                ElementBounds costSelectionBounds = ElementBounds.FixedSize(75, 30).FixedUnder(desiredProductSlotBounds).FixedRightOf(costSelectionLabel).WithFixedOffset(5, 10);
+                ElementBounds costSelectionLabel = ElementBounds.FixedSize(170, 30).FixedUnder(purchaseSlotBounds).WithFixedOffset(0, 15);
+                ElementBounds costSelectionBounds = ElementBounds.FixedSize(75, 30).FixedUnder(purchaseSlotBounds).FixedRightOf(costSelectionLabel).WithFixedOffset(5, 10);
 
                 ElementBounds quantitySelectionLabel = ElementBounds.FixedSize(170, 30).FixedUnder(costSelectionLabel).WithFixedOffset(0, 15);
                 ElementBounds quantitySelectionBounds = ElementBounds.FixedSize(75, 30).FixedUnder(costSelectionLabel).FixedRightOf(quantitySelectionLabel).WithFixedOffset(5, 10);
@@ -190,7 +190,7 @@ namespace Viconomy.GUI
                     .AddStaticText(Lang.Get("vinconomy:gui-shop"), CairoFont.WhiteSmallText(), shopSelectionLabel)
                     .AddDropDown(shopsKeys, shopsNames, selectedIndex, new SelectionChangedDelegate(this.onSelectionChanged), shopSelectBounds, "shopSelection")
 
-                    .AddStaticText(Lang.Get("vinconomy:gui-product"), CairoFont.WhiteSmallText(), desiredProductLabel)
+                    .AddStaticText(Lang.Get("vinconomy:gui-purchased-stock"), CairoFont.WhiteSmallText(), desiredProductLabel)
                     .AddItemSlotGrid(vInventory, new Action<object>(this.SetDesiredProductSlot), 1, new int[] { cOffset + vInventory.PurchasedItemStacksPerStall }, desiredProductSlotBounds, "desiredProduct")
 
                     .AddStaticText(Lang.Get("vinconomy:gui-currency"), CairoFont.WhiteSmallText(), purchaseLabel)

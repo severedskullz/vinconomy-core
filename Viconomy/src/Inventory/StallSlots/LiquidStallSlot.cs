@@ -13,7 +13,7 @@ namespace Viconomy.Inventory.StallSlots
         public LiquidStallSlot(InventoryBase inventory, int stallSlot, float literCapacity) : base(inventory, stallSlot, 1)
         {
             slots = new ViconItemSlot[1];
-            slots[0] = new VinconLockedItemSlot(inventory, stallSlot, 0);
+            slots[0] = new ViconItemSlot(inventory, stallSlot, 0);
             this.LiterCapacity = literCapacity;
         }
 

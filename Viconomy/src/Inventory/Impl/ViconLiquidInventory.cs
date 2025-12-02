@@ -12,8 +12,8 @@ namespace Viconomy.Inventory.Impl
     {
         public ViconLiquidInventory(BEVinconBase stall, string inventoryID, ICoreAPI api, int numStalls, int numStacksPerStall) : base(stall, inventoryID, api, numStalls, numStacksPerStall)
         {
-            //PutLocked = true;
-            //TakeLocked = true;
+            PutLocked = true;
+            TakeLocked = true;
             InitializeStalls();
         }
 
@@ -41,7 +41,7 @@ namespace Viconomy.Inventory.Impl
             {
                 return new ViconCurrencySlot(this);
             }
-            return new VinconLockedItemSlot(this, stallSlot, itemSlot);
+            return new ViconItemSlot(this, stallSlot, itemSlot);
         }
 
 

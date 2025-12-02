@@ -1,0 +1,33 @@
+[
+  {
+    "ingredientPattern": "SWS,IWI,SWS",
+    "ingredients": {
+        "W": {
+          "type": "item",
+          "code": "game:plank-*",
+          "name": "primary",
+          "allowedVariants": [ "birch", "oak", "maple", "pine", "acacia", "kapok", "baldcypress", "larch", "redwood", "ebony", "walnut", "purpleheart" ]
+        },
+        "I": {
+            "type": "item",
+            "code": "game:ingot-*",
+            "name": "secondary",
+            "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "silver", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+        },
+        "S": {
+            "type": "item",
+            "code": "game:stick"
+        }
+    },
+    "width": 3,
+    "height": 3,
+    "output": {
+      "type": "block",
+      "code": "liquidbarrel-north",
+          "attributes": {
+                "PrimaryMaterial": "{primary}",
+                "SecondaryMaterial": "{secondary}"
+          }
+    }
+  }
+]
