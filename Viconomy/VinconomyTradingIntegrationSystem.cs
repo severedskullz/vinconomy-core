@@ -244,7 +244,7 @@ namespace Viconomy
 
                                         ItemStack currency = currencyStack.Clone();
                                         currency.StackSize = currencyStack.StackSize * numPurchases;
-                                        register.AddItem(currency, currency.StackSize);
+                                        register.AddCurrency(currency, currency.StackSize);
 
                                         playersToNotify.Add(reg.Owner);
                                         update.Status = VinConstants.TRADE_STATUS_PROCESSED;

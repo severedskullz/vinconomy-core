@@ -21,6 +21,16 @@ namespace Viconomy.Inventory.Impl
             TradePass = new ViconCurrencySlot(this);
         }
 
+        public ItemSlot[] GetCurrencySlots()
+        {
+            return slots;
+        }
+
+        public ItemSlot[] GetCouponSlots()
+        {
+            return CouponSlots;
+        }
+
         public override ItemSlot this[int slotId] {
             get
             {

@@ -141,19 +141,42 @@ namespace Viconomy.BlockEntities
             return false;
         }
 
-        public bool AddItem(ItemStack sourceStack, int quantity)
+        public bool AddCoupon(ItemStack sourceStack, int quantity)
         {
             ItemSlot dslot = new ItemSlot(null);
             dslot.Itemstack = sourceStack;
 
             int amountLeft = quantity;
-            foreach (ItemSlot slot in inventory)
+
+            foreach (ItemSlot slot in inventory.GetCouponSlots())
             {
                 if (slot.CanHold(dslot))
                 {
                     amountLeft -= dslot.TryPutInto(this.Api.World, slot, amountLeft);
                 }
               
+                if (amountLeft <= 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool AddCurrency(ItemStack sourceStack, int quantity)
+        {
+            ItemSlot dslot = new ItemSlot(null);
+            dslot.Itemstack = sourceStack;
+
+            int amountLeft = quantity;
+
+            foreach (ItemSlot slot in inventory.GetCurrencySlots())
+            {
+                if (slot.CanHold(dslot))
+                {
+                    amountLeft -= dslot.TryPutInto(this.Api.World, slot, amountLeft);
+                }
+
                 if (amountLeft <= 0)
                 {
                     return true;

@@ -108,10 +108,9 @@ namespace Viconomy.BlockEntities
             bool sneakMod = byPlayer.Entity.Controls.Sneak;
             bool sprintMod = byPlayer.Entity.Controls.Sprint;
 
-
             ItemSlot hotbarslot = byPlayer.InventoryManager.ActiveHotbarSlot;
 
-            if (byPlayer.PlayerUID == Owner && !VinconomyCoreSystem.ShouldForceCustomerScreen)
+            if (CanAccess(byPlayer) && !VinconomyCoreSystem.ShouldForceCustomerScreen)
             {
                 // If we are holding an empty food container, and sneaking => take from stall
                 // Empty pots and crocks dont have the recipe code or contents set, so not the same as TransferContentsToStall()

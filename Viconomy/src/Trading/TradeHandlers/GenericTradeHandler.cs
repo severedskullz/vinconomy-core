@@ -128,7 +128,7 @@ namespace Viconomy.Trading.TradeHandlers
             {
                 foreach (ItemStack couponStack in res.TransferedCoupons)
                 {
-                    if (!res.Request.ShopRegister.AddItem(couponStack, couponStack.StackSize))
+                    if (!res.Request.ShopRegister.AddCoupon(couponStack, couponStack.StackSize))
                     {
                         AuditLogError(res, $"Failed to add coupons of {couponStack.StackSize} {couponStack.GetName()} to Shop Register");
                     }
@@ -214,7 +214,7 @@ namespace Viconomy.Trading.TradeHandlers
             {
                 foreach (ItemStack paymentStack in res.TransferedCurrency)
                 {
-                    if (!res.Request.ShopRegister.AddItem(paymentStack, paymentStack.StackSize))
+                    if (!res.Request.ShopRegister.AddCurrency(paymentStack, paymentStack.StackSize))
                     {
                         AuditLogError(res, $"Failed to add payment of {paymentStack.StackSize} {paymentStack.GetName()} to Shop Register");
                     }

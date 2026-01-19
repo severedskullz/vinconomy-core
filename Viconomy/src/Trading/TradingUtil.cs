@@ -77,7 +77,7 @@ namespace Viconomy.Trading
             // Add the payment to the register
             if (purchaseResult.shopRegister != null)
             {
-                purchaseResult.shopRegister.AddItem(paymentStack, paymentStack.StackSize);
+                purchaseResult.shopRegister.AddCurrency(paymentStack, paymentStack.StackSize);
             }
 
             purchaseResult.purchasedItems = productStackClone;
