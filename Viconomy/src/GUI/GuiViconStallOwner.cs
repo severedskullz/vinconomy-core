@@ -256,7 +256,7 @@ namespace Viconomy.GUI
             ItemSlot item = stallSlot.FindFirstNonEmptyStockSlot();
 
 
-            if (item != null)
+            if (item?.Itemstack != null)
             {
                 this.purchaseSlot.Itemstack = item.Itemstack.Clone();
                 this.purchaseSlot.Itemstack.StackSize = Math.Min(Math.Max(1, stallSlot.ItemsPerPurchase), item.MaxSlotStackSize);

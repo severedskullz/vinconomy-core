@@ -99,7 +99,7 @@ namespace Viconomy.Inventory.StallSlots
 
         public override ItemSlot FindFirstNonEmptyStockSlot()
         {
-            if (Liquid == null)
+            if (Liquid.Itemstack == null)
                 return null;
 
             return Liquid;
