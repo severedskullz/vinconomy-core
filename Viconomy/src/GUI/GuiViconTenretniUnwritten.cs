@@ -15,7 +15,6 @@ namespace Viconomy.GUI
     {
         private ElementBounds clipBounds;
         private GuiElementRichtext textElem;
-        CairoFont font;
         private VinconomyCoreSystem modSystem;
         private string BookText;
         private int endpointSelectionIndex;

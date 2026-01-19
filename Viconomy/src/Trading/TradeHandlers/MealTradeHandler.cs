@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using Viconomy.BlockEntities;
 using Viconomy.Inventory.Impl;
 using Viconomy.Inventory.StallSlots;
-using Viconomy.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
@@ -58,9 +56,9 @@ namespace Viconomy.Trading.TradeHandlers
 
 
             MealStallSlot stall = ((ViconBaseInventory)res.Request.SellingEntity.Inventory).GetStall<MealStallSlot>(res.Request.StallSlot);
-            ItemStack[] ingredientStacks = stall.GetMealStacks();
-            string recipeCode = stall.GetRecipeCode(res.Request.Api);
-            ItemStack outputStack = stall.GenerateMealStack(res.Request.Api);
+            ItemStack[] ingredientStacks = stall.GetMealContents();
+            string recipeCode = stall.RecipeCode;
+            ItemStack outputStack = stall.FindFirstNonEmptyStockSlot()?.Itemstack;
             int requestedServings = res.Request.NumPurchases * res.Request.GetFinalProductNeededPerPurchase();
             if (outputStack.Block == null)
             {

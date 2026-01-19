@@ -113,11 +113,10 @@ namespace Viconomy.GUI
 
                 bgBounds.WithChildren(currencyLabelBounds, currencySlotGrid, couponLabelBounds, couponSlotGrid);
 
-                //IconUtil.DrawArrowRight
                 ElementBounds tabBounds = ElementBounds.FixedSize(TAB_WIDTH, TAB_HEIGHT).FixedLeftOf(bgBounds).WithFixedOffset(0, GuiStyle.TitleBarHeight);
 
-                
 
+                CairoFont hoverText = CairoFont.WhiteDetailText();
 
                 // Lastly, create the dialog
                 SingleComposer = capi.Gui.CreateCompo("ViconRegister", dialogBounds)
@@ -125,8 +124,11 @@ namespace Viconomy.GUI
                     .AddVerticalTabs(tabs, tabBounds, onTabChanged)
                     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked)
                     .AddStaticText(Lang.Get("vinconomy:gui-currency"), CairoFont.WhiteSmallishText(), currencyLabelBounds)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-currency"), hoverText, 500, currencyLabelBounds)
+
                     .AddItemSlotGrid(Inventory, new Action<object>(this.SendInvPacket), 10, GenerateArrayOf(1, regInv.CurrencySlotCount), currencySlotGrid, "currency")
                     .AddStaticText(Lang.Get("vinconomy:gui-coupons"), CairoFont.WhiteSmallishText(), couponLabelBounds)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-coupons"), hoverText, 500, couponLabelBounds)
                     .AddItemSlotGrid(Inventory, new Action<object>(this.SendInvPacket), 10, GenerateArrayOf(regInv.CurrencySlotCount + 1, regInv.CouponSlotCount), couponSlotGrid,"coupons");
 
 
@@ -178,13 +180,12 @@ namespace Viconomy.GUI
                 ElementBounds accessStallsBounds = ElementBounds.FixedSize(30, 30).FixedUnder(accessInsetBounds).WithFixedOffset(0, 10);
                 ElementBounds accessStallsLabelBounds = accessStallsBounds.RightCopy().WithFixedSize(200, 30).WithFixedOffset(10, 0);
 
-
-
                 bgBounds.WithChildren(tradePassLabelBounds, tradePassBounds, accessStallsLabelBounds, accessStallsBounds,
                     accessInsetBounds, accessScrollbarBounds, accessInputLabelBounds, accessInputBounds, accessAddButtonBounds);
 
-                //IconUtil.DrawArrowRight
                 ElementBounds tabBounds = ElementBounds.FixedSize(TAB_WIDTH, TAB_HEIGHT).FixedLeftOf(bgBounds).WithFixedOffset(0, GuiStyle.TitleBarHeight);
+
+                CairoFont hoverText = CairoFont.WhiteDetailText();
 
                 // Lastly, create the dialog
                 SingleComposer = capi.Gui.CreateCompo("ViconRegister", dialogBounds)
@@ -192,16 +193,15 @@ namespace Viconomy.GUI
                     .AddVerticalTabs(tabs, tabBounds, onTabChanged)
                     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked)
                     .AddStaticText(Lang.Get("vinconomy:gui-trade-pass"), CairoFont.WhiteSmallishText(), tradePassLabelBounds)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-trade-pass"), hoverText, 500, tradePassLabelBounds)
                     .AddItemSlotGrid(Inventory, new Action<object>(this.SendInvPacket), 10, new int[] { 0 }, tradePassBounds, "coupons")
-                    .AddStaticText(Lang.Get("vinconomy:gui-stall-access"), CairoFont.WhiteSmallishText(), accessStallsLabelBounds)
-                    .AddSwitch(EnableStallAccess, accessStallsBounds, "stallAccess")
                     .AddStaticText(Lang.Get("vinconomy:gui-shop-access"), CairoFont.WhiteSmallishText(), accessInputLabelBounds)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-shop-access"), hoverText, 500, accessInputLabelBounds)
                     .AddTextInput(accessInputBounds, null, null, "playerName")
                     .AddButton("Add", OnAddAccess, accessAddButtonBounds)
                     .AddInset(accessInsetBounds, 3)
                         .BeginClip(accessClipBounds)
-                        .AddStaticText("", CairoFont.SmallTextInput(), accessContainerBounds, "container")
-                            //.AddContainer(accessContainerBounds, "container")
+                            .AddStaticText("", CairoFont.SmallTextInput(), accessContainerBounds, "container")
                             .BeginChildElements();
                                 try
                                 {
@@ -215,7 +215,6 @@ namespace Viconomy.GUI
                                         
                                         ElementBounds removeButtonBounds = ElementBounds.Fixed(315, 40 * i, 150, 25);
                                         SingleComposer.AddButton("Remove", RemovePlayerPermissions(access), removeButtonBounds);
-                                        //SingleComposer.AddSwitch(SetPlayerPermissions(access), removeButtonBounds, access.PlayerName);
                                         i++;
                                     }
                     
@@ -224,10 +223,13 @@ namespace Viconomy.GUI
                                 {
                                     SingleComposer.AddRichtext(Lang.Get("vinconomy:gui-error-tell-the-dev") + ex.Message, CairoFont.WhiteDetailText(), accessContainerBounds, "description");
                                 }
-                            SingleComposer.EndChildElements();
-                        SingleComposer.EndClip()
-                        
-                .AddVerticalScrollbar(OnNewShopAccessScrollbarValue, accessScrollbarBounds, "access-scrollbar");
+                            SingleComposer.EndChildElements()
+                        .EndClip()
+                .AddVerticalScrollbar(OnNewShopAccessScrollbarValue, accessScrollbarBounds, "access-scrollbar")
+
+                .AddSwitch(EnableStallAccess, accessStallsBounds, "stallAccess")
+                .AddStaticText(Lang.Get("vinconomy:gui-stall-access"), CairoFont.WhiteSmallishText(), accessStallsLabelBounds)
+                .AddHoverText(Lang.Get("vinconomy:tooltip-stall-access"), hoverText, 500, accessStallsLabelBounds);
 
                 UpdateSelectedTab();
                 SingleComposer.GetTextInput("playerName").SetPlaceHolderText("Player Name");
@@ -363,9 +365,6 @@ namespace Viconomy.GUI
 
                 ElementBounds saveButtonBounds = webhookBounds.BelowCopy().WithFixedSize(60, 20).WithFixedOffset(0, 10).WithAlignment(EnumDialogArea.RightTop);
 
-
-
-
                 bgBounds.WithChildren(shopNameLabelBounds, shopNameInputBounds, shortDescInsetBounds, descriptionInsetBounds,
                     shortDescScrollbarBounds, descriptionScrollbarBounds,
                     shortDescriptionLabelBounds,  shortDescriptionSizeLabelBounds,
@@ -373,6 +372,8 @@ namespace Viconomy.GUI
                     webhookLabelBounds, webhookBounds, saveButtonBounds);
 
                 ElementBounds tabBounds = ElementBounds.FixedSize(TAB_WIDTH, TAB_HEIGHT).FixedLeftOf(bgBounds).WithFixedOffset(0, GuiStyle.TitleBarHeight);
+
+                CairoFont hoverText = CairoFont.WhiteDetailText();
 
                 // Lastly, create the dialog
                 SingleComposer = capi.Gui.CreateCompo("ViconRegister", dialogBounds)
@@ -383,6 +384,8 @@ namespace Viconomy.GUI
                     .AddTextInput(shopNameInputBounds, null, CairoFont.TextInput(), "shopName")
 
                     .AddStaticText(Lang.Get("vinconomy:gui-short-description"), CairoFont.WhiteSmallText(), shortDescriptionLabelBounds)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-short-description"), hoverText, 500, shortDescriptionLabelBounds)
+
                     .AddInset(shortDescInsetBounds, 3)
                     .BeginClip(shortDescClipBounds);
                     try
@@ -398,6 +401,7 @@ namespace Viconomy.GUI
                     .AddDynamicText("0 / 250", CairoFont.WhiteSmallishText(), shortDescriptionSizeLabelBounds, "shortDescriptionLength")
 
                     .AddStaticText(Lang.Get("vinconomy:gui-description"), CairoFont.WhiteSmallText(), descriptionLabelBounds)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-description"), hoverText, 500, descriptionLabelBounds)
                     //.AddTextArea(descriptionBounds, UpdateLongCount, CairoFont.TextInput(), "description")
                     .AddInset(descriptionInsetBounds, 3)
                     .BeginClip(descClipBounds);
@@ -414,6 +418,7 @@ namespace Viconomy.GUI
                     .AddDynamicText("0 / 2500", CairoFont.WhiteSmallishText(), descriptionSizeLabelBounds, "descriptionLength")
 
                     .AddStaticText(Lang.Get("vinconomy:gui-webhook"), CairoFont.WhiteSmallText(), webhookLabelBounds)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-webhook"), hoverText, 500, webhookLabelBounds)
                     .AddTextInput(webhookBounds, null, CairoFont.TextInput(), "webhook")
 
                     .AddButton(Lang.Get("vinconomy:gui-save"), OnSaveShopConfigPressed, saveButtonBounds, EnumButtonStyle.Small, "save");
@@ -598,6 +603,7 @@ namespace Viconomy.GUI
                     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked)
                     .AddVerticalTabs(tabs, tabBounds, onTabChanged)
                     .AddStaticText(Lang.Get("vinconomy:gui-waypoint-visible"), CairoFont.WhiteSmallText(), waypointLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-waypoint-visible"), CairoFont.WhiteDetailText(), 500, waypointLabel)
                     .AddSwitch(new Action<bool>(OnToggleWaypointVisible), waypointVisible, "isvisible")
                     .AddStaticText(Lang.Get("vinconomy:gui-color"), CairoFont.WhiteSmallText(), colorLabelBounds)
                     .AddColorListPicker(colors, onToggleColor, colorRow, 500, "colorpicker")

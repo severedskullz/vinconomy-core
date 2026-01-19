@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Viconomy.GUI;
 using Viconomy.Inventory.Impl;
 using Viconomy.Inventory.StallSlots;
@@ -16,30 +18,35 @@ namespace Viconomy.BlockEntities
     public class BEVinconFoodContainer : BEVinconContainer
     {
 
-        public override int ProductStacksPerSlot => 9;
+        public override int ProductStacksPerSlot => 1;
         public override int BulkPurchaseAmount => 6;
 
         public override void ConfigureInventory()
         {
-            inventory = new ViconMealInventory(this, null, Api, StallSlotCount, ProductStacksPerSlot);
+            inventory = new ViconMealInventory(this, null, Api, StallSlotCount, 1);
         }
 
         public MeshData GenMesh(int stallSlot)
         {
             if (Block == null) return null;
             MealStallSlot stall = inventory.GetStall<MealStallSlot>(stallSlot);
+            if (stall.Meal != null)
+            {
+                ItemStack[] stacks = stall.GetMealContents();
 
-            ItemStack[] stacks = stall.GetMealStacks();
-            
-            CookingRecipe recipe = stall.GetMatchingCookingRecipe(Api);
-            Block potBlock = Api.World.GetBlock(new AssetLocation("game:claypot-blue-fired"));
-            if (inventory.ChiselDecoSlot.Itemstack != null)
-            {
-                return Api.ModLoader.GetModSystem<MealMeshCache>().GenMealInContainerMesh(potBlock, recipe, stacks, new Vec3f(0, 2.5f / 16f, 0));
-            } else
-            {
-                return Api.ModLoader.GetModSystem<MealMeshCache>().GenMealMesh(recipe, stacks, new Vec3f(0, 1 - (2.5f / 16f), 0));
+                CookingRecipe recipe = stall.GetMatchingCookingRecipe(Api);
+                Block potBlock = Api.World.GetBlock(new AssetLocation("game:claypot-blue-fired"));
+                if (inventory.ChiselDecoSlot.Itemstack != null)
+                {
+                    return Api.ModLoader.GetModSystem<MealMeshCache>().GenMealInContainerMesh(potBlock, recipe, stacks, new Vec3f(0, 2.5f / 16f, 0));
+                }
+                else
+                {
+                    return Api.ModLoader.GetModSystem<MealMeshCache>().GenMealMesh(recipe, stacks, new Vec3f(0, 1 - (2.5f / 16f), 0));
+                }
             }
+            return null;
+            
         }
 
         protected override void TesselateDisplayedItems(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
@@ -69,7 +76,7 @@ namespace Viconomy.BlockEntities
 
             if (handSlot.Itemstack.Block is IBlockMealContainer meal)
             {
-                return VinUtils.IsMergableContents(meal.GetNonEmptyContents(Api.World,handSlot.Itemstack), inventory.GetStall<MealStallSlot>(stallSlot).GetMealStacks());
+                return VinUtils.IsMergableContents(meal.GetNonEmptyContents(Api.World,handSlot.Itemstack), inventory.GetStall<MealStallSlot>(stallSlot).GetMealContents());
             }
 
             return false;
@@ -156,22 +163,12 @@ namespace Viconomy.BlockEntities
             int toTake = Math.Min(firstStack.StackSize, ctrlMod ? BulkPurchaseAmount : 1);
             toTake = Math.Min(capacity, toTake);
 
-            int transfered = MealTradeHandler.TransferToMealBlock(byPlayer, hotbarslot, stallSlot.GetRecipeCode(Api), stallSlot.GetMealStacks(), toTake);
+            int transfered = MealTradeHandler.TransferToMealBlock(byPlayer, hotbarslot, stallSlot.RecipeCode, stallSlot.GetMealContents(), toTake);
             if (transfered != toTake)
             {
                 modSystem.Mod.Logger.Error("Somehow generated differing quantity of food. Wanted " + toTake + " but took " + transfered);
             }
-            foreach (ItemSlot foodSlot in stallSlot.GetSlots())
-            {
-                if (foodSlot.Itemstack == null)
-                    continue;
-
-                ItemStack stack = foodSlot.TakeOut(toTake);
-                if (stack.StackSize != toTake)
-                {
-                    modSystem.Mod.Logger.Error("Somehow generated differing quantity of food. Wanted " + toTake + " but took " + transfered);
-                }
-            }
+            stallSlot.RemoveServings(toTake);
         }
 
         protected override bool TryAddItemToStall(IPlayer byPlayer, ItemSlot activeSlot, int stallSlot, bool bulk)
@@ -187,7 +184,7 @@ namespace Viconomy.BlockEntities
         public override AggregatedSlots GetRequiredTools(IPlayer player, int stallSlot)
         {
             ServingCapacityAggregatedSlots aggregatedSlots = new ServingCapacityAggregatedSlots(Api);
-            ItemStack[] mealStacks = inventory.GetStall<MealStallSlot>(stallSlot).GetMealStacks();
+            ItemStack[] mealStacks = inventory.GetStall<MealStallSlot>(stallSlot).GetMealContents();
 
 
             ItemSlot handItem = player.InventoryManager.ActiveHotbarSlot;
@@ -235,6 +232,41 @@ namespace Viconomy.BlockEntities
             return 0;
         }
 
+
+        public override void OnReceivedClientPacket(IPlayer player, int packetid, byte[] data)
+        {
+            //Console.WriteLine(Api.Side + ": OnRecievedClientPacket " + packetid);
+            //PrintClientMessage(player, Api.Side + ": OnRecievedClientPacket");
+            IPlayerInventoryManager inventoryManager = player.InventoryManager;
+            int stallSlot;
+            int amount;
+            switch (packetid)
+            {
+                case VinConstants.ACTIVATE_BLOCK:
+                    using (MemoryStream memoryStream = new MemoryStream(data))
+                    {
+                        BinaryReader binaryReader = new BinaryReader(memoryStream);
+                        stallSlot = binaryReader.ReadInt32();
+                        amount = binaryReader.ReadInt32();
+                    }
+                    ViconMealInventory inv = (ViconMealInventory)inventory;
+
+                    if (amount < 0)
+                    {
+                        inv.AddMealToStall(stallSlot, inv.TransferSlot, Math.Abs(amount));
+                    } else
+                    {
+                        inv.RemoveMealFromStall(stallSlot, inv.TransferSlot, amount);
+                    }
+
+                        
+                    break;
+                default:
+                    base.OnReceivedClientPacket(player, packetid, data);
+                    break;
+            }
+        }
+
         protected override GuiDialogBlockEntity GetCustomerGui(string dialogTitle, int stallSelection)
         {
             return new GuiVinconMealStallCustomer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
@@ -243,16 +275,10 @@ namespace Viconomy.BlockEntities
         
         protected override GuiDialogBlockEntity GetOwnerGui(string dialogTitle, bool isOwner, int stallSelection)
         {
-            return new GuiVinconMealStallOwner(dialogTitle, this.Inventory, isOwner, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+            return new GuiViconFoodStallOwner(dialogTitle, this.Inventory, isOwner, this.Pos, this.Api as ICoreClientAPI, stallSelection);
         }
 
-        public override ItemStack GetProductOutputStack(int stallSlot)
-        {
-            return inventory.GetStall<MealStallSlot>(stallSlot).GenerateMealStack(Api);
-        }
 
-        //TODO: These are wrong. Fix them
-        /*
         public override WorldInteraction[] GetPlacedBlockInteractionHelp(BlockSelection selection, IPlayer forPlayer)
         {
             List<WorldInteraction> interactions = new List<WorldInteraction>();
@@ -261,6 +287,10 @@ namespace Viconomy.BlockEntities
             ItemStack product = FindFirstNonEmptyStockStack(index);
             ItemSlot currency = GetCurrencyForStall(index);
 
+            ItemSlot hotbar = forPlayer.InventoryManager.ActiveHotbarSlot;
+
+            bool isEmptyPot = VinUtils.IsEmptyContainer(hotbar.Itemstack, Api);
+            bool isMeal = VinUtils.IsMealContainer(hotbar.Itemstack, Api);
 
             if (Owner != forPlayer.PlayerUID || VinconomyCoreSystem.ShouldForceCustomerScreen)
             {
@@ -288,60 +318,75 @@ namespace Viconomy.BlockEntities
             }
             else
             {
-                ItemStack firstSlot = product;
-                if (firstSlot != null)
+                
+                if (isMeal)
                 {
-                    ItemStack helpSlot = firstSlot.Clone();
-                    helpSlot.StackSize = 1;
+                    ItemStack helpStack = hotbar.Itemstack.Clone();
+                    helpStack.StackSize = 1;
                     interactions.Add(new WorldInteraction
                     {
-                        ActionLangCode = "vinconomy:stall-add",
+                        ActionLangCode = "vinconomy:stall-add-servings",
                         MouseButton = EnumMouseButton.Right,
-                        HotKeyCode = "sneak",
-                        Itemstacks = [helpSlot]
+                        Itemstacks = [helpStack]
                     });
 
-                    ItemStack helpSlotStack = helpSlot.Clone();
-                    helpSlotStack.StackSize = helpSlotStack.Collectible.MaxStackSize;
+                    ItemStack helpSlotStack = helpStack.Clone();
+                    helpSlotStack.StackSize = BulkPurchaseAmount;
                     interactions.Add(new WorldInteraction
                     {
-                        ActionLangCode = "vinconomy:stall-add",
+                        ActionLangCode = "vinconomy:stall-add-bulk-servings",
+                        MouseButton = EnumMouseButton.Right,
+                        HotKeyCodes = ["sprint"],
+                        Itemstacks = [helpSlotStack]
+                    });
+                }
+
+                if (isMeal || isEmptyPot)
+                {
+                    ItemStack helpStack = hotbar.Itemstack.Clone();
+                    helpStack.StackSize = 1;
+                    interactions.Add(new WorldInteraction
+                    {
+                        ActionLangCode = "vinconomy:stall-remove-servings",
+                        MouseButton = EnumMouseButton.Right,
+                        HotKeyCodes = ["sneak"],
+                        Itemstacks = [helpStack]
+                    });
+
+                    ItemStack helpSlotStack = helpStack.Clone();
+                    helpSlotStack.StackSize = BulkPurchaseAmount;
+                    interactions.Add(new WorldInteraction
+                    {
+                        ActionLangCode = "vinconomy:stall-remove-bulk-servings",
                         MouseButton = EnumMouseButton.Right,
                         HotKeyCodes = ["sneak", "sprint"],
                         Itemstacks = [helpSlotStack]
                     });
-
-                    if (currency.Itemstack != null)
-                    {
-                        interactions.Add(new WorldInteraction
-                        {
-                            ActionLangCode = "vinconomy:stall-purchase",
-                            MouseButton = EnumMouseButton.Right,
-                            HotKeyCode = "sneak",
-                            Itemstacks = [currency.Itemstack]
-
-                        });
-
-                        ItemStack fiveStack = currency.Itemstack.Clone();
-                        fiveStack.StackSize = 5 * fiveStack.StackSize;
-                        interactions.Add(new WorldInteraction
-                        {
-                            ActionLangCode = "vinconomy:stall-purchase-bulk",
-                            MouseButton = EnumMouseButton.Right,
-                            HotKeyCodes = ["sneak", "sprint"],
-                            Itemstacks = [fiveStack]
-                        });
-                    }
                 }
-                else
+
+                if (currency.Itemstack != null)
                 {
                     interactions.Add(new WorldInteraction
                     {
-                        ActionLangCode = "vinconomy:stall-add",
+                        ActionLangCode = "vinconomy:stall-purchase",
                         MouseButton = EnumMouseButton.Right,
-                        HotKeyCode = "sneak"
+                        HotKeyCode = "sneak",
+                        Itemstacks = [currency.Itemstack]
+
+                    });
+
+                    ItemStack fiveStack = currency.Itemstack.Clone();
+                    fiveStack.StackSize = 5 * fiveStack.StackSize;
+                    interactions.Add(new WorldInteraction
+                    {
+                        ActionLangCode = "vinconomy:stall-purchase-bulk",
+                        MouseButton = EnumMouseButton.Right,
+                        HotKeyCodes = ["sneak", "sprint"],
+                        Itemstacks = [fiveStack]
                     });
                 }
+                
+
             }
 
             interactions.Add(new WorldInteraction
@@ -353,7 +398,7 @@ namespace Viconomy.BlockEntities
 
             return interactions.ToArray();
         }
-        */
+        
 
     }
 }

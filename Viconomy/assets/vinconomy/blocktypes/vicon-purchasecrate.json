@@ -171,7 +171,10 @@
     "attributes": {
         "handbook": {
             "groupBy": [ "purchasecrate-north" ],
-            "groupedName": "purchasecrate-north"            
+            "groupedName": "purchasecrate-north",
+            "extraSections": [
+                { "title": "", "text": "vinconomy:handbooktext-purchasecrate" }
+			]
         }
     },
     "behaviors": [ { "name": "HorizontalOrientable" } ],

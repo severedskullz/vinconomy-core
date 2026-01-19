@@ -283,15 +283,12 @@ namespace Viconomy.BlockEntities
 
         public override void OnReceivedClientPacket(IPlayer player, int packetid, byte[] data)
         {
-            //Console.WriteLine(Api.Side + ": OnRecievedClientPacket " + packetid);
-            //PrintClientMessage(player, Api.Side + ": OnRecievedClientPacket");
-            IPlayerInventoryManager inventoryManager = player.InventoryManager;
             int stallSlot;
             int amount;
             switch (packetid)
             {
                 case VinConstants.CLOSE_GUI:
-                        inventoryManager?.CloseInventory(this.Inventory);
+                    player.InventoryManager?.CloseInventory(this.Inventory);
                     break;
 
                 case VinConstants.PURCHASE_ITEMS:
@@ -347,7 +344,6 @@ namespace Viconomy.BlockEntities
                     }
                     SetDiscardProduct(player, isAdmin);
                     break;
-
                 default:
                     if (packetid < 1000)
                     {

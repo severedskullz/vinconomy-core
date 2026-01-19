@@ -1,7 +1,5 @@
 ﻿using System.Text;
-using Viconomy.GUI;
 using Viconomy.Network;
-using Viconomy.Registry;
 using Viconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -11,11 +9,6 @@ namespace Viconomy.ItemTypes
 {
     public class ItemCatalog : Item
     {
-        //GuiDialogGeneric ledgerGUI;
-        VinconomyCoreSystem modSystem;
-
-
-
         public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handling)
         {
            

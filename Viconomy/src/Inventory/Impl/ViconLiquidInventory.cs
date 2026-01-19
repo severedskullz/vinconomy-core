@@ -3,7 +3,6 @@ using Viconomy.BlockEntities;
 using Viconomy.Inventory.Slots;
 using Viconomy.Inventory.StallSlots;
 using Vintagestory.API.Common;
-using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 
 namespace Viconomy.Inventory.Impl
@@ -12,8 +11,6 @@ namespace Viconomy.Inventory.Impl
     {
         public ViconLiquidInventory(BEVinconBase stall, string inventoryID, ICoreAPI api, int numStalls, int numStacksPerStall) : base(stall, inventoryID, api, numStalls, numStacksPerStall)
         {
-            PutLocked = true;
-            TakeLocked = true;
             InitializeStalls();
         }
 
@@ -41,37 +38,7 @@ namespace Viconomy.Inventory.Impl
             {
                 return new ViconCurrencySlot(this);
             }
-            return new ViconItemSlot(this, stallSlot, itemSlot);
-        }
-
-
-
-        public override void FromTreeAttributes(ITreeAttribute tree)
-        {
-            for (int i = 0; i < NumStalls; i++)
-            {
-                LiquidStallSlot stall = (LiquidStallSlot)StallSlots[i];
-                ITreeAttribute stallTree = tree.GetOrAddTreeAttribute("stall" + i);
-                stall.FromTreeAttributes(stallTree);
-            }
-            ChiselDecoSlot.Itemstack = tree.GetItemstack("decoBlock");
-
-            ResolveBlocksOrItems();
-        }
-
-        public override void ToTreeAttributes(ITreeAttribute tree)
-        {
-            //base.SlotsToTreeAttributes(this.slots, tree);
-            for (int i = 0; i < NumStalls; i++)
-            {
-                LiquidStallSlot stall = (LiquidStallSlot)StallSlots[i];
-                ITreeAttribute stallTree = tree.GetOrAddTreeAttribute("stall" + i);
-                stall.ToTreeAttributes(stallTree);
-            }
-            if (ChiselDecoSlot.Itemstack != null)
-            {
-                tree.SetItemstack("decoBlock", ChiselDecoSlot.Itemstack.Clone());
-            }
+            return new ViconLockedSlot(this, stallSlot);
         }
 
         public int AddLiquidToStall(int stall, ItemStack sourceStack, int amount)

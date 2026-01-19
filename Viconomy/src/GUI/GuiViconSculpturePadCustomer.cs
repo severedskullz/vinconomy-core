@@ -18,7 +18,7 @@ namespace Viconomy.GUI
         int curTab;
         int quantity = 1;
         DummyInventory inv;
-        ViconPurchaseSlot purchaseSlot;
+        ViconLockedSlot purchaseSlot;
         ViconCurrencySlot currancySlot;
 
         public GuiDialogViconSculpturePadCustomer(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi)
@@ -36,7 +36,7 @@ namespace Viconomy.GUI
 
             this.inv = new DummyInventory(capi, 2);
 
-            purchaseSlot = new ViconPurchaseSlot(inv, 0);
+            purchaseSlot = new ViconLockedSlot(inv, 0);
             this.inv[0] = purchaseSlot;
 
             currancySlot = new ViconCurrencySlot(inv);
@@ -136,7 +136,7 @@ namespace Viconomy.GUI
                 writer.Write(true);
                 data = ms.ToArray();
                 
-                capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.PURCHASE_ITEMS, data);
+                capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.PURCHASE_ITEMS, data);
             }
             return true;
         }

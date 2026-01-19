@@ -40,7 +40,7 @@ namespace Viconomy.GUI
 
             for (int i = 1; i < Inventory.Count; i++)
             {
-                this.inv[i] = new ViconPurchaseSlot(inv, i);
+                this.inv[i] = new ViconLockedSlot(inv, i);
             }
             
             Compose();

@@ -17,7 +17,7 @@ namespace Viconomy.GUI
         public override void InitializeInventory()
         {
             inv = new DummyInventory(capi);
-            purchaseSlot = new ViconPurchaseSlot(inv, 0);
+            purchaseSlot = new ViconLockedSlot(inv, 0);
             inv.TakeLocked = true;
             inv.PutLocked = true;
             inv[0] = purchaseSlot;
@@ -34,7 +34,7 @@ namespace Viconomy.GUI
 
             if (purchaseItem != null)
             {
-                this.purchaseSlot.Itemstack = stall.GenerateMealStack(capi);
+                this.purchaseSlot.Itemstack = stall.GetSlot(0).Itemstack?.Clone();
                 this.purchaseSlot.Itemstack.StackSize = 1;
             }
             else

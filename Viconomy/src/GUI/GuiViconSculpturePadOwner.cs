@@ -152,16 +152,14 @@ namespace Viconomy.GUI
                 ElementBounds currencyLabel = ElementBounds.FixedSize(100, 20).FixedUnder(nameBounds, 15);
                 ElementBounds currencySlotBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 0, 1, 1).FixedUnder(currencyLabel);
 
-                //TODO: Add number input for price
+                ElementBounds costSelectionLabel = ElementBounds.FixedSize(150, 30).FixedUnder(currencySlotBounds).WithFixedOffset(0, 15);
+                ElementBounds costSelectionBounds = ElementBounds.FixedSize(75, 30).FixedUnder(currencySlotBounds).FixedRightOf(costSelectionLabel).WithFixedOffset(25, 10);
 
-                ElementBounds adminShopLabel = ElementBounds.FixedSize(100, 25).FixedUnder(currencySlotBounds).WithFixedOffset(0, 15);
-                ElementBounds adminShopBounds = ElementBounds.FixedSize(40, 40).FixedUnder(currencySlotBounds).FixedRightOf(adminShopLabel).WithFixedOffset(0, 10);
+                ElementBounds adminShopLabel = ElementBounds.FixedSize(100, 25).FixedUnder(costSelectionBounds).WithFixedOffset(0, 15);
+                ElementBounds adminShopBounds = ElementBounds.FixedSize(40, 40).FixedUnder(costSelectionBounds).FixedRightOf(adminShopLabel).WithFixedOffset(0, 10);
 
-                settingBounds.WithChildren(shopSelectBounds, shopSelectionLabel, currencyLabel, currencySlotBounds, adminShopBounds, adminShopLabel);
+                settingBounds.WithChildren(shopSelectBounds, shopSelectionLabel, currencyLabel, currencySlotBounds, costSelectionLabel, costSelectionBounds, adminShopBounds, adminShopLabel);
                 settingBounds.verticalSizing = ElementSizing.FitToChildren;
-
-                // Background boundaries. Again, just make it fit it's child elements, then add the text as a child element
-                //ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.ElementToDialogPadding);
 
                 
                 int minSizeX = 190;
@@ -175,13 +173,10 @@ namespace Viconomy.GUI
                 }
                 int itemPageTotalHeight = 50+(sizeX * 60);
                 ElementBounds itemPage = ElementBounds.FixedSize(itemPageTotalWidth, itemPageTotalHeight).FixedRightOf(settingBounds).WithFixedOffset(10, GuiStyle.TitleBarHeight);
-                //itemPage.BothSizing = ElementSizing.FitToChildren;
 
 
                 ElementBounds pagePrev = ElementBounds.FixedSize(30, 30).WithFixedPosition(0, 0);
-                //ElementBounds pageLabel = ElementBounds.FixedSize(50, 20).WithAlignment(EnumDialogArea.CenterTop).WithFixedAlignmentOffset(0,15).WithFixedPadding(75,0);
                 ElementBounds pageLabel = ElementBounds.FixedSize(itemPageTotalWidth-60, 26).WithFixedAlignmentOffset(0, 10).FixedRightOf(pagePrev);
-                //ElementBounds pageNext = ElementBounds.FixedSize(50, 50).WithAlignment(EnumDialogArea.RightTop);
                 CairoFont labelTextFont = CairoFont.WhiteSmallText().WithOrientation(EnumTextOrientation.Center);
                 string labelText = Lang.Get("vinconomy:gui-layer", new object[] { curTab + 1, sizeY });
                 labelTextFont.AutoBoxSize(labelText, pageLabel, true);
@@ -200,7 +195,6 @@ namespace Viconomy.GUI
                     {
                         ElementBounds slot = ElementStdBounds.SlotGrid(EnumDialogArea.None, offsetX + 10 + x * 60, 50+ y * 60, 1, 1).WithParent(itemPage);
                         slotBounds[y][x] = slot;
-                        //itemPage.WithChild(slot);
                     }
                 }
                 
@@ -223,15 +217,8 @@ namespace Viconomy.GUI
                     }
                 }
                 
-                //disabledSlotsPage.BothSizing = ElementSizing.FitToChildren;
-
-
-
                 bgBounds.WithChildren(itemPage, settingBounds, disabledSlotsPage);
 
-                //IconUtil.DrawArrowRight
-
-                // Lastly, create the dialog
                 SingleComposer = capi.Gui.CreateCompo("ViconSculpturePad", dialogBounds)
                     .AddShadedDialogBG(bgBounds)
                     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);
@@ -249,13 +236,11 @@ namespace Viconomy.GUI
                             .AddStaticText(Lang.Get("vinconomy:gui-admin-shop"), CairoFont.WhiteSmallText(), adminShopLabel)
                             .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
                         .EndIf()
-                   
-                        //.AddButton("Save", new ActionConsumable(this.onSave),saveButtonBounds, EnumButtonStyle.Small, "save")
                         .AddStaticText(Lang.Get("vinconomy:gui-price"), CairoFont.WhiteSmallText(), currencyLabel)
                         .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { 0 }, currencySlotBounds, "currency")
-                   
-                        //.AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlotBounds, "purchase")
-                    //.AddPassiveItemSlot(outputSlotBounds, Inventory, )
+                        .AddStaticText(Lang.Get("vinconomy:gui-cost-per-purchase"), CairoFont.WhiteSmallText(), costSelectionLabel)
+                        .AddNumberInput(costSelectionBounds, new Action<string>(this.onCostQuantityChanged), CairoFont.WhiteSmallText(), "costQuantity")
+
                     .EndChildElements();
                 
                 SingleComposer.BeginChildElements(itemPage)
@@ -310,6 +295,7 @@ namespace Viconomy.GUI
                     sculptureInput.SetValue(stall.GetSculptureName());
 
                 //.AddHorizontalTabs(tabs, tabBounds, new Action<int>(this.OnTabClicked), tabFont, tabFont.Clone().WithColor(GuiStyle.ActiveButtonTextColor), "tabs")
+                UpdateCurrencyAmount();
                 SingleComposer.Compose();
 
             }
@@ -317,6 +303,26 @@ namespace Viconomy.GUI
             {
                 this.capi.Logger.Debug(e.ToString());
             }
+
+        }
+
+        private void onCostQuantityChanged(string txt)
+        {
+            if (txt.Length == 0)
+                return;
+
+            Int32.TryParse(txt, out int val);
+            val = Math.Max(val, 1);
+
+            byte[] data;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BinaryWriter writer = new BinaryWriter(ms);
+                writer.Write(0);
+                writer.Write(val);
+                data = ms.ToArray();
+            }
+            capi.Network.SendBlockEntityPacket(BlockEntityPosition, VinConstants.SET_ITEM_PRICE, data);
 
         }
 
@@ -432,7 +438,15 @@ namespace Viconomy.GUI
 
         private void SendInvPacket(object p)
         {
+            UpdateCurrencyAmount();
             capi.Network.SendBlockEntityPacket(BlockEntityPosition.X, BlockEntityPosition.Y, BlockEntityPosition.Z, p);
+        }
+
+
+        public void UpdateCurrencyAmount()
+        {
+            ItemSlot item = stall.Inventory[0];
+            SingleComposer.GetTextInput("costQuantity").SetValue(Math.Max(1, item.StackSize));
         }
 
         private void OnTitleBarCloseClicked()

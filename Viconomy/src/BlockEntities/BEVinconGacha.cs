@@ -167,7 +167,7 @@ namespace Viconomy.BlockEntities
             }
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
-            if (isOwner)
+            if (isOwner && !VinconomyCoreSystem.ShouldForceCustomerScreen)
                 this.invDialog = new GuiViconGachaOwner(dialogTitle, this.inventory, this.Pos, this.Api as ICoreClientAPI);
             else
                 this.invDialog = new GuiDialogViconGachaCustomer(dialogTitle, this.inventory, this.Pos, this.Api as ICoreClientAPI);

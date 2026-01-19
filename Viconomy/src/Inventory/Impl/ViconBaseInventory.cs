@@ -5,6 +5,7 @@ using Viconomy.Config;
 using Viconomy.Inventory.Slots;
 using Viconomy.Inventory.StallSlots;
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
 namespace Viconomy.Inventory.Impl
@@ -45,9 +46,9 @@ namespace Viconomy.Inventory.Impl
         public override int Count => (StallSlotSize * NumStalls) + 1;
 
         
+        
         public override void ResolveBlocksOrItems()
         {
-
             // Because Tyron wants us to try to resolve block items both BEFORE and AFTER the Api has be passed off into the Inventory with LateInitialize,
             // as well as when it is loaded with FromTreeAttributes We need to make sure it actually is fucking SET before we try to resolve the blocks or items...
             // See InventoryBase:SlotsFromTreeAtributes
@@ -74,6 +75,7 @@ namespace Viconomy.Inventory.Impl
             
         }
         
+        
         public StallSlotBase GetStall(int slot)
         {
             if (slot >= StallSlots.Length || slot < 0)
@@ -89,13 +91,13 @@ namespace Viconomy.Inventory.Impl
             return (T)GetStall(slot);
         }
 
-        public int GetStallForSlot(int slotId)
+        public virtual int GetStallForSlot(int slotId)
         {
             // Subtract 1 from slotId for the chisel decoration block first
             return (slotId - 1) / GetStallTotalStallSlots();
         }
 
-        public int GetItemSlotForStall(int slotId)
+        public virtual int GetItemSlotForStall(int slotId)
         {
             // Subtract 1 from slotId for the chisel decoration block first
             return (slotId - 1) % GetStallTotalStallSlots();
@@ -146,19 +148,14 @@ namespace Viconomy.Inventory.Impl
                 }
                 else
                 {
+                    if (inventorySlotId - 1 < 0 || inventorySlotId >= Count)
+                    {
+                        throw new ArgumentOutOfRangeException("slotId");
+                    } 
+
                     int stallSlot = GetStallForSlot(inventorySlotId);
                     int itemSlot = GetItemSlotForStall(inventorySlotId);
                     return StallSlots[stallSlot][itemSlot];
-                    /*
-                    if (itemSlot == GetStallTotalStallSlots() - 1)
-                    {
-                        return StallSlots[stallSlot].Currency;
-                    }
-                    else
-                    {
-                        return StallSlots[stallSlot].GetSlot(itemSlot);
-                    }
-                    */
                 }
             }
             set
@@ -181,17 +178,6 @@ namespace Viconomy.Inventory.Impl
                     int stallSlot = GetStallForSlot(inventorySlotId);
                     int itemSlot = GetItemSlotForStall(inventorySlotId);
                     StallSlots[stallSlot][itemSlot] = value;
-                    /*
-                    if (itemSlot == StallSlotSize - 1)
-                    {
-                        StallSlots[stallSlot].Currency = (ViconCurrencySlot) value;
-                    }
-                    else
-                    {
-                        StallSlots[stallSlot].SetSlot(itemSlot, value);
-                    }
-                    */
-
                 }
 
             }
@@ -232,6 +218,33 @@ namespace Viconomy.Inventory.Impl
 
                 current.Itemstack = null;
                 current.MarkDirty();
+            }
+        }
+
+        public override void FromTreeAttributes(ITreeAttribute tree)
+        {
+            for (int i = 0; i < NumStalls; i++)
+            {
+                StallSlotBase stall = StallSlots[i];
+                ITreeAttribute stallTree = tree.GetOrAddTreeAttribute("stall" + i);
+                stall.FromTreeAttributes(stallTree);
+            }
+            ChiselDecoSlot.Itemstack = tree.GetItemstack("decoBlock");
+
+            ResolveBlocksOrItems();
+        }
+
+        public override void ToTreeAttributes(ITreeAttribute tree)
+        {
+            for (int i = 0; i < NumStalls; i++)
+            {
+                StallSlotBase stall = StallSlots[i];
+                ITreeAttribute stallTree = tree.GetOrAddTreeAttribute("stall" + i);
+                stall.ToTreeAttributes(stallTree);
+            }
+            if (ChiselDecoSlot.Itemstack != null)
+            {
+                tree.SetItemstack("decoBlock", ChiselDecoSlot.Itemstack.Clone());
             }
         }
     }

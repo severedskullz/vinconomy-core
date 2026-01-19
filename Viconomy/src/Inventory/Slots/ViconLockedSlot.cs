@@ -2,11 +2,11 @@
 
 namespace Viconomy.Inventory.Slots
 {
-    public class ViconPurchaseSlot : ItemSlot
+    public class ViconLockedSlot : ItemSlot
     {
         public int stallSlot { get; private set; }
 
-        public ViconPurchaseSlot(InventoryBase inventory, int stallSlot) : base(inventory)
+        public ViconLockedSlot(InventoryBase inventory, int stallSlot) : base(inventory)
         {
             this.stallSlot = stallSlot;
             //this.HexBackgroundColor = "#12526B";

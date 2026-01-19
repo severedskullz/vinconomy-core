@@ -99,7 +99,7 @@ namespace Viconomy.Filters
 
             return slot.Itemstack.Item?.Attributes?.KeyExists("toolrackTransform") == true 
                 || slot.Itemstack.Item?.Code.Path.StartsWith("bugnet") == true
-                || slot.Itemstack.Item?.Code.Path.StartsWith("arrow") == true;
+                || slot.Itemstack.Item?.Code.Path.StartsWith("arrow-") == true;
         }
 
         public static bool IsShield(ItemSlot slot)
@@ -115,7 +115,12 @@ namespace Viconomy.Filters
             if (slot == null || slot.Itemstack == null)
                 return false;
 
-            return !IsToolOrWeapon(slot) && !IsClothingOrArmor(slot) && !IsShield(slot); 
+            bool isToolOrWeapon = IsToolOrWeapon(slot);
+            bool isClothingOrArmor = IsClothingOrArmor(slot);
+            bool isShield = IsShield(slot);
+
+
+            return IsFaceSlot(slot) || (!isToolOrWeapon && !isClothingOrArmor && !isShield); 
         }
 
         public static bool IsBootsSlot(ItemSlot slot)
@@ -135,7 +140,6 @@ namespace Viconomy.Filters
 
         public static bool IsEmptyGachaSlot(ItemSlot slot)
         {
-
             return slot.Itemstack.Item?.Code.Path == "gachaball" && slot.Itemstack.Attributes.GetTreeAttribute("Contents") == null;
         }
 
@@ -147,6 +151,14 @@ namespace Viconomy.Filters
         public static bool IsMicroblock(ItemSlot slot)
         {
             return slot.Itemstack?.Block is BlockMicroBlock;
+        }
+
+        public static bool IsFoodContainer(ItemSlot slot)
+        {
+            ItemStack stack = slot.Itemstack;
+            if (stack == null) return false;
+
+            return stack.Block is IBlockMealContainer || stack.Block is BlockCookingContainer; // || (stack.Block is BlockContainer container && stack.Block?.Attributes["mealContainer"]?.AsBool() == true);
         }
     }
 }

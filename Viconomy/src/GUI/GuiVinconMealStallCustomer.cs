@@ -1,13 +1,9 @@
-﻿using HarmonyLib;
-using Microsoft.VisualBasic;
-using System;
-using Viconomy.BlockEntities;
+﻿using Viconomy.BlockEntities;
 using Viconomy.Inventory.Impl;
 using Viconomy.Inventory.StallSlots;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
-using Vintagestory.GameContent;
 
 namespace Viconomy.GUI
 {
@@ -30,7 +26,7 @@ namespace Viconomy.GUI
 
             if (purchaseItem != null)
             {
-                this.purchaseSlot.Itemstack = stall.GenerateMealStack(capi);
+                this.purchaseSlot.Itemstack = stall.GetSlot(0).Itemstack.Clone();
                 this.purchaseSlot.Itemstack.StackSize = stall.ItemsPerPurchase * quantity;
             }
             else
@@ -42,7 +38,7 @@ namespace Viconomy.GUI
 
             if (currencyItem != null && currencyItem.Itemstack != null)
             {
-                this.currancySlot.Itemstack = currencyItem.Itemstack.Clone();
+                this.currancySlot.Itemstack = currencyItem.Itemstack?.Clone();
                 this.currancySlot.Itemstack.StackSize = currencyItem.Itemstack.StackSize * quantity;
             }
             else

@@ -19,8 +19,8 @@ namespace Viconomy.GUI
         protected int curTab;
         protected int quantity = 1;
         protected DummyInventory inv;
-        protected ViconPurchaseSlot purchaseSlot;
-        protected ViconPurchaseSlot currancySlot;
+        protected ViconLockedSlot purchaseSlot;
+        protected ViconLockedSlot currancySlot;
         protected StallSlotBase stallSlot;
 
         public GuiViconStallCustomer(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
@@ -42,10 +42,10 @@ namespace Viconomy.GUI
             inv.TakeLocked = true;
             inv.PutLocked = true;
 
-            purchaseSlot = new ViconPurchaseSlot(inv, 0);
+            purchaseSlot = new ViconLockedSlot(inv, 0);
             this.inv[0] = purchaseSlot;
 
-            currancySlot = new ViconPurchaseSlot(inv,0);
+            currancySlot = new ViconLockedSlot(inv,0);
             this.inv[1] = currancySlot;
 
             this.Compose();

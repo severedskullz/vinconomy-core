@@ -311,7 +311,7 @@ namespace Viconomy.BlockEntities
             }
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
-            if (isOwner)
+            if (isOwner && !VinconomyCoreSystem.ShouldForceCustomerScreen)
                 this.invDialog = new GuiViconSculpturePadOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
             else
                 this.invDialog = new GuiDialogViconSculpturePadCustomer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
@@ -475,7 +475,7 @@ namespace Viconomy.BlockEntities
         {
             if (!CanAccess(byPlayer))
             {
-                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, new object[] { });
+                VinconomyCoreSystem.PrintClientMessage(byPlayer, TradingConstants.DOESNT_OWN, []);
                 return;
             }
 
@@ -747,7 +747,7 @@ namespace Viconomy.BlockEntities
         {
             if (!CanAccess(player))
             {
-                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.DOESNT_OWN, new object[] { });
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.DOESNT_OWN, []);
                 return;
             }
 
@@ -766,7 +766,7 @@ namespace Viconomy.BlockEntities
         {
             if (!CanAccess(player))
             {
-                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.DOESNT_OWN, new object[] { });
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.DOESNT_OWN, []);
                 return;
             }
 
@@ -785,7 +785,7 @@ namespace Viconomy.BlockEntities
         {
             if (!CanAccess(player))
             {
-                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.DOESNT_OWN, new object[] { });
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.DOESNT_OWN, []);
                 return;
             }
             GetSlotForGrid(x, y, z).isDisabled = disabled;
@@ -796,7 +796,7 @@ namespace Viconomy.BlockEntities
         {
             if (!CanAccess(player))
             {
-                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.DOESNT_OWN, new object[] { });
+                VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.DOESNT_OWN, []);
                 return;
             }
             sculptureName = name;
@@ -845,11 +845,11 @@ namespace Viconomy.BlockEntities
                 ItemSlot currency = inventory[0];
                 if (currency.Itemstack != null && CanSell())
                 {
-                    dsc.AppendLine(Lang.Get("vinconomy:for-sale", new Object[] { 1, 1, GetSculptureName(), currency.Itemstack.StackSize, currency.Itemstack.GetName() }));
+                    dsc.AppendLine(Lang.Get("vinconomy:for-sale", [1, 1, GetSculptureName(), currency.Itemstack.StackSize, currency.Itemstack.GetName()]));
                 }
                 else
                 {
-                    dsc.AppendLine(Lang.Get("vinconomy:not-for-sale", new Object[] { 1 }));
+                    dsc.AppendLine(Lang.Get("vinconomy:not-for-sale", [1]));
                 }
 
             

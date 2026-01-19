@@ -1,21 +1,93 @@
 ﻿using System;
 using Viconomy.BlockEntities;
+using Viconomy.Filters;
 using Viconomy.Inventory.Slots;
 using Viconomy.Inventory.StallSlots;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
 namespace Viconomy.Inventory.Impl
 {
     public class ViconMealInventory : ViconBaseInventory
     {
+        public ViconItemSlot TransferSlot;
+        public override int Count => (StallSlotSize * NumStalls) + 2;
         public ViconMealInventory(BEVinconBase stall, string inventoryID, ICoreAPI api, int numStalls, int numStacksPerStall) : base(stall, inventoryID, api, numStalls, numStacksPerStall)
         {
+            TransferSlot = new ViconItemSlot(this, -1, 1);
+            TransferSlot.SetFilter(ViconomyFilters.IsFoodContainer);
+            TransferSlot.MaxSlotStackSize = 1;
             InitializeStalls();
-            this.TakeLocked = true;
-            this.PutLocked = true;
+
         }
+
+        public override ItemSlot this[int inventorySlotId]
+        {
+            get
+            {
+                if (inventorySlotId == 0)
+                {
+                    return ChiselDecoSlot;
+                }
+                else if (inventorySlotId == 1)
+                {
+                    return TransferSlot;
+                }
+                else
+                {
+                    if (inventorySlotId - 2 < 0 || inventorySlotId >= Count)
+                    {
+                        throw new ArgumentOutOfRangeException("slotId");
+                    }
+
+                    int stallSlot = GetStallForSlot(inventorySlotId);
+                    int itemSlot = GetItemSlotForStall(inventorySlotId);
+                    return StallSlots[stallSlot][itemSlot];
+                }
+            }
+            set
+            {
+                if (inventorySlotId == 0)
+                {
+                    ChiselDecoSlot = (ViconDecoBlockSlot)value;
+                }
+                else if (inventorySlotId == 1)
+                {
+                    TransferSlot = (ViconItemSlot)value;
+                }
+                else
+                {
+                    if (inventorySlotId-2 < 0 || inventorySlotId >= Count)
+                    {
+                        throw new ArgumentOutOfRangeException("slotId");
+                    }
+                    if (value == null)
+                    {
+                        throw new ArgumentNullException("value");
+                    }
+
+                    int stallSlot = GetStallForSlot(inventorySlotId);
+                    int itemSlot = GetItemSlotForStall(inventorySlotId);
+                    StallSlots[stallSlot][itemSlot] = value;
+                }
+
+            }
+        }
+
+        public override int GetStallForSlot(int slotId)
+        {
+            // Subtract 2 from slotId for the chisel decoration block and output first
+            return (slotId - 2) / GetStallTotalStallSlots();
+        }
+
+        public override int GetItemSlotForStall(int slotId)
+        {
+            // Subtract 2 from slotId for the chisel decoration block and output first
+            return (slotId - 2) % GetStallTotalStallSlots();
+        }
+
 
         protected override void InitializeStalls()
         {
@@ -24,29 +96,8 @@ namespace Viconomy.Inventory.Impl
             {
                 StallSlots[i] = new MealStallSlot(this, i, ProductStacksPerStall);
             }
+
         }
-
-
-        protected override ItemSlot NewSlot(int slotId)
-        {
-            if (slotId == 0)
-            {
-                return new ViconDecoBlockSlot(this, 0);
-            }
-
-            int index = slotId - 1;
-
-            int stallSlot = index / StallSlotSize;
-            int itemSlot = slotId % StallSlotSize;
-
-            if (itemSlot == ProductStacksPerStall)
-            {
-                return new ViconCurrencySlot(this);
-            }
-            return new ViconItemSlot(this,stallSlot,itemSlot);
-        }
-
-
 
         public override void FromTreeAttributes(ITreeAttribute tree)
         {
@@ -57,8 +108,39 @@ namespace Viconomy.Inventory.Impl
                 stall.FromTreeAttributes(stallTree);
             }
             ChiselDecoSlot.Itemstack = tree.GetItemstack("decoBlock");
+            TransferSlot.Itemstack = tree.GetItemstack("transferSlot");
 
             ResolveBlocksOrItems();
+        }
+
+
+        public override void ResolveBlocksOrItems()
+        {
+            // Because Tyron wants us to try to resolve block items both BEFORE and AFTER the Api has be passed off into the Inventory with LateInitialize,
+            // as well as when it is loaded with FromTreeAttributes We need to make sure it actually is fucking SET before we try to resolve the blocks or items...
+            // See InventoryBase:SlotsFromTreeAtributes
+            //
+            // I am not really doing anything different than what the base method does, but attempting to use that throws a null pointer for some reason
+            // so why this is needed is beyond me. All it does is call ResloveBlockOrItem on each item stack in the inventory... I suspect Api is null since
+            // LateInitialize hasnt gotten called yet, and im trying to use this method to automatically resolve the blocks in FromTreeAttributes?
+            //
+            // This is probably something I am doing "wrong" here given the null check and "continue" for Api, and that I should be resolving the items manually in
+            // the FromTreeAttributes method but whatever - it works, so fuck it.
+
+            if (Api?.World == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < NumStalls; i++)
+            {
+                StallSlotBase stall = StallSlots[i];
+                stall.ResolveBlockOrItem(Api.World);
+
+            }
+            ChiselDecoSlot.Itemstack?.ResolveBlockOrItem(Api.World);
+            TransferSlot.Itemstack?.ResolveBlockOrItem(Api.World);
+
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)
@@ -74,98 +156,28 @@ namespace Viconomy.Inventory.Impl
             {
                 tree.SetItemstack("decoBlock", ChiselDecoSlot.Itemstack.Clone());
             }
+            if (TransferSlot.Itemstack != null)
+            {
+                tree.SetItemstack("transferSlot", TransferSlot.Itemstack.Clone());
+            }
         }
 
-        public bool AddMealToStall(int stall, ItemSlot mealSlot, int amount)
+        public bool AddMealToStall(int stall, ItemSlot sourceSlot, int amount)
         {
-            // Look, I dont feel like trying to manually manipulate item stacks just so players cant add/remove from the inventory manually.
-            // There really needs to be a way to distinguish between PLAYERS adding/removing items and CODE.
-            PutLocked = false;
-            bool result = AddMealToStallRaw(stall, mealSlot, amount);
-            PutLocked = true;
-            return result;
+            if (sourceSlot.StackSize != 1)
+            {
+                //This shouldnt ever happen, but just in case, cuz we dont have code to handle this.
+                throw new ArgumentException("Shouldn't have a source meal container with more than 1 stack size!");
+            }
+
+            MealStallSlot slot = GetStall<MealStallSlot>(stall);
+            return slot.AddMeal(sourceSlot, amount);
         }
 
-        private bool AddMealToStallRaw(int stall, ItemSlot mealSlot, int amount)
+        public bool RemoveMealFromStall(int stall, ItemSlot outputSlot, int amount)
         {
-            ItemStack meal = mealSlot.Itemstack;
-            IBlockMealContainer container = meal.Block as IBlockMealContainer;
-            if (container == null)
-            {
-                return false;
-            }
-
-            ItemStack[] contents = container.GetNonEmptyContents(Api.World, meal);
-            float servings = container.GetQuantityServings(Api.World, meal);
-            int toTransfer = Math.Min(amount, (int)servings);
-            if (contents != null)
-            {
-                MealStallSlot slot = GetStall< MealStallSlot>(stall);
-
-                ItemStack[] ingSlots = slot.GetMealStacks();
-                // check if ingredient count matches
-         
-                // check if recipe code matches
-                if (ingSlots.Length != 0) {
-                    if (ingSlots.Length != contents.Length)
-                    {
-                        return false;
-                    }
-
-                    for (int i = 0; i < contents.Length; i++)
-                    {
-                        ItemStack bowlStack = contents[i];
-                        ItemStack containerStack = ingSlots[i];
-
-                        if (bowlStack.Id != containerStack.Id)
-                        {
-                            return false;
-                        }
-                    }
-                }
-                   
-
-                int servingsTransfered = 0;
-                for (int i = 0; i < contents.Length; i++)
-                {
-                    ItemStack ing = new ItemStack(contents[i].Item);
-                    ing.StackSize = toTransfer;
-                    ItemSlot fromSlot = new DummySlot(ing);
-                    ItemSlot toSlot = slot.GetSlot(i);
-                    int amountMoved = fromSlot.TryPutInto(Api.World, toSlot, ing.StackSize);
-                    // In almost every case, this should *ALWAYS* be the same because you cant have a meal with different amounts of ingredients, but *JUST* to be sure.
-                    servingsTransfered = Math.Max(servingsTransfered, amountMoved);
-                    toSlot.MarkDirty();
-                        
-                }
-                servings = servings - servingsTransfered;
-                if (servings > 0)
-                {
-                    container.SetQuantityServings(Api.World, meal, servings);
-                    meal.Attributes?.RemoveAttribute("sealed");
-                } else
-                {
-                    // Check if its a BlockCookedContainer (AKA Cooking Pot) first, because cooking pot does not have `eatenBlock` attribute
-                    //TODO: Could probably reverse this logic and just check for eatenBlock first and convert item, otherwise just set contents
-                    if ( meal.Block is BlockCookedContainerBase)
-                    {
-                        container.SetContents(null, meal, null, 0);
-                        meal.Attributes?.RemoveAttribute("sealed");
-                    } else
-                    {
-                        string code = meal.Block.Attributes["eatenBlock"].AsString();
-                        if (code == null) return false;
-                        Block mealblock = Api.World.GetBlock(new AssetLocation(code));
-                        ItemStack stack = new ItemStack(mealblock);
-                        mealSlot.Itemstack = stack;
-                    }
-                    
-                }
-                mealSlot.MarkDirty();
-                return true;
-            }
-            
-            return false;
+            MealStallSlot slot = GetStall<MealStallSlot>(stall);
+            return slot.RemoveMeal(outputSlot, amount);
         }
 
         public ItemStack[] GetMealContents(int stallSlot)
@@ -179,6 +191,17 @@ namespace Viconomy.Inventory.Impl
             }
 
             return stacks;
+        }
+
+        public override float GetTransitionSpeedMul(EnumTransitionType transType, ItemStack stack)
+        {
+            return 0;
+        }
+
+        public override void DropAll(Vec3d pos, int maxStackSize = 0)
+        {
+            if (TransferSlot.Itemstack != null)
+                Api.World.SpawnItemEntity(TransferSlot.Itemstack, pos);
         }
 
     }

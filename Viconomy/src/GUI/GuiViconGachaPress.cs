@@ -14,14 +14,10 @@ namespace Viconomy.GUI
     {
         BEVinconGachaLoader stall;
         InventoryBase vinInv;
-        ShopRegistration[] registers;
-        ICoreClientAPI api;
-
 
         public GuiViconGachaPress(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
         {
-            api = capi;
             stall = capi.World.BlockAccessor.GetBlockEntity<BEVinconGachaLoader>(BlockEntityPosition);
             vinInv = Inventory;
            
@@ -118,10 +114,6 @@ namespace Viconomy.GUI
 
                         slotBounds[curIn] = curSlotBounds;
                         amountSelectionBounds[curIn] = curLabelBounds;
-
-
-
-
                     }
                     int index = (row * slotsPerRow) + slotsPerRow;
                     if (index < slotCount)
@@ -129,45 +121,36 @@ namespace Viconomy.GUI
 
                 }
 
-                
-
                 itemPage.WithChildren(itemsPerLabel, gachaBounds);
-
-
                 settingBounds.WithChildren(nameSelectionBounds, nameSelectionLabel, inputLabel, inputSlotBounds, outputLabel, outputSlotBounds);
                 settingBounds.BothSizing = ElementSizing.FitToChildren;
                 bgBounds.WithChildren(settingBounds, itemPage);
 
-                //IconUtil.DrawArrowRight
-
-                // Lastly, create the dialog
                 SingleComposer = capi.Gui.CreateCompo("ViconStallOwner", dialogBounds)
                     .AddShadedDialogBG(bgBounds)
                     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);
 
-                
-                    SingleComposer.BeginChildElements(settingBounds)
+                CairoFont hoverText = CairoFont.WhiteDetailText();
+                CairoFont smallText = CairoFont.WhiteSmallText();
 
-
-                        //.AddButton("Save", new ActionConsumable(this.onSave),saveButtonBounds, EnumButtonStyle.Small, "save")
-                        .AddStaticText(Lang.Get("vinconomy:gui-name"), CairoFont.WhiteSmallText(), nameSelectionLabel)
-                        .AddTextInput(nameSelectionBounds, OnTextChanged, CairoFont.WhiteSmallText(), "bundleName")
-                        .AddStaticText(Lang.Get("vinconomy:gui-gacha"), CairoFont.WhiteSmallText(), inputLabel)
-                        .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { 1 }, inputSlotBounds, "input")
-                        .AddStaticText(Lang.Get("vinconomy:gui-output"), CairoFont.WhiteSmallText(), outputLabel)
-                        .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { 0 }, outputSlotBounds, "output")
-                        .AddButton(Lang.Get("vinconomy:gui-bundle"), new ActionConsumable(this.BundleItems), bundleBounds, EnumButtonStyle.Small, "bundle")
-                        .AddButton(Lang.Get("vinconomy:gui-bundle-all"), new ActionConsumable(this.BundleAllItems), bundleAllBounds, EnumButtonStyle.Small, "bundleAll")
-                    //.AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlotBounds, "purchase")
-                    //.AddPassiveItemSlot(outputSlotBounds, Inventory, )
-                    .EndChildElements();
+                SingleComposer.BeginChildElements(settingBounds)
+                    .AddStaticText(Lang.Get("vinconomy:gui-name"), smallText, nameSelectionLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-gacha-name"), hoverText, 500, nameSelectionLabel)
+                    .AddTextInput(nameSelectionBounds, OnTextChanged, smallText, "bundleName")
+                    .AddStaticText(Lang.Get("vinconomy:gui-gacha"), smallText, inputLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-gacha-input"), hoverText, 500, inputLabel)
+                    .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { 1 }, inputSlotBounds, "input")
+                    .AddStaticText(Lang.Get("vinconomy:gui-output"), smallText, outputLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-gacha-output"), hoverText, 500, outputLabel)
+                    .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { 0 }, outputSlotBounds, "output")
+                    .AddButton(Lang.Get("vinconomy:gui-bundle"), new ActionConsumable(this.BundleItems), bundleBounds, EnumButtonStyle.Small, "bundle")
+                    .AddButton(Lang.Get("vinconomy:gui-bundle-all"), new ActionConsumable(this.BundleAllItems), bundleAllBounds, EnumButtonStyle.Small, "bundleAll")
+                .EndChildElements();
 
                 CairoFont font = CairoFont.WhiteSmallText().WithOrientation(EnumTextOrientation.Center);
                 SingleComposer.BeginChildElements(gachaBounds)
-                .AddStaticText(Lang.Get("vinconomy:gui-items-per-gacha"), font, itemsPerLabel);
-
-                
-               
+                    .AddStaticText(Lang.Get("vinconomy:gui-items-per-gacha"), font, itemsPerLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-items-per-gacha"), hoverText, 500, itemsPerLabel);
 
                 for (int i = 0; i < slotBounds.Length; i++)
                 {

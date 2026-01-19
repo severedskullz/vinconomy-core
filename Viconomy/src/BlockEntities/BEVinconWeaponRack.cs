@@ -113,7 +113,7 @@ namespace Viconomy.BlockEntities
                 Matrixf wepLeft = new Matrixf()
                     .Translate(0.5f, 0.5f, 0.5f)
                     .RotateYDeg(Block.Shape.rotateY)
-                    .Translate(0, 0, -0.40f)
+                    .Translate(0, 0, -0.4f)
                     .Scale(0.6f, 0.6f, 0.6f)
                     .Translate(-0.5f, -0.5f, -0.5f);
                 tfMatrices[0] = wepLeft.Values;
@@ -125,9 +125,9 @@ namespace Viconomy.BlockEntities
             {
                 Matrixf shield = new Matrixf()
                     .Translate(0.5f, 0f, 0.5f)
-                    .RotateYDeg(Block.Shape.rotateY)
+                    .RotateYDeg(Block.Shape.rotateY +180)
                     .Scale(0.6f, 0.6f, 0.6f)
-                    .Translate(-0.5f, -0.5f, -0.5f);
+                    .Translate(-0.5f, -0.5f, 0.5f);
 
                 tfMatrices[1] = shield.Values;
             }
@@ -138,7 +138,7 @@ namespace Viconomy.BlockEntities
                 Matrixf wepRight = new Matrixf()
                     .Translate(0.5f, 0.5f, 0.5f)
                     .RotateYDeg(Block.Shape.rotateY)
-                    .Translate(0,0,-0.35f)
+                    .Translate(0,0,-0.4f)
                     .Scale(0.6f, 0.6f, 0.6f)
                     .Translate(-0.5f, -0.5f, -0.5f);
 

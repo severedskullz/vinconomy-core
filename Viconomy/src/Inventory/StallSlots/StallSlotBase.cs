@@ -10,7 +10,7 @@ namespace Viconomy.Inventory.StallSlots
         public int ProductStacksPerStall;
         public ViconCurrencySlot Currency;
         public int ItemsPerPurchase = 1;
-        //protected InventoryBase Inventory;
+        protected InventoryBase Inventory;
 
         public virtual int StallSlots => ProductStacksPerStall;
         public virtual int TotalSlots => StallSlots + 1;
@@ -20,7 +20,7 @@ namespace Viconomy.Inventory.StallSlots
 
         public StallSlotBase(InventoryBase inventory, int numStacksPerStall)
         {
-            //Inventory = inventory;
+            Inventory = inventory;
             Currency = new ViconCurrencySlot(inventory);
             ProductStacksPerStall = numStacksPerStall;
         }

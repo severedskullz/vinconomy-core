@@ -179,9 +179,6 @@ namespace Viconomy.GUI
                         curRow = slotBounds[index - 1];
 
                 }
-
-                
-
                 itemPage.WithChildren(chanceLabel, gachaBounds);
 
 
@@ -189,7 +186,8 @@ namespace Viconomy.GUI
                 settingBounds.BothSizing = ElementSizing.FitToChildren;
                 bgBounds.WithChildren(settingBounds, itemPage);
 
-                //IconUtil.DrawArrowRight
+                CairoFont hoverText = CairoFont.WhiteDetailText();
+                CairoFont smallText = CairoFont.WhiteSmallText();
 
                 // Lastly, create the dialog
                 SingleComposer = capi.Gui.CreateCompo("ViconStallOwner", dialogBounds)
@@ -198,24 +196,28 @@ namespace Viconomy.GUI
 
                 
                     SingleComposer.BeginChildElements(settingBounds)
-                        .AddStaticText(Lang.Get("vinconomy:gui-shop"), CairoFont.WhiteSmallText(), shopSelectionLabel)
+                        .AddStaticText(Lang.Get("vinconomy:gui-shop"), smallText, shopSelectionLabel)
+                        .AddHoverText(Lang.Get("vinconomy:tooltip-shop"), hoverText, 500, shopSelectionLabel)
                         .AddDropDown(shopsKeys, shopsNames, selectedIndex, new SelectionChangedDelegate(this.onSelectionChanged), shopSelectBounds)
                         .AddIf(stall.IsAdminShop || VinUtils.IsCreativePlayer(api.World.Player)) 
-                            .AddStaticText(Lang.Get("vinconomy:gui-admin-shop"), CairoFont.WhiteSmallText(), adminShopLabel)
+                            .AddStaticText(Lang.Get("vinconomy:gui-admin-shop"), smallText, adminShopLabel)
+                            .AddHoverText(Lang.Get("vinconomy:tooltip-admin-shop"), hoverText, 500, adminShopLabel)
                             .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
                         .EndIf()
 
                         //.AddButton("Save", new ActionConsumable(this.onSave),saveButtonBounds, EnumButtonStyle.Small, "save")
-                        .AddStaticText(Lang.Get("vinconomy:gui-price"), CairoFont.WhiteSmallText(), currencyLabel)
+                        .AddStaticText(Lang.Get("vinconomy:gui-price"), smallText, currencyLabel)
+                        .AddHoverText(Lang.Get("vinconomy:tooltip-price"), hoverText, 500, currencyLabel)
                         .AddItemSlotGrid(vinInv, new Action<object>(this.SendInvPacket), 1, new int[] { 0 }, currencySlotBounds, "currency")
-                        .AddStaticText(Lang.Get("vinconomy:gui-use-total-randomizer"), CairoFont.WhiteSmallText(), absoluteLabel)
+                        .AddStaticText(Lang.Get("vinconomy:gui-use-total-randomizer"), smallText, absoluteLabel)
+                        .AddHoverText(Lang.Get("vinconomy:tooltip-total-count-randomizer"), hoverText, 500, absoluteLabel)
                         .AddSwitch(new Action<bool>(this.OnToggleAbsolutePick), absoluteBounds, "absolutePick")
                         //.AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlotBounds, "purchase")
                     //.AddPassiveItemSlot(outputSlotBounds, Inventory, )
                     .EndChildElements();
 
                 SingleComposer.BeginChildElements(gachaBounds)
-                .AddStaticText(Lang.Get("vinconomy:gui-winning-chance"), CairoFont.WhiteSmallText(), chanceLabel);
+                .AddStaticText(Lang.Get("vinconomy:gui-winning-chance"), smallText, chanceLabel);
 
                 CairoFont font = CairoFont.WhiteSmallText().WithOrientation(EnumTextOrientation.Center);
                
@@ -310,7 +312,7 @@ namespace Viconomy.GUI
                 writer.Write(id);
                 data = ms.ToArray();
             }
-            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition.X, this.BlockEntityPosition.Y, this.BlockEntityPosition.Z, VinConstants.SET_REGISTER_ID, data);
+            this.capi.Network.SendBlockEntityPacket(this.BlockEntityPosition, VinConstants.SET_REGISTER_ID, data);
 
         }
 

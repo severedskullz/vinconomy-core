@@ -151,17 +151,12 @@ namespace Viconomy.GUI
                 settingBounds.WithChildren(shopSelectBounds, shopSelectionLabel, quantitySelectionBounds, quantitySelectionLabel, desiredProductLabel, desiredProductSlotBounds, purchaseSlotBounds, adminShopBounds, adminShopLabel);
                 settingBounds.verticalSizing = ElementSizing.FitToChildren;
 
-                // Background boundaries. Again, just make it fit it's child elements, then add the text as a child element
-                //ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.ElementToDialogPadding);
-
                 ElementBounds itemPage = ElementBounds.FixedSize(200, 10).FixedRightOf(settingBounds).WithFixedOffset(25, GuiStyle.TitleBarHeight);
                 itemPage.BothSizing = ElementSizing.FitToChildren;
 
 
                 ElementBounds pagePrev = ElementBounds.FixedSize(30, 30).WithFixedPosition(0, 0);
-                //ElementBounds pageLabel = ElementBounds.FixedSize(50, 20).WithAlignment(EnumDialogArea.CenterTop).WithFixedAlignmentOffset(0,15).WithFixedPadding(75,0);
                 ElementBounds pageLabel = ElementBounds.FixedSize(430, 25).WithFixedAlignmentOffset(0, 10).FixedRightOf(pagePrev, 10);
-                //ElementBounds pageNext = ElementBounds.FixedSize(50, 50).WithAlignment(EnumDialogArea.RightTop);
                 CairoFont labelTextFont = CairoFont.WhiteSmallText().WithOrientation(EnumTextOrientation.Center);
                 string labelText = Lang.Get("vinconomy:gui-slot", new object[] { curTab + 1, stall.StallSlotCount });
                 labelTextFont.AutoBoxSize(labelText, pageLabel, true);
@@ -174,12 +169,11 @@ namespace Viconomy.GUI
                 ElementBounds currencySlotGrid = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0, 20, 10,(int)Math.Ceiling(purchasedSlots.Length / 10.0)).FixedUnder(currencySlotLabel).WithFixedOffset(0,-15);
                
                 itemPage.WithChildren(pagePrev, pageLabel, pageNext, currencySlotLabel, currencySlotGrid, productSlotLabel, productSlotGrid);
-
-
-
                 bgBounds.WithChildren(itemPage, settingBounds);
 
-                //IconUtil.DrawArrowRight
+
+                CairoFont hoverText = CairoFont.WhiteDetailText();
+                CairoFont smallText = CairoFont.WhiteSmallText();
 
                 // Lastly, create the dialog
                 SingleComposer = capi.Gui.CreateCompo("ViconStallOwner", dialogBounds)
@@ -187,56 +181,65 @@ namespace Viconomy.GUI
                     .AddDialogTitleBar(DialogTitle, OnTitleBarCloseClicked);
 
                 SingleComposer.BeginChildElements(settingBounds)
-                    .AddStaticText(Lang.Get("vinconomy:gui-shop"), CairoFont.WhiteSmallText(), shopSelectionLabel)
+                    .AddStaticText(Lang.Get("vinconomy:gui-shop"), smallText, shopSelectionLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-shop"), hoverText, 500, shopSelectionLabel)
                     .AddDropDown(shopsKeys, shopsNames, selectedIndex, new SelectionChangedDelegate(this.onSelectionChanged), shopSelectBounds, "shopSelection")
 
-                    .AddStaticText(Lang.Get("vinconomy:gui-purchased-stock"), CairoFont.WhiteSmallText(), desiredProductLabel)
+                    .AddStaticText(Lang.Get("vinconomy:gui-purchased-stock"), smallText, desiredProductLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-purchased-stock"), hoverText, 500, desiredProductLabel)
                     .AddItemSlotGrid(vInventory, new Action<object>(this.SetDesiredProductSlot), 1, new int[] { cOffset + vInventory.PurchasedItemStacksPerStall }, desiredProductSlotBounds, "desiredProduct")
 
-                    .AddStaticText(Lang.Get("vinconomy:gui-currency"), CairoFont.WhiteSmallText(), purchaseLabel)
+                    .AddStaticText(Lang.Get("vinconomy:gui-currency"), smallText, purchaseLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-returned-currency"), hoverText, 500, purchaseLabel)
                     .AddItemSlotGrid(vInventory, new Action<object>(this.SetReturnedCurrencySlot), 1, new int[] { pOffset + vInventory.StallSlotSize - 1 }, purchaseSlotBounds, "returnedCurrency")
 
+                    .AddStaticText(Lang.Get("vinconomy:gui-items-per-purchase"), smallText, costSelectionLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-crate-items-per-purchase"), hoverText, 500, costSelectionLabel)
+                    .AddNumberInput(costSelectionBounds, new Action<string>(this.onProductQuantityChanged), smallText, "desiredProductQuantity")
 
-                    .AddStaticText(Lang.Get("vinconomy:gui-items-per-purchase"), CairoFont.WhiteSmallText(), costSelectionLabel)
-                    .AddNumberInput(costSelectionBounds, new Action<string>(this.onProductQuantityChanged), CairoFont.WhiteSmallText(), "desiredProductQuantity")
+                    .AddStaticText(Lang.Get("vinconomy:gui-cost-per-purchase"), smallText, quantitySelectionLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-crate-cost-per-purchase"), hoverText, 500, quantitySelectionLabel)
+                    .AddNumberInput(quantitySelectionBounds, new Action<string>(this.onCostQuantityChanged), smallText, "returnedCurrencyQuantity")
 
-                    .AddStaticText(Lang.Get("vinconomy:gui-cost-per-purchase"), CairoFont.WhiteSmallText(), quantitySelectionLabel)
-                    .AddNumberInput(quantitySelectionBounds, new Action<string>(this.onCostQuantityChanged), CairoFont.WhiteSmallText(), "returnedCurrencyQuantity")
-
-                    .AddStaticText(Lang.Get("vinconomy:gui-register-fallback"), CairoFont.WhiteSmallText(), registerFallbackLabel)
+                    .AddStaticText(Lang.Get("vinconomy:gui-register-fallback"), smallText, registerFallbackLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-register-fallback"), hoverText, 500, registerFallbackLabel)
                     .AddSwitch(new Action<bool>(this.OnToggleRegisterFallback), registerFallbackBounds, "registerFallback")
 
-                    .AddStaticText(Lang.Get("vinconomy:gui-limit-purchases"), CairoFont.WhiteSmallText(), limitPurchaseLabel)
+                    .AddStaticText(Lang.Get("vinconomy:gui-limit-purchases"), smallText, limitPurchaseLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-limit-purchases"), hoverText, 500, limitPurchaseLabel)
                     .AddSwitch(new Action<bool>(this.OnToggleLimitPurchases), limitPurchaseBounds, "limitPurchases")
 
-                    .AddStaticText(Lang.Get("vinconomy:gui-fuzzy-matching"), CairoFont.WhiteSmallText(), fuzzyMatchingLabel)
+                    .AddStaticText(Lang.Get("vinconomy:gui-fuzzy-matching"), smallText, fuzzyMatchingLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-fuzzy-matching"), hoverText, 500, fuzzyMatchingLabel)
                     .AddSwitch(new Action<bool>(this.OnToggleFuzzyMatching), fuzzyMatchingBounds, "fuzzyMatching")
 
-                    .AddStaticText(Lang.Get("vinconomy:gui-purchases-left"), CairoFont.WhiteSmallText(), numPurchasesSelectionLabel)
-                    .AddNumberInput(numPurchasesSelectionBounds, new Action<string>(this.onRemainingPurchasesQuantityChanged), CairoFont.WhiteSmallText(), "numPurchases")
+                    .AddStaticText(Lang.Get("vinconomy:gui-purchases-left"), smallText, numPurchasesSelectionLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-purchases-left"), hoverText, 500, numPurchasesSelectionLabel)
+                    .AddNumberInput(numPurchasesSelectionBounds, new Action<string>(this.onRemainingPurchasesQuantityChanged), smallText, "numPurchases")
 
-                    //.AddButton("Save", new ActionConsumable(this.onSave),saveButtonBounds, EnumButtonStyle.Small, "save")
-                  
-                    .AddStaticText(Lang.Get("vinconomy:gui-decoration-block"), CairoFont.WhiteSmallText(), chiselLabel )
+      
+                    .AddStaticText(Lang.Get("vinconomy:gui-decoration-block"), smallText, chiselLabel )
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-decoration-block"), hoverText, 500, chiselLabel)
                     .AddItemSlotGrid(vInventory, new Action<object>(this.SendInvPacket), 1, new int[] {0}, chiselSlotBounds, "chisel")
                     .AddIf(stall.IsAdminShop || VinUtils.IsCreativePlayer(api.World.Player))
-                        .AddStaticText(Lang.Get("vinconomy:gui-admin-shop"), CairoFont.WhiteSmallText(), adminShopLabel)
+                        .AddStaticText(Lang.Get("vinconomy:gui-admin-shop"), smallText, adminShopLabel)
+                        .AddHoverText(Lang.Get("vinconomy:tooltip-admin-shop"), hoverText, 500, adminShopLabel)
                         .AddSwitch(new Action<bool>(this.OnToggleAdminShop), adminShopBounds, "admin")
-                        .AddStaticText(Lang.Get("vinconomy:gui-discard-product"), CairoFont.WhiteSmallText(), discardProductLabel)
+                        .AddStaticText(Lang.Get("vinconomy:gui-discard-product"), smallText, discardProductLabel)
+                        .AddHoverText(Lang.Get("vinconomy:tooltip-discard-product"), hoverText, 500, discardProductLabel)
                         .AddSwitch(new Action<bool>(this.OnToggleDiscardCurrency), discardProductBounds, "discardProduct")
                     .EndIf()
-
-                //.AddItemSlotGrid(inv, null, 1, new int[] { 0 }, purchaseSlotBounds, "purchase")
-                //.AddPassiveItemSlot(outputSlotBounds, Inventory, )
                 .EndChildElements();
 
                 SingleComposer.BeginChildElements(itemPage)
                     .AddButton("<", new ActionConsumable(this.PreviousPage), pagePrev, EnumButtonStyle.Small, "prevPage")
                     .AddDynamicText(labelText, labelTextFont, pageLabel, "pageLabel")
                     .AddButton(">", new ActionConsumable(this.NextPage), pageNext, EnumButtonStyle.Small, "nextPage")
-                    .AddStaticText(Lang.Get("vinconomy:gui-currency"), CairoFont.WhiteSmallText(), productSlotLabel)
+                    .AddStaticText(Lang.Get("vinconomy:gui-currency"), smallText, productSlotLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-returned-currency-output"), hoverText, 500, productSlotLabel)
                     .AddItemSlotGrid(vInventory, new Action<object>(this.SendInvPacket), 10, productSlots, productSlotGrid, "productSlots")
-                    .AddStaticText(Lang.Get("vinconomy:gui-purchased-stock"), CairoFont.WhiteSmallText(), currencySlotLabel)
+                    .AddStaticText(Lang.Get("vinconomy:gui-purchased-stock"), smallText, currencySlotLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-purchased-stock-output"), hoverText, 500, currencySlotLabel)
                     .AddItemSlotGrid(vInventory, new Action<object>(this.SendInvPacket), 10, purchasedSlots, currencySlotGrid, "currencySlots")
 
                 .EndChildElements();
@@ -263,9 +266,6 @@ namespace Viconomy.GUI
                 SingleComposer.GetSwitch("limitPurchases").SetValue(stallSlot.LimitedPurchases);
                 SingleComposer.GetSwitch("fuzzyMatching").SetValue(stallSlot.FuzzyMatching);
                 SingleComposer.GetTextInput("numPurchases").SetValue(stallSlot.NumTradesLeft);
-
-
-                //.AddHorizontalTabs(tabs, tabBounds, new Action<int>(this.OnTabClicked), tabFont, tabFont.Clone().WithColor(GuiStyle.ActiveButtonTextColor), "tabs")
                 SingleComposer.Compose();
 
             }
@@ -278,7 +278,7 @@ namespace Viconomy.GUI
         private void onRemainingPurchasesQuantityChanged(string amount)
         {
             int val = 1;
-            Int32.TryParse(amount, out val);
+            int.TryParse(amount, out val);
             val = Math.Max(0, val);
             val = Math.Min(1024, val);
 
@@ -300,7 +300,7 @@ namespace Viconomy.GUI
                 return;
 
             int val = 1;
-            Int32.TryParse(txt, out  val);
+            int.TryParse(txt, out  val);
 
             if (val > 0 && val <= 1024 && val != stallSlot.DesiredProduct.StackSize)
             {
@@ -324,7 +324,7 @@ namespace Viconomy.GUI
         private void onCostQuantityChanged(string amount)
         {
             int val = 1;
-            Int32.TryParse(amount, out val);
+            int.TryParse(amount, out val);
 
             if (val > 0 && val <= 1024 && val != stallSlot.Currency.StackSize)
             {

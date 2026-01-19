@@ -4,6 +4,7 @@ namespace Viconomy.Inventory.Slots
 {
     public class ViconCurrencySlot : ItemSlot
     {
+        
         public ViconCurrencySlot(InventoryBase inventory) : base(inventory)
         {
             //this.HexBackgroundColor = "#B62521";

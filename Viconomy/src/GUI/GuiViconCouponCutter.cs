@@ -88,24 +88,21 @@ namespace Viconomy.GUI
 
                 ElementBounds itemInputLabel = ElementBounds.FixedSize(200, 20).FixedUnder(itemBlacklistInput).WithFixedOffset(0, 0);
                 ElementBounds itemInputBounds = ElementStdBounds.Slot().FixedUnder(itemInputLabel).WithFixedOffset(0, 10);
-                //ElementBounds itemOutputLabel = ElementBounds.FixedSize(200, 20).FixedUnder(itemBlacklistInput).FixedRightOf(itemInputLabel);
-                //ElementBounds itemOutputBounds = ElementStdBounds.Slot().FixedUnder(itemInputLabel).FixedRightOf(itemInputLabel).WithFixedOffset(0, 10);
 
                 ElementBounds cutButton = ElementBounds.FixedSize(200, 20).FixedUnder(itemInputBounds).WithFixedOffset(100, 10);
 
-                //settingBounds.BothSizing = ElementSizing.FitToChildren;
                 bgBounds.WithChildren(couponNameLabel, couponNameInput,
                     appliedShopsLabel, appliedShopsNoteLabel, appliedShopsInput,
                     couponValueLabel, couponValueInput, couponDiscountTypeInput, couponBonusTypeInput,
                     consumeCouponInput, consumeCouponLabel,
                     itemWhitelistLabel, itemWhitelistBounds, itemBlacklistInput, itemBlacklistLabel,
-                    itemInputLabel, itemInputBounds, //itemOutputLabel, itemOutputBounds,
+                    itemInputLabel, itemInputBounds, 
                     cutButton
                     );
 
-                //IconUtil.DrawArrowRight
 
                 CairoFont labelFont = CairoFont.WhiteSmallishText();
+                CairoFont hoverText = CairoFont.WhiteDetailText();
 
                 // Lastly, create the dialog
                 SingleComposer = capi.Gui.CreateCompo("ViconCouponPrinter", dialogBounds)
@@ -116,32 +113,34 @@ namespace Viconomy.GUI
                     .AddTextInput(couponNameInput, OnNameChanged, labelFont, "couponName")
 
                     .AddStaticText(Lang.Get("vinconomy:gui-whitelisted-shops"), labelFont, appliedShopsLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-whitelisted-shops"), hoverText, 500, appliedShopsLabel)
                     .AddStaticText(Lang.Get("vinconomy:gui-whitelisted-shops-note"), CairoFont.WhiteDetailText(), appliedShopsNoteLabel)
                     .AddMultiSelectDropDown(shopsKeys, shopsNames, -1, OnShopChanged, appliedShopsInput, "appliedShops")
 
                     .AddStaticText(Lang.Get("vinconomy:gui-coupon"), labelFont, couponValueLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-coupon"), hoverText, 500, couponValueLabel)
                     .AddNumberInput(couponValueInput, OnNumberValueChanged, labelFont, "couponValue")
                     .AddDropDown([ItemCoupon.DISCOUNT_TYPE_UNIT, ItemCoupon.DISCOUNT_TYPE_PERCENT], [Lang.Get("vinconomy:gui-units"), Lang.Get("vinconomy:gui-percent")], 0, OnChangeNumericType, couponDiscountTypeInput, "couponDiscountType")
                     .AddDropDown([ItemCoupon.BONUS_TYPE_PRODUCT, ItemCoupon.BONUS_TYPE_DISCOUNT], [Lang.Get("vinconomy:gui-bonus-product"), Lang.Get("vinconomy:gui-price-discount")], 0, OnChangeBonusType, couponBonusTypeInput, "couponBonusType")
 
                     .AddSwitch(OnToggleConsumeCoupon, consumeCouponInput, "consumeCoupon")
                     .AddStaticText(Lang.Get("vinconomy:gui-consume-coupon"), labelFont, consumeCouponLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-consume-coupon"), hoverText, 500, consumeCouponLabel)
 
                     .AddDynamicText(Lang.Get("vinconomy:gui-item-whitelist"), labelFont, itemWhitelistLabel, "itemListLabel")
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-item-whitelist"), hoverText, 500, itemWhitelistLabel)
                     .AddItemSlotGrid(inventory, SendInvPacket, 5, [1,2, 3, 4, 5, 6, 7, 8, 9, 10], itemWhitelistBounds)
                     .AddSwitch(OnToggleBlacklist, itemBlacklistInput, "isBlacklist")
                     .AddStaticText(Lang.Get("vinconomy:gui-blacklist"), labelFont, itemBlacklistLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-blacklist"), hoverText, 500, itemBlacklistLabel)
 
                     .AddStaticText(Lang.Get("vinconomy:gui-paper"), labelFont, itemInputLabel)
+                    .AddHoverText(Lang.Get("vinconomy:tooltip-paper"), hoverText, 500, itemInputLabel)
                     .AddItemSlotGrid(inventory, SendInvPacket, 1, [0], itemInputBounds)
-                    //.AddStaticText(Lang.Get("vinconomy:gui-output"), labelFont, itemOutputLabel)
-                    //.AddItemSlotGrid(inventory, SendInvPacket, 1, [1], itemOutputBounds)
 
                     .AddButton(Lang.Get("vinconomy:gui-cut"), OnCut, cutButton);
 
                 SingleComposer.GetTextInput("couponName").SetValue(CouponPrinter.CouponName);
-
-
                 SingleComposer.GetNumberInput("couponValue").SetValue(CouponPrinter.CouponValue);
                 SingleComposer.GetSwitch("consumeCoupon").SetValue(CouponPrinter.ConsumeCoupon);
                 SingleComposer.GetSwitch("isBlacklist").SetValue(CouponPrinter.ItemBlacklist);

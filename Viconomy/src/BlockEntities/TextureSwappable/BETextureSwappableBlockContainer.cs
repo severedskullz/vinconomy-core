@@ -40,8 +40,8 @@ namespace Viconomy.BlockEntities.TextureSwappable
                 Inventory.OnInventoryOpened += Inventory_OnInventoryOpenedClient;
             }
 
-            RegisterGameTickListener(OnTick, 10000);
             roomReg = Api.ModLoader.GetModSystem<RoomRegistry>();
+            RegisterGameTickListener(OnTick, 10000);
         }
 
         private void Inventory_OnInventoryOpenedClient(IPlayer player)
@@ -70,15 +70,22 @@ namespace Viconomy.BlockEntities.TextureSwappable
 
             foreach (ItemSlot item in Inventory)
             {
-                if (item.Itemstack != null)
+                try
                 {
-                    AssetLocation code = item.Itemstack.Collectible.Code;
-                    item.Itemstack.Collectible.UpdateAndGetTransitionStates(Api.World, item);
-                    if (item.Itemstack?.Collectible.Code != code)
+                    if (item.Itemstack != null)
                     {
-                        MarkDirty(redrawOnClient: true);
+                        AssetLocation code = item.Itemstack?.Collectible?.Code;
+                        item.Itemstack.Collectible.UpdateAndGetTransitionStates(Api.World, item);
+                        if (item.Itemstack?.Collectible?.Code != code)
+                        {
+                            MarkDirty(redrawOnClient: true);
+                        }
                     }
+                } catch (Exception e)
+                {
+                    return;
                 }
+               
             }
 
             temperatureCached = -1000f;
@@ -249,6 +256,11 @@ namespace Viconomy.BlockEntities.TextureSwappable
             }
 
             dsc.AppendLine(Lang.Get("Stored food perish speed: {0}x", Math.Round(num, 2)));
+        }
+
+        public void CheckInventoryClearedMidTick()
+        {
+            // What the fuck is this supposed to do Tyron?
         }
     }
 }
