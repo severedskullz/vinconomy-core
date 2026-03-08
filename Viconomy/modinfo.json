@@ -4,8 +4,8 @@
     "name": "Vinconomy",
     "authors": ["Severed Skullz"],
     "description": "An Economy Mod allowing players to establish their own shops and sell goods to other players",
-    "version": "5.2.1", 
+    "version": "5.3.0", 
   "dependencies": {
-    "game": "1.21.6"
+    "game": "1.22.0-pre.3"
   }
 }
