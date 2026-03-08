@@ -333,5 +333,6 @@
         "break": "game:block/planks",
         "place": "game:block/planks",
         "walk": "game:walk/wood"
-    }
+    },
+	"renderPass": "Transparent"
 }

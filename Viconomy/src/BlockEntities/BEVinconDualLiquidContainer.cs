@@ -1,12 +1,12 @@
 ﻿using System;
-using Viconomy.BlockTypes;
-using Viconomy.Inventory.StallSlots;
+using Vinconomy.BlockTypes;
+using Vinconomy.Inventory.StallSlots;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
-namespace Viconomy.BlockEntities
+namespace Vinconomy.BlockEntities
 {
     public class BEVinconDualLiquidContainer : BEVinconLiquidContainer
     {

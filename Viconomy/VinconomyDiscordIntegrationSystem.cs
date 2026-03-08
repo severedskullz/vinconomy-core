@@ -3,14 +3,14 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using Viconomy.BlockEntities;
-using Viconomy.Config;
-using Viconomy.Registry;
-using Viconomy.Trading;
+using Vinconomy.BlockEntities;
+using Vinconomy.Config;
+using Vinconomy.Registry;
+using Vinconomy.Trading;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
 
-namespace Viconomy
+namespace Vinconomy
 {
 
     public class VinconomyDiscordIntegrationSystem : ModSystem

@@ -1,12 +1,12 @@
-﻿using Viconomy.BlockEntities;
-using Viconomy.Inventory;
-using Viconomy.Registry;
-using Viconomy.TradeNetwork.Api;
-using Viconomy.Trading;
+﻿using Viconomy.Network.JavaApi.TradeNetwork;
+using Vinconomy.BlockEntities;
+using Vinconomy.Inventory;
+using Vinconomy.Registry;
+using Vinconomy.Trading;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-namespace Viconomy.Delegates
+namespace Vinconomy.Delegates
 {
 
 

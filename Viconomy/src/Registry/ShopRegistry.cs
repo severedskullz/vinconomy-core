@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Viconomy.Database;
-using Viconomy.Network;
+using Vinconomy.Database;
+using Vinconomy.Network;
 using Vintagestory.API.MathTools;
 
-namespace Viconomy.Registry
+namespace Vinconomy.Registry
 {
     public class ShopRegistry
     {
@@ -73,7 +73,7 @@ namespace Viconomy.Registry
 
         public ShopRegistration AddShop(string owner, string ownerName, string name, BlockPos pos, int ID = -1)
         {
-            Console.WriteLine("Adding new Shop for " + owner );
+            //Console.WriteLine("Adding new Shop for " + owner );
             ShopRegistration register = new ShopRegistration() {Owner = owner, OwnerName = ownerName, Name = name, Position = pos, ID = ID };
 
             db.AddShop(register);
@@ -100,7 +100,7 @@ namespace Viconomy.Registry
 
             shopsByOwner[register.Owner][register.ID] = register;
             shops[register.ID] = register;
-            Console.WriteLine("Added Register with ID " + register.ID + " and owner " + register.Owner);
+            //Console.WriteLine("Added Register with ID " + register.ID + " and owner " + register.Owner);
         }
 
         public int GetCount()
@@ -122,7 +122,7 @@ namespace Viconomy.Registry
             ShopRegistration register = GetShop(id);
             if (register != null)
             {
-                Console.WriteLine("Updating configuration for existing Register with ID " + id);
+                //Console.WriteLine("Updating configuration for existing Register with ID " + id);
                 register.Description = description;
                 register.ShortDescription = shortDescription;
                 register.WebHook = webHook;
@@ -141,7 +141,7 @@ namespace Viconomy.Registry
             ShopRegistration register = GetShop(id);
             if (register != null)
             {
-                Console.WriteLine("Updating existing Register with ID " + id);
+                //Console.WriteLine("Updating existing Register with ID " + id);
                 if (name != null) { 
                     register.Name = name;
                 }

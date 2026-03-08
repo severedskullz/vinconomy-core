@@ -1,7 +1,7 @@
-﻿using Viconomy.BlockTypes;
+﻿using Vinconomy.BlockTypes;
 using Vintagestory.API.Client;
 
-namespace Viconomy.src.BlockTypes
+namespace Vinconomy.BlockTypes
 {
     public class BlockVPurchaseContainer : BlockVContainer
     {

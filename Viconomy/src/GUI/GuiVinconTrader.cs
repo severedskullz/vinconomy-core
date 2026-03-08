@@ -1,14 +1,14 @@
 ﻿using System;
-using Viconomy.Inventory;
+using Vinconomy.Inventory;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Util;
-using Viconomy.Network;
-using Viconomy.TradeNetwork.Api;
+using Vinconomy.Network;
 using Vintagestory.GameContent;
+using Viconomy.Network.JavaApi.TradeNetwork;
 
-namespace Viconomy.GUI
+namespace Vinconomy.GUI
 {
     public class GuiVinconTrader : GuiDialog
     {
@@ -147,7 +147,7 @@ namespace Viconomy.GUI
                 bgBounds.WithChildren(itemInsetBounds, itemScrollbarBounds, currencyLabel, currencySlotBounds, purchaseLabel, purchaseSlotBounds, quantitySelectionLabel, quantitySelectionBounds, purchaseButtonBounds);
 
 
-                SingleComposer = capi.Gui.CreateCompo("GuiVinconTraderCatalog", dialogBounds)
+                SingleComposer = capi.Gui.CreateCompo("GuiVinconTraderCatalog" + Inventory.InventoryID, dialogBounds)
                .AddShadedDialogBG(bgBounds)
                .AddDialogTitleBar(this.DialogTitle, OnTitleBarCloseClicked)
                .AddStaticText(Lang.Get("vinconomy:gui-f-owner", [Shop.Owner]), CairoFont.WhiteSmallText(), descLabelBounds)

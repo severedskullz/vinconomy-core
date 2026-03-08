@@ -1,13 +1,13 @@
 ﻿using Vintagestory.API.Client;
-using Viconomy.Filters;
+using Vinconomy.Filters;
 using Vintagestory.API.Common;
-using Viconomy.Inventory.Impl;
+using Vinconomy.Inventory.Impl;
 using System;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
-namespace Viconomy.BlockEntities
+namespace Vinconomy.BlockEntities
 {
     public class BEVinconWeaponRack : BEVinconContainer
     {
@@ -17,17 +17,17 @@ namespace Viconomy.BlockEntities
 
         public override void ConfigureInventory()
         {
-            ViconItemInventory inv = new ViconItemInventory(this, null, null, StallSlotCount, ProductStacksPerSlot);
-            inv.SetSlotFilter(0, ViconomyFilters.IsToolOrWeapon);
+            VinconItemInventory inv = new VinconItemInventory(this, null, null, StallSlotCount, ProductStacksPerSlot);
+            inv.SetSlotFilter(0, VinconomyFilters.IsToolOrWeapon);
             inv.SetSlotBackground(0, "vicon-toolrack");
-            inv.SetSlotFilter(1, ViconomyFilters.IsShield);
+            inv.SetSlotFilter(1, VinconomyFilters.IsShield);
             inv.SetSlotBackground(1, "vicon-shield");
-            inv.SetSlotFilter(2, ViconomyFilters.IsToolOrWeapon);
+            inv.SetSlotFilter(2, VinconomyFilters.IsToolOrWeapon);
             inv.SetSlotBackground(2, "vicon-toolrack");
             inventory = inv;
         }
 
-        protected override MeshData getOrCreateMesh(ItemStack stack, int index)
+        protected override MeshData getOrCreateMesh(ItemSlot slot, int index)
         {
 
             //TODO: Im sick of fighting with matricies. If it works, it works... Dont cache because then everything breaks again
@@ -40,10 +40,10 @@ namespace Viconomy.BlockEntities
             //}
 
             MeshData modeldata = null;
-
+            ItemStack stack = slot.Itemstack;
             if (stack.Collectible is IContainedMeshSource containedMeshSource)
             {
-                modeldata = containedMeshSource.GenMesh(stack, capi.BlockTextureAtlas, Pos);
+                modeldata = containedMeshSource.GenMesh(slot, capi.BlockTextureAtlas, Pos);
             }
 
             if (modeldata == null)

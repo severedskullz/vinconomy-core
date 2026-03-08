@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Viconomy.Inventory.Slots;
+using Vinconomy.Inventory.Slots;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-namespace Viconomy.Inventory.Impl
+namespace Vinconomy.Inventory.Impl
 {
     public class VinconGenericInventory : InventoryGeneric
     {
@@ -25,7 +25,7 @@ namespace Viconomy.Inventory.Impl
             while (enumerator.MoveNext())
             {
                 ItemSlot current = enumerator.Current;
-                if (current.Itemstack == null || current is ViconCurrencySlot)
+                if (current.Itemstack == null || current is VinconCurrencySlot)
                 {
                     continue;
                 }

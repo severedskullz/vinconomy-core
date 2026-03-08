@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using Viconomy.BlockEntities;
+using Vinconomy.BlockEntities;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 
-namespace Viconomy.Renderer
+namespace Vinconomy.Renderer
 {
     public class MicroBlockRenderer : IItemRenderer
     {
@@ -18,11 +18,11 @@ namespace Viconomy.Renderer
             return stack.Block is BlockMicroBlock;
         }
 
-        public MeshData createMesh(BEVinconBase stall, ItemStack stack, int index)
+        public MeshData createMesh(BEVinconBase stall, ItemSlot slot, int index)
         {
             ICoreClientAPI coreClientAPI = stall.Api as ICoreClientAPI;
 
-            ITreeAttribute treeAttribute = stack.Attributes;
+            ITreeAttribute treeAttribute = slot.Itemstack?.Attributes;
             if (treeAttribute == null)
             {
                 treeAttribute = new TreeAttribute();

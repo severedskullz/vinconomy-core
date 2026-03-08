@@ -1,18 +1,16 @@
 ﻿using Cairo;
-using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Viconomy.Registry;
+using Vinconomy.Registry;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
-using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
-namespace Viconomy.Map
+namespace Vinconomy.Map
 {
     public class ShopMapLayer : MapLayer
     {
@@ -237,21 +235,6 @@ namespace Viconomy.Map
                 meshRef.Dispose();
             }
             base.Dispose();
-        }
-
-
-        [HarmonyPatch(typeof(GuiDialogWorldMap), "Open")]
-        private class GuiDialogWorldMapOpenPatch
-        {
-            private static void Postfix(EnumDialogType type)
-            {
-                /*if (ProspectorOverlayLayer._config.ShowGui && type == EnumDialogType.Dialog)
-                {
-                    ProspectorOverlayLayer._settingsDialog.TryOpen();
-                    return;
-                }
-                ProspectorOverlayLayer._settingsDialog.TryClose();*/
-            }
         }
     }
 }

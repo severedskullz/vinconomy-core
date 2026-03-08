@@ -1,12 +1,12 @@
-﻿using Viconomy.BlockEntities;
+﻿using Vinconomy.BlockEntities;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 
-namespace Viconomy.Renderer
+namespace Vinconomy.Renderer
 {
     public interface IItemRenderer
     {
-        public MeshData createMesh(BEVinconBase stall, ItemStack stack, int index);
+        public MeshData createMesh(BEVinconBase stall, ItemSlot slot, int index);
 
         public bool canHandle(ItemStack stack);
         public int getPriority();

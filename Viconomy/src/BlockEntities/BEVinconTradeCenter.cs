@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json.Nodes;
-using Viconomy.Config;
-using Viconomy.Entities;
-using Viconomy.GUI;
-using Viconomy.Network.Api;
-using Viconomy.Network.Common;
-using Viconomy.TradeNetwork.Api;
-using Viconomy.Util;
+using Vinconomy.Config;
+using Vinconomy.Entities;
+using Vinconomy.GUI;
+using Vinconomy.Network.JavaApi;
+using Vinconomy.Network.Common;
+using Vinconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -16,8 +15,9 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.Common;
+using Viconomy.Network.JavaApi.TradeNetwork;
 
-namespace Viconomy.BlockEntities
+namespace Vinconomy.BlockEntities
 {
     public class BEVinconTradeCenter : BlockEntity
     {
@@ -69,7 +69,7 @@ namespace Viconomy.BlockEntities
 
         public override void OnReceivedClientPacket(IPlayer fromPlayer, int packetid, byte[] data)
         {
-            ViconConfig config = _coreSystem.Config;
+            VinconConfig config = _coreSystem.Config;
             if (!config.tradingNetworkEnabled)
             {
                 return;

@@ -1,15 +1,15 @@
 ﻿using Cairo.Freetype;
 using System;
 using System.Collections.Generic;
-using Viconomy.BlockEntities;
-using Viconomy.ItemTypes;
-using Viconomy.Trading.TradeHandlers;
+using Vinconomy.BlockEntities;
+using Vinconomy.ItemTypes;
+using Vinconomy.Trading.TradeHandlers;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 
-namespace Viconomy.Trading
+namespace Vinconomy.Trading
 {
     public class TradingUtil
     {
@@ -117,8 +117,7 @@ namespace Viconomy.Trading
             AssetLocation assetLocation = null;
             if (block != null)
             {
-                BlockSounds sounds = block.Sounds;
-                assetLocation = ((sounds != null) ? sounds.Place : null);
+                assetLocation = block?.Sounds?.Place.Location;
             }
             AssetLocation sound = assetLocation;
             result.coreApi.World.PlaySoundAt((sound != null) ? sound : new AssetLocation("sounds/player/build"), result.customer.Entity, result.customer, true, 16f, 1f);

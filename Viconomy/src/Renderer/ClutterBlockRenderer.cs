@@ -1,10 +1,10 @@
-﻿using Viconomy.BlockEntities;
+﻿using Vinconomy.BlockEntities;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
-namespace Viconomy.Renderer
+namespace Vinconomy.Renderer
 {
     public class ClutterBlockRenderer : IItemRenderer
     {
@@ -17,12 +17,12 @@ namespace Viconomy.Renderer
             return stack.Block is BlockClutter;
         }
 
-        public MeshData createMesh(BEVinconBase stall, ItemStack stack, int index)
+        public MeshData createMesh(BEVinconBase stall, ItemSlot slot, int index)
         {
             //ICoreClientAPI coreClientAPI = (ICoreClientAPI)stall.Api;
 
             //Dictionary<string, MultiTextureMeshRef> clutterMeshRefs = ObjectCacheUtil.GetOrCreate(coreClientAPI, "viconClutterMeshesInventory", () => new Dictionary<string, MultiTextureMeshRef>());
-
+            ItemStack stack = slot.Itemstack;
             string type = stack.Attributes.GetString("type", "");
             IShapeTypeProps cprops = (stack.Block as BlockShapeFromAttributes).GetTypeProps(type, stack, null);
             if (cprops == null)

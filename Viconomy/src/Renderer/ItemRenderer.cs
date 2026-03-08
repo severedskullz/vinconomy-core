@@ -1,11 +1,11 @@
 ﻿using System;
-using Viconomy.BlockEntities;
+using Vinconomy.BlockEntities;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
-namespace Viconomy.Renderer
+namespace Vinconomy.Renderer
 {
     public class ItemRenderer : IItemRenderer
     {
@@ -18,8 +18,9 @@ namespace Viconomy.Renderer
             return stack.Class == EnumItemClass.Item;
         }
 
-        public MeshData createMesh(BEVinconBase stall, ItemStack stack, int index)
+        public MeshData createMesh(BEVinconBase stall, ItemSlot slot, int index)
         {
+            ItemStack stack = slot.Itemstack;
             MeshData modeldata = null;
             try
             {
@@ -27,7 +28,7 @@ namespace Viconomy.Renderer
                 IContainedMeshSource containedMeshSource = stack.Collectible as IContainedMeshSource;
                 if (containedMeshSource != null)
                 {
-                    modeldata = containedMeshSource.GenMesh(stack, coreClientAPI.BlockTextureAtlas, stall.Pos);
+                    modeldata = containedMeshSource.GenMesh(slot, coreClientAPI.BlockTextureAtlas, stall.Pos);
                     if (modeldata != null)
                     {
                         return modeldata;

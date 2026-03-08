@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Viconomy.Inventory.Slots;
+using Vinconomy.Inventory.Slots;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 
-namespace Viconomy.Inventory.StallSlots
+namespace Vinconomy.Inventory.StallSlots
 {
     public class MealStallSlot : StallSlotBase
     {
@@ -16,7 +16,7 @@ namespace Viconomy.Inventory.StallSlots
 
         public MealStallSlot(InventoryBase inventory, int stallSlot, int numSlots) : base(inventory, 1)
         {
-            Meal = new ViconLockedSlot(inventory, stallSlot);
+            Meal = new VinconLockedSlot(inventory, stallSlot);
             Capacity = 64;
         }
 
@@ -42,10 +42,10 @@ namespace Viconomy.Inventory.StallSlots
             {
                 if (slotId == 0)
                 {
-                    Meal = (ViconItemSlot)value;
+                    Meal = (VinconItemSlot)value;
                 }
                 else
-                    Currency = (ViconCurrencySlot)value;
+                    Currency = (VinconCurrencySlot)value;
             }
         }
 

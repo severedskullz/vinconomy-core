@@ -1,9 +1,9 @@
 ﻿using ProtoBuf;
 using System.Collections.Generic;
-using Viconomy.Registry;
+using Vinconomy.Registry;
 using Vintagestory.API.Server;
 
-namespace Viconomy.Network
+namespace Vinconomy.Network
 {
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
     public class RegistryUpdatePacket

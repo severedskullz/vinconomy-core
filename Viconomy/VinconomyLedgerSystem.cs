@@ -1,14 +1,14 @@
-﻿using Viconomy.Network;
+﻿using Vinconomy.Network;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
 using System.Collections.Generic;
-using Viconomy.GUI;
+using Vinconomy.GUI;
 using Vintagestory.API.Config;
-using Viconomy.Registry;
-using Viconomy.Util;
+using Vinconomy.Registry;
+using Vinconomy.Util;
 
-namespace Viconomy
+namespace Vinconomy
 {
 
 
@@ -24,7 +24,7 @@ namespace Viconomy
 
         //Shared Variables
         private VinconomyCoreSystem _coreSystem;
-        private GuiViconLedger ledgerGUI;
+        private GuiVinconLedger ledgerGUI;
 
         public override double ExecuteOrder() => 1.1;
 
@@ -90,7 +90,7 @@ namespace Viconomy
                 capi.ShowChatMessage(Lang.Get("vinconomy:ledger-shop-not-found"));
             } else if ( ledgerGUI == null || (ledgerGUI != null && !ledgerGUI.IsOpened()))
             {
-                ledgerGUI = new GuiViconLedger(packet.Name, packet.Id, capi);
+                ledgerGUI = new GuiVinconLedger(packet.Name, packet.Id, capi);
                 ledgerGUI.OnClosed += LedgerGUI_OnClosed;
                 ledgerGUI.TryOpen();
             }

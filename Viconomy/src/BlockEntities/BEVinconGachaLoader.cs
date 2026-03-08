@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
-using Viconomy.GUI;
-using Viconomy.Inventory.Slots;
-using Viconomy.Trading;
-using Viconomy.Util;
+using Vinconomy.GUI;
+using Vinconomy.Inventory.Slots;
+using Vinconomy.Trading;
+using Vinconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -11,7 +11,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
-namespace Viconomy.BlockEntities
+namespace Vinconomy.BlockEntities
 {
     public class BEVinconGachaLoader : BlockEntityContainer, IDisposable
     {
@@ -38,13 +38,13 @@ namespace Viconomy.BlockEntities
             {
                 return new ItemSlotOutput(self);
             } else if (slotId == 1) {
-                ViconItemSlot slot = new ViconItemSlot(self, 0, slotId);
-                slot.SetFilter(Filters.ViconomyFilters.IsEmptyGachaSlot);
+                VinconItemSlot slot = new VinconItemSlot(self, 0, slotId);
+                slot.SetFilter(Filters.VinconomyFilters.IsEmptyGachaSlot);
                 slot.BackgroundIcon = "vicon-general2";
                 return slot;
             } else
             {
-                return new ViconItemSlot(self, 0, slotId);
+                return new VinconItemSlot(self, 0, slotId);
             }
         }
 
@@ -83,7 +83,7 @@ namespace Viconomy.BlockEntities
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
             
-            this.invDialog = new GuiViconGachaPress(Lang.Get("vinconomy:gui-gacha-loader"), this.Inventory, this.Pos, this.Api as ICoreClientAPI);
+            this.invDialog = new GuiVinconGachaPress(Lang.Get("vinconomy:gui-gacha-loader"), this.Inventory, this.Pos, this.Api as ICoreClientAPI);
            
             //this.invDialog.OpenSound = this.OpenSound;
             //this.invDialog.CloseSound = this.CloseSound;

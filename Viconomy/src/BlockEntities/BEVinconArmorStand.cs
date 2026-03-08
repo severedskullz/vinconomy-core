@@ -1,9 +1,9 @@
 ﻿using Vintagestory.API.Client;
-using Viconomy.Filters;
+using Vinconomy.Filters;
 using Vintagestory.API.Common;
-using Viconomy.Inventory.Impl;
+using Vinconomy.Inventory.Impl;
 
-namespace Viconomy.BlockEntities
+namespace Vinconomy.BlockEntities
 {
     public class BEVinconArmorStand : BEVinconContainer
     {
@@ -16,24 +16,24 @@ namespace Viconomy.BlockEntities
 
         public override void ConfigureInventory()
         {
-            ViconItemInventory inv = new ViconItemInventory(this, null, null, StallSlotCount, ProductStacksPerSlot);
-            inv.SetSlotFilter(0, ViconomyFilters.IsBootsSlot);
+            VinconItemInventory inv = new VinconItemInventory(this, null, null, StallSlotCount, ProductStacksPerSlot);
+            inv.SetSlotFilter(0, VinconomyFilters.IsBootsSlot);
             inv.SetSlotBackground(0, "vicon-boots");
-            inv.SetSlotFilter(1, ViconomyFilters.IsPantsSlot);
+            inv.SetSlotFilter(1, VinconomyFilters.IsPantsSlot);
             inv.SetSlotBackground(1, "vicon-legs");
-            inv.SetSlotFilter(2, ViconomyFilters.IsHandSlot);
+            inv.SetSlotFilter(2, VinconomyFilters.IsHandSlot);
             inv.SetSlotBackground(2, "vicon-hands");
-            inv.SetSlotFilter(3, ViconomyFilters.IsWaistSlot);
+            inv.SetSlotFilter(3, VinconomyFilters.IsWaistSlot);
             inv.SetSlotBackground(3, "vicon-belt");
-            inv.SetSlotFilter(4, ViconomyFilters.IsBodySlot);
+            inv.SetSlotFilter(4, VinconomyFilters.IsBodySlot);
             inv.SetSlotBackground(4, "vicon-body");
-            inv.SetSlotFilter(5, ViconomyFilters.IsArmSlot);
+            inv.SetSlotFilter(5, VinconomyFilters.IsArmSlot);
             inv.SetSlotBackground(5, "vicon-arms");
-            inv.SetSlotFilter(6, ViconomyFilters.IsNeckSlot);
+            inv.SetSlotFilter(6, VinconomyFilters.IsNeckSlot);
             inv.SetSlotBackground(6, "vicon-neck");
-            inv.SetSlotFilter(7, ViconomyFilters.IsFaceSlot);
+            inv.SetSlotFilter(7, VinconomyFilters.IsFaceSlot);
             inv.SetSlotBackground(7, "vicon-face");
-            inv.SetSlotFilter(8, ViconomyFilters.IsHelmetSlot);
+            inv.SetSlotFilter(8, VinconomyFilters.IsHelmetSlot);
             inv.SetSlotBackground(8, "vicon-helmet");
             inventory = inv;
         }
@@ -69,7 +69,7 @@ namespace Viconomy.BlockEntities
                 ItemSlot slot = inventory.FindFirstNonEmptyStockSlot(i);
                 if (slot != null && slot.Itemstack != null)
                 { 
-                    if (!ViconomyFilters.IsWaistSlot(slot))
+                    if (!VinconomyFilters.IsWaistSlot(slot))
                     {
                         matrix.Translate(0, 0.05f, 0);
                         

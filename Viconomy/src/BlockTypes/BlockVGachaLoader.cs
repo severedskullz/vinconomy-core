@@ -1,7 +1,7 @@
-﻿using Viconomy.BlockEntities;
+﻿using Vinconomy.BlockEntities;
 using Vintagestory.API.Common;
 
-namespace Viconomy.BlockTypes
+namespace Vinconomy.BlockTypes
 {
     public class BlockVGachaLoader : Block
     {

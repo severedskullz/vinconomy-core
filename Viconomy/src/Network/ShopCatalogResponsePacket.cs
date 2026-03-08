@@ -1,8 +1,8 @@
 ﻿using ProtoBuf;
 using System.Collections.Generic;
-using Viconomy.Registry;
+using Vinconomy.Registry;
 
-namespace Viconomy.Network
+namespace Vinconomy.Network
 {
     [ProtoContract]
     public class ShopCatalogResponsePacket

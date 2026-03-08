@@ -1,11 +1,11 @@
 ﻿using System;
-using Viconomy.BlockEntities;
+using Vinconomy.BlockEntities;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
-namespace Viconomy.Renderer
+namespace Vinconomy.Renderer
 {
     public class CoinItemRenderer : IItemRenderer
     {
@@ -18,9 +18,10 @@ namespace Viconomy.Renderer
             return stack.Class == EnumItemClass.Item && stack.Item.Code.Domain.Equals("coinage") && stack.Item.Code.PathStartsWith("coin-");
         }
 
-        public MeshData createMesh(BEVinconBase stall, ItemStack stack, int index)
+        public MeshData createMesh(BEVinconBase stall, ItemSlot slot, int index)
         {
             MeshData modeldata = null;
+            ItemStack stack = slot.Itemstack;
             try
             {
                 ICoreClientAPI coreClientAPI = (ICoreClientAPI)stall.Api;
@@ -43,7 +44,7 @@ namespace Viconomy.Renderer
                 stall.SetNowTesselatingObj(stack.Collectible);
                 stall.SetNowTesselatingShape(null);
 
-                if (stack.Item.Shape?.Base != null)
+                if (stack?.Item.Shape?.Base != null)
                 {
                     stall.SetNowTesselatingShape(coreClientAPI.TesselatorManager.GetCachedShape(stack.Item.Shape.Base));
                 }

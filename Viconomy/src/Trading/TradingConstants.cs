@@ -1,4 +1,4 @@
-﻿namespace Viconomy.Trading
+﻿namespace Vinconomy.Trading
 {
     public class TradingConstants
     {

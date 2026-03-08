@@ -1,7 +1,7 @@
-﻿using Viconomy.Trading;
+﻿using Vinconomy.Trading;
 using Vintagestory.API.Common;
 
-namespace Viconomy.Trading
+namespace Vinconomy.Trading
 {
     internal class MealTradeRequest : GenericTradeRequest
     {

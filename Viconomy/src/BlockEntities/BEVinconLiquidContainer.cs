@@ -1,16 +1,16 @@
 ﻿using System;
-using Viconomy.BlockTypes;
-using Viconomy.Inventory.Impl;
-using Viconomy.Inventory.StallSlots;
-using Viconomy.Trading;
-using Viconomy.Trading.TradeHandlers;
-using Viconomy.Util;
+using Vinconomy.BlockTypes;
+using Vinconomy.Inventory.Impl;
+using Vinconomy.Inventory.StallSlots;
+using Vinconomy.Trading;
+using Vinconomy.Trading.TradeHandlers;
+using Vinconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.GameContent;
 
-namespace Viconomy.BlockEntities
+namespace Vinconomy.BlockEntities
 {
     public class BEVinconLiquidContainer : BEVinconContainer
     {
@@ -20,7 +20,7 @@ namespace Viconomy.BlockEntities
 
         public override void ConfigureInventory()
         {
-            inventory = new ViconLiquidInventory(this, null, Api, StallSlotCount, ProductStacksPerSlot);
+            inventory = new VinconLiquidInventory(this, null, Api, StallSlotCount, ProductStacksPerSlot);
         }
 
         public virtual MeshData GenMesh(int stallSlot)
@@ -165,11 +165,11 @@ namespace Viconomy.BlockEntities
 
                 if (activeSlot.StackSize == 1)
                 {
-                    result = ((ViconLiquidInventory)inventory).AddLiquidToStall(stallSlot, activeSlot.Itemstack, bulk ? BulkPurchaseAmount : 1) > 0;
+                    result = ((VinconLiquidInventory)inventory).AddLiquidToStall(stallSlot, activeSlot.Itemstack, bulk ? BulkPurchaseAmount : 1) > 0;
                 } else
                 {
                     ItemStack taken = activeSlot.TakeOut(1);
-                    ((ViconLiquidInventory)inventory).AddLiquidToStall(stallSlot, taken, bulk ? BulkPurchaseAmount : 1);
+                    ((VinconLiquidInventory)inventory).AddLiquidToStall(stallSlot, taken, bulk ? BulkPurchaseAmount : 1);
                     byPlayer.InventoryManager.TryGiveItemstack(taken);
                 }
                 Api.World.PlaySoundAt((props?.PourSound != null) ? props.PourSound : new AssetLocation("sounds/effect/water-pour.ogg"), byPlayer.Entity, byPlayer, true, 16f, 1f);

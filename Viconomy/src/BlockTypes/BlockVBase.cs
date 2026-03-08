@@ -1,11 +1,11 @@
 ﻿
-using Viconomy.BlockEntities;
+using Vinconomy.BlockEntities;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 
-namespace Viconomy.BlockTypes
+namespace Vinconomy.BlockTypes
 {
     public class BlockVBase : Block
     {
@@ -14,7 +14,7 @@ namespace Viconomy.BlockTypes
             if (byPlayer == null)
                 return;
 
-            IOwnable vEntity = world.BlockAccessor.GetBlockEntity(pos) as IOwnable;
+            IShopRoot vEntity = world.BlockAccessor.GetBlockEntity(pos) as IShopRoot;
             if (vEntity != null && vEntity.Owner == byPlayer.PlayerUID || byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative)
             {
                 VinconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<VinconomyCoreSystem>();

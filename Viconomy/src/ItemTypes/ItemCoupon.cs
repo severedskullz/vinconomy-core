@@ -1,10 +1,10 @@
 ﻿using System.Text;
-using Viconomy.Registry;
+using Vinconomy.Registry;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 
-namespace Viconomy.ItemTypes
+namespace Vinconomy.ItemTypes
 {
     public class ItemCoupon : Item
     {

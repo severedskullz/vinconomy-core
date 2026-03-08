@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Viconomy.Network.Common;
+using Vinconomy.Network.Common;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -17,7 +17,7 @@ using Vintagestory.Common;
 using Vintagestory.GameContent;
 using static Vintagestory.Common.VSWebClient;
 
-namespace Viconomy.Util
+namespace Vinconomy.Util
 {
     public class VinUtils
     {

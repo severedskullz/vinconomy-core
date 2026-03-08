@@ -8,7 +8,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
-namespace Viconomy.BlockEntities.TextureSwappable
+namespace Vinconomy.BlockEntities.TextureSwappable
 {
     //This is, for the most part, BlockEntityContainer. Since I need to inherit BETextureSwappableBlock instead, I have to reimplement it...
     public abstract class BETextureSwappableBlockContainer : BETextureSwappableBlock, IBlockEntityContainer

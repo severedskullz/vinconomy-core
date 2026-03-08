@@ -1,20 +1,20 @@
 ﻿
-using Viconomy.Inventory.Slots;
+using Vinconomy.Inventory.Slots;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
-namespace Viconomy.Inventory.StallSlots
+namespace Vinconomy.Inventory.StallSlots
 {
     public class ItemStallSlot : StallSlotBase
     {
-        public ViconItemSlot[] slots;
+        public VinconItemSlot[] slots;
 
         public ItemStallSlot(InventoryBase inventory, int stallSlot, int numSlots) : base(inventory, numSlots)
         {
-            slots = new ViconItemSlot[numSlots];
+            slots = new VinconItemSlot[numSlots];
             for (int i = 0; i < numSlots; i++)
             {
-                slots[i] = new ViconItemSlot(inventory, stallSlot, i);
+                slots[i] = new VinconItemSlot(inventory, stallSlot, i);
 
             }
         }
@@ -35,31 +35,31 @@ namespace Viconomy.Inventory.StallSlots
             {
                 if (slotId < ProductStacksPerStall)
                 {
-                    slots[slotId] = (ViconItemSlot)value;
+                    slots[slotId] = (VinconItemSlot)value;
                 }
                 else
-                    Currency = (ViconCurrencySlot)value;
+                    Currency = (VinconCurrencySlot)value;
             }
         }
 
-        public override ViconItemSlot GetSlot(int itemSlot)
+        public override VinconItemSlot GetSlot(int itemSlot)
         {
             return slots[itemSlot];
         }
 
-        public override ViconItemSlot[] GetSlots()
+        public override VinconItemSlot[] GetSlots()
         {
             return slots;
         }
 
         public override void SetSlot(int itemSlot, ItemSlot value)
         {
-            slots[itemSlot] = (ViconItemSlot) value;
+            slots[itemSlot] = (VinconItemSlot) value;
         }
 
-        public override ViconItemSlot FindFirstNonEmptyStockSlot()
+        public override VinconItemSlot FindFirstNonEmptyStockSlot()
         {
-            foreach (ViconItemSlot slot in slots)
+            foreach (VinconItemSlot slot in slots)
             {
                 if (slot.Itemstack != null)
                     return slot;

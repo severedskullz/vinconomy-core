@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using Viconomy.BlockEntities.TextureSwappable;
-using Viconomy.Inventory;
-using Viconomy.Registry;
-using Viconomy.Renderer;
-using Viconomy.Trading;
-using Viconomy.Trading.TradeHandlers;
+using Vinconomy.BlockEntities.TextureSwappable;
+using Vinconomy.Inventory;
+using Vinconomy.Registry;
+using Vinconomy.Renderer;
+using Vinconomy.Trading;
+using Vinconomy.Trading.TradeHandlers;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
-namespace Viconomy.BlockEntities
+namespace Vinconomy.BlockEntities
 {
-    public abstract class BEVinconBase : BETextureSwappableBlockDisplay, IOwnableStall, IInteractableStall
+    public abstract class BEVinconBase : BETextureSwappableBlockDisplay, IShopStall, IInteractable
     {
         protected VinconomyCoreSystem modSystem;
         protected GuiDialogBlockEntity invDialog;
@@ -20,8 +20,7 @@ namespace Viconomy.BlockEntities
         public string Owner { get; protected set; }
         public string OwnerName { get; protected set; }
 
-        //TODO: Rename to ShopID
-        public int RegisterID { get; protected set; } = -1;
+        public int ShopId { get; protected set; } = -1;
         public bool IsAdminShop { get; protected set; }
         public bool DiscardProduct { get; protected set; }
 
@@ -70,6 +69,7 @@ namespace Viconomy.BlockEntities
             {
                 this.distanceRenderer = new DistanceRenderer(this);
             }
+            
         }
 
         protected virtual void UpdateStallForSlot(int index)
@@ -115,7 +115,7 @@ namespace Viconomy.BlockEntities
 
         public void SetRegisterID(int registerID)
         {
-            RegisterID = registerID;
+            ShopId = registerID;
 
             IStallSlotUpdater inv = Inventory as IStallSlotUpdater;
             if (inv != null && Api.Side == EnumAppSide.Server)
@@ -188,7 +188,7 @@ namespace Viconomy.BlockEntities
             base.ToTreeAttributes(tree);
             tree.SetString("Owner", Owner);
             tree.SetString("OwnerName", OwnerName);
-            tree.SetInt("RegisterID", RegisterID);
+            tree.SetInt("RegisterID", ShopId);
             tree.SetBool("isAdminShop", IsAdminShop);
             tree.SetBool("DiscardProduct", DiscardProduct);
         }
@@ -198,7 +198,7 @@ namespace Viconomy.BlockEntities
             base.FromTreeAttributes(tree, world);
             Owner = tree.GetString("Owner");
             OwnerName = tree.GetString("OwnerName");
-            RegisterID = tree.GetInt("RegisterID");
+            ShopId = tree.GetInt("RegisterID");
             IsAdminShop = tree.GetBool("isAdminShop");
             DiscardProduct = tree.GetBool("DiscardProduct");
         }
@@ -346,10 +346,10 @@ namespace Viconomy.BlockEntities
             if (player.PlayerUID == this.Owner)
                 return true;
 
-            ShopRegistration reg = modSystem.GetRegistry().GetShop(RegisterID);
+            ShopRegistration reg = modSystem.GetRegistry().GetShop(ShopId);
             if (reg == null)
             {
-                modSystem.Mod.Logger.Error("Couldnt find shop registration for register " + RegisterID);
+                modSystem.Mod.Logger.Error("Couldnt find shop registration for register " + ShopId);
                 return false;
             }
             return reg.StallPermissions && reg.CanAccess(player);

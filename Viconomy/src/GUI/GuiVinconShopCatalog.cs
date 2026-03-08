@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using Viconomy.Registry;
-using Viconomy.Util;
+using Vinconomy.Registry;
+using Vinconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 
-namespace Viconomy.GUI
+namespace Vinconomy.GUI
 {
     public class GuiVinconShopCatalog : GuiDialogGeneric
     {

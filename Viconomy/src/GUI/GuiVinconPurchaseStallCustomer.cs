@@ -1,13 +1,13 @@
-﻿using Viconomy.BlockEntities;
-using Viconomy.Inventory.StallSlots;
+﻿using Vinconomy.BlockEntities;
+using Vinconomy.Inventory.StallSlots;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
-using Viconomy.Inventory.Impl;
+using Vinconomy.Inventory.Impl;
 
-namespace Viconomy.GUI
+namespace Vinconomy.GUI
 {
-    public class GuiVinconPurchaseStallCustomer : GuiViconStallCustomer
+    public class GuiVinconPurchaseStallCustomer : GuiVinconStallCustomer
     {
         public GuiVinconPurchaseStallCustomer(string DialogTitle, InventoryBase Inventory, BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi, stallSelection)
@@ -17,7 +17,7 @@ namespace Viconomy.GUI
 
         public override void InitializeInventoryDisplaySlots()
         {
-            ViconItemPurchaseInventory vinInv = Inventory as ViconItemPurchaseInventory;
+            VinconItemPurchaseInventory vinInv = Inventory as VinconItemPurchaseInventory;
             PurchaseStallSlot purchaseSlot = vinInv.GetStall<PurchaseStallSlot>(curTab);
             stallSlot = purchaseSlot;
             ItemSlot purchaseItem = stallSlot.Currency;

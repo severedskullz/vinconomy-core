@@ -1,4 +1,4 @@
-﻿namespace Viconomy.Util
+﻿namespace Vinconomy.Util
 {
     public static class VinConstants
     {
@@ -17,6 +17,11 @@
         public const int SET_COUPON_BLACKLIST = 1009;
         public const int SET_COUPON_CONSUME_ON_PURCHASE = 1010;
         public const int ACTIVATE_BLOCK = 1011;
+
+        public const int SEARCH_ITEM = 1020;
+        public const int LOAD_ITEM = 1021;
+        public const int SAVE_ITEM = 1022;
+        public const int CREATE_ITEM = 1023;
 
         //Owner Packets
         public const int SET_ITEMS_PER_PURCHASE = 2001;
@@ -43,9 +48,11 @@
         public const int SET_LIMITED_PURCHASES = 2019;
         public const int SET_FUZZY_MATCHING = 2020;
 
+
+
         // Customer Packets
         public const int PURCHASE_ITEMS = 3002;
-        public const int CURRENCY_CONVERSION = 3003;
+        public const int CONVERT_CURRENCY = 3003;
 
         public const int TOGGLE_GUI = 5000;
 

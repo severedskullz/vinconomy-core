@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using Viconomy.BlockEntities;
+using Vinconomy.BlockEntities;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 
-namespace Viconomy.BlockTypes
+namespace Vinconomy.BlockTypes
 {
     public class BlockVContainer : TextureSwappableBlock
     {
@@ -16,7 +16,7 @@ namespace Viconomy.BlockTypes
             this.PlacedPriorityInteract = true;
         }
 
-        public override bool DoParticalSelection(IWorldAccessor world, BlockPos pos) => true;
+        public override bool DoPartialSelection(IWorldAccessor world, BlockPos pos) => true;
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {

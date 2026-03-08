@@ -1,10 +1,10 @@
 ﻿using ProtoBuf;
 using System.Collections.Generic;
-using Viconomy.Network;
+using Vinconomy.Network;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-namespace Viconomy.Registry
+namespace Vinconomy.Registry
 {
 
     //Note to self: Why didnt I just extend ShopUpdatePacket? Well it doesnt fucking work, thats why.

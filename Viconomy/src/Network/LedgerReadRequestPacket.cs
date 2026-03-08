@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 
-namespace Viconomy.Network
+namespace Vinconomy.Network
 {
     [ProtoContract]
     public class LedgerReadRequestPacket

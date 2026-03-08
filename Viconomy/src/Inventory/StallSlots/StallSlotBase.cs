@@ -1,14 +1,14 @@
 ﻿using System;
-using Viconomy.Inventory.Slots;
+using Vinconomy.Inventory.Slots;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
-namespace Viconomy.Inventory.StallSlots
+namespace Vinconomy.Inventory.StallSlots
 {
     public abstract class StallSlotBase
     {
         public int ProductStacksPerStall;
-        public ViconCurrencySlot Currency;
+        public VinconCurrencySlot Currency;
         public int ItemsPerPurchase = 1;
         protected InventoryBase Inventory;
 
@@ -21,7 +21,7 @@ namespace Viconomy.Inventory.StallSlots
         public StallSlotBase(InventoryBase inventory, int numStacksPerStall)
         {
             Inventory = inventory;
-            Currency = new ViconCurrencySlot(inventory);
+            Currency = new VinconCurrencySlot(inventory);
             ProductStacksPerStall = numStacksPerStall;
         }
 

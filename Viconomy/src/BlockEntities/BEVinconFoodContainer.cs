@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Viconomy.GUI;
-using Viconomy.Inventory.Impl;
-using Viconomy.Inventory.StallSlots;
-using Viconomy.Trading;
-using Viconomy.Trading.TradeHandlers;
-using Viconomy.Util;
+using Vinconomy.GUI;
+using Vinconomy.Inventory.Impl;
+using Vinconomy.Inventory.StallSlots;
+using Vinconomy.Trading;
+using Vinconomy.Trading.TradeHandlers;
+using Vinconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
-namespace Viconomy.BlockEntities
+namespace Vinconomy.BlockEntities
 {
     public class BEVinconFoodContainer : BEVinconContainer
     {
@@ -23,7 +23,7 @@ namespace Viconomy.BlockEntities
 
         public override void ConfigureInventory()
         {
-            inventory = new ViconMealInventory(this, null, Api, StallSlotCount, 1);
+            inventory = new VinconMealInventory(this, null, Api, StallSlotCount, 1);
         }
 
         public MeshData GenMesh(int stallSlot)
@@ -175,7 +175,7 @@ namespace Viconomy.BlockEntities
 
             if (activeSlot.Itemstack?.Block is IBlockMealContainer)
             {
-                return ((ViconMealInventory)inventory).AddMealToStall(stallSlot, activeSlot, bulk ? BulkPurchaseAmount : 1);
+                return ((VinconMealInventory)inventory).AddMealToStall(stallSlot, activeSlot, bulk ? BulkPurchaseAmount : 1);
             }
             return false;
         }
@@ -248,7 +248,7 @@ namespace Viconomy.BlockEntities
                         stallSlot = binaryReader.ReadInt32();
                         amount = binaryReader.ReadInt32();
                     }
-                    ViconMealInventory inv = (ViconMealInventory)inventory;
+                    VinconMealInventory inv = (VinconMealInventory)inventory;
 
                     if (amount < 0)
                     {
@@ -274,7 +274,7 @@ namespace Viconomy.BlockEntities
         
         protected override GuiDialogBlockEntity GetOwnerGui(string dialogTitle, bool isOwner, int stallSelection)
         {
-            return new GuiViconFoodStallOwner(dialogTitle, this.Inventory, isOwner, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+            return new GuiVinconFoodStallOwner(dialogTitle, this.Inventory, isOwner, this.Pos, this.Api as ICoreClientAPI, stallSelection);
         }
 
 

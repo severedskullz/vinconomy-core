@@ -1,7 +1,7 @@
-﻿using Viconomy.Inventory.Slots;
+﻿using Vinconomy.Inventory.Slots;
 using Vintagestory.API.Common;
 
-namespace Viconomy.Inventory
+namespace Vinconomy.Inventory
 {
     public interface IStallSlotUpdater
     {
@@ -25,7 +25,7 @@ namespace Viconomy.Inventory
         /**
          * Gets the currenty ItemSlot for the given Stall Slot
          */
-        public ViconCurrencySlot GetCurrencyForStallSlot(int stallSlot);
+        public VinconCurrencySlot GetCurrencyForStallSlot(int stallSlot);
 
         /**
         * Gets the product ItemSlots for the given Stall Slot

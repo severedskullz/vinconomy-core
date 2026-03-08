@@ -1,21 +1,20 @@
 ﻿using Cairo;
 using System;
 using System.Collections.Generic;
-using Viconomy.BlockEntities;
-using Viconomy.BlockTypes;
-using Viconomy.Config;
-using Viconomy.Database;
-using Viconomy.Delegates;
-using Viconomy.Entities;
-using Viconomy.GUI;
-using Viconomy.ItemTypes;
-using Viconomy.Map;
-using Viconomy.Network;
-using Viconomy.Registry;
-using Viconomy.Renderer;
-using Viconomy.src.BlockTypes;
-using Viconomy.Trading;
-using Viconomy.Util;
+using Vinconomy.BlockEntities;
+using Vinconomy.BlockTypes;
+using Vinconomy.Config;
+using Vinconomy.Database;
+using Vinconomy.Delegates;
+using Vinconomy.Entities;
+using Vinconomy.GUI;
+using Vinconomy.ItemTypes;
+using Vinconomy.Map;
+using Vinconomy.Network;
+using Vinconomy.Registry;
+using Vinconomy.Renderer;
+using Vinconomy.Trading;
+using Vinconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -24,7 +23,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
-namespace Viconomy
+namespace Vinconomy
 {
         
     public class VinconomyCoreSystem : ModSystem
@@ -49,7 +48,7 @@ namespace Viconomy
 
 
         //Shared Variables
-        public ViconConfig Config { get; internal set; }
+        public VinconConfig Config { get; internal set; }
         private ShopRegistry ShopRegistry { get; set; }
 
         #endregion Variables
@@ -62,7 +61,6 @@ namespace Viconomy
             api.RegisterEntity("EntityVinconTrader", typeof(EntityVinconTrader));
             //api.RegisterEntityClass("EntityVinconTrader", typeof(EntityVinconTrader));
 
-            // 5.0 Item Mappings
             api.RegisterItemClass("VinconCoupon", typeof(ItemCoupon));
 
             // 5.0 Block Mappings
@@ -78,6 +76,8 @@ namespace Viconomy
             api.RegisterBlockEntityClass("BEVinconFoodContainer", typeof(BEVinconFoodContainer));
             api.RegisterBlockEntityClass("BEVinconCouponCutter", typeof(BEVinconCouponCutter));
             api.RegisterBlockEntityClass("BEVinconPurchaseContainer", typeof(BEVinconPurchaseContainer));
+
+            api.RegisterBlockEntityClass("BEVinconAdminRegister", typeof(BEVinconAdminRegister));
 
             // 3.0 Block Mappings
             api.RegisterBlockClass("VinconContainer", typeof(BlockVContainer));
@@ -106,7 +106,6 @@ namespace Viconomy
             api.RegisterBlockEntityClass("BEVinconJobboard", typeof(BEVinconJobboard));
             api.RegisterBlockEntityClass("BEVinconTradeCenter", typeof(BEVinconTradeCenter));
 
-
             //2.10 Legacy Block Entity
             api.RegisterBlockClass("ViconContainer", typeof(BlockVContainer));
             api.RegisterBlockClass("ViconRegister", typeof(BlockVRegister));
@@ -130,11 +129,16 @@ namespace Viconomy
             api.RegisterBlockEntityClass("BEViconGacha", typeof(BEVinconGacha));
             api.RegisterBlockEntityClass("BEViconGachaLoader", typeof(BEVinconGachaLoader));
             api.RegisterBlockEntityClass("BEViconJobboard", typeof(BEVinconJobboard));
-            
 
             //Item Types
-            api.RegisterItemClass("ViconLedger", typeof(ItemLedger));
+            api.RegisterItemClass("VinconLedger", typeof(ItemLedger));
             api.RegisterItemClass("VinconCatalog", typeof(ItemCatalog));
+            api.RegisterItemClass("VinconSculptureBundle", typeof(ItemSculptureBundle));
+            api.RegisterItemClass("VinconGachaBall", typeof(ItemGachaBall));
+            api.RegisterItemClass("VinconTenretni", typeof(ItemTenretniBook));
+            
+            // 5.0 Legacy Item Mappings
+            api.RegisterItemClass("ViconLedger", typeof(ItemLedger));
             api.RegisterItemClass("ViconSculptureBundle", typeof(ItemSculptureBundle));
             api.RegisterItemClass("ViconGachaBall", typeof(ItemGachaBall));
             api.RegisterItemClass("ViconTenretni", typeof(ItemTenretniBook));
@@ -153,7 +157,7 @@ namespace Viconomy
             
             try
             {
-                ViconConfig config = api.LoadModConfig<ViconConfig>(CONFIG_NAME);
+                VinconConfig config = api.LoadModConfig<VinconConfig>(CONFIG_NAME);
                 if (config == null)
                 {
                     config = ResetModConfig();
@@ -281,9 +285,9 @@ namespace Viconomy
 
         #endregion ModSystem Stuff
 
-        public ViconConfig ResetModConfig()
+        public VinconConfig ResetModConfig()
         {
-            ViconConfig config = new ViconConfig();
+            VinconConfig config = new VinconConfig();
             config.ViconTenretniWhitelists = new ViconTenretniWhitelist[] { new ViconTenretniWhitelist { name = "Pastebin.com", baseURL = "https://pastebin.com/raw/" } };
 
             return config;
@@ -310,9 +314,9 @@ namespace Viconomy
             }
 
             string playerUUID = playerData.PlayerUID;
-            if (entity is IOwnableStall)
+            if (entity is IShopStall)
             {
-                ((IOwnableStall)entity).SetOwner(playerUUID, playerData.LastKnownPlayername);
+                ((IShopStall)entity).SetOwner(playerUUID, playerData.LastKnownPlayername);
             }
             else if (entity is BEVinconRegister)
             {
@@ -479,6 +483,11 @@ namespace Viconomy
             {
                 ((IClientPlayer)player).ShowChatNotification(Lang.Get(message, args));
             }
+        }
+
+        public IItemRenderer GetRenderer(ItemSlot slot)
+        {
+           return GetRenderer(slot.Itemstack);
         }
 
         public IItemRenderer GetRenderer(ItemStack stack)
@@ -787,7 +796,7 @@ namespace Viconomy
 
         public void UpdateStallProductForStall(BEVinconBase stall, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
         {
-            int shopId = stall.RegisterID;
+            int shopId = stall.ShopId;
             BlockPos pos = stall.Pos;
 
             if (shopId <= 0 || product == null || currency == null) {
@@ -947,7 +956,7 @@ namespace Viconomy
 
         private void OnSaveGameLoading()
         {
-            this.Mod.Logger.Debug("+============== Loading Viconomy ==============+");
+            this.Mod.Logger.Debug("+============== Loading Vinconomy ==============+");
             DB.CleanupShops();
             DB.LoadShops(ShopRegistry);
 
@@ -972,7 +981,7 @@ namespace Viconomy
                 }
             }
 
-            this.Mod.Logger.Debug("=============== Loaded Viconomy ================");
+            this.Mod.Logger.Debug("=============== Loaded Vinconomy ================");
         }
 
         public void PersistConfig()

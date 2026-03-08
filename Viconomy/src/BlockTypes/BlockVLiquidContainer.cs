@@ -6,7 +6,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
-namespace Viconomy.BlockTypes
+namespace Vinconomy.BlockTypes
 {
     public class BlockVLiquidContainer : BlockVContainer
     {

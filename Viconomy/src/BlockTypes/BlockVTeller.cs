@@ -1,8 +1,8 @@
-﻿using Viconomy.BlockEntities;
+﻿using Vinconomy.BlockEntities;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-namespace Viconomy.BlockTypes
+namespace Vinconomy.BlockTypes
 {
     public class BlockVTeller : TextureSwappableBlock
     {
@@ -58,7 +58,7 @@ namespace Viconomy.BlockTypes
             if (vEntity != null)
             {
                 stack.Attributes.SetString("Owner", vEntity.Owner);
-                stack.Attributes.SetInt("ID", vEntity.RegisterID);
+                stack.Attributes.SetInt("ID", vEntity.ShopId);
                 stack.Attributes.SetString("OwnerName", vEntity.OwnerName);
                 AddTextureAttributes(stack, vEntity);
             }

@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 
-namespace Viconomy.Network
+namespace Vinconomy.Network
 {
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
     public class TradeNetworkPurchasePacket

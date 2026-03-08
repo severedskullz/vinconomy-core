@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using Viconomy.BlockEntities;
-using Viconomy.Config;
-using Viconomy.Delegates;
-using Viconomy.Network;
-using Viconomy.Network.Api;
-using Viconomy.Network.Common;
-using Viconomy.Registry;
-using Viconomy.TradeNetwork;
-using Viconomy.TradeNetwork.Api;
-using Viconomy.Trading;
-using Viconomy.Util;
+using Vinconomy.BlockEntities;
+using Vinconomy.Config;
+using Vinconomy.Delegates;
+using Vinconomy.Network;
+using Vinconomy.Network.JavaApi;
+using Vinconomy.Network.Common;
+using Vinconomy.Registry;
+using Vinconomy.TradeNetwork;
+using Vinconomy.Trading;
+using Vinconomy.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.Common;
+using Viconomy.Network.JavaApi.TradeNetwork;
 
-namespace Viconomy
+namespace Vinconomy
 {
 
     public class VinconomyTradingIntegrationSystem : ModSystem
@@ -97,7 +97,7 @@ namespace Viconomy
 
         private void SyncTradeNetwork()
         {
-            ViconConfig config = _coreSystem.Config;
+            VinconConfig config = _coreSystem.Config;
             if (!config.tradingNetworkEnabled)
             {
                 return;
@@ -265,7 +265,7 @@ namespace Viconomy
                                 if (updateResults.Count > 0)
                                 {
                                     string jsonString = VinUtils.SerializeToJson(updateResults);
-                                    ViconConfig config = _coreSystem.Config;
+                                    VinconConfig config = _coreSystem.Config;
                                     string apiKey = config.GetAPIKey(_coreServerAPI.World.SavegameIdentifier);
                                     VinUtils.PostAsync($"{config.tradingNetworkUrl}/api/market/purchases/pending", jsonString, null, apiKey);
                                 }
@@ -390,7 +390,7 @@ namespace Viconomy
 
         private void UpdateShopProductForNetwork(BEVinconBase stall, int stallSlot, ItemStack product, int numItemsPerPurchase, ItemStack currency)
         {
-            int shopId = stall.RegisterID;
+            int shopId = stall.ShopId;
             BlockPos pos = stall.Pos;
 
             //TODO: I have a feeling we are missing cleanup on shops being set to a register, then unset or changed to a different register. Verify that is working correctly.
@@ -468,7 +468,7 @@ namespace Viconomy
             TradeNetworkShop shop = TradeNetworkCache.GetShop(nodeId, shopId);
             if ( shop == null) {
 
-                ViconConfig config = _coreSystem.Config;
+                VinconConfig config = _coreSystem.Config;
                 string apiKey = config.GetAPIKey(_coreServerAPI.World.SavegameIdentifier);
                 if (string.IsNullOrEmpty(apiKey)) return;
                 if (!config.tradingNetworkEnabled) return;
@@ -501,7 +501,7 @@ namespace Viconomy
             if (shop == null) {
                 return false;
             }
-            Network.Api.ShopProduct prod = shop.GetProductById(purchase.X, purchase.Y, purchase.Z, purchase.StallSlot);
+            Network.JavaApi.ShopProduct prod = shop.GetProductById(purchase.X, purchase.Y, purchase.Z, purchase.StallSlot);
             if (prod == null)
             {
                 return false;
@@ -582,8 +582,7 @@ namespace Viconomy
             AssetLocation assetLocation = null;
             if (block != null)
             {
-                BlockSounds sounds = block.Sounds;
-                assetLocation = ((sounds != null) ? sounds.Place : null);
+                assetLocation = block?.Sounds?.Place.Location;
             }
             AssetLocation sound = assetLocation;
             _coreServerAPI.World.PlaySoundAt((sound != null) ? sound : new AssetLocation("sounds/player/build"), customer.Entity, customer, true, 16f, 1f);

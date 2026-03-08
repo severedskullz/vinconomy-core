@@ -1,18 +1,18 @@
 ﻿using System;
-using Viconomy.BlockEntities;
-using Viconomy.Inventory.Impl;
-using Viconomy.Inventory.StallSlots;
+using Vinconomy.BlockEntities;
+using Vinconomy.Inventory.Impl;
+using Vinconomy.Inventory.StallSlots;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 
-namespace Viconomy.Trading.TradeHandlers
+namespace Vinconomy.Trading.TradeHandlers
 {
     public static class MealTradeHandler
     {
         public static bool StallHasRequiredProduct(GenericTradeRequest req)
         {
-            ViconMealInventory inv = (ViconMealInventory)req.SellingEntity.Inventory;
+            VinconMealInventory inv = (VinconMealInventory)req.SellingEntity.Inventory;
             return inv.GetStall<MealStallSlot>(req.StallSlot).GetProductQuantity() >= req.GetFinalProductNeededPerPurchase();
 
         }
@@ -55,7 +55,7 @@ namespace Viconomy.Trading.TradeHandlers
             GenericTradeHandler.TryExtractCurrencySlots(res);
 
 
-            MealStallSlot stall = ((ViconBaseInventory)res.Request.SellingEntity.Inventory).GetStall<MealStallSlot>(res.Request.StallSlot);
+            MealStallSlot stall = ((VinconBaseInventory)res.Request.SellingEntity.Inventory).GetStall<MealStallSlot>(res.Request.StallSlot);
             ItemStack[] ingredientStacks = stall.GetMealContents();
             string recipeCode = stall.RecipeCode;
             ItemStack outputStack = stall.FindFirstNonEmptyStockSlot()?.Itemstack;
@@ -239,8 +239,7 @@ namespace Viconomy.Trading.TradeHandlers
             AssetLocation assetLocation = null;
             if (block != null)
             {
-                BlockSounds sounds = block.Sounds;
-                assetLocation = ((sounds != null) ? sounds.Place : null);
+                assetLocation = block.Sounds?.Place.Location;
             }
             AssetLocation sound = assetLocation;
             res.Request.Api.World.PlaySoundAt((sound != null) ? sound : new AssetLocation("sounds/player/build"), customer.Entity, customer, true, 16f, 1f);
@@ -259,7 +258,7 @@ namespace Viconomy.Trading.TradeHandlers
             if (!res.Request.IsAdminShop)
             {
                 BEVinconFoodContainer container = res.Request.SellingEntity as BEVinconFoodContainer;
-                ViconBaseInventory inv = (ViconBaseInventory)container.Inventory;
+                VinconBaseInventory inv = (VinconBaseInventory)container.Inventory;
                 MealStallSlot stall = inv.GetStall<MealStallSlot>(res.Request.StallSlot);
                 int requestedServings = res.Request.NumPurchases * res.Request.GetFinalProductNeededPerPurchase();
                 stall.RemoveServings(requestedServings);

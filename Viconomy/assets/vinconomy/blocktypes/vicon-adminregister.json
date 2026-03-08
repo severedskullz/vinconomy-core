@@ -1,0 +1,158 @@
+﻿{
+    "code": "adminregister",
+    "class": "VinconRegister",
+    "entityClass": "BEVinconAdminRegister",
+    "priorityInteract": true,
+    "creativeinventory": {},
+    "creativeinventoryStacksByType": {
+        "*-north": [
+            {
+                "tabs": [ "vinconomy", "general" ],
+                "stacks": [
+                    {"type": "block","code": "adminregister-north","attributes": {"PrimaryMaterial": "brass","SecondaryMaterial": "acacia"}},
+                    {"type": "block","code": "adminregister-north","attributes": {"PrimaryMaterial": "copper","SecondaryMaterial": "acacia"}},
+                    {"type": "block","code": "adminregister-north","attributes": {"PrimaryMaterial": "gold","SecondaryMaterial": "acacia"}},
+                    {"type": "block","code": "adminregister-north","attributes": {"PrimaryMaterial": "silver","SecondaryMaterial": "acacia"}},
+                    {"type": "block","code": "adminregister-north","attributes": {"PrimaryMaterial": "iron","SecondaryMaterial": "acacia"}},
+                    {"type": "block","code": "adminregister-north","attributes": {"PrimaryMaterial": "lead","SecondaryMaterial": "acacia"}},
+                    {"type": "block","code": "adminregister-north","attributes": {"PrimaryMaterial": "meteoriciron","SecondaryMaterial": "acacia"}},
+                    {"type": "block","code": "adminregister-north","attributes": {"PrimaryMaterial": "tinbronze","SecondaryMaterial": "acacia"}},
+                    {"type": "block","code": "adminregister-north","attributes": {"PrimaryMaterial": "tin","SecondaryMaterial": "acacia"}},
+                    {"type": "block","code": "adminregister-north","attributes": {"PrimaryMaterial": "uranium","SecondaryMaterial": "acacia"}},
+                    {"type": "block","code": "adminregister-north","attributes": {"PrimaryMaterial": "zinc","SecondaryMaterial": "acacia"}}
+                ]
+            }
+        ]
+    },
+    "textures": {
+        "default": { "base": "game:block/metal/plate/steel" },
+
+        "bismuth": { "base": "game:block/metal/plate/bismuth" },
+        "bismuthbronze": { "base": "game:block/metal/plate/bismuthbronze" },
+        "blackbronze": { "base": "game:block/metal/plate/blackbronze" },
+        "brass": { "base": "game:block/metal/plate/brass" },
+        "copper": { "base": "game:block/metal/plate/copper" },
+        "silver": { "base": "game:block/metal/plate/silver" },
+        "gold": { "base": "game:block/metal/plate/gold" },
+        "iron": { "base": "game:block/metal/plate/iron" },
+        "lead": { "base": "game:block/metal/plate/lead" },
+        "meteoriciron": { "base": "game:block/metal/plate/meteoriciron" },
+        "tinbronze": { "base": "game:block/metal/plate/tinbronze" },
+        "steel": { "base": "game:block/metal/plate/steel" },
+        "tin": { "base": "game:block/metal/plate/tin" },
+        "uranium": { "base": "game:block/metal/plate/uranium" },
+        "zinc": { "base": "game:block/metal/plate/zinc" },
+
+        "acacia": { "base": "game:block/wood/planks/acacia1" },
+        "baldcypress": { "base": "game:block/wood/planks/baldcypress1" },
+        "birch": { "base": "game:block/wood/planks/birch1" },
+        "ebony": { "base": "game:block/wood/planks/ebony1" },
+        "kapok": { "base": "game:block/wood/planks/kapok1" },
+        "larch": { "base": "game:block/wood/planks/larch1" },
+        "maple": { "base": "game:block/wood/planks/maple1" },
+        "oak": { "base": "game:block/wood/planks/oak1" },
+        "pine": { "base": "game:block/wood/planks/pine1" },
+        "purpleheart": { "base": "game:block/wood/planks/purpleheart1" },
+        "redwood": { "base": "game:block/wood/planks/redwood1" },
+        "walnut": { "base": "game:block/wood/planks/walnut1" }
+    },
+    "attributes": {
+        "handbook": {
+            "groupBy": [ "adminregister-north" ],
+            "groupedName": "adminregister-north",
+            "extraSections": [
+                {
+                    "title": "",
+                    "text": "vinconomy:handbooktext-register"
+                }
+            ]
+        }
+    },
+    "behaviors": [ { "name": "HorizontalOrientable" } ],
+    "heldTpIdleAnimation": "holdbothhandslarge",
+    "heldTpUseAnimation": "twohandplaceblock",
+    "blockmaterial": "Metal",
+    "variantgroups": [
+
+        {
+            "code": "side",
+            "loadFromProperties": "abstract/horizontalorientation"
+        }
+    ],
+    "guiTransform": {
+        "translation": {
+            "x": 0,
+            "y": -5,
+            "z": 0
+        },
+        "rotation": {
+            "x": -22,
+            "y": 135,
+            "z": 0
+        },
+        "scale": 1.42
+    },
+
+    "tpHandTransform": {
+        "translation": {
+            "x": -2.2,
+            "y": -1.9,
+            "z": -1.1
+        },
+        "rotation": {
+            "x": 106,
+            "y": -11,
+            "z": -76
+        }
+    },
+
+    "shapebytype": {
+        "*-north": {
+            "base": "block/register",
+            "rotateY": 0
+        },
+        "*-east": {
+            "base": "block/register",
+            "rotateY": 270
+        },
+        "*-south": {
+            "base": "block/register",
+            "rotateY": 180
+        },
+        "*-west": {
+            "base": "block/register",
+            "rotateY": 90
+        }
+    },
+
+    "collisionSelectionBoxes": [
+        {
+            "x1": 0.125,
+            "y1": 0,
+            "z1": 0.125,
+            "x2": 0.875,
+            "y2": 0.65,
+            "z2": 0.875,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        }
+    ],
+    "lightAbsorption": 0,
+    "sidesolid": {
+        "all": "false"
+    },
+    "sideopaque": {
+        "all": "false"
+    },
+    "resistance": 3.5,
+    "sounds": {
+        "hit": "game:block/planks",
+        "break": "game:block/planks",
+        "place": "game:block/planks",
+        "walk": "game:walk/wood"
+    }
+}

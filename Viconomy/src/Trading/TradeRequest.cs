@@ -1,9 +1,9 @@
 ﻿
 using System.Collections.Generic;
-using Viconomy.BlockEntities;
+using Vinconomy.BlockEntities;
 using Vintagestory.API.Common;
 
-namespace Viconomy.Trading
+namespace Vinconomy.Trading
 {
     public class TradeRequest
     {

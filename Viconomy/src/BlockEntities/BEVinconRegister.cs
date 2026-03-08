@@ -1,25 +1,25 @@
 ﻿using System.IO;
-using Viconomy.GUI;
-using Viconomy.Registry;
-using Viconomy.BlockEntities.TextureSwappable;
-using Viconomy.Util;
+using Vinconomy.GUI;
+using Vinconomy.Registry;
+using Vinconomy.BlockEntities.TextureSwappable;
+using Vinconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.Client.NoObf;
-using Viconomy.Inventory.Impl;
+using Vinconomy.Inventory.Impl;
 using Vintagestory.Server;
 using System.Collections.Generic;
 
-namespace Viconomy.BlockEntities
+namespace Vinconomy.BlockEntities
 {
-    public class BEVinconRegister : BETextureSwappableBlockContainer, IOwnable
+    public class BEVinconRegister : BETextureSwappableBlockContainer, IShopRoot, IInteractable
     {
 
-        private ViconRegisterInventory inventory;
-        private GuiViconRegister invDialog;
+        private VinconRegisterInventory inventory;
+        private GuiVinconRegister invDialog;
         private VinconomyCoreSystem modSystem;
         public int ID { get; internal set; } = -1;
         public string Owner { get; internal set; }
@@ -32,7 +32,7 @@ namespace Viconomy.BlockEntities
 
         public BEVinconRegister()
         {
-            this.inventory = new ViconRegisterInventory(40, 10, null, null);
+            this.inventory = new VinconRegisterInventory(40, 10, null, null);
         }
 
         public override void Initialize(ICoreAPI api)
@@ -40,8 +40,6 @@ namespace Viconomy.BlockEntities
             base.Initialize(api);
             //block = (BlockVRegister)api.World.BlockAccessor.GetBlock(this.Pos);
             modSystem = Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
-
-
         }
 
         public void UpdateShop(string Owner, string OwnerName, int ID, string Name)
@@ -75,11 +73,6 @@ namespace Viconomy.BlockEntities
             this.Owner = Owner;
             this.OwnerName = OwnerName;
             
-        }
-
-        public void UpdateShopConfiguration(string desc, string shortDesc, string webHook)
-        {
-            modSystem.UpdateShopConfig(ID, desc, shortDesc, webHook);  
         }
 
         public override void OnBlockBroken(IPlayer byPlayer = null)
@@ -118,27 +111,6 @@ namespace Viconomy.BlockEntities
             tree.SetInt("ID", ID);
             tree.SetString("Owner", Owner);
             tree.SetString("OwnerName", OwnerName);
-        }
-
-        public bool CanHold(ItemStack sourceStack)
-        {
-            int amountLeft = sourceStack.StackSize;
-            foreach (ItemSlot slot in inventory)
-            {
-                if (slot.Itemstack == null)
-                {
-                    return true;
-                } else if (slot.Itemstack.Equals(sourceStack)) {
-                    // 64 - 10 = 54
-                    amountLeft -= slot.Itemstack.Item.MaxStackSize - slot.Itemstack.StackSize;
-                    if (amountLeft <= 0)
-                    {
-                        return true;
-                    }
-
-                }
-            }
-            return false;
         }
 
         public bool AddCoupon(ItemStack sourceStack, int quantity)
@@ -523,8 +495,8 @@ namespace Viconomy.BlockEntities
             }
               
 
-            this.invDialog = new GuiViconRegister(shopRegistry, inventory, this.Pos, this.Api as ICoreClientAPI);
-            this.invDialog.OpenSound = "sounds/effect/cashregister";
+            this.invDialog = new GuiVinconRegister(shopRegistry, inventory, this.Pos, this.Api as ICoreClientAPI);
+            this.invDialog.OpenSound = new SoundAttributes("sounds/effect/cashregister", true);
             // this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();
             this.invDialog.OnClosed += delegate ()

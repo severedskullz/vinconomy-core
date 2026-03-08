@@ -1,7 +1,7 @@
-﻿using Viconomy.Network.Api;
+﻿using Vinconomy.Network.JavaApi;
 using Vintagestory.API.Common;
 
-namespace Viconomy.Inventory
+namespace Vinconomy.Inventory
 {
     public class VinconNetworkItemSlot : ItemSlot
     {

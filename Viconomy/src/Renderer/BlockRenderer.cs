@@ -1,10 +1,10 @@
 ﻿using System;
-using Viconomy.BlockEntities;
+using Vinconomy.BlockEntities;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 
-namespace Viconomy.Renderer
+namespace Vinconomy.Renderer
 {
     public class BlockRenderer : IItemRenderer
     {
@@ -17,15 +17,17 @@ namespace Viconomy.Renderer
             return stack.Class == EnumItemClass.Block;
         }
 
-        public MeshData createMesh(BEVinconBase stall, ItemStack stack, int index)
+        public MeshData createMesh(BEVinconBase stall, ItemSlot slot, int index)
         {
+            ItemStack stack = slot.Itemstack;
             ICoreClientAPI coreClientAPI = (ICoreClientAPI)stall.Api;
             try
             {
+                
                 IContainedMeshSource containedMeshSource = stack.Collectible as IContainedMeshSource;
                 if (containedMeshSource != null)
                 {
-                    MeshData modeldata = containedMeshSource.GenMesh(stack, coreClientAPI.BlockTextureAtlas, stall.Pos);
+                    MeshData modeldata = containedMeshSource.GenMesh(slot, coreClientAPI.BlockTextureAtlas, stall.Pos);
                     if (modeldata != null)
                     {
                         return modeldata;

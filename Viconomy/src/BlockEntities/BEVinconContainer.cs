@@ -2,13 +2,13 @@
 using System.IO;
 using System.Numerics;
 using System.Text;
-using Viconomy.Filters;
-using Viconomy.GUI;
-using Viconomy.Inventory.Impl;
-using Viconomy.Inventory.StallSlots;
-using Viconomy.Renderer;
-using Viconomy.Trading;
-using Viconomy.Util;
+using Vinconomy.Filters;
+using Vinconomy.GUI;
+using Vinconomy.Inventory.Impl;
+using Vinconomy.Inventory.StallSlots;
+using Vinconomy.Renderer;
+using Vinconomy.Trading;
+using Vinconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -17,11 +17,11 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
-namespace Viconomy.BlockEntities
+namespace Vinconomy.BlockEntities
 {
     public class BEVinconContainer : BEVinconBase
     {
-        protected ViconBaseInventory inventory;
+        protected VinconBaseInventory inventory;
         protected bool bypassShelvableAttributes;
 
         public override InventoryBase Inventory { get { return this.inventory; } }
@@ -42,10 +42,10 @@ namespace Viconomy.BlockEntities
 
         public virtual void ConfigureInventory()
         {
-            ViconItemInventory inv = new ViconItemInventory(this, null, Api, StallSlotCount, ProductStacksPerSlot);
+            VinconItemInventory inv = new VinconItemInventory(this, null, Api, StallSlotCount, ProductStacksPerSlot);
             for (int i = 0; i < StallSlotCount; i++)
             {
-                inv.SetSlotFilter(i, ViconomyFilters.IsGenericItem);
+                inv.SetSlotFilter(i, VinconomyFilters.IsGenericItem);
                 inv.SetSlotBackground(i, "vicon-general");
             }
             inventory = inv;
@@ -127,7 +127,7 @@ namespace Viconomy.BlockEntities
             }
 
             // Does the shop have a register ID set?
-            if (this.RegisterID == -1 && !this.IsAdminShop)
+            if (this.ShopId == -1 && !this.IsAdminShop)
             {
                 VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
@@ -135,7 +135,7 @@ namespace Viconomy.BlockEntities
 
 
             // Is there a shop with the given Register ID?
-            BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
+            BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.ShopId);
             if (register == null && !this.IsAdminShop)
             {
                 VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.COULDNT_GET_REGISTER);
@@ -179,12 +179,12 @@ namespace Viconomy.BlockEntities
 
         protected virtual GuiDialogBlockEntity GetCustomerGui(string dialogTitle, int stallSelection)
         {
-            return new GuiViconStallCustomer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+            return new GuiVinconStallCustomer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, stallSelection);
         }
 
         protected virtual GuiDialogBlockEntity GetOwnerGui(string dialogTitle, bool isOwner, int stallSelection)
         {
-            return new GuiViconStallOwner(dialogTitle, this.Inventory, isOwner, this.Pos, this.Api as ICoreClientAPI, stallSelection);
+            return new GuiVinconStallOwner(dialogTitle, this.Inventory, isOwner, this.Pos, this.Api as ICoreClientAPI, stallSelection);
         }
 
         protected virtual void OpenShopForPlayer(IPlayer byPlayer, int selectedStall)
@@ -478,7 +478,7 @@ namespace Viconomy.BlockEntities
             ItemSlot slot = inventory.FindFirstNonEmptyStockSlot(index);
             if (Api != null && Api.Side != EnumAppSide.Server && slot != null && !slot.Empty)
             {
-                getOrCreateMesh(slot.Itemstack, index);
+                getOrCreateMesh(slot, index);
             }
         }
 
@@ -498,7 +498,7 @@ namespace Viconomy.BlockEntities
                         slot = inventory.FindFirstNonEmptyStockSlot(i);
                         if (slot != null && !slot.Empty && tfMatrices != null)
                         {
-                            mesh = getOrCreateMesh(slot.Itemstack, i);
+                            mesh = getOrCreateMesh(slot, i);
                             if (mesh != null)
                             {
                                 mesher.AddMeshData(mesh, tfMatrices[i]);
@@ -519,8 +519,7 @@ namespace Viconomy.BlockEntities
         {
             if (inventory.ChiselDecoSlot.Itemstack != null)
             {
-                ItemStack stack = inventory.ChiselDecoSlot.Itemstack;
-                MeshData mesh = modSystem.GetRenderer(stack).createMesh(this, stack, 0);
+                MeshData mesh = modSystem.GetRenderer(inventory.ChiselDecoSlot).createMesh(this, inventory.ChiselDecoSlot, 0);
                 mesh = mesh.Clone().Rotate(new Vec3f(0.5f, 0.5f, 0.5f), 0, (float)((Block.Shape.rotateY * Math.PI) / 180), 0);
                 mesher.AddMeshData(mesh);
             }
@@ -633,18 +632,19 @@ namespace Viconomy.BlockEntities
             return inventory.GetTransitionSpeedMul(EnumTransitionType.Perish, null);
         }
 
-        protected override MeshData getOrCreateMesh(ItemStack stack, int index)
+        protected override MeshData getOrCreateMesh(ItemSlot slot, int index)
         {
-            MeshData modeldata = GetMesh(stack);
+            MeshData modeldata = GetMesh(slot);
             if (modeldata != null)
             {
                 return modeldata;
             }
 
-            IItemRenderer renderer = modSystem.GetRenderer(stack);
+            IItemRenderer renderer = modSystem.GetRenderer(slot);
             if (renderer != null)
             {
-                modeldata = renderer.createMesh(this, stack, index);
+                ItemStack stack = slot.Itemstack;
+                modeldata = renderer.createMesh(this, slot, index);
                 if (modeldata == null)
                 {
                     //Don't crash if we couldnt get the model for some reason
@@ -700,7 +700,7 @@ namespace Viconomy.BlockEntities
 
                 if (renderer.shouldCache(stack))
                 {
-                    string meshCacheKey = GetMeshCacheKey(stack);
+                    string meshCacheKey = GetMeshCacheKey(slot);
                     MeshCache[meshCacheKey] = modeldata;
                 }
             }

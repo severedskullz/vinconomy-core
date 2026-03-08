@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Viconomy.Network.Api;
-using Viconomy.TradeNetwork.Api;
-using Viconomy.Util;
+using Viconomy.Network.JavaApi.TradeNetwork;
+using Vinconomy.Network.JavaApi;
+using Vinconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 
-namespace Viconomy.GUI
+namespace Vinconomy.GUI
 {
     public class GuiVinconNetworkCatalog : GuiDialogGeneric
     {

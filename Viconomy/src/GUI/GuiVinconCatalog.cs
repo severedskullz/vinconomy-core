@@ -1,13 +1,13 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using Viconomy.Network;
-using Viconomy.Registry;
-using Viconomy.Util;
+using Vinconomy.Network;
+using Vinconomy.Registry;
+using Vinconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Config;
 
-namespace Viconomy.GUI
+namespace Vinconomy.GUI
 {
     public class GuiVinconCatalog : GuiDialogGeneric
     {

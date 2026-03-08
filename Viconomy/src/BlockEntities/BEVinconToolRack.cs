@@ -1,9 +1,9 @@
 ﻿using Vintagestory.API.Client;
-using Viconomy.Filters;
+using Vinconomy.Filters;
 using Vintagestory.API.Common;
-using Viconomy.Inventory.Impl;
+using Vinconomy.Inventory.Impl;
 
-namespace Viconomy.BlockEntities
+namespace Vinconomy.BlockEntities
 {
     public class BEVinconToolRack : BEVinconContainer
     {
@@ -12,10 +12,10 @@ namespace Viconomy.BlockEntities
 
         public override void ConfigureInventory()
         {
-            ViconItemInventory inv = new ViconItemInventory(this, null, null, StallSlotCount, ProductStacksPerSlot);
+            VinconItemInventory inv = new VinconItemInventory(this, null, null, StallSlotCount, ProductStacksPerSlot);
             for (int i = 0; i < StallSlotCount; i++)
             {
-                inv.SetSlotFilter(i, ViconomyFilters.IsToolOrWeapon);
+                inv.SetSlotFilter(i, VinconomyFilters.IsToolOrWeapon);
                 inv.SetSlotBackground(i, "vicon-toolrack");
             }
             inventory = inv;

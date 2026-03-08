@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Viconomy.BlockEntities;
-using Viconomy.Inventory.Impl;
-using Viconomy.Inventory.StallSlots;
-using Viconomy.Registry;
-using Viconomy.Util;
+using Vinconomy.BlockEntities;
+using Vinconomy.Inventory.Impl;
+using Vinconomy.Inventory.StallSlots;
+using Vinconomy.Registry;
+using Vinconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace Viconomy.GUI
+namespace Vinconomy.GUI
 {
     public class GuiVinconPurchaseStallOwner : GuiDialogBlockEntity
     {
@@ -23,7 +23,7 @@ namespace Viconomy.GUI
         int curTab;
         bool isOwner;
         PurchaseStallSlot stallSlot;
-        ViconItemPurchaseInventory vInventory;
+        VinconItemPurchaseInventory vInventory;
 
         public GuiVinconPurchaseStallOwner(string DialogTitle, InventoryBase Inventory, bool isOwner,  BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection)
             : base(DialogTitle, Inventory, BlockEntityPosition, capi)
@@ -65,7 +65,7 @@ namespace Viconomy.GUI
                 ElementBounds bgBounds = ElementBounds.Fill.WithFixedPadding(GuiStyle.DialogToScreenPadding);
                 bgBounds.BothSizing = ElementSizing.FitToChildren;
 
-                vInventory = Inventory as ViconItemPurchaseInventory;
+                vInventory = Inventory as VinconItemPurchaseInventory;
                 int[] productSlots = new int[vInventory.ProductStacksPerStall];
                 int pOffset = (curTab * vInventory.StallSlotSize)+1;
                 if (vInventory != null)
@@ -98,7 +98,7 @@ namespace Viconomy.GUI
                     shopsNames[i + 1] = registers[i].Name;
                     shopsKeys[i + 1] = registers[i].ID.ToString();
 
-                    if (stall.RegisterID == registers[i].ID)
+                    if (stall.ShopId == registers[i].ID)
                     {
                         selectedIndex = i + 1;
                     }

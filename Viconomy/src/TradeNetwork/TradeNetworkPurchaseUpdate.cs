@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Nodes;
-using Viconomy.Network;
-using Viconomy.Network.Api;
+using Vinconomy.Network;
+using Vinconomy.Network.JavaApi;
 using Vintagestory.API.MathTools;
 
-namespace Viconomy.TradeNetwork
+namespace Vinconomy.TradeNetwork
 {
      public class TradeNetworkPurchaseUpdate : Dictionary<string, ShopPurchaseUpdate>
     {

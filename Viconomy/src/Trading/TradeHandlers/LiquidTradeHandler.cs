@@ -1,16 +1,16 @@
-﻿using Viconomy.Inventory.Impl;
-using Viconomy.Inventory.StallSlots;
+﻿using Vinconomy.Inventory.Impl;
+using Vinconomy.Inventory.StallSlots;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 
-namespace Viconomy.Trading.TradeHandlers
+namespace Vinconomy.Trading.TradeHandlers
 {
     public static class LiquidTradeHandler
     {
         public static AssetLocation fillSound = new AssetLocation("sounds/effect/water-fill.ogg");
         public static bool StallHasRequiredProduct(GenericTradeRequest req)
         {
-            ViconLiquidInventory inv = (ViconLiquidInventory)req.SellingEntity.Inventory;
+            VinconLiquidInventory inv = (VinconLiquidInventory)req.SellingEntity.Inventory;
             return inv.GetStall<LiquidStallSlot>(req.StallSlot).GetProductQuantity() >= req.GetFinalProductNeededPerPurchase();
 
         }
@@ -54,7 +54,7 @@ namespace Viconomy.Trading.TradeHandlers
             GenericTradeHandler.TryExtractProductSlots(res);
 
 
-            LiquidStallSlot stall = ((ViconBaseInventory)res.Request.SellingEntity.Inventory).GetStall<LiquidStallSlot>(res.Request.StallSlot);
+            LiquidStallSlot stall = ((VinconBaseInventory)res.Request.SellingEntity.Inventory).GetStall<LiquidStallSlot>(res.Request.StallSlot);
             ItemStack ingredientStacks = stall.FindFirstNonEmptyStockSlot()?.Itemstack;
 
             // Send TradeResult to mod system to take taxes, log sale in ledger, etc.

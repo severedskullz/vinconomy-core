@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Viconomy.GUI;
-using Viconomy.Inventory.Impl;
-using Viconomy.Inventory.Slots;
-using Viconomy.ItemTypes;
-using Viconomy.Registry;
-using Viconomy.Util;
+using Vinconomy.GUI;
+using Vinconomy.Inventory.Impl;
+using Vinconomy.Inventory.Slots;
+using Vinconomy.ItemTypes;
+using Vinconomy.Registry;
+using Vinconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -14,12 +14,12 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
-namespace Viconomy.BlockEntities
+namespace Vinconomy.BlockEntities
 {
     public class BEVinconCouponCutter : BlockEntityContainer
     {
         private VinconGenericInventory inventory;
-        private GuiViconCouponCutter invDialog;
+        private GuiVinconCouponCutter invDialog;
         public string BonusType { get; private set; }
         public string DiscountType { get; private set; }
         public string CouponName { get; private set; }
@@ -45,14 +45,14 @@ namespace Viconomy.BlockEntities
         {
             if (slotId == 0)
             {
-                ViconItemSlot slot = new ViconItemSlot(self, 0, slotId);
+                VinconItemSlot slot = new VinconItemSlot(self, 0, slotId);
                 slot.SetFilter(IsPaper);
                 slot.BackgroundIcon = "vicon-paper";
                 return slot;
             }
             else
             {
-                ViconCurrencySlot slot = new ViconCurrencySlot(self);
+                VinconCurrencySlot slot = new VinconCurrencySlot(self);
                 slot.BackgroundIcon = "vicon-general";
                 return slot;
             }
@@ -233,7 +233,7 @@ namespace Viconomy.BlockEntities
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
            
-            this.invDialog = new GuiViconCouponCutter(Lang.Get("vinconomy:gui-coupon-cutter"), this.Inventory, this.Pos, this.Api as ICoreClientAPI);
+            this.invDialog = new GuiVinconCouponCutter(Lang.Get("vinconomy:gui-coupon-cutter"), this.Inventory, this.Pos, this.Api as ICoreClientAPI);
             //this.invDialog.OpenSound = this.OpenSound;
             //this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();

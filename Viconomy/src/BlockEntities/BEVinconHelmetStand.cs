@@ -1,9 +1,9 @@
-﻿using Viconomy.Filters;
-using Viconomy.Inventory.Impl;
+﻿using Vinconomy.Filters;
+using Vinconomy.Inventory.Impl;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 
-namespace Viconomy.BlockEntities
+namespace Vinconomy.BlockEntities
 {
     public class BEVinconHelmetStand : BEVinconContainer
     {
@@ -16,9 +16,9 @@ namespace Viconomy.BlockEntities
 
         public override void ConfigureInventory()
         {
-            ViconItemInventory inv = new ViconItemInventory(this, null, null, StallSlotCount, ProductStacksPerSlot);
+            VinconItemInventory inv = new VinconItemInventory(this, null, null, StallSlotCount, ProductStacksPerSlot);
             inv.SlotModified += base.Inventory_SlotModified;
-            inv.SetSlotFilter(0, ViconomyFilters.IsHelmetSlot);
+            inv.SetSlotFilter(0, VinconomyFilters.IsHelmetSlot);
             inv.SetSlotBackground(0, "vicon-helmet");
             inventory = inv;
         }

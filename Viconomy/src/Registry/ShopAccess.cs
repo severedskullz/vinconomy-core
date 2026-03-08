@@ -2,7 +2,7 @@
 using Vintagestory.API.Common;
 
 
-namespace Viconomy.Registry
+namespace Vinconomy.Registry
 {
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
     public class ShopAccess

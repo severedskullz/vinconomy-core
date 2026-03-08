@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Viconomy.TradeNetwork.Api;
+using Viconomy.Network.JavaApi.TradeNetwork;
 
-namespace Viconomy.TradeNetwork
+namespace Vinconomy.TradeNetwork
 {
     public class TradeNetworkCache : Dictionary<string, TradeNetworkShopCache>
     {

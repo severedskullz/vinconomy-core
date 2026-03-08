@@ -1,7 +1,7 @@
 ﻿using System;
 using Vintagestory.API.Common;
 
-namespace Viconomy.Trading.TradeHandlers
+namespace Vinconomy.Trading.TradeHandlers
 {
     public static class GenericTradeHandler
     {
@@ -40,11 +40,13 @@ namespace Viconomy.Trading.TradeHandlers
 
         public static bool PlayerHasRequiredCurrency(GenericTradeRequest req)
         {
-            if (req.GetFinalCurrencyNeededPerPurchase() == 0)
+            int currencyReq = req.GetFinalCurrencyNeededPerPurchase();
+
+            if (currencyReq == 0)
                 return true;
 
             if (req.CurrencySourceSlots != null)
-                return req.CurrencySourceSlots.TotalCount / req.GetFinalCurrencyNeededPerPurchase() > 0;
+                return req.CurrencySourceSlots.TotalCount / currencyReq > 0;
             return false;
         }
 
@@ -159,7 +161,7 @@ namespace Viconomy.Trading.TradeHandlers
             }
 
             Block block = res.Request.ProductStackNeeded.Block;
-            AssetLocation sound = block?.Sounds?.Place;
+            AssetLocation sound = block?.Sounds?.Place.Location;
             res.Request.Api.World.PlaySoundAt((sound != null) ? sound : tradeSound, customer.Entity, customer, true, 16f, 1f);
 
         }

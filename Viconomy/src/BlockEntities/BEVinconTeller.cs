@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Viconomy.GUI;
-using Viconomy.Registry;
-using Viconomy.Inventory.Impl;
-using Viconomy.Trading;
-using Viconomy.Util;
+using Vinconomy.GUI;
+using Vinconomy.Registry;
+using Vinconomy.Inventory.Impl;
+using Vinconomy.Trading;
+using Vinconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -13,11 +13,11 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.Client.NoObf;
 
-namespace Viconomy.BlockEntities
+namespace Vinconomy.BlockEntities
 {
     public class BEVinconTeller : BEVinconBase
     {
-        private ViconomyTellerInventory inventory;
+        private ViconTellerInventory inventory;
 
         public override InventoryBase Inventory => inventory;
 
@@ -25,7 +25,7 @@ namespace Viconomy.BlockEntities
 
         public BEVinconTeller()
         {
-            this.inventory = new ViconomyTellerInventory(this, null, null);
+            this.inventory = new ViconTellerInventory(this, null, null);
         }
 
         public override void Initialize(ICoreAPI api)
@@ -55,7 +55,7 @@ namespace Viconomy.BlockEntities
             if (this.Api.World is IServerWorldAccessor)
             {
                 VinconomyCoreSystem modSystem = Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
-                ShopRegistration register = modSystem.GetRegistry().GetShop(RegisterID);
+                ShopRegistration register = modSystem.GetRegistry().GetShop(ShopId);
 
                 byte[] data;
                 using (MemoryStream ms = new MemoryStream())
@@ -109,7 +109,7 @@ namespace Viconomy.BlockEntities
                     SetStallRegisterID(player, data);
                     break;
 
-                case VinConstants.CURRENCY_CONVERSION:
+                case VinConstants.CONVERT_CURRENCY:
                     using (MemoryStream ms = new MemoryStream(data))
                     {
                         BinaryReader reader = new BinaryReader(ms);
@@ -153,7 +153,7 @@ namespace Viconomy.BlockEntities
             }
 
             // Does the shop have a register ID set?
-            if (this.RegisterID == -1 && !this.IsAdminShop)
+            if (this.ShopId == -1 && !this.IsAdminShop)
             {
                 VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
@@ -161,7 +161,7 @@ namespace Viconomy.BlockEntities
 
 
             // Is there a shop with the given Register ID?
-            BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
+            BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.ShopId);
             if (register == null && !this.IsAdminShop)
             {
                 VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
@@ -269,7 +269,7 @@ namespace Viconomy.BlockEntities
             }
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
-            this.invDialog = new GuiViconTeller(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, isOwner);
+            this.invDialog = new GuiVinconTeller(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI, isOwner);
             //this.invDialog.OpenSound = this.OpenSound;
             //this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();

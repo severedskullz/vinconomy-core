@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Text;
-using Viconomy.Util;
+using Vinconomy.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
-namespace Viconomy.ItemTypes
+namespace Vinconomy.ItemTypes
 {
     public class ItemSculptureBundle : Item
     {

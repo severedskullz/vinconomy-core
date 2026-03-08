@@ -1,41 +1,53 @@
 {
     "code": "book-tenretni",
-    "class": "ViconTenretni",
+    "class": "VinconTenretni",
     "maxstacksize": 1,
     "behaviors": [
-    {
-      "name": "GroundStorable",
-      "properties": {
-        "layout": "Quadrants",
-        "collisionBox": {
-          "x1": 0,
-          "y1": 0,
-          "z1": 0,
-          "x2": 1,
-          "y2": 0.125,
-          "z2": 1
-        }
-      }
-    }
-  ],
-  "attributes": {
-    "displaycaseable": true,
-    "shelvable": true,
-    "bookshelveable": true,
-    "groundStorageTransform": {
-			"translation": { "x": 0.12, "y": 0, "z": -0.04 },
-			"rotation": { "x": 0, "y": 35, "z": 90 },
-			"origin": { "x": 0.5, "y": 0.05, "z": 0.5 }
-		},
-
-    "handbook": {
-        "extraSections": [
-            {
-                "title": "",
-                "text": "vinconomy:handbooktext-tenretni"
+        {
+            "name": "GroundStorable",
+            "properties": {
+                "layout": "Quadrants",
+                "collisionBox": {
+                    "x1": 0,
+                    "y1": 0,
+                    "z1": 0,
+                    "x2": 1,
+                    "y2": 0.125,
+                    "z2": 1
+                }
             }
-        ]
-    }
+        }
+    ],
+    "attributes": {
+        "displaycaseable": true,
+        "shelvable": true,
+        "bookshelveable": true,
+        "groundStorageTransform": {
+            "translation": {
+                "x": 0.12,
+                "y": 0,
+                "z": -0.04
+            },
+            "rotation": {
+                "x": 0,
+                "y": 35,
+                "z": 90
+            },
+            "origin": {
+                "x": 0.5,
+                "y": 0.05,
+                "z": 0.5
+            }
+        },
+
+        "handbook": {
+            "extraSections": [
+                {
+                    "title": "",
+                    "text": "vinconomy:handbooktext-tenretni"
+                }
+            ]
+        }
 
     },
     "shape": { "base": "game:block/clutter/bookshelves/small-normal" },
@@ -49,7 +61,8 @@
         "cover": { "base": "game:item/lore/normal-{color}" }
     },
     "creativeinventory": {
-        "vinconomy": [ "*" ], "general": [ "*" ]
+        "vinconomy": [ "*" ],
+        "general": [ "*" ]
     },
     "guiTransform": {
         "translation": {

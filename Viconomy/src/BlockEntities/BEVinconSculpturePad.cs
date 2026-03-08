@@ -2,12 +2,12 @@
 using System.IO;
 using System.Numerics;
 using System.Text;
-using Viconomy.GUI;
-using Viconomy.Inventory.Impl;
-using Viconomy.Inventory.Slots;
-using Viconomy.Renderer;
-using Viconomy.Trading;
-using Viconomy.Util;
+using Vinconomy.GUI;
+using Vinconomy.Inventory.Impl;
+using Vinconomy.Inventory.Slots;
+using Vinconomy.Renderer;
+using Vinconomy.Trading;
+using Vinconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -17,7 +17,7 @@ using Vintagestory.API.Server;
 using Vintagestory.Common;
 using Vintagestory.GameContent;
 
-namespace Viconomy.BlockEntities
+namespace Vinconomy.BlockEntities
 {
     public class BEVinconSculpturePad : BEVinconBase
     {
@@ -46,7 +46,7 @@ namespace Viconomy.BlockEntities
 
         public virtual void ConfigureInventory()
         {
-            this.inventory = new ViconSculptureInventory((maxSizeXZ * maxSizeXZ * maxSizeY) + 1, null, null);
+            this.inventory = new VinconSculptureInventory((maxSizeXZ * maxSizeXZ * maxSizeY) + 1, null, null);
         }
 
 
@@ -111,7 +111,7 @@ namespace Viconomy.BlockEntities
             } 
             
             // Does the shop have a register ID set?
-            if (this.RegisterID == -1 && !this.IsAdminShop)
+            if (this.ShopId == -1 && !this.IsAdminShop)
             {
                 VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
@@ -119,7 +119,7 @@ namespace Viconomy.BlockEntities
 
             
             // Is there a shop with the given Register ID?
-            BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
+            BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.ShopId);
             if (register == null && !this.IsAdminShop)
             {
                 VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
@@ -151,7 +151,7 @@ namespace Viconomy.BlockEntities
                 {
                     for (int x = 0; x < sizeXZ; x++)
                     {
-                        ViconSculptureBlockSlot slot = GetSlotForGrid(x, y, z);
+                        VinconSculptureBlockSlot slot = GetSlotForGrid(x, y, z);
                         if (!slot.isDisabled)
                         {
                             if (slot.Empty)
@@ -188,7 +188,7 @@ namespace Viconomy.BlockEntities
                 {
                     for (int x = 0; x < sizeXZ; x++)
                     {
-                        ViconSculptureBlockSlot slot = GetSlotForGrid(x, y, z);
+                        VinconSculptureBlockSlot slot = GetSlotForGrid(x, y, z);
                         if (!slot.Empty && !slot.isDisabled)
                         {
                             numBlocks++;
@@ -249,7 +249,7 @@ namespace Viconomy.BlockEntities
                         {
                             for (int x = 0; x < sizeXZ; x++)
                             {
-                                ViconSculptureBlockSlot slot = GetSlotForGrid(x, y, z);
+                                VinconSculptureBlockSlot slot = GetSlotForGrid(x, y, z);
                                 if (!slot.Empty && !slot.isDisabled)
                                 {
                                     slot.TakeOut(1);
@@ -312,9 +312,9 @@ namespace Viconomy.BlockEntities
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
             if (isOwner && !VinconomyCoreSystem.ShouldForceCustomerScreen)
-                this.invDialog = new GuiViconSculpturePadOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
+                this.invDialog = new GuiVinconSculpturePadOwner(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
             else
-                this.invDialog = new GuiDialogViconSculpturePadCustomer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
+                this.invDialog = new GuiVinconSculpturePadCustomer(dialogTitle, this.Inventory, this.Pos, this.Api as ICoreClientAPI);
             //this.invDialog.OpenSound = this.OpenSound;
             //this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();
@@ -598,7 +598,7 @@ namespace Viconomy.BlockEntities
             ItemSlot slot = this.inventory[index];
             if (Api != null && Api.Side != EnumAppSide.Server && slot != null && !slot.Empty)
             {
-                getOrCreateMesh(slot.Itemstack, index);
+                getOrCreateMesh(slot, index);
             }
         }
         protected override void TesselateDisplayedItems(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
@@ -610,9 +610,9 @@ namespace Viconomy.BlockEntities
                 {
                     for (int x = 0; x < sizeXZ; x++)
                     {
-                        ViconSculptureBlockSlot slot = GetSlotForGrid(x, y, z);
+                        VinconSculptureBlockSlot slot = GetSlotForGrid(x, y, z);
                         if (slot != null && !slot.Empty && !slot.isDisabled && tfMatrices != null)
-                            mesher.AddMeshData(getOrCreateMesh(slot.Itemstack, index), tfMatrices[index]);
+                            mesher.AddMeshData(getOrCreateMesh(slot, index), tfMatrices[index]);
                         index++;
                     }
                 }
@@ -670,18 +670,19 @@ namespace Viconomy.BlockEntities
             return tfMatrices;
         }
 
-        protected override MeshData getOrCreateMesh(ItemStack stack, int index)
+        protected override MeshData getOrCreateMesh(ItemSlot slot, int index)
         {
-            MeshData modeldata = GetMesh(stack);
+            MeshData modeldata = GetMesh(slot);
             if (modeldata != null)
             {
                 return modeldata;
             }
 
-            IItemRenderer renderer = modSystem.GetRenderer(stack);
+            IItemRenderer renderer = modSystem.GetRenderer(slot);
             if (renderer != null)
             {
-                modeldata = renderer.createMesh(this, stack, index);
+                ItemStack stack = slot.Itemstack;
+                modeldata = renderer.createMesh(this, slot, index);
                 ModelTransform modelTransform = null;
                 // pick our preselected Attribute Transform Code
                 if (stack.Collectible.Attributes?[AttributeTransformCode].Exists ?? false)
@@ -718,7 +719,7 @@ namespace Viconomy.BlockEntities
 
                 if (renderer.shouldCache(stack))
                 {
-                    string meshCacheKey = GetMeshCacheKey(stack);
+                    string meshCacheKey = GetMeshCacheKey(slot);
                     MeshCache[meshCacheKey] = modeldata;
                 }
             }
@@ -728,17 +729,17 @@ namespace Viconomy.BlockEntities
             return modeldata;
         }
 
-        protected override string GetMeshCacheKey(ItemStack stack)
+        protected override string GetMeshCacheKey(ItemSlot slot)
         {
-            if (stack == null)
+            if (slot.Itemstack == null)
                 return null;
 
-            if (stack.Collectible is IContainedMeshSource containedMeshSource)
+            if (slot.Itemstack.Collectible is IContainedMeshSource containedMeshSource)
             {
-                return containedMeshSource.GetMeshCacheKey(stack);
+                return containedMeshSource.GetMeshCacheKey(slot);
             }
 
-            return "sculpturepad-"+stack.Collectible.Code.ToString();
+            return "sculpturepad-"+ slot.Itemstack.Collectible.Code.ToString();
         }
 
         #endregion
@@ -906,11 +907,11 @@ namespace Viconomy.BlockEntities
             return maxSizeY;
         }
 
-        public ViconSculptureBlockSlot GetSlotForGrid(int x, int y, int z)
+        public VinconSculptureBlockSlot GetSlotForGrid(int x, int y, int z)
         {
             int layerOffset = y * GetMaxSizeXZ() * GetMaxSizeXZ();
             int zOffset = z * GetMaxSizeXZ();
-            return (ViconSculptureBlockSlot)this.Inventory[layerOffset + zOffset + x + 1];
+            return (VinconSculptureBlockSlot)this.Inventory[layerOffset + zOffset + x + 1];
         }
 
         public string GetSculptureName()

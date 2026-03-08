@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using Viconomy.BlockEntities;
-using Viconomy.Inventory.StallSlots;
-using Viconomy.Inventory.Impl;
+using Vinconomy.BlockEntities;
+using Vinconomy.Inventory.StallSlots;
+using Vinconomy.Inventory.Impl;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-namespace Viconomy.BlockTypes
+namespace Vinconomy.BlockTypes
 {
     public class BlockVClothingDisplayTop : Block
     {
@@ -16,7 +16,7 @@ namespace Viconomy.BlockTypes
             this.PlacedPriorityInteract = true;
         }
 
-        public override bool DoParticalSelection(IWorldAccessor world, BlockPos pos) => true;
+        public override bool DoPartialSelection(IWorldAccessor world, BlockPos pos) => true;
 
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
@@ -38,7 +38,7 @@ namespace Viconomy.BlockTypes
             List<WorldInteraction> interactions = [];
             if (be != null)
             {
-                StallSlotBase[] slots = ((ViconItemInventory)be.Inventory).StallSlots;
+                StallSlotBase[] slots = ((VinconItemInventory)be.Inventory).StallSlots;
                 //In case we have some oddity with selections, just exit gracefully.
                 if (selection.SelectionBoxIndex >= slots.Length)
                 {

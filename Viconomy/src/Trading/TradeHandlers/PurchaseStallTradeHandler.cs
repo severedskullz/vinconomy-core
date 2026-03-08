@@ -1,10 +1,10 @@
 ﻿using System;
-using Viconomy.BlockEntities;
-using Viconomy.Inventory.Impl;
-using Viconomy.Inventory.StallSlots;
+using Vinconomy.BlockEntities;
+using Vinconomy.Inventory.Impl;
+using Vinconomy.Inventory.StallSlots;
 using Vintagestory.API.Common;
 
-namespace Viconomy.Trading.TradeHandlers
+namespace Vinconomy.Trading.TradeHandlers
 {
 
     /**
@@ -66,7 +66,7 @@ namespace Viconomy.Trading.TradeHandlers
             GenericTradeResult res = new GenericTradeResult(request, core);
 
             BEVinconPurchaseContainer sellingEnt = (BEVinconPurchaseContainer)res.Request.SellingEntity;
-            PurchaseStallSlot slot = (PurchaseStallSlot)((ViconItemPurchaseInventory)sellingEnt.Inventory).StallSlots[res.Request.StallSlot];
+            PurchaseStallSlot slot = (PurchaseStallSlot)((VinconItemPurchaseInventory)sellingEnt.Inventory).StallSlots[res.Request.StallSlot];
 
             // If we have a limited amount of purchases, grab whichever is fewer - the NumTradesLeft or the original amount.
             if (slot.LimitedPurchases)
@@ -147,7 +147,7 @@ namespace Viconomy.Trading.TradeHandlers
 
                     ItemSlot dslot = new ItemSlot(null);
                     dslot.Itemstack = paymentStack;
-                    ViconItemPurchaseInventory inv = (ViconItemPurchaseInventory)stall.Inventory;
+                    VinconItemPurchaseInventory inv = (VinconItemPurchaseInventory)stall.Inventory;
                     PurchaseStallSlot stallSlot = (PurchaseStallSlot)inv.StallSlots[res.Request.StallSlot];
                     foreach (ItemSlot slot in stallSlot.PurchasedProductSlots)
                     {
@@ -169,7 +169,7 @@ namespace Viconomy.Trading.TradeHandlers
         {
             int maxStackSize = request.CurrencyStackNeeded.Collectible.MaxStackSize;
             int qntyLeft =  request.NumPurchases * request.GetFinalCurrencyNeededPerPurchase();
-            ViconItemPurchaseInventory inv = ((ViconItemPurchaseInventory)request.SellingEntity.Inventory);
+            VinconItemPurchaseInventory inv = ((VinconItemPurchaseInventory)request.SellingEntity.Inventory);
             PurchaseStallSlot slot = (PurchaseStallSlot) inv.StallSlots[request.StallSlot];
             foreach (ItemSlot itemSlot in slot.GetPurchasedProductSlots())
             {

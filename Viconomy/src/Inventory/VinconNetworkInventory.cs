@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Viconomy.Delegates;
-using Viconomy.Network.Api;
-using Viconomy.TradeNetwork.Api;
-using Viconomy.Util;
+using Viconomy.Network.JavaApi.TradeNetwork;
+using Vinconomy.Delegates;
+using Vinconomy.Network.JavaApi;
+using Vinconomy.Util;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
-namespace Viconomy.Inventory
+namespace Vinconomy.Inventory
 {
     public class VinconNetworkInventory : InventoryBase
     {

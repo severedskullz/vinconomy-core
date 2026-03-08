@@ -1,22 +1,28 @@
-﻿using System;
-using System.IO;
-using Vintagestory.API.Config;
-using Microsoft.Data.Sqlite;
-using Vintagestory.API.Server;
-using Viconomy.Registry;
-using Viconomy.Trading;
-using Viconomy.Network;
+﻿using Microsoft.Data.Sqlite;
+using System;
 using System.Collections.Generic;
-using Vintagestory.API.Common;
-using Vintagestory.API.MathTools;
 using System.Data;
+using System.IO;
+using System.Reflection.Metadata;
+using Viconomy.Registry;
+using Vinconomy.BlockEntities;
+using Vinconomy.Network;
+using Vinconomy.Registry;
+using Vinconomy.Trading;
+using Vintagestory.API.Common;
+using Vintagestory.API.Config;
+using Vintagestory.API.MathTools;
+using Vintagestory.API.Server;
 
-namespace Viconomy.Database
+namespace Vinconomy.Database
 {
     public class ViconDatabase
     {
         private string ConnStr;
         ICoreServerAPI api;
+
+        Dictionary<int, ShopProductList> productListCache = new Dictionary<int, ShopProductList>();
+        private long EXPIRE_TIME_MILLIS = 1000 * 60 * 10;
 
         public ViconDatabase(ICoreServerAPI api)
         {
@@ -35,9 +41,11 @@ namespace Viconomy.Database
             {
                 connection.Open();
                 SqliteCommand cmd = connection.CreateCommand();
-                cmd.CommandText = "CREATE TABLE IF NOT EXISTS Shops (Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Owner TEXT, OwnerName TEXT, X INTEGER, Y INTEGER, Z INTEGER, BroadcastWaypoint INTEGER, WaypointIcon TEXT, WaypointColor INTEGER, Description TEXT, ShortDescription TEXT, WebHook TEXT, StallAccess INTEGER NOT NULL DEFAULT 0);";
+                cmd.CommandText = "CREATE TABLE IF NOT EXISTS Shops (Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Owner TEXT, OwnerName TEXT, X INTEGER, Y INTEGER, Z INTEGER, BroadcastWaypoint BOOLEAN, WaypointIcon TEXT, WaypointColor INTEGER, Description TEXT, ShortDescription TEXT, WebHook TEXT, StallAccess INTEGER NOT NULL DEFAULT 0);";
                 cmd.ExecuteNonQuery();
 
+                /*
+                // No one should still be running 4.0 at this point... Keeping here for historical reasons, but lets not hit the DB  with a bad query each time we start.
                 try
                 {
                     // For backwards compatability to 4.0
@@ -45,7 +53,7 @@ namespace Viconomy.Database
                     cmd.ExecuteNonQuery();
                 }
                 catch{ }
-
+                */
 
                 cmd.CommandText = "CREATE TABLE IF NOT EXISTS Sales (ShopId INTEGER, Customer TEXT, Month INTEGER, Year INTEGER, ProductCode TEXT, ProductQuantity INTEGER, ProductAttributes TEXT, CurrencyCode TEXT, CurrencyQuantity INTEGER, CurrencyAttributes TEXT);";
                 cmd.ExecuteNonQuery();
@@ -60,6 +68,15 @@ namespace Viconomy.Database
                 cmd.ExecuteNonQuery();
 
                 cmd.CommandText = "CREATE TABLE IF NOT EXISTS ShopPermissions (Id INTEGER, PlayerUid TEXT, PlayerName TEXT);";
+                cmd.ExecuteNonQuery();
+
+                cmd.CommandText = "CREATE TABLE IF NOT EXISTS CurrencyDefinitions (Id INTEGER PRIMARY KEY AUTOINCREMENT, ShopId INTEGER, CurrencyCode TEXT, CurrencyAttributes BLOB, IgnoreAttributes BOOLEAN, Supply INTEGER, IntervalType INTEGER, IntervalDuration INTEGER, IntervalPeriod INTEGER, IntervalAction INTEGER, IntervalActionValue INTEGER);";
+                cmd.ExecuteNonQuery();
+
+                cmd.CommandText = "CREATE TABLE IF NOT EXISTS ProductDefinitions (Id INTEGER PRIMARY KEY AUTOINCREMENT, ShopId INTEGER, ProductCode TEXT, ProductQuantity INTEGER, ProductAttributes BLOB, CurrencyCode TEXT, CurrencyQuantity INTEGER, CurrencyAttributes BLOB,  IgnoreAttributes BOOLEAN, Supply INTEGER, IntervalType INTEGER, IntervalDuration INTEGER, IntervalPeriod INTEGER, IntervalAction INTEGER, IntervalActionValue INTEGER, SupplyThreshold INTEGER, ThresholdScale INTEGER, CurrencyLowQuantity INTEGER, CurrencyHighQuantity INTEGER, IdealSupply INTEGER, MaxSupply INTEGER, SalesContribute BOOLEAN, UnlimitedSupply BOOLEAN, UnlimitedDemand BOOLEAN);";
+                cmd.ExecuteNonQuery();
+
+                cmd.CommandText = "CREATE TABLE IF NOT EXISTS PlayerCooldowns (ShopId INTEGER, PlayerUid TEXT, LastAccessed TIMESTAMP, PRIMARY KEY (ShopId, PlayerUid));";
                 cmd.ExecuteNonQuery();
 
                 connection.Close();
@@ -183,7 +200,7 @@ namespace Viconomy.Database
 
                 connection.Open();
                 SqliteCommand cmd = connection.CreateCommand();
-                cmd.Parameters.Add("@ShopId", SqliteType.Integer).Value = req.SellingEntity.RegisterID;
+                cmd.Parameters.Add("@ShopId", SqliteType.Integer).Value = req.SellingEntity.ShopId;
                 cmd.Parameters.Add("@Customer", SqliteType.Text).Value = req.Customer.PlayerUID;
                 cmd.Parameters.Add("@Month", SqliteType.Integer).Value = req.Api.World.Calendar.Month;
                 cmd.Parameters.Add("@Year", SqliteType.Integer).Value = req.Api.World.Calendar.Year;
@@ -236,7 +253,7 @@ namespace Viconomy.Database
             {
                 connection.Open();
                 SqliteCommand cmd = connection.CreateCommand();
-                cmd.Parameters.Add("@ShopId", SqliteType.Integer).Value = purchaseResult.sellingEntity.RegisterID;
+                cmd.Parameters.Add("@ShopId", SqliteType.Integer).Value = purchaseResult.sellingEntity.ShopId;
                 cmd.Parameters.Add("@Customer", SqliteType.Text).Value = purchaseResult.customer.PlayerUID;
                 cmd.Parameters.Add("@Month", SqliteType.Integer).Value = purchaseResult.coreApi.World.Calendar.Month;
                 cmd.Parameters.Add("@Year", SqliteType.Integer).Value = purchaseResult.coreApi.World.Calendar.Year;
@@ -548,8 +565,7 @@ namespace Viconomy.Database
             }
         }
 
-        Dictionary<int, ShopProductList> productListCache = new Dictionary<int, ShopProductList>();
-        private long EXPIRE_TIME_MILLIS = 1000 * 60 * 10;
+
 
         public ShopProductList GetShopProducts(int ID)
         {
@@ -576,7 +592,7 @@ namespace Viconomy.Database
                 
                 while (reader.Read())
                 {
-                    ShopProduct product = new ShopProduct();
+                    Registry.ShopProduct product = new Registry.ShopProduct();
                     product.ProductName = reader.GetString(5);
                     product.ProductCode = reader.GetString(6);
                     product.ProductQuantity = reader.GetInt32(7);
@@ -611,5 +627,387 @@ namespace Viconomy.Database
             }
 
         }
+
+        private static CurrencyDefinition ReadCurrencyDefinition(SqliteDataReader reader)
+        {
+            /*
+            Id INTEGER,
+            ShopId INTEGER,
+            CurrencyCode TEXT,
+            CurrencyQuantity INTEGER,
+            CurrencyAttributes BLOB,
+            Amount INTEGER,
+            IntervalType INTEGER,
+            IntervalDuration INTEGER,
+            IntervalPeriod INTEGER,
+            IntervalAction INTEGER,
+            IntervalActionValue INTEGER
+            */
+
+            CurrencyDefinition reg = new CurrencyDefinition();
+            reg.Id = reader.GetInt32(0);
+            reg.ShopId = reader.GetInt32(1);
+            reg.CurrencyCode = reader.GetString(2);
+            reg.CurrencyAttributes = (byte[])reader.GetValue(3);
+            reg.IgnoreAttributes = reader.GetBoolean(4);
+            reg.Supply = reader.GetInt32(5);
+            reg.IntervalType = reader.GetInt32(6);
+            reg.IntervalDuration = reader.GetInt32(7);
+            reg.IntervalPeriod = reader.GetInt32(8);
+            reg.IntervalAction = reader.GetInt32(9);
+            reg.IntervalActionValue = reader.GetInt32(10);
+
+            return reg;
+        }
+
+        private static EntryResultDefinition ReadCurrencyDefinitionAsResult(SqliteDataReader reader)
+        {
+        EntryResultDefinition reg = new EntryResultDefinition();
+            reg.Id = reader.GetInt32(0);
+            reg.ShopId = reader.GetInt32(1);
+            reg.Code = reader.GetString(2);
+            reg.Attributes = (byte[])reader.GetValue(3);
+            reg.Supply = reader.GetInt32(5);
+            reg.Type = BEVinconAdminRegister.TYPE_CURRENCY;
+            return reg;
+        }
+
+
+        private static ProductDefinition ReadProductDefinition(SqliteDataReader reader)
+        {
+            /*
+            Id INTEGER,
+            ShopId INTEGER,
+            ProductCode TEXT,
+            ProductQuantity INTEGER,
+            ProductAttributes BLOB,
+            CurrencyCode TEXT,
+            CurrencyQuantity INTEGER,
+            CurrencyAttributes BLOB,
+            Amount INTEGER,
+            IntervalType INTEGER,
+            IntervalDuration INTEGER,
+            IntervalPeriod INTEGER,
+            IntervalAction INTEGER,
+            IntervalActionValue INTEGER,
+            SupplyThreshold INTEGER,
+            ThresholdScale INTEGER,
+            CurrencyLowQuantity INTEGER,
+            CurrencyHighQuantity INTEGER,
+            IdealSupply INTEGER,
+            MaxSupply INTEGER,
+            SalesContribute BOOLEAN,
+            UnlimitedSupply BOOLEAN,
+            UnlimitedDemand BOOLEAN
+            */
+
+            ProductDefinition reg = new ProductDefinition();
+            reg.Id = reader.GetInt32(0);
+            reg.ShopId = reader.GetInt32(1);
+            reg.ProductCode = reader.GetString(2);
+            reg.ProductQuantity = reader.GetInt32(3);
+            reg.ProductAttributes = (byte[])reader.GetValue(4);
+            reg.CurrencyCode = reader.GetString(5);
+            reg.CurrencyQuantity = reader.GetInt32(6);
+            reg.CurrencyAttributes = (byte[])reader.GetValue(7);
+            reg.IgnoreAttributes = reader.GetBoolean(8);
+            reg.Supply = reader.GetInt32(9);
+            reg.IntervalType = reader.GetInt32(10);
+            reg.IntervalDuration = reader.GetInt32(11);
+            reg.IntervalPeriod = reader.GetInt32(12);
+            reg.IntervalAction = reader.GetInt32(13);
+            reg.IntervalActionValue = reader.GetInt32(14);
+            reg.SupplyThreshold = reader.GetInt32(15);
+            reg.ThresholdScale = reader.GetInt32(16);
+            reg.CurrencyLowQuantity = reader.GetInt32(17);
+            reg.CurrencyHighQuantity = reader.GetInt32(18);
+            reg.IdealSupply = reader.GetInt32(19);
+            reg.MaxSupply = reader.GetInt32(20);
+            reg.SalesContribute = reader.GetBoolean(21);
+            reg.UnlimitedSupply = reader.GetBoolean(22);
+            reg.UnlimitedDemand = reader.GetBoolean(23);
+            return reg;
+        }
+
+        private static EntryResultDefinition ReadProductDefinitionAsResult(SqliteDataReader reader)
+        {
+            EntryResultDefinition reg = new EntryResultDefinition();
+            reg.Id = reader.GetInt32(0);
+            reg.ShopId = reader.GetInt32(1);
+            reg.Code = reader.GetString(2);
+            reg.Attributes = (byte[])reader.GetValue(4);
+            reg.Supply = reader.GetInt32(9);
+            reg.Type = BEVinconAdminRegister.TYPE_PRODUCT;
+            return reg;
+        }
+
+
+        public List<EntryResultDefinition> GetProductDefinitionResults(int shopId, string item = null)
+        {
+            List<EntryResultDefinition> list = new List<EntryResultDefinition>();
+            using (SqliteConnection connection = GetConnection())
+            {
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+                cmd.Parameters.Add("@ShopID", SqliteType.Integer).Value = shopId;
+                cmd.Parameters.Add("@ProductCode", SqliteType.Text).Value = item;
+                cmd.CommandText = "SELECT * FROM ProductDefinitions WHERE ShopId = @ShopID";
+                if (item != null && item != "")
+                    cmd.CommandText += " AND ProductCode = @ProductCode";
+
+                SqliteDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    list.Add(ReadProductDefinitionAsResult(reader));
+                }
+            }
+            return list;
+        }
+
+        public List<ProductDefinition> GetProductDefinitions(string item, int shopId)
+        {
+            List<ProductDefinition> list = new List<ProductDefinition>();
+            using (SqliteConnection connection = GetConnection())
+            {
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+                cmd.Parameters.Add("@ProductCode", SqliteType.Text).Value = item;
+                cmd.Parameters.Add("@ShopID", SqliteType.Integer).Value = shopId;
+                cmd.CommandText = "SELECT * FROM ProductDefinitions WHERE ProductCode = @ProductCode AND ShopId = @ShopID";
+
+                SqliteDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    list.Add(ReadProductDefinition(reader));
+                }
+            }
+
+            return list;
+        }
+
+        public ProductDefinition GetProductDefinition(int entryId, int shopId) 
+        {
+            using (SqliteConnection connection = GetConnection())
+            {
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+                cmd.Parameters.Add("@ID", SqliteType.Integer).Value = entryId;
+                cmd.Parameters.Add("@ShopID", SqliteType.Integer).Value = shopId;
+                cmd.CommandText = "SELECT * FROM ProductDefinitions WHERE ID = @ID AND ShopId = @ShopID";
+
+                SqliteDataReader reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    return ReadProductDefinition(reader);
+                }
+            }
+
+            return null;
+        }
+
+        public ProductDefinition CreateOrUpdateProductDefinition(ProductDefinition def)
+        {
+            using (SqliteConnection connection = GetConnection())
+            {
+
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+                cmd.Parameters.Add("@Id", SqliteType.Integer).Value = def.Id;
+                cmd.Parameters.Add("@ShopId", SqliteType.Integer).Value = def.ShopId;
+                cmd.Parameters.Add("@ProductCode", SqliteType.Text).Value = def.ProductCode;
+                cmd.Parameters.Add("@ProductQuantity", SqliteType.Text).Value = def.ProductQuantity;
+                cmd.Parameters.Add("@ProductAttributes", SqliteType.Text).Value = def.ProductAttributes;
+                cmd.Parameters.Add("@CurrencyCode", SqliteType.Text).Value = def.CurrencyCode;
+                cmd.Parameters.Add("@CurrencyQuantity", SqliteType.Text).Value = def.CurrencyQuantity;
+                cmd.Parameters.Add("@CurrencyAttributes", SqliteType.Text).Value = def.CurrencyAttributes;
+                cmd.Parameters.Add("@IgnoreAttributes", SqliteType.Integer).Value = def.IgnoreAttributes;
+                cmd.Parameters.Add("@Supply", SqliteType.Integer).Value = def.Supply;
+                cmd.Parameters.Add("@IntervalType", SqliteType.Integer).Value = def.IntervalType;
+                cmd.Parameters.Add("@IntervalDuration", SqliteType.Integer).Value = def.IntervalDuration;
+                cmd.Parameters.Add("@IntervalPeriod", SqliteType.Integer).Value = def.IntervalPeriod;
+                cmd.Parameters.Add("@IntervalAction", SqliteType.Integer).Value = def.IntervalAction;
+                cmd.Parameters.Add("@IntervalActionValue", SqliteType.Integer).Value = def.IntervalActionValue;
+                cmd.Parameters.Add("@SupplyThreshold", SqliteType.Integer).Value = def.SupplyThreshold;
+                cmd.Parameters.Add("@ThresholdScale", SqliteType.Integer).Value = def.ThresholdScale;
+                cmd.Parameters.Add("@CurrencyLowQuantity", SqliteType.Integer).Value = def.CurrencyLowQuantity;
+                cmd.Parameters.Add("@CurrencyHighQuantity", SqliteType.Integer).Value = def.CurrencyHighQuantity;
+                cmd.Parameters.Add("@IdealSupply", SqliteType.Integer).Value = def.IdealSupply;
+                cmd.Parameters.Add("@MaxSupply", SqliteType.Integer).Value = def.MaxSupply;
+                cmd.Parameters.Add("@SalesContribute", SqliteType.Integer).Value = def.SalesContribute;
+                cmd.Parameters.Add("@UnlimitedSupply", SqliteType.Integer).Value = def.UnlimitedSupply;
+                cmd.Parameters.Add("@UnlimitedDemand", SqliteType.Integer).Value = def.UnlimitedDemand;
+
+
+                if (def.Id >  0)
+                {
+                    cmd.CommandText = "UPDATE ProductDefinitions SET ProductCode = @ProductCode, ProductQuantity = @ProductQuantity, ProductAttributes = @ProductAttributes, CurrencyCode = @CurrencyCode,"+
+                        "CurrencyQuantity = @CurrencyQuantity, CurrencyAttributes = @CurrencyAttributes, IgnoreAttributes = @IgnoreAttributes, Supply = @Supply, IntervalType = @IntervalType, IntervalDuration = @IntervalDuration,"+
+                        "IntervalPeriod = @IntervalPeriod, IntervalAction = @IntervalAction, IntervalActionValue = @IntervalActionValue, SupplyThreshold = @SupplyThreshold, ThresholdScale = @ThresholdScale,"+
+                        "CurrencyLowQuantity = @CurrencyLowQuantity, CurrencyHighQuantity = @CurrencyHighQuantity, IdealSupply = @IdealSupply, MaxSupply = @MaxSupply, SalesContribute = @SalesContribute, "+
+                        "UnlimitedSupply = @UnlimitedSupply, UnlimitedDemand = @UnlimitedDemand WHERE ID = @Id AND ShopId = @ShopId;";
+                    cmd.ExecuteNonQuery();
+                }
+                else
+                {
+                    cmd.CommandText = "INSERT INTO ProductDefinitions VALUES (NULL, @ShopId, @ProductCode, @ProductQuantity, @ProductAttributes, @CurrencyCode, @CurrencyQuantity, @CurrencyAttributes, @IgnoreAttributes," +
+                       "@Supply, @IntervalType, @IntervalDuration, @IntervalPeriod, @IntervalAction, @IntervalActionValue, @SupplyThreshold, @ThresholdScale, @CurrencyLowQuantity, @CurrencyHighQuantity," +
+                       "@IdealSupply, @MaxSupply, @SalesContribute, @UnlimitedSupply, @UnlimitedDemand); SELECT last_insert_rowid();";
+
+                    int lastId = Convert.ToInt32(cmd.ExecuteScalar());
+                    def.Id = lastId;
+                }
+
+                connection.Close();
+            }
+
+            return def;
+        }
+
+        public void DeleteProductDefinition(ProductDefinition def)
+        {
+            using (SqliteConnection connection = GetConnection())
+            {
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+
+                cmd.Parameters.Add("@Id", SqliteType.Integer).Value = def.Id;
+                cmd.Parameters.Add("@ShopId", SqliteType.Integer).Value = def.ShopId;
+
+                cmd.CommandText = @"DELETE FROM ProductDefinitions WHERE ID = @ID AND ShopId = @ShopId;";
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+
+        public List<EntryResultDefinition> GetCurrencyDefinitionResults(int shopId, string item = null)
+        {
+            List<EntryResultDefinition> list = new List<EntryResultDefinition>();
+            using (SqliteConnection connection = GetConnection())
+            {
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+                cmd.Parameters.Add("@ShopID", SqliteType.Integer).Value = shopId;
+                cmd.Parameters.Add("@CurrencyCode", SqliteType.Text).Value = item;
+                cmd.CommandText = "SELECT * FROM CurrencyDefinitions WHERE ShopId = @ShopID";
+                if (item != null && item != "")
+                    cmd.CommandText += " AND CurrencyCode = @CurrencyCode";
+
+                SqliteDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    list.Add(ReadCurrencyDefinitionAsResult(reader));
+                }
+            }
+            return list;
+        }
+
+        public List<CurrencyDefinition> GetCurrencyDefinitions(string item, int shopId)
+        {
+            List<CurrencyDefinition> list = new List<CurrencyDefinition>();
+            using (SqliteConnection connection = GetConnection())
+            {
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+                cmd.Parameters.Add("@CurrencyCode", SqliteType.Text).Value = item;
+                cmd.Parameters.Add("@ShopID", SqliteType.Integer).Value = shopId;
+                cmd.CommandText = "SELECT * FROM CurrencyDefinitions WHERE CurrencyCode = @CurrencyCode AND ShopId = @ShopID";
+
+                SqliteDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    list.Add(ReadCurrencyDefinition(reader));
+                }
+
+            }
+
+            return list;
+        }
+
+        public CurrencyDefinition GetCurrencyDefinition(int entryId, int shopId)
+        {
+            using (SqliteConnection connection = GetConnection())
+            {
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+                cmd.Parameters.Add("@ID", SqliteType.Integer).Value = entryId;
+                cmd.Parameters.Add("@ShopID", SqliteType.Integer).Value = shopId;
+                cmd.CommandText = "SELECT * FROM CurrencyDefinitions WHERE ID = @ID AND ShopId = @ShopID";
+
+                SqliteDataReader reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    return ReadCurrencyDefinition(reader);
+                }
+            }
+
+            return null;
+        }
+
+
+
+        public CurrencyDefinition CreateOrUpdateCurrencyDefinition(CurrencyDefinition def)
+        {
+            using (SqliteConnection connection = GetConnection())
+            {
+
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+                cmd.Parameters.Add("@Id", SqliteType.Integer).Value = def.Id;
+                cmd.Parameters.Add("@ShopId", SqliteType.Integer).Value = def.ShopId;
+                cmd.Parameters.Add("@CurrencyCode", SqliteType.Text).Value = def.CurrencyCode;
+                cmd.Parameters.Add("@CurrencyAttributes", SqliteType.Text).Value = def.CurrencyAttributes;
+                cmd.Parameters.Add("@IgnoreAttributes", SqliteType.Integer).Value = def.IgnoreAttributes;
+                cmd.Parameters.Add("@Supply", SqliteType.Integer).Value = def.Supply;
+                cmd.Parameters.Add("@IntervalType", SqliteType.Integer).Value = def.IntervalType;
+                cmd.Parameters.Add("@IntervalDuration", SqliteType.Integer).Value = def.IntervalDuration;
+                cmd.Parameters.Add("@IntervalPeriod", SqliteType.Integer).Value = def.IntervalPeriod;
+                cmd.Parameters.Add("@IntervalAction", SqliteType.Integer).Value = def.IntervalAction;
+                cmd.Parameters.Add("@IntervalActionValue", SqliteType.Integer).Value = def.IntervalActionValue;
+
+
+
+                if (def.Id > 0)
+                {
+                    cmd.CommandText = "UPDATE CurrencyDefinitions SET CurrencyCode = @CurrencyCode, CurrencyAttributes = @CurrencyAttributes, IgnoreAttributes = @IgnoreAttributes, Supply = @Supply, IntervalType = @IntervalType, IntervalDuration = @IntervalDuration,"+
+                        "IntervalPeriod = @IntervalPeriod, IntervalAction = @IntervalAction, IntervalActionValue = @IntervalActionValue WHERE ID = @Id AND ShopId = @ShopId;";
+                    cmd.ExecuteNonQuery();
+                }
+                else
+                {
+                    cmd.CommandText = "INSERT INTO CurrencyDefinitions VALUES (NULL, @ShopId, @CurrencyCode, @CurrencyAttributes, @IgnoreAttributes, @Supply," +
+                        "@IntervalType, @IntervalDuration, @IntervalPeriod, @IntervalAction, @IntervalActionValue); SELECT last_insert_rowid();";
+
+                    int lastId = Convert.ToInt32(cmd.ExecuteScalar());
+                    def.Id = lastId;
+                }
+
+                connection.Close();
+            }
+
+            return def;
+        }
+
+        public void DeleteCurrencyDefinition(CurrencyDefinition def)
+        {
+            using (SqliteConnection connection = GetConnection())
+            {
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+
+                cmd.Parameters.Add("@Id", SqliteType.Integer).Value = def.Id;
+                cmd.Parameters.Add("@ShopId", SqliteType.Integer).Value = def.ShopId;
+
+                cmd.CommandText = "DELETE FROM CurrencyDefinitions WHERE ID = @ID AND ShopId = @ShopId;";
+                cmd.ExecuteNonQuery();
+            }
+
+        }
+
     }
 }

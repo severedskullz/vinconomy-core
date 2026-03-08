@@ -1,15 +1,15 @@
 ﻿using System;
-using Viconomy.Inventory.Slots;
-using Viconomy.Trading.TradeHandlers;
+using Vinconomy.Inventory.Slots;
+using Vinconomy.Trading.TradeHandlers;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 
-namespace Viconomy.Inventory.StallSlots
+namespace Vinconomy.Inventory.StallSlots
 {
     public class LiquidStallSlot : StallSlotBase
     {
-        ViconLockedSlot Liquid;
+        VinconLockedSlot Liquid;
         public float LiterCapacity { get; protected set; }
 
         public override ItemSlot this[int slotId]
@@ -28,16 +28,16 @@ namespace Viconomy.Inventory.StallSlots
             {
                 if (slotId < ProductStacksPerStall)
                 {
-                    Liquid = (ViconLockedSlot)value;
+                    Liquid = (VinconLockedSlot)value;
                 }
                 else
-                    Currency = (ViconCurrencySlot)value;
+                    Currency = (VinconCurrencySlot)value;
             }
         }
 
         public LiquidStallSlot(InventoryBase inventory, int stallSlot, float literCapacity) : base(inventory, 1)
         {
-            Liquid = new ViconLockedSlot(inventory, stallSlot);
+            Liquid = new VinconLockedSlot(inventory, stallSlot);
             this.LiterCapacity = literCapacity;
         }
 
@@ -84,7 +84,7 @@ namespace Viconomy.Inventory.StallSlots
 
         public override void SetSlot(int itemSlot, ItemSlot value)
         {
-            Liquid = (ViconLockedSlot)value;
+            Liquid = (VinconLockedSlot)value;
         }
 
         public override ItemSlot GetSlot(int itemSlot)

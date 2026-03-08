@@ -1,8 +1,8 @@
 ﻿using System;
-using Viconomy.BlockEntities;
+using Vinconomy.BlockEntities;
 using Vintagestory.API.Client;
 
-namespace Viconomy.Renderer
+namespace Vinconomy.Renderer
 {
     public class DistanceRenderer : IRenderer, IDisposable
     {

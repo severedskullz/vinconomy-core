@@ -1,6 +1,6 @@
 ﻿using Vintagestory.API.Common;
 
-namespace Viconomy.BlockEntities
+namespace Vinconomy.BlockEntities
 {
     public class BEVinconJobboard : BlockEntity
     {

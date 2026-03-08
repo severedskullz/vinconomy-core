@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Viconomy.BlockEntities.TextureSwappable;
+using Vinconomy.BlockEntities.TextureSwappable;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -10,7 +10,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace Viconomy.BlockTypes
+namespace Vinconomy.BlockTypes
 {
     public class TextureSwappableBlock : BlockVBase, ITexPositionSource
     {
@@ -283,7 +283,7 @@ namespace Viconomy.BlockTypes
             {
                 ItemStack drops = this.OnPickBlock(world, pos);
                 world.SpawnItemEntity(drops, new Vec3d((double)pos.X + 0.5, (double)pos.Y + 0.5, (double)pos.Z + 0.5), null);
-                world.PlaySoundAt(this.Sounds.GetBreakSound(byPlayer), (double)pos.X, (double)pos.Y, (double)pos.Z, byPlayer, true, 32f, 1f);
+                world.PlaySoundAt(this.Sounds.GetBreakSound(byPlayer).Location, (double)pos.X, (double)pos.Y, (double)pos.Z, byPlayer, true, 32f, 1f);
             }
 
 

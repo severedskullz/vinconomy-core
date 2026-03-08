@@ -1,11 +1,11 @@
 ﻿using System;
-using Viconomy.BlockEntities;
-using Viconomy.ItemTypes;
-using Viconomy.Trading.TradeHandlers;
+using Vinconomy.BlockEntities;
+using Vinconomy.ItemTypes;
+using Vinconomy.Trading.TradeHandlers;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
-namespace Viconomy.Trading
+namespace Vinconomy.Trading
 {
     public class GenericTradeRequest
     {

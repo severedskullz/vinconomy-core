@@ -9,14 +9,14 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
-using Viconomy.GUI;
-using Viconomy.Network;
-using Viconomy.TradeNetwork.Api;
+using Vinconomy.GUI;
+using Vinconomy.Network;
 using Vintagestory.API.MathTools;
-using Viconomy.BlockEntities;
+using Vinconomy.BlockEntities;
 using System.Collections.Generic;
+using Viconomy.Network.JavaApi.TradeNetwork;
 
-namespace Viconomy.Entities
+namespace Vinconomy.Entities
 {
     public class EntityVinconTrader : EntityAgent
     {
@@ -288,13 +288,13 @@ namespace Viconomy.Entities
             base.Revive();
             if (Attributes.HasAttribute("spawnX"))
             {
-                ServerPos.X = Attributes.GetDouble("spawnX");
-                ServerPos.Y = Attributes.GetDouble("spawnY");
-                ServerPos.Z = Attributes.GetDouble("spawnZ");
+                Pos.X = Attributes.GetDouble("spawnX");
+                Pos.Y = Attributes.GetDouble("spawnY");
+                Pos.Z = Attributes.GetDouble("spawnZ");
             }
         }
 
-        public override void PlayEntitySound(string type, IPlayer dualCallByPlayer = null, bool randomizePitch = true, float range = 24f)
+        public override void PlayEntitySound(string type, IPlayer dualCallByPlayer = null)// , bool randomizePitch = true, float range = 24f)
         {
             if (type == "hurt" && World.Side == EnumAppSide.Server)
             {
@@ -306,7 +306,7 @@ namespace Viconomy.Entities
             }
             else
             {
-                base.PlayEntitySound(type, dualCallByPlayer, randomizePitch, range);
+                base.PlayEntitySound(type, dualCallByPlayer); //, randomizePitch, range);
             }
         }
 

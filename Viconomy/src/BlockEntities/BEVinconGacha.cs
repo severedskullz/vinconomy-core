@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using Viconomy.GUI;
-using Viconomy.Inventory.Impl;
-using Viconomy.Inventory.Slots;
-using Viconomy.Trading;
-using Viconomy.Util;
+using Vinconomy.GUI;
+using Vinconomy.Inventory.Impl;
+using Vinconomy.Inventory.Slots;
+using Vinconomy.Trading;
+using Vinconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -13,11 +13,11 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 
-namespace Viconomy.BlockEntities
+namespace Vinconomy.BlockEntities
 {
     public class BEVinconGacha : BEVinconBase
     {
-        protected ViconGachaInventory inventory;
+        protected VinconGachaInventory inventory;
         //private MeshData[] meshes;
         public bool useTotalRandomizer { get; private set; }
 
@@ -27,7 +27,7 @@ namespace Viconomy.BlockEntities
 
         public BEVinconGacha()
         {
-            this.inventory = new ViconGachaInventory(10, null, Api);
+            this.inventory = new VinconGachaInventory(10, null, Api);
             this.inventory.SlotModified += Inventory_SlotModified;
         }
 
@@ -91,7 +91,7 @@ namespace Viconomy.BlockEntities
             } 
             
             // Does the shop have a register ID set?
-            if (this.RegisterID == -1 && !this.IsAdminShop)
+            if (this.ShopId == -1 && !this.IsAdminShop)
             {
                 VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
@@ -99,14 +99,14 @@ namespace Viconomy.BlockEntities
 
             
             // Is there a shop with the given Register ID?
-            BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
+            BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.ShopId);
             if (register == null && !this.IsAdminShop)
             {
                 VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.COULDNT_GET_REGISTER);
                 return;
             }
 
-            ViconItemSlot stockSlot = this.inventory.GetRandomItem(this.useTotalRandomizer);
+            VinconItemSlot stockSlot = this.inventory.GetRandomItem(this.useTotalRandomizer);
             if (stockSlot == null)
             {
                 //Console.WriteLine(Api.Side + ": Not enough stock to purchase item");
@@ -168,9 +168,9 @@ namespace Viconomy.BlockEntities
             this.Inventory.FromTreeAttributes(tree);
             this.Inventory.ResolveBlocksOrItems();
             if (isOwner && !VinconomyCoreSystem.ShouldForceCustomerScreen)
-                this.invDialog = new GuiViconGachaOwner(dialogTitle, this.inventory, this.Pos, this.Api as ICoreClientAPI);
+                this.invDialog = new GuiVinconGachaOwner(dialogTitle, this.inventory, this.Pos, this.Api as ICoreClientAPI);
             else
-                this.invDialog = new GuiDialogViconGachaCustomer(dialogTitle, this.inventory, this.Pos, this.Api as ICoreClientAPI);
+                this.invDialog = new GuiDialogVinconGachaCustomer(dialogTitle, this.inventory, this.Pos, this.Api as ICoreClientAPI);
             //this.invDialog.OpenSound = this.OpenSound;
             //this.invDialog.CloseSound = this.CloseSound;
             this.invDialog.TryOpen();

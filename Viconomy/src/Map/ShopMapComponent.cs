@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
-using Viconomy.Registry;
+using Vinconomy.Registry;
 using Vintagestory.API.Client;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
-namespace Viconomy.Map
+namespace Vinconomy.Map
 {
     public class ShopMapComponent : MapComponent
     {

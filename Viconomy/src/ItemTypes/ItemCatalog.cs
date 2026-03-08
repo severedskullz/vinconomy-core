@@ -1,11 +1,11 @@
 ﻿using System.Text;
-using Viconomy.Network;
-using Viconomy.Util;
+using Vinconomy.Network;
+using Vinconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 
-namespace Viconomy.ItemTypes
+namespace Vinconomy.ItemTypes
 {
     public class ItemCatalog : Item
     {

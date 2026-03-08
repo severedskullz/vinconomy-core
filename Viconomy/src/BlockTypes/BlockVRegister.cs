@@ -1,18 +1,19 @@
 ﻿using System.Text;
-using Viconomy.BlockEntities;
+using Vinconomy.BlockEntities;
+using Vinconomy.BlockEntities.TextureSwappable;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 
-namespace Viconomy.BlockTypes
+namespace Vinconomy.BlockTypes
 {
     public class BlockVRegister : TextureSwappableBlock
     {
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
-            BEVinconRegister be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVinconRegister;
+            IInteractable be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as IInteractable;
             if (be != null)
             {
                 return be.OnPlayerRightClick(byPlayer, blockSel);
@@ -42,7 +43,7 @@ namespace Viconomy.BlockTypes
             if (result)
             {
 
-                BEVinconRegister vEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BEVinconRegister;
+                IShopRoot vEntity = world.BlockAccessor.GetBlockEntity(blockSel.Position) as IShopRoot;
                 if (vEntity != null)
                 {
                     if (Owner != null)
@@ -68,18 +69,24 @@ namespace Viconomy.BlockTypes
             }
             ;
             ItemStack stack = new ItemStack(world.GetBlock(new AssetLocation(Code.Domain, this.CodeWithoutParts(1) +"-north")));
-            BEVinconRegister vEntity = world.BlockAccessor.GetBlockEntity(pos) as BEVinconRegister;
-            if (vEntity != null)
+
+            BlockEntity entity = world.BlockAccessor.GetBlockEntity(pos);
+
+            if (entity is IShopRoot vEntity)
             {
                 stack.Attributes.SetString("Owner", vEntity.Owner);
                 stack.Attributes.SetInt("ID", vEntity.ID);
                 stack.Attributes.SetString("OwnerName", vEntity.OwnerName);
                 VinconomyCoreSystem modSystem = world.Api.ModLoader.GetModSystem<VinconomyCoreSystem>();
                 stack.Attributes.SetString("ShopName", modSystem.GetRegistry().GetShopName(vEntity.ID));
-                AddTextureAttributes(stack, vEntity);
             }
-                
-            return new ItemStack[] { stack };
+
+            if (entity is BETextureSwappableBlock tsEntity)
+            {
+                AddTextureAttributes(stack, tsEntity);
+            }
+
+            return [stack];
         }
 
         public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)

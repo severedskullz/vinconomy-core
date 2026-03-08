@@ -1,14 +1,14 @@
 ﻿using System;
-using Viconomy.Inventory.Impl;
-using Viconomy.Inventory.Slots;
-using Viconomy.Inventory.StallSlots;
+using Vinconomy.Inventory.Impl;
+using Vinconomy.Inventory.Slots;
+using Vinconomy.Inventory.StallSlots;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-namespace Viconomy.GUI
+namespace Vinconomy.GUI
 {
-    public class GuiVinconMealStallOwner : GuiViconStallOwner
+    public class GuiVinconMealStallOwner : GuiVinconStallOwner
     {
         public GuiVinconMealStallOwner(string DialogTitle, InventoryBase Inventory, bool isOwner, BlockPos BlockEntityPosition, ICoreClientAPI capi, int stallSelection) : base(DialogTitle, Inventory, isOwner, BlockEntityPosition, capi, stallSelection)
         {
@@ -17,7 +17,7 @@ namespace Viconomy.GUI
         public override void InitializeInventory()
         {
             inv = new DummyInventory(capi);
-            purchaseSlot = new ViconLockedSlot(inv, 0);
+            purchaseSlot = new VinconLockedSlot(inv, 0);
             inv.TakeLocked = true;
             inv.PutLocked = true;
             inv[0] = purchaseSlot;
@@ -28,7 +28,7 @@ namespace Viconomy.GUI
 
         public override void UpdatePurchaseSlot()
         {
-            ViconMealInventory vinInv = Inventory as ViconMealInventory;
+            VinconMealInventory vinInv = Inventory as VinconMealInventory;
             MealStallSlot stall = vinInv.GetStall<MealStallSlot>(curTab);
             ItemSlot purchaseItem = stall.FindFirstNonEmptyStockSlot();
 

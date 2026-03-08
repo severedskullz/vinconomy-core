@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Vintagestory.API.Common;
 
-namespace Viconomy.Trading
+namespace Vinconomy.Trading
 {
     public class GenericTradeResult
     {

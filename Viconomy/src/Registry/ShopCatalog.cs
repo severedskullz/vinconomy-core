@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 
-namespace Viconomy.Registry
+namespace Vinconomy.Registry
 {
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
     public class ShopCatalog

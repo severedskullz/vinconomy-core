@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Viconomy.GUI;
-using Viconomy.Inventory.Impl;
-using Viconomy.Inventory.StallSlots;
-using Viconomy.Trading;
-using Viconomy.Trading.TradeHandlers;
-using Viconomy.Util;
+using Vinconomy.GUI;
+using Vinconomy.Inventory.Impl;
+using Vinconomy.Inventory.StallSlots;
+using Vinconomy.Trading;
+using Vinconomy.Trading.TradeHandlers;
+using Vinconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -16,7 +16,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
-namespace Viconomy.BlockEntities
+namespace Vinconomy.BlockEntities
 {
     public class BEVinconPurchaseContainer : BEVinconContainer
     {
@@ -38,7 +38,7 @@ namespace Viconomy.BlockEntities
 
         public override void ConfigureInventory()
         {
-            inventory = new ViconItemPurchaseInventory(this, null, Api, StallSlotCount, ProductStacksPerSlot, PurchasedProductStacksPerSlot);
+            inventory = new VinconItemPurchaseInventory(this, null, Api, StallSlotCount, ProductStacksPerSlot, PurchasedProductStacksPerSlot);
         }
 
 
@@ -64,7 +64,7 @@ namespace Viconomy.BlockEntities
             }
 
             // Does the shop have a register ID set?
-            if (this.RegisterID == -1 && !this.IsAdminShop)
+            if (this.ShopId == -1 && !this.IsAdminShop)
             {
                 VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.NOT_REGISTERED);
                 return;
@@ -72,7 +72,7 @@ namespace Viconomy.BlockEntities
 
 
             // Is there a shop with the given Register ID?
-            BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.RegisterID);
+            BEVinconRegister register = modSystem.GetShopRegister(this.Owner, this.ShopId);
             if (register == null && !this.IsAdminShop)
             {
                 VinconomyCoreSystem.PrintClientMessage(player, TradingConstants.COULDNT_GET_REGISTER);
@@ -281,7 +281,7 @@ namespace Viconomy.BlockEntities
             ItemSlot slot = inventory.GetStall<PurchaseStallSlot>(index).DesiredProduct;
             if (Api != null && Api.Side != EnumAppSide.Server && slot != null && !slot.Empty)
             {
-                getOrCreateMesh(slot.Itemstack, index);
+                getOrCreateMesh(slot, index);
             }
         }
 
@@ -307,7 +307,7 @@ namespace Viconomy.BlockEntities
 
                         if (isNotLimited && isNotEmpty && isCurrencyNotEmpty && tfMatrices != null)
                         {
-                            MeshData mesh = getOrCreateMesh(productSlot.Itemstack, i);
+                            MeshData mesh = getOrCreateMesh(productSlot, i);
                             if (mesh != null)
                             {
                                 mesher.AddMeshData(mesh, tfMatrices[i*4]);
@@ -315,7 +315,7 @@ namespace Viconomy.BlockEntities
 
                             for (int j=1; j <= 3; j++)
                             {
-                                mesh = getOrCreateMesh(slot.Itemstack, (i * 4) + j);
+                                mesh = getOrCreateMesh(slot, (i * 4) + j);
                                 if (mesh != null)
                                 {
                                     mesher.AddMeshData(mesh, tfMatrices[(i * 4) + j]);

@@ -1,0 +1,47 @@
+Split UI Into 2 Sections:
+Currency
+	Supply Inventory
+	Can set whether or not currency injection is a thing
+		Baseline Supply
+			What supply level is considered the "Ideal" supply
+		Minimum Supply
+			Below what level the amount of current currency needs to be before more is injected into the supply chain
+		what interval?
+			Ingame
+			IRL
+			Manual
+		what action
+			Set to specific amount
+			Additional Inventory
+			Meet Minimum
+		Equivalancies
+			What currencies this currency is a part of, Eg. Gold -> Silver -> Copper
+Products
+	Supply Inventory
+		Ignore Attributes
+
+		Prices based on Current Supply
+			Demand Threshold
+				What percentage +/- deviation is considered outside of "Average" demand
+			High Demand Price
+			Base Price
+			Low Demand Price
+		Selling Contribute to Supply
+			Whether or not selling this item to stalls reintroduces the item into circulation or if it is simply destroyed
+		Unlimited Supply
+			Whether or not the product has unlimited supply ( Can be sold even if Virtual Supply is 0)
+		Unlimited Demand
+			Whether or not the product has unlimited demand ( Can be bought even if Virtual Supply is maxed)
+		Baseline Supply
+			What supply level is considered the "Ideal" supply
+		Maximum Supply	
+			What level should this product stop being purchased
+		what interval?
+			Ingame
+			IRL
+			Manual
+		what action
+			Set to specific amount
+			Additional Inventory
+			Meet Minimum Supply
+				Below what level the amount of current currency needs to be before more is injected into the supply chain

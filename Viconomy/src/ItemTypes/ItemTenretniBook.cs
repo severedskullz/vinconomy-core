@@ -1,13 +1,13 @@
 ﻿using System.Text;
 using System.Threading.Tasks;
-using Viconomy.GUI;
-using Viconomy.Util;
+using Vinconomy.GUI;
+using Vinconomy.Util;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.Common;
 
-namespace Viconomy.ItemTypes
+namespace Vinconomy.ItemTypes
 {
     public class ItemTenretniBook : Item
     {
@@ -28,7 +28,7 @@ namespace Viconomy.ItemTypes
                     task = VinUtils.GetAsync(baseUrl + ID, postHandlder);
                 } else
                 {
-                    GuiViconTenretniUnwritten gui = new GuiViconTenretniUnwritten("Blank Tenretni Book", (ICoreClientAPI) api);
+                    GuiVinconTenretniUnwritten gui = new GuiVinconTenretniUnwritten("Blank Tenretni Book", (ICoreClientAPI) api);
                     gui.TryOpen();
                 }
                
@@ -59,7 +59,7 @@ namespace Viconomy.ItemTypes
         private void postHandlder(CompletedArgs args)
         {
             api.Event.EnqueueMainThreadTask(() => { //Console.WriteLine(args.Response.ToString());
-                GuiViconTenretniWritten gui = new GuiViconTenretniWritten("Tenretni Book", args.Response, (ICoreClientAPI)api);
+                GuiVinconTenretniWritten gui = new GuiVinconTenretniWritten("Tenretni Book", args.Response, (ICoreClientAPI)api);
                 gui.TryOpen();
                 task = null;
             }, "HttpRequestCallback");

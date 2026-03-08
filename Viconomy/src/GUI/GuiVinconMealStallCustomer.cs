@@ -1,13 +1,13 @@
-﻿using Viconomy.BlockEntities;
-using Viconomy.Inventory.Impl;
-using Viconomy.Inventory.StallSlots;
+﻿using Vinconomy.BlockEntities;
+using Vinconomy.Inventory.Impl;
+using Vinconomy.Inventory.StallSlots;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-namespace Viconomy.GUI
+namespace Vinconomy.GUI
 {
-    public class GuiVinconMealStallCustomer : GuiViconStallCustomer
+    public class GuiVinconMealStallCustomer : GuiVinconStallCustomer
     {
         BEVinconContainer stall;
 
@@ -19,7 +19,7 @@ namespace Viconomy.GUI
 
         public override void InitializeInventoryDisplaySlots()
         {
-            ViconMealInventory vinInv = Inventory as ViconMealInventory;
+            VinconMealInventory vinInv = Inventory as VinconMealInventory;
             MealStallSlot stall = vinInv.GetStall<MealStallSlot>(curTab);
             stallSlot = stall;
             ItemSlot purchaseItem = stall.FindFirstNonEmptyStockSlot();

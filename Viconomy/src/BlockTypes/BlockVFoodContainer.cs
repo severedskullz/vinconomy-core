@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Viconomy.BlockEntities;
+using Vinconomy.BlockEntities;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 
-namespace Viconomy.BlockTypes
+namespace Vinconomy.BlockTypes
 {
     public class BlockVFoodContainer : BlockVContainer
     {

@@ -1,47 +1,87 @@
 {
-  "code": "coupon",
-  "class": "VinconCoupon",
-  "maxstacksize": 64,
-  
-  "shape": { "base": "item/coupon" },
-  "textures": {
-    "*": { "base": "item/coupon" },
-    "coupon": { "base": "item/coupon" }
-  },
- 	"guiTransform": {
-		"translation": { "x": 3, "y": -8, "z": 0 },
-		"rotation": { "x": 121, "y": 34, "z": 4 },
-		"origin": { "x": 0.48, "y": 0.21, "z": 0.5 },
-		"scaleXyz": { "x": -2.43, "y": 2.43, "z": 2.43 }
-	},
-  "fpHandTransform": {
-    "translation": {
-      "x": 0,
-      "y": 0.2,
-      "z": 0
+    "code": "coupon",
+    "class": "VinconCoupon",
+    "maxstacksize": 64,
+
+    "shape": { "base": "item/coupon" },
+    "textures": {
+        "*": { "base": "item/coupon" },
+        "coupon": { "base": "item/coupon" }
     },
-    "rotation": {
-      "x": -14,
-      "y": -152,
-      "z": 28
+    "guiTransform": {
+        "translation": {
+            "x": 3,
+            "y": -8,
+            "z": 0
+        },
+        "rotation": {
+            "x": 121,
+            "y": 34,
+            "z": 4
+        },
+        "origin": {
+            "x": 0.48,
+            "y": 0.21,
+            "z": 0.5
+        },
+        "scaleXyz": {
+            "x": -2.43,
+            "y": 2.43,
+            "z": 2.43
+        }
     },
-    "origin": {
-      "x": 0.5,
-      "y": 0.1,
-      "z": 0.5
+    "fpHandTransform": {
+        "translation": {
+            "x": 0,
+            "y": 0.2,
+            "z": 0
+        },
+        "rotation": {
+            "x": -14,
+            "y": -152,
+            "z": 28
+        },
+        "origin": {
+            "x": 0.5,
+            "y": 0.1,
+            "z": 0.5
+        },
+        "scale": 2.07
     },
-    "scale": 2.07
-  },
-	"tpHandTransform": {
-		"translation": { "x": -0.79, "y": -0.36, "z": -0.73 },
-		"rotation": { "x": 0, "y": -84, "z": 7 },
-		"origin": { "x": 0.5, "y": 0.1, "z": 0.5 },
-		"scale": 0.67
-	},
-  	"groundTransform": {
-		"translation": { "x": 0, "y": 0, "z": 0 },
-		"rotation": { "x": 0, "y": 0, "z": 0 },
-		"origin": { "x": 0.41, "y": 0, "z": 0.5 },
-		"scale": 3
-	}
+    "tpHandTransform": {
+        "translation": {
+            "x": -0.79,
+            "y": -0.36,
+            "z": -0.73
+        },
+        "rotation": {
+            "x": 0,
+            "y": -84,
+            "z": 7
+        },
+        "origin": {
+            "x": 0.5,
+            "y": 0.1,
+            "z": 0.5
+        },
+        "scale": 0.67
+    },
+    "groundTransform": {
+        "translation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "origin": {
+            "x": 0.41,
+            "y": 0,
+            "z": 0.5
+        },
+        "scale": 3
+    }
 }

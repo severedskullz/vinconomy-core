@@ -1,16 +1,16 @@
 ﻿using System;
-using Viconomy.Inventory.Slots;
+using Vinconomy.Inventory.Slots;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
-namespace Viconomy.Inventory.StallSlots
+namespace Vinconomy.Inventory.StallSlots
 {
     public class PurchaseStallSlot : StallSlotBase
     {
 
-        public ViconCurrencySlot DesiredProduct;
-        public ViconItemSlot[] CurrencySlots;
-        public ViconItemSlot[] PurchasedProductSlots;
+        public VinconCurrencySlot DesiredProduct;
+        public VinconItemSlot[] CurrencySlots;
+        public VinconItemSlot[] PurchasedProductSlots;
         public int PurchasedItemStacksPerStall { get; private set; }
         public int NumTradesLeft;
         public bool LimitedPurchases;
@@ -45,20 +45,20 @@ namespace Viconomy.Inventory.StallSlots
             {
                 if (slotId < ProductStacksPerStall)
                 {
-                    CurrencySlots[slotId] = (ViconItemSlot)value;
+                    CurrencySlots[slotId] = (VinconItemSlot)value;
                 }
                 else if (slotId <= StallSlots)
                 {
-                    PurchasedProductSlots[slotId - ProductStacksPerStall] = (ViconItemSlot)value;
+                    PurchasedProductSlots[slotId - ProductStacksPerStall] = (VinconItemSlot)value;
                 }
                 else if (slotId == TotalSlots - 2)
                 {
-                    DesiredProduct = (ViconCurrencySlot)value;
+                    DesiredProduct = (VinconCurrencySlot)value;
 
                 }
                 else
                 {
-                    Currency = (ViconCurrencySlot)value;
+                    Currency = (VinconCurrencySlot)value;
                     ItemsPerPurchase = value == null ? 0 : value.StackSize;
                 }
                     
@@ -68,7 +68,7 @@ namespace Viconomy.Inventory.StallSlots
         public PurchaseStallSlot(InventoryBase inventory, int stallSlot,  int numProductSlots, int numPurchasedStacks) : base(inventory, numProductSlots)
         {
 
-            DesiredProduct = new ViconCurrencySlot(inventory);
+            DesiredProduct = new VinconCurrencySlot(inventory);
             DesiredProduct.BackgroundIcon = "vicon-general";
 
             Currency.BackgroundIcon = "vicon-payment";
@@ -76,19 +76,19 @@ namespace Viconomy.Inventory.StallSlots
             PurchasedItemStacksPerStall = numPurchasedStacks;
             ProductStacksPerStall = numProductSlots;
 
-            CurrencySlots = new ViconItemSlot[numProductSlots];
+            CurrencySlots = new VinconItemSlot[numProductSlots];
             for (int i = 0; i < numProductSlots; i++)
             {
-                CurrencySlots[i] = new ViconItemSlot(inventory, stallSlot, i);
+                CurrencySlots[i] = new VinconItemSlot(inventory, stallSlot, i);
                 CurrencySlots[i].BackgroundIcon = "vicon-payment";
                 //ProductSlots[i].HexBackgroundColor = "#FF0000";
 
             }
 
-            PurchasedProductSlots = new ViconItemSlot[numPurchasedStacks];
+            PurchasedProductSlots = new VinconItemSlot[numPurchasedStacks];
             for (int i = 0; i < numPurchasedStacks; i++)
             {
-                PurchasedProductSlots[i] = new ViconItemSlot(inventory, stallSlot, i);
+                PurchasedProductSlots[i] = new VinconItemSlot(inventory, stallSlot, i);
                 PurchasedProductSlots[i].BackgroundIcon = "vicon-general";
                 //PurchasedProductSlots[i].HexBackgroundColor = "#FFFF00";
 
@@ -97,7 +97,7 @@ namespace Viconomy.Inventory.StallSlots
 
         public override ItemSlot FindFirstNonEmptyStockSlot()
         {
-            foreach (ViconItemSlot slot in CurrencySlots)
+            foreach (VinconItemSlot slot in CurrencySlots)
             {
                 if (slot.Itemstack != null)
                     return slot;
@@ -140,9 +140,9 @@ namespace Viconomy.Inventory.StallSlots
         public override void SetSlot(int itemSlot, ItemSlot value)
         {
             if (itemSlot < ProductStacksPerStall)
-                CurrencySlots[itemSlot] = (ViconItemSlot)value;
+                CurrencySlots[itemSlot] = (VinconItemSlot)value;
             else
-                PurchasedProductSlots[itemSlot - ProductStacksPerStall] = (ViconItemSlot)value;
+                PurchasedProductSlots[itemSlot - ProductStacksPerStall] = (VinconItemSlot)value;
 
         }
 

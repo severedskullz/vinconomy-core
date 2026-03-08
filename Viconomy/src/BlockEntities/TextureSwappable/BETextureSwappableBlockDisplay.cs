@@ -7,7 +7,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
-namespace Viconomy.BlockEntities.TextureSwappable
+namespace Vinconomy.BlockEntities.TextureSwappable
 {
     public abstract class BETextureSwappableBlockDisplay : BETextureSwappableBlockContainer, ITexPositionSource
     {
@@ -104,7 +104,7 @@ namespace Viconomy.BlockEntities.TextureSwappable
             {
                 if (!Inventory[i].Empty)
                 {
-                    string meshCacheKey = GetMeshCacheKey(Inventory[i].Itemstack);
+                    string meshCacheKey = GetMeshCacheKey(Inventory[i]);
                     MeshCache.Remove(meshCacheKey);
                 }
             }
@@ -139,41 +139,44 @@ namespace Viconomy.BlockEntities.TextureSwappable
         {
             if (Api != null && Api.Side != EnumAppSide.Server && !Inventory[index].Empty)
             {
-                getOrCreateMesh(Inventory[index].Itemstack, index);
+                getOrCreateMesh(Inventory[index], index);
             }
         }
 
-        protected virtual string GetMeshCacheKey(ItemStack stack)
+        protected virtual string GetMeshCacheKey(ItemSlot slot)
         {
+            ItemStack stack = slot.Itemstack;
             if (stack == null)
                 return null;
 
             if (stack.Collectible is IContainedMeshSource containedMeshSource)
             {
-                return containedMeshSource.GetMeshCacheKey(stack);
+                return containedMeshSource.GetMeshCacheKey(slot);
             }
 
             return stack.Collectible.Code.ToString();
         }
 
-        protected MeshData GetMesh(ItemStack stack)
+        protected MeshData GetMesh(ItemSlot stack)
         {
             string meshCacheKey = GetMeshCacheKey(stack);
             MeshCache.TryGetValue(meshCacheKey, out var value);
             return value;
         }
 
-        protected virtual MeshData getOrCreateMesh(ItemStack stack, int index)
+        protected virtual MeshData getOrCreateMesh(ItemSlot slot, int index)
         {
-            MeshData modeldata = GetMesh(stack);
+            MeshData modeldata = GetMesh(slot);
             if (modeldata != null)
             {
                 return modeldata;
             }
 
+            ItemStack stack = slot.Itemstack;
+
             if (stack.Collectible is IContainedMeshSource containedMeshSource)
             {
-                modeldata = containedMeshSource.GenMesh(stack, capi.BlockTextureAtlas, Pos);
+                modeldata = containedMeshSource.GenMesh(slot, capi.BlockTextureAtlas, Pos);
             }
 
             if (modeldata == null)
@@ -208,7 +211,7 @@ namespace Viconomy.BlockEntities.TextureSwappable
                 modeldata.Translate(0f, -15f / 32f, 0f);
             }
 
-            string meshCacheKey = GetMeshCacheKey(stack);
+            string meshCacheKey = GetMeshCacheKey(slot);
             MeshCache[meshCacheKey] = modeldata;
             return modeldata;
         }
@@ -249,7 +252,7 @@ namespace Viconomy.BlockEntities.TextureSwappable
                 ItemSlot itemSlot = Inventory[i];
                 if (!itemSlot.Empty && tfMatrices != null)
                 {
-                    mesher.AddMeshData(GetMesh(itemSlot.Itemstack), tfMatrices[i]);
+                    mesher.AddMeshData(GetMesh(itemSlot), tfMatrices[i]);
                 }
             }
         }

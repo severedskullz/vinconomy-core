@@ -1,11 +1,12 @@
 {
     "code": "gachaball",
-    "class": "ViconGachaBall",
+    "class": "VinconGachaBall",
     "maxstacksize": 128,
 
     "shape": { "base": "item/gachaball" },
     "creativeinventory": {
-        "vinconomy": [ "*" ], "general": [ "*" ]
+        "vinconomy": [ "*" ],
+        "general": [ "*" ]
     },
     "guiTransform": {
         "translation": {

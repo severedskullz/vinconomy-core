@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Viconomy.Network
+namespace Vinconomy.Network
 {
     [ProtoContract]
     public class LedgerEntryResponsePacket

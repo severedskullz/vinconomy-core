@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Viconomy.BlockEntities;
-using Viconomy.Inventory;
+using Vinconomy.BlockEntities;
+using Vinconomy.Inventory;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -8,7 +8,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
-namespace Viconomy.BlockTypes
+namespace Vinconomy.BlockTypes
 {
     public class BlockVJobboard : Block
     {
