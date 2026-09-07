@@ -1,0 +1,310 @@
+[
+  {
+    "ingredientPattern": "SC",
+    "ingredients": {
+      "S": {
+        "type": "block",
+        "code": "weaponplaque-*"
+      },
+      "C": {
+        "type": "item",
+        "code": "stallcoupon"
+      }
+    },
+    "copyAttributesFrom": "S",
+    "width": 2,
+    "height": 1,
+    "_shapeless": true,
+    "output": {
+      "type": "block",
+      "code": "weaponplaque-north",
+      "quantity": 2
+    }
+  },
+  {
+    "ingredientPattern": "SC",
+    "ingredients": {
+      "S": {
+        "type": "block",
+        "code": "weaponplaque-*"
+      },
+      "C": {
+        "type": "item",
+        "code": "stallcoupon"
+      }
+    },
+    "copyAttributesFrom": "S",
+    "width": 2,
+    "height": 1,
+    "_shapeless": true,
+    "output": {
+      "type": "block",
+      "code": "weaponplaque-north",
+      "quantity": 2
+    }
+  },
+  {
+    "ingredientPattern": "SC",
+    "ingredients": {
+      "S": {
+        "type": "block",
+        "code": "weaponplaque-*"
+      },
+      "C": {
+        "type": "item",
+        "code": "stallcoupon"
+      }
+    },
+    "copyAttributesFrom": "S",
+    "width": 2,
+    "height": 1,
+    "_shapeless": true,
+    "output": {
+      "type": "block",
+      "code": "weaponplaque-north",
+      "quantity": 2
+    }
+  },
+  {
+    "ingredientPattern": "SC",
+    "ingredients": {
+      "S": {
+        "type": "block",
+        "code": "weaponplaque-*"
+      },
+      "C": {
+        "type": "item",
+        "code": "stallcoupon"
+      }
+    },
+    "copyAttributesFrom": "S",
+    "width": 2,
+    "height": 1,
+    "_shapeless": true,
+    "output": {
+      "type": "block",
+      "code": "weaponplaque-north",
+      "quantity": 2
+    }
+  },
+  {
+    "ingredientPattern": "SC",
+    "ingredients": {
+      "S": {
+        "type": "block",
+        "code": "weaponplaque-*"
+      },
+      "C": {
+        "type": "item",
+        "code": "stallcoupon"
+      }
+    },
+    "copyAttributesFrom": "S",
+    "width": 2,
+    "height": 1,
+    "_shapeless": true,
+    "output": {
+      "type": "block",
+      "code": "weaponplaque-north",
+      "quantity": 2
+    }
+  },
+  {
+    "ingredientPattern": "SC",
+    "ingredients": {
+      "S": {
+        "type": "block",
+        "code": "weaponplaque-*"
+      },
+      "C": {
+        "type": "item",
+        "code": "stallcoupon"
+      }
+    },
+    "copyAttributesFrom": "S",
+    "width": 2,
+    "height": 1,
+    "_shapeless": true,
+    "output": {
+      "type": "block",
+      "code": "weaponplaque-north",
+      "quantity": 2
+    }
+  },
+  {
+    "ingredientPattern": "SC",
+    "ingredients": {
+      "S": {
+        "type": "block",
+        "code": "weaponplaque-*"
+      },
+      "C": {
+        "type": "item",
+        "code": "stallcoupon"
+      }
+    },
+    "copyAttributesFrom": "S",
+    "width": 2,
+    "height": 1,
+    "_shapeless": true,
+    "output": {
+      "type": "block",
+      "code": "weaponplaque-north",
+      "quantity": 2
+    }
+  },
+  {
+    "ingredientPattern": "SC",
+    "ingredients": {
+      "S": {
+        "type": "block",
+        "code": "weaponplaque-*"
+      },
+      "C": {
+        "type": "item",
+        "code": "stallcoupon"
+      }
+    },
+    "copyAttributesFrom": "S",
+    "width": 2,
+    "height": 1,
+    "_shapeless": true,
+    "output": {
+      "type": "block",
+      "code": "weaponplaque-north",
+      "quantity": 2
+    }
+  },
+  {
+    "ingredientPattern": "SC",
+    "ingredients": {
+      "S": {
+        "type": "block",
+        "code": "weaponplaque-*"
+      },
+      "C": {
+        "type": "item",
+        "code": "stallcoupon"
+      }
+    },
+    "copyAttributesFrom": "S",
+    "width": 2,
+    "height": 1,
+    "_shapeless": true,
+    "output": {
+      "type": "block",
+      "code": "weaponplaque-north",
+      "quantity": 2
+    }
+  },
+  {
+    "ingredientPattern": "SC",
+    "ingredients": {
+      "S": {
+        "type": "block",
+        "code": "weaponplaque-*"
+      },
+      "C": {
+        "type": "item",
+        "code": "stallcoupon"
+      }
+    },
+    "copyAttributesFrom": "S",
+    "width": 2,
+    "height": 1,
+    "_shapeless": true,
+    "output": {
+      "type": "block",
+      "code": "weaponplaque-north",
+      "quantity": 2
+    }
+  },
+  {
+    "ingredientPattern": "SC",
+    "ingredients": {
+      "S": {
+        "type": "block",
+        "code": "weaponplaque-*"
+      },
+      "C": {
+        "type": "item",
+        "code": "stallcoupon"
+      }
+    },
+    "copyAttributesFrom": "S",
+    "width": 2,
+    "height": 1,
+    "_shapeless": true,
+    "output": {
+      "type": "block",
+      "code": "weaponplaque-north",
+      "quantity": 2
+    }
+  },
+  {
+    "ingredientPattern": "SC",
+    "ingredients": {
+      "S": {
+        "type": "block",
+        "code": "weaponplaque-*"
+      },
+      "C": {
+        "type": "item",
+        "code": "stallcoupon"
+      }
+    },
+    "copyAttributesFrom": "S",
+    "width": 2,
+    "height": 1,
+    "_shapeless": true,
+    "output": {
+      "type": "block",
+      "code": "weaponplaque-north",
+      "quantity": 2
+    }
+  },
+  {
+    "ingredientPattern": "SC",
+    "ingredients": {
+      "S": {
+        "type": "block",
+        "code": "weaponplaque-*"
+      },
+      "C": {
+        "type": "item",
+        "code": "stallcoupon"
+      }
+    },
+    "copyAttributesFrom": "S",
+    "width": 2,
+    "height": 1,
+    "_shapeless": true,
+    "output": {
+      "type": "block",
+      "code": "weaponplaque-north",
+      "quantity": 2
+    }
+  },
+  {
+    "ingredientPattern": "SC",
+    "ingredients": {
+      "S": {
+        "type": "block",
+        "code": "weaponplaque-*"
+      },
+      "C": {
+        "type": "item",
+        "code": "stallcoupon"
+      }
+    },
+    "copyAttributesFrom": "S",
+    "width": 2,
+    "height": 1,
+    "_shapeless": true,
+    "output": {
+      "type": "block",
+      "code": "weaponplaque-north",
+      "quantity": 2
+    }
+  }
+]

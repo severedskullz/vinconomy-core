@@ -1,0 +1,235 @@
+{
+  "code": "purchasestall",
+  "class": "Commercially.BlockCommercial",
+  "entityClass": "Commercially.BECommercialBase",
+  "priorityInteract": true,
+  "attributes": {
+    "handbook": {
+      "groupBy": [ "shelf-north" ],
+      "extraSections": [
+        {
+          "title": "",
+          "text": "vinconomy:handbooktext-stall"
+        }
+      ]
+    }
+  },
+  "entityBehaviors": [
+
+    {
+      "name": "Vinconomy.PurchaseInventory",
+      "properties": {
+        "numStalls": 2,
+        "stockSlotsPerStall": 30,
+        "currencySlotsPerStall": 20
+      }
+    },
+    {
+      "name": "Vinconomy.StallDisplay",
+      "properties": {
+        "displayTransformType": "toolrackTransform",
+        "displayTransforms": [
+
+          {
+            "x": -0.225,
+            "y": 1,
+            "z": -0.25
+          },
+          {
+            "x": 0.225,
+            "y": 1,
+            "z": -0.25
+          }
+        ]
+      }
+    },
+    {
+      "name": "Vinconomy.Stall",
+      "properties": {
+        "ownerTab": "Vinconomy.PurchaseStallOwner",
+        "customerTab": "Vinconomy.ShopCustomer",
+        "stallSelectionIndexes": {
+          "1": 0,
+          "2": 1
+        }
+      }
+    },
+    {
+      "name": "Commercially.InteractionManager",
+      "properties": {
+        "interactions": [
+          {
+            "code": "Vinconomy.AddStock",
+            "priority": 10
+          },
+          {
+            "code": "Vinconomy.PurchaseItem",
+            "priority": 5
+          },
+          {
+            "code": "Vinconomy.OpenStall",
+            "priority": 0,
+            "properties": {
+              "ownerTab": "Vinconomy.PurchaseStallOwner",
+              "customerTab": "Vinconomy.ShopCustomer"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Commercially.GuiManager",
+      "properties": {
+        "tabs": [ "Vinconomy.PurchaseStallOwner", "Vinconomy.ShopCustomer", "Commercially.ContainerDebug", "Vinconomy.DisplayDebug", "Commercially.BlockEntityDebug" ]
+      }
+    },
+    { "name": "Commercially.TextureSwappable" }
+  ],
+
+  "behaviors": [
+    { "name": "Commercially.CommercialEvents" },
+    {
+      "name": "Commercially.TextureSwappable",
+      "properties": {
+        "BaseBlock": "purchasestall-north",
+        "CreativeTabs": [ "vinconomy", "general" ],
+        "PrimaryMaterials": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ],
+        "SecondaryMaterials": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+      }
+    },
+    { "name": "HorizontalOrientable" }
+  ],
+  "heldTpIdleAnimation": "holdbothhandslarge",
+  "heldTpUseAnimation": "twohandplaceblock",
+  "blockmaterial": "Wood",
+  "variantgroups": [
+    {
+      "code": "side",
+      "loadFromProperties": "abstract/horizontalorientation"
+    }
+  ],
+  "textures": {
+    "default": { "base": "game:block/wood/crate/acacia-sides" },
+
+    "acacia-sides": { "base": "game:block/wood/crate/acacia-sides" },
+    "baldcypress-sides": { "base": "game:block/wood/crate/baldcypress-sides" },
+    "birch-sides": { "base": "game:block/wood/crate/birch-sides" },
+    "ebony-sides": { "base": "game:block/wood/crate/ebony-sides" },
+    "kapok-sides": { "base": "game:block/wood/crate/kapok-sides" },
+    "larch-sides": { "base": "game:block/wood/crate/larch-sides" },
+    "maple-sides": { "base": "game:block/wood/crate/maple-sides" },
+    "oak-sides": { "base": "game:block/wood/crate/oak-sides" },
+    "pine-sides": { "base": "game:block/wood/crate/pine-sides" },
+    "purpleheart-sides": { "base": "game:block/wood/crate/purpleheart-sides" },
+    "redwood-sides": { "base": "game:block/wood/crate/redwood-sides" },
+    "walnut-sides": { "base": "game:block/wood/crate/walnut-sides" },
+
+    "acacia": { "base": "game:block/wood/crate/acacia-inside" },
+    "baldcypress": { "base": "game:block/wood/crate/baldcypress-inside" },
+    "birch": { "base": "game:block/wood/crate/birch-inside" },
+    "ebony": { "base": "game:block/wood/crate/ebony-inside" },
+    "kapok": { "base": "game:block/wood/crate/kapok-inside" },
+    "larch": { "base": "game:block/wood/crate/larch-inside" },
+    "maple": { "base": "game:block/wood/crate/maple-inside" },
+    "oak": { "base": "game:block/wood/crate/oak-inside" },
+    "pine": { "base": "game:block/wood/crate/pine-inside" },
+    "purpleheart": { "base": "game:block/wood/crate/purpleheart-inside" },
+    "redwood": { "base": "game:block/wood/crate/redwood-inside" },
+    "walnut": { "base": "game:block/wood/crate/walnut-inside" }
+  },
+  "shapebytype": {
+    "*-north": {
+      "base": "block/purchasestall",
+      "rotateY": 0
+    },
+    "*-west": {
+      "base": "block/purchasestall",
+      "rotateY": 90
+    },
+    "*-south": {
+      "base": "block/purchasestall",
+      "rotateY": 180
+    },
+    "*-east": {
+      "base": "block/purchasestall",
+      "rotateY": 270
+    }
+  },
+
+  "collisionboxes": [
+    {
+      "x1": 0,
+      "y1": 0,
+      "z1": 0,
+      "x2": 1,
+      "y2": 1,
+      "z2": 1
+    }
+  ],
+
+  "selectionBoxes": [
+    {
+      "x1": 0,
+      "y1": 0,
+      "z1": 0,
+      "x2": 0,
+      "y2": 0,
+      "z2": 0,
+      "rotateYByType": {
+        "*-north": 0,
+        "*-east": 270,
+        "*-west": 90,
+        "*-south": 180
+      }
+    },
+    {
+      "x1": 0,
+      "y1": 0,
+      "z1": 0,
+      "x2": 0.5,
+      "y2": 1,
+      "z2": 1,
+      "rotateYByType": {
+        "*-north": 0,
+        "*-east": 270,
+        "*-west": 90,
+        "*-south": 180
+      }
+    },
+    {
+      "x1": 0.5,
+      "y1": 0,
+      "z1": 0,
+      "x2": 1,
+      "y2": 1,
+      "z2": 1,
+      "rotateYByType": {
+        "*-north": 0,
+        "*-east": 270,
+        "*-west": 90,
+        "*-south": 180
+      }
+    }
+  ],
+  "guiTransform": {
+    "rotation": {
+      "x": -22,
+      "y": 135,
+      "z": 0
+    }
+  },
+  "lightAbsorption": 0,
+  "sidesolid": {
+    "all": "false"
+  },
+  "sideopaque": {
+    "all": "false"
+  },
+  "resistance": 3.5,
+  "sounds": {
+    "hit": "game:block/planks",
+    "break": "game:block/planks",
+    "place": "game:block/planks",
+    "walk": "game:walk/wood"
+  }
+}

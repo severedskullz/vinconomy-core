@@ -1,0 +1,216 @@
+{
+    "code": "clothingstall",
+    "class": "Commercially.BlockCommercial",
+    "entityClass": "Commercially.BECommercialBase",
+    "attributes": {
+        "handbook": {
+            "groupBy": [ "clothingstall-north" ],
+            "extraSections": [
+                {
+                    "title": "",
+                    "text": "vinconomy:handbooktext-clothingstall"
+                }
+            ]
+        }
+    },
+    "entityBehaviors": [
+        {
+            "name": "Vinconomy.StallInventory",
+            "properties": {
+                "numStalls": 15,
+                "numSlotsPerStall": 9,
+                "stallType": "GenericStallSlot",
+                "stallFilters": [
+                  "Commercially.HeadSlot",
+                  "Commercially.ShoulderSlot",
+                  "Commercially.UpperBodySlot",
+                  "Commercially.UpperBodyOverSlot",
+                  "Commercially.LowerBodySlot",
+                  "Commercially.FootSlot",
+                  "Commercially.NeckSlot",
+                  "Commercially.EmblemSlot",
+                  "Commercially.FaceSlot",
+                  "Commercially.ArmSlot",
+                  "Commercially.HandSlot",
+                  "Commercially.WaistSlot",
+                  "Commercially.ArmorHeadSlot",
+                  "Commercially.ArmorBodySlot",
+                  "Commercially.ArmorLegsSlot"
+                ],
+                "stallBackgrounds": [
+                  "hat",
+                  "cape",
+                  "shirt",
+                  "pullover",
+                  "trousers",
+                  "boots",
+                  "necklace",
+                  "medal",
+                  "mask",
+                  "bracers",
+                  "gloves",
+                  "belt",
+                  "armorhead",
+                  "armorbody",
+                  "armorlegs"
+                ]
+            }
+        },
+        {
+            "name": "Vinconomy.StallDisplay",
+            "properties": {
+                "globalTransform": {
+                    "preRotate" :  90
+                }
+            }
+        },
+        {
+          "name": "Vinconomy.Stall",
+          "properties": {
+            "ownableType": "ShopStall",
+            "allowedTypes": [ "ShopRegister" ]
+          }
+        },
+        {
+            "name": "Commercially.GuiManager",
+            "properties": {
+              "tabs": [ "Vinconomy.ShopOwner", "Vinconomy.ClothingStandCustomer", "Commercially.ContainerDebug", "Vinconomy.DisplayDebug", "Commercially.BlockEntityDebug" ]
+            }
+        },
+        {
+            "name": "Commercially.InteractionManager",
+            "properties": {
+                "interactions": [
+                    {
+                        "code": "Vinconomy.AddStock",
+                        "priority": 10
+                    },
+                    {
+                        "code": "Vinconomy.PurchaseItem",
+                        "priority": 10
+                    },
+                  {
+                    "code": "Vinconomy.OpenStall",
+                    "priority": 0,
+                    "properties": {
+                      "ownerTab": "Vinconomy.ShopOwner",
+                      "customerTab": "Vinconomy.ClothingStandCustomer"
+                    }
+                  }
+                ]
+            }
+        },
+
+        { "name": "Commercially.TextureSwappable" }
+    ],
+
+    "behaviors": [
+        { "name": "Commercially.CommercialEvents" },
+        {
+            "name": "Commercially.TextureSwappable",
+            "properties": {
+                "BaseBlock": "clothingstall-north",
+                "CreativeTabs": [ "vinconomy", "general" ],
+                "SecondaryMaterials": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ],
+                "PrimaryMaterials": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "silver", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+
+            }
+        },
+        { "name": "HorizontalOrientable" }
+    ],
+    "heldTpIdleAnimation": "holdbothhandslarge",
+    "heldTpUseAnimation": "twohandplaceblock",
+    "blockmaterial": "Cloth",
+    "variantgroups": [
+        {
+            "code": "side",
+            "loadFromProperties": "abstract/horizontalorientation"
+        }
+    ],
+    "textures": {
+        "default": { "base": "game:block/wood/planks/oak1" },
+
+        "bismuth": { "base": "game:block/metal/plate/bismuth" },
+        "bismuthbronze": { "base": "game:block/metal/plate/bismuthbronze" },
+        "blackbronze": { "base": "game:block/metal/plate/blackbronze" },
+        "brass": { "base": "game:block/metal/plate/brass" },
+        "copper": { "base": "game:block/metal/plate/copper" },
+        "silver": { "base": "game:block/metal/plate/silver" },
+        "gold": { "base": "game:block/metal/plate/gold" },
+        "iron": { "base": "game:block/metal/plate/iron" },
+        "lead": { "base": "game:block/metal/plate/lead" },
+        "meteoriciron": { "base": "game:block/metal/plate/meteoriciron" },
+        "tinbronze": { "base": "game:block/metal/plate/tinbronze" },
+        "steel": { "base": "game:block/metal/plate/steel" },
+        "tin": { "base": "game:block/metal/plate/tin" },
+        "uranium": { "base": "game:block/metal/plate/uranium" },
+        "zinc": { "base": "game:block/metal/plate/zinc" },
+
+        "acacia": { "base": "game:block/wood/planks/acacia1" },
+        "baldcypress": { "base": "game:block/wood/planks/baldcypress1" },
+        "birch": { "base": "game:block/wood/planks/birch1" },
+        "ebony": { "base": "game:block/wood/planks/ebony1" },
+        "kapok": { "base": "game:block/wood/planks/kapok1" },
+        "larch": { "base": "game:block/wood/planks/larch1" },
+        "maple": { "base": "game:block/wood/planks/maple1" },
+        "oak": { "base": "game:block/wood/planks/oak1" },
+        "pine": { "base": "game:block/wood/planks/pine1" },
+        "purpleheart": { "base": "game:block/wood/planks/purpleheart1" },
+        "redwood": { "base": "game:block/wood/planks/redwood1" },
+        "walnut": { "base": "game:block/wood/planks/walnut1" }
+    },
+    "shapebytype": {
+        "*-north": {
+            "base": "block/armorstand",
+            "rotateY": 0
+        },
+        "*-west": {
+            "base": "block/armorstand",
+            "rotateY": 90
+        },
+        "*-south": {
+            "base": "block/armorstand",
+            "rotateY": 180
+        },
+        "*-east": {
+            "base": "block/armorstand",
+            "rotateY": 270
+        }
+    },
+
+    "collisionboxes": [
+        {
+            "x1": 0,
+            "y1": 0,
+            "z1": 0,
+            "x2": 1,
+            "y2": 2,
+            "z2": 1
+        }
+    ],
+
+    "selectionBoxes": [
+        {
+            "x1": 0,
+            "y1": 0,
+            "z1": 0,
+            "x2": 1,
+            "y2": 2,
+            "z2": 1
+        }
+    ],
+    "lightAbsorption": 0,
+    "sidesolid": {
+        "all": "false"
+    },
+    "sideopaque": {
+        "all": "false"
+    },
+    "resistance": 3.5,
+    "sounds": {
+        "hit": "game:block/planks",
+        "break": "game:block/planks",
+        "place": "game:block/planks",
+        "walk": "game:walk/wood"
+    }
+}

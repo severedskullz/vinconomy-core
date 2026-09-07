@@ -1,0 +1,37 @@
+{
+  "ingredientPattern": "WHW,WHW,ICI",
+  "ingredients": {
+    "H": {
+      "type": "block",
+      "code": "game:hay-normal-ud"
+    },
+    "W": {
+      "type": "item",
+      "code": "game:plank-*",
+      "name": "secondary",
+      "allowedVariants": [ "birch", "oak", "maple", "pine", "acacia", "kapok", "baldcypress", "larch", "redwood", "ebony", "walnut", "purpleheart" ]
+    },
+    "I": {
+      "type": "item",
+      "code": "game:ingot-*",
+      "name": "primary",
+      "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "silver", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+    },
+    "C": {
+      "type": "block",
+      "code": "game:chest-east",
+      "attributes": { "type": "normal-generic" }
+    }
+  },
+  "recipeGroup": 1,
+  "width": 3,
+  "height": 3,
+  "output": {
+    "type": "block",
+    "code": "clothingstall-north",
+    "attributes": {
+      "PrimaryMaterial": "{primary}",
+      "SecondaryMaterial": "{secondary}"
+    }
+  }
+}

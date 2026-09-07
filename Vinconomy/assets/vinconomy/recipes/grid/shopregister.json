@@ -1,0 +1,34 @@
+[
+    {
+        "ingredientPattern": "WWW,COC,WWW",
+        "ingredients": {
+          "W": {
+            "type": "item",
+            "code": "game:plank-*",
+            "name": "secondary",
+            "allowedVariants": [ "birch", "oak", "maple", "pine", "acacia", "kapok", "baldcypress", "larch", "redwood", "ebony", "walnut", "purpleheart" ]
+          },
+            "C": {
+                "type": "item",
+                "code": "game:metalplate-*",
+                "name": "primary",
+                "allowedVariants": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "gold", "silver", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "width": 3,
+        "height": 3,
+        "output": {
+            "type": "block",
+            "code": "shopregister-north",
+            "attributes": {
+                "PrimaryMaterial": "{primary}",
+                "SecondaryMaterial": "{secondary}"
+            }
+        }
+    }
+]

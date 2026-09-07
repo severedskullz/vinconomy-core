@@ -1,0 +1,275 @@
+{
+    "code": "buffettable",
+    "class": "Commercially.BlockCommercial",
+    "entityClass": "Commercially.BECommercialBase",
+    "priorityInteract": true,
+    "attributes": {
+        "handbook": {
+            "groupBy": [ "buffettable-north" ],
+            "extraSections": [
+                {
+                    "title": "",
+                    "text": "vinconomy:handbooktext-stall"
+                }
+            ]
+        }
+    },
+    "entityBehaviors": [
+        {
+            "name": "Vinconomy.MealInventory",
+            "properties": {
+                "numStalls": 4,
+                "numSlotsPerStall": 1,
+                "stallType": "MealStallSlot"
+            }
+        },
+        {
+            "name": "Vinconomy.MealDisplay",
+            "properties": {
+                "displayTransforms": [
+
+                    {
+                        "x": -0.25,
+                        "y": 0.85,
+                      "z": -0.25,
+                      "scaleX": 3,
+                      "scaleY": 3,
+                      "scaleZ": 3
+                    },
+                  {
+                    "x": 0.25,
+                    "y": 0.85,
+                    "z": -0.25,
+                    "scaleX": 3,
+                    "scaleY": 3,
+                    "scaleZ": 3
+                  },
+                  {
+                    "x": -0.25,
+                    "y": 0.85,
+                    "z": 0.25,
+                    "scaleX": 3,
+                    "scaleY": 3,
+                    "scaleZ": 3
+                  },
+                  {
+                    "x": 0.25,
+                    "y": 0.85,
+                    "z": 0.25,
+                    "scaleX": 3,
+                    "scaleY": 3,
+                    "scaleZ": 3
+                  }
+                ]
+            }
+        },
+        {
+            "name": "Vinconomy.Stall",
+          "properties": {
+            "ownableType": "ShopStall",
+            "allowedTypes": [ "ShopRegister" ],
+            "stallSelectionIndexes": {
+              "1": 0,
+              "2": 1,
+              "3": 2,
+              "4": 3
+            }
+
+          }
+        },
+        {
+            "name": "Commercially.InteractionManager",
+            "properties": {
+                "interactions": [
+                    {
+                        "code": "Vinconomy.AddStock",
+                        "priority": 10
+                    },
+                    {
+                        "code": "Vinconomy.PurchaseItem",
+                        "priority": 5
+                    },
+                  {
+                    "code": "Vinconomy.OpenStall",
+                    "priority": 0,
+                    "properties": {
+                      "ownerTab": "Vinconomy.BuffetOwner",
+                      "customerTab": "Vinconomy.GachaStallCustomer"
+                    }
+                  }
+                ]
+            }
+        },
+        {
+            "name": "Commercially.GuiManager",
+            "properties": {
+              "tabs": [ "Vinconomy.BuffetOwner", "Vinconomy.ShopCustomer", "Commercially.ContainerDebug", "Vinconomy.DisplayDebug", "Commercially.BlockEntityDebug" ],
+            }
+        },
+        { "name": "Commercially.TextureSwappable" }
+    ],
+
+    "behaviors": [
+        { "name": "Commercially.CommercialEvents" },
+        {
+            "name": "Commercially.TextureSwappable",
+            "properties": {
+                "BaseBlock": "buffettable-north",
+                "CreativeTabs": [ "vinconomy", "general" ],
+                "PrimaryMaterials": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ]
+            }
+        },
+        { "name": "HorizontalOrientable" }
+    ],
+    "heldTpIdleAnimation": "holdbothhandslarge",
+    "heldTpUseAnimation": "twohandplaceblock",
+    "blockmaterial": "Wood",
+    "variantgroups": [
+        {
+            "code": "side",
+            "loadFromProperties": "abstract/horizontalorientation"
+        }
+    ],
+    "textures": {
+        "default": { "base": "game:block/clay/ceramic" },
+
+        "ceramic": { "base": "game:block/clay/ceramic" },
+
+        "acacia": { "base": "game:block/wood/planks/acacia1" },
+        "baldcypress": { "base": "game:block/wood/planks/baldcypress1" },
+        "birch": { "base": "game:block/wood/planks/birch1" },
+        "ebony": { "base": "game:block/wood/planks/ebony1" },
+        "kapok": { "base": "game:block/wood/planks/kapok1" },
+        "larch": { "base": "game:block/wood/planks/larch1" },
+        "maple": { "base": "game:block/wood/planks/maple1" },
+        "oak": { "base": "game:block/wood/planks/oak1" },
+        "pine": { "base": "game:block/wood/planks/pine1" },
+        "purpleheart": { "base": "game:block/wood/planks/purpleheart1" },
+        "redwood": { "base": "game:block/wood/planks/redwood1" },
+        "walnut": { "base": "game:block/wood/planks/walnut1" }
+    },
+    "shapeByType": {
+        "*-north": {
+            "base": "block/mealtable",
+            "rotateY": 0
+        },
+        "*-east": {
+            "base": "block/mealtable",
+            "rotateY": 270
+        },
+        "*-south": {
+            "base": "block/mealtable",
+            "rotateY": 180
+        },
+        "*-west": {
+            "base": "block/mealtable",
+            "rotateY": 90
+        }
+    },
+    "collisionBoxes": [
+        {
+            "x1": 0,
+            "y1": 0,
+            "z1": 0,
+            "x2": 1,
+            "y2": 1,
+            "z2": 1
+        }
+    ],
+
+    "tpHandTransform": {
+        "translation": {
+            "x": -2.1,
+            "y": -1.8,
+            "z": -1.25
+        },
+        "rotation": {
+            "x": -99,
+            "y": 4,
+            "z": -99
+        }
+    },
+
+    "selectionBoxes": [
+        {
+            "x1": 0,
+            "y1": 0,
+            "z1": 0,
+            "x2": 1,
+            "y2": 1,
+            "z2": 1
+        },
+        {
+            "x1": 0.05,
+            "y1": 0.5,
+            "z1": 0.05,
+            "x2": 0.45,
+            "y2": 1.05,
+            "z2": 0.45,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        },
+        {
+            "x1": 0.55,
+            "y1": 0.5,
+            "z1": 0.05,
+            "x2": 0.95,
+            "y2": 1.05,
+            "z2": 0.45,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        },
+        {
+            "x1": 0.05,
+            "y1": 0.5,
+            "z1": 0.55,
+            "x2": 0.45,
+            "y2": 1.05,
+            "z2": 0.95,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        },
+        {
+            "x1": 0.55,
+            "y1": 0.5,
+            "z1": 0.55,
+            "x2": 0.95,
+            "y2": 1.05,
+            "z2": 0.95,
+            "rotateYByType": {
+                "*-north": 0,
+                "*-east": 270,
+                "*-west": 90,
+                "*-south": 180
+            }
+        }
+
+
+    ],
+    "lightAbsorption": 0,
+    "sidesolid": {
+        "all": "false"
+    },
+    "sideopaque": {
+        "all": "false"
+    },
+    "resistance": 3.5,
+    "sounds": {
+        "hit": "game:block/planks",
+        "break": "game:block/planks",
+        "place": "game:block/planks",
+        "walk": "game:walk/wood"
+    }
+}

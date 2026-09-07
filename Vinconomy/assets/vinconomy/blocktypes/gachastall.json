@@ -1,0 +1,182 @@
+{
+  "code": "gachastall",
+  "class": "Commercially.BlockCommercial",
+  "entityClass": "Commercially.BECommercialBase",
+  "priorityInteract": true,
+  "attributes": {
+    "handbook": {
+      "groupBy": [ "gachastall-north" ],
+      "extraSections": [
+        {
+          "title": "",
+          "text": "vinconomy:handbooktext-stall"
+        }
+      ]
+    }
+  },
+  "entityBehaviors": [
+
+    {
+      "name": "Vinconomy.GachaStallInventory",
+      "properties": {
+        "stallType": "GachaStallSlot",
+        "numStalls": 6,
+        "numSlotsPerStall": 20,
+        "contentsPerStall" : 5
+      }
+    },
+    {
+      "name": "Vinconomy.GachaStall",
+      "properties": {
+        "ownableType": "ShopStall",
+        "allowedTypes": [ "ShopRegister" ]
+      }
+    },
+    {
+      "name": "Commercially.InteractionManager",
+      "properties": {
+        "interactions": [
+          {
+            "code": "Vinconomy.AddStock",
+            "priority": 10
+          },
+          {
+            "code": "Vinconomy.PurchaseItem",
+            "priority": 5
+          },
+          {
+            "code": "Vinconomy.OpenStall",
+            "priority": 0,
+            "properties": {
+              "ownerTab": "Vinconomy.GachaStallOwner",
+              "customerTab": "Vinconomy.GachaStallCustomer"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Commercially.GuiManager",
+      "properties": {
+        "tabs": [ "Vinconomy.GachaStallOwner", "Vinconomy.GachaStallCustomer", "Commercially.ContainerDebug", "Vinconomy.DisplayDebug", "Commercially.BlockEntityDebug" ]
+      }
+    },
+    { "name": "Commercially.TextureSwappable" }
+  ],
+
+  "behaviors": [
+    { "name": "Commercially.CommercialEvents" },
+    {
+      "name": "Commercially.TextureSwappable",
+      "properties": {
+        "BaseBlock": "gachastall-north",
+        "CreativeTabs": [ "vinconomy", "general" ],
+        "PrimaryMaterials": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "silver", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ],
+        "SecondaryMaterials": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "silver", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ],
+        "DecoMaterials": [ "blue", "brown", "green", "pink", "plain", "quartz", "red", "violet", "yellow" ]
+      }
+    },
+    { "name": "HorizontalOrientable" }
+  ],
+  "heldTpIdleAnimation": "holdbothhandslarge",
+  "heldTpUseAnimation": "twohandplaceblock",
+  "blockmaterial": "Wood",
+  "variantgroups": [
+    {
+      "code": "side",
+      "loadFromProperties": "abstract/horizontalorientation"
+    }
+  ],
+  "textures": {
+    "default": { "base": "game:block/metal/plate/steel" },
+
+    "bismuth": { "base": "game:block/metal/plate/bismuth" },
+    "bismuthbronze": { "base": "game:block/metal/plate/bismuthbronze" },
+    "blackbronze": { "base": "game:block/metal/plate/blackbronze" },
+    "brass": { "base": "game:block/metal/plate/brass" },
+    "copper": { "base": "game:block/metal/plate/copper" },
+    "silver": { "base": "game:block/metal/plate/silver" },
+    "gold": { "base": "game:block/metal/plate/gold" },
+    "iron": { "base": "game:block/metal/plate/iron" },
+    "lead": { "base": "game:block/metal/plate/lead" },
+    "meteoriciron": { "base": "game:block/metal/plate/meteoriciron" },
+    "tinbronze": { "base": "game:block/metal/plate/tinbronze" },
+    "steel": { "base": "game:block/metal/plate/steel" },
+    "tin": { "base": "game:block/metal/plate/tin" },
+    "uranium": { "base": "game:block/metal/plate/uranium" },
+    "zinc": { "base": "game:block/metal/plate/zinc" },
+
+    "blue": { "base": "game:block/glass/blue" },
+    "brown": { "base": "game:block/glass/brown" },
+    "green": { "base": "game:block/glass/green" },
+    "pink": { "base": "game:block/glass/pink" },
+    "plain": { "base": "game:block/glass/plain" },
+    "quartz": { "base": "game:block/glass/quartz" },
+    "quartzglass": { "base": "game:block/glass/quartzglass" },
+    "red": { "base": "game:block/glass/red" },
+    "smoky": { "base": "game:block/glass/smoky" },
+    "vintage": { "base": "game:block/glass/vintage" },
+    "violet": { "base": "game:block/glass/violet" },
+    "yellow": { "base": "game:block/glass/yellow" }
+  },
+  "shapebytype": {
+    "*-north": {
+      "base": "block/gacha",
+      "rotateY": 0
+    },
+    "*-west": {
+      "base": "block/gacha",
+      "rotateY": 90
+    },
+    "*-south": {
+      "base": "block/gacha",
+      "rotateY": 180
+    },
+    "*-east": {
+      "base": "block/gacha",
+      "rotateY": 270
+    }
+  },
+  "guiTransform": {
+    "rotation": {
+      "x": -22,
+      "y": 135,
+      "z": 0
+    }
+  },
+  "collisionboxes": [
+    {
+      "x1": 0,
+      "y1": 0,
+      "z1": 0,
+      "x2": 1,
+      "y2": 1,
+      "z2": 1
+    }
+  ],
+
+  "selectionBoxes": [
+    {
+      "x1": 0,
+      "y1": 0,
+      "z1": 0,
+      "x2": 1,
+      "y2": 1,
+      "z2": 1
+    }
+  ],
+  "lightAbsorption": 0,
+  "sidesolid": {
+    "all": "false"
+  },
+  "sideopaque": {
+    "all": "false"
+  },
+  "resistance": 3.5,
+  "sounds": {
+    "hit": "game:block/planks",
+    "break": "game:block/planks",
+    "place": "game:block/planks",
+    "walk": "game:walk/wood"
+  }
+}

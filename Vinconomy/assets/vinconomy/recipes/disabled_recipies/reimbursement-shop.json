@@ -1,0 +1,24 @@
+[
+  {
+    "ingredientPattern": "SC",
+    "ingredients": {
+      "S": {
+        "type": "block",
+        "code": "shopregister-*"
+      },
+      "C": {
+        "type": "item",
+        "code": "shopcoupon"
+      }
+    },
+    "mergeAttributesFrom": "S",
+    "width": 2,
+    "height": 1,
+    "_shapeless": true,
+    "output": {
+      "type": "block",
+      "code": "shopregister-north",
+      "quantity": 2
+    }
+  }
+]

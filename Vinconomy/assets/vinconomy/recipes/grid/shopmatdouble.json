@@ -1,0 +1,35 @@
+[
+    {
+        "ingredientPattern": "_OC,CCW",
+        "ingredients": {
+          "W": {
+            "type": "item",
+            "code": "game:plank-*",
+            "name": "secondary",
+            "allowedVariants": [ "birch", "oak", "maple", "pine", "acacia", "kapok", "baldcypress", "larch", "redwood", "ebony", "walnut", "purpleheart" ]
+          },
+            "C": {
+                "type": "item",
+                "code": "game:cloth-*",
+                "name": "primary",
+                "allowedVariants": [ "black", "blue", "brown", "gray", "green", "mordant", "orange", "pink", "plain", "purple", "red", "white", "yellow" ]
+            },
+            "O": {
+                "type": "block",
+                "code": "game:chest-east",
+                "attributes": { "type": "normal-generic" }
+            }
+        },
+        "recipeGroup": 1,
+        "width": 3,
+        "height": 2,
+        "output": {
+            "type": "block",
+            "code": "shopmatdouble-north",
+          "attributes": {
+            "PrimaryMaterial": "{primary}",
+            "SecondaryMaterial": "{secondary}"
+          }
+        }
+    }
+]

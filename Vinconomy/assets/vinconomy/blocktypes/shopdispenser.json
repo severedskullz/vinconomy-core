@@ -1,0 +1,260 @@
+{
+	"code": "shopdispenser",
+	"class": "Commercially.BlockCommercial",
+	"entityClass": "Commercially.BECommercialBase",
+	"priorityInteract": true,
+
+	"attributes": {
+		"handbook": {
+			"groupBy": [ "shopdispenser-north" ],
+			"extraSections": [
+				{
+					"title": "",
+					"text": "vinconomy:handbooktext-stall"
+				}
+			]
+		}
+	},
+	"entityBehaviors": [
+		{
+			"name": "Vinconomy.LiquidInventory",
+			"properties": {
+				"numStalls": 2,
+				"numSlotsPerStall": 1,
+				"stallType": "LiquidStallSlot"
+			}
+		},
+		{
+			"name": "Vinconomy.LiquidDisplay",
+			"properties": {
+				"isCubic": true,
+				"contentsShape": "game:shapes/block/basic/cube.json",
+				"displayTransforms": [
+					{
+						"x": -0.22,
+						"y": 0.3,
+						"z": 0,
+						"scaleX": 0.28,
+						"scaleY": 0.58,
+						"scaleZ": 0.6
+					},
+					{
+						"x": 0.22,
+						"y": 0.3,
+						"z": 0,
+						"scaleX": 0.28,
+						"scaleY": 0.58,
+						"scaleZ": 0.6
+					}
+				]
+			}
+		},
+		{
+			"name": "Vinconomy.Stall",
+			"properties": {
+				"ownableType": "ShopStall",
+				"allowedTypes": [ "ShopRegister" ],
+				"stallSelectionIndexes": {
+					"1": 0,
+					"2": 1
+				}
+			}
+		},
+		{
+			"name": "Commercially.GuiManager",
+			"properties": {
+				"tabs": ["Vinconomy.LiquidOwner", "Vinconomy.ShopCustomer", "Commercially.ContainerDebug", "Vinconomy.DisplayDebug", "Commercially.BlockEntityDebug" ]
+			}
+		},
+		{
+			"name": "Commercially.InteractionManager",
+			"properties": {
+				"interactions": [
+					{
+						"code": "Vinconomy.AddStock",
+						"priority": 10
+					},
+					{
+						"code": "Vinconomy.PurchaseItem",
+						"priority": 5
+					},
+					{
+						"code": "Vinconomy.OpenStall",
+						"priority": 0,
+						"properties": {
+							"ownerTab": "Vinconomy.LiquidOwner",
+							"customerTab": "Vinconomy.ShopCustomer"
+						}
+					}
+				]
+			}
+		},
+		{ "name": "Commercially.TextureSwappable" }
+	],
+
+	"behaviors": [
+		{ "name": "Commercially.CommercialEvents" },
+		{
+			"name": "Commercially.TextureSwappable",
+			"properties": {
+				"BaseBlock": "shopdispenser-north",
+				"CreativeTabs": [ "vinconomy", "general" ],
+				"PrimaryMaterials": [ "acacia", "baldcypress", "birch", "ebony", "kapok", "larch", "maple", "oak", "pine", "purpleheart", "redwood", "walnut" ],
+				"SecondaryMaterials": [ "bismuth", "bismuthbronze", "blackbronze", "brass", "copper", "silver", "gold", "iron", "lead", "meteoriciron", "tinbronze", "steel", "tin", "uranium", "zinc" ],
+				"DecoMaterials": [ "blue", "brown", "green", "pink", "plain", "quartz", "red", "violet", "yellow" ]
+			}
+		},
+		{ "name": "HorizontalOrientable" }
+	],
+	"heldTpIdleAnimation": "holdbothhandslarge",
+	"heldTpUseAnimation": "twohandplaceblock",
+	"blockmaterial": "Wood",
+	"variantgroups": [
+		{
+			"code": "side",
+			"loadFromProperties": "abstract/horizontalorientation"
+		}
+	],
+	"textures": {
+		"default": { "base": "game:block/wood/planks/oak1" },
+
+		"bismuth": { "base": "game:block/metal/plate/bismuth" },
+		"bismuthbronze": { "base": "game:block/metal/plate/bismuthbronze" },
+		"blackbronze": { "base": "game:block/metal/plate/blackbronze" },
+		"brass": { "base": "game:block/metal/plate/brass" },
+		"copper": { "base": "game:block/metal/plate/copper" },
+		"silver": { "base": "game:block/metal/plate/silver" },
+		"gold": { "base": "game:block/metal/plate/gold" },
+		"iron": { "base": "game:block/metal/plate/iron" },
+		"lead": { "base": "game:block/metal/plate/lead" },
+		"meteoriciron": { "base": "game:block/metal/plate/meteoriciron" },
+		"tinbronze": { "base": "game:block/metal/plate/tinbronze" },
+		"steel": { "base": "game:block/metal/plate/steel" },
+		"tin": { "base": "game:block/metal/plate/tin" },
+		"uranium": { "base": "game:block/metal/plate/uranium" },
+		"zinc": { "base": "game:block/metal/plate/zinc" },
+
+		"acacia": { "base": "game:block/wood/planks/acacia1" },
+		"baldcypress": { "base": "game:block/wood/planks/baldcypress1" },
+		"birch": { "base": "game:block/wood/planks/birch1" },
+		"ebony": { "base": "game:block/wood/planks/ebony1" },
+		"kapok": { "base": "game:block/wood/planks/kapok1" },
+		"larch": { "base": "game:block/wood/planks/larch1" },
+		"maple": { "base": "game:block/wood/planks/maple1" },
+		"oak": { "base": "game:block/wood/planks/oak1" },
+		"pine": { "base": "game:block/wood/planks/pine1" },
+		"purpleheart": { "base": "game:block/wood/planks/purpleheart1" },
+		"redwood": { "base": "game:block/wood/planks/redwood1" },
+		"walnut": { "base": "game:block/wood/planks/walnut1" },
+
+		"blue": { "base": "game:block/glass/blue" },
+		"brown": { "base": "game:block/glass/brown" },
+		"green": { "base": "game:block/glass/green" },
+		"pink": { "base": "game:block/glass/pink" },
+		"plain": { "base": "game:block/glass/vintage" },
+		"quartz": { "base": "game:block/glass/quartz" },
+		"red": { "base": "game:block/glass/red" },
+		"violet": { "base": "game:block/glass/violet" },
+		"yellow": { "base": "game:block/glass/yellow" }
+	},
+	"shapeByType": {
+		"*-north": {
+			"base": "block/liquiddispenser",
+			"rotateY": 0
+		},
+		"*-east": {
+			"base": "block/liquiddispenser",
+			"rotateY": 270
+		},
+		"*-south": {
+			"base": "block/liquiddispenser",
+			"rotateY": 180
+		},
+		"*-west": {
+			"base": "block/liquiddispenser",
+			"rotateY": 90
+		}
+	},
+	"collisionBoxes": [
+		{
+			"x1": 0,
+			"y1": 0,
+			"z1": 0,
+			"x2": 1,
+			"y2": 1,
+			"z2": 1
+		}
+	],
+
+	"tpHandTransform": {
+		"translation": {
+			"x": -2.1,
+			"y": -1.8,
+			"z": -1.15
+		},
+		"rotation": {
+			"x": 120,
+			"y": 4,
+			"z": -75
+		}
+	},
+
+	"selectionBoxes": [
+		{
+			"x1": 0.0262,
+			"y1": 0,
+			"z1": 0.075,
+			"x2": 0.975,
+			"y2": 0.566,
+			"z2": 0.9175,
+			"rotateYByType": {
+				"*-north": 0,
+				"*-east": 270,
+				"*-west": 90,
+				"*-south": 180
+			}
+		},
+		{
+			"x1": 0.1175,
+			"y1": 0.3,
+			"z1": 0.1875,
+			"x2": 0.45,
+			"y2": 0.95,
+			"z2": 0.825,
+			"rotateYByType": {
+				"*-north": 0,
+				"*-east": 270,
+				"*-west": 90,
+				"*-south": 180
+			}
+		},
+		{
+			"x1": 0.555,
+			"y1": 0.3,
+			"z1": 0.1875,
+			"x2": 0.8875,
+			"y2": 0.95,
+			"z2": 0.825,
+			"rotateYByType": {
+				"*-north": 0,
+				"*-east": 270,
+				"*-west": 90,
+				"*-south": 180
+			}
+		}
+	],
+	"lightAbsorption": 0,
+	"sidesolid": {
+		"all": "false"
+	},
+	"sideopaque": {
+		"all": "false"
+	},
+	"resistance": 3.5,
+	"sounds": {
+		"hit": "game:block/planks",
+		"break": "game:block/planks",
+		"place": "game:block/planks",
+		"walk": "game:walk/wood"
+	}
+}
