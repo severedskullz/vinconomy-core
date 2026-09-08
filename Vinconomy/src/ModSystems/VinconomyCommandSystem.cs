@@ -4,7 +4,6 @@ using Commercially.Common.Interfaces;
 using Commercially.Common.ModSystems;
 using Commercially.Common.Util;
 using Commercially.Vinconomy.Database;
-using System;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -58,6 +57,7 @@ namespace Commercially.Vinconomy.ModSystems
             VinconomyLegacyDatabase.ReimburseProductForPlayer(args.Caller.Player, out reimbursedProduct, out skippedProduct);
             VinconomyLegacyDatabase.ReimburseShopsForPlayer(args.Caller.Player, out reimbursedShops);
             VinconomyLegacyDatabase.ReimburseStallsForPlayer(args.Caller.Player, out reimbursedStalls);
+            VinconomyLegacyDatabase.ClearShopsForPlayer(args.Caller.Player);
             return TextCommandResult.Success($"Player was reimbursed {reimbursedProduct} products, {reimbursedShops} shops, and {reimbursedStalls} stalls. {skippedProduct} items were skipped.");
         }
 

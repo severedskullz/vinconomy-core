@@ -131,8 +131,11 @@ namespace Commercially.Vinconomy.ModSystems
             if (_CoreClientAPI != null)
             {
                 Dictionary<string, MeshData> cache = ObjectCacheUtil.TryGet<Dictionary<string, MeshData>>(_CoreClientAPI, "stallMeshesDisplay");
-                foreach (MeshData data in cache.Values) { data.Dispose(); }
-                ObjectCacheUtil.Delete(_CoreClientAPI, "stallMeshesDisplay");
+                if (cache != null)
+                {
+                    foreach (MeshData data in cache.Values) { data.Dispose(); }
+                    ObjectCacheUtil.Delete(_CoreClientAPI, "stallMeshesDisplay");
+                }
             }
         }
         public void Lifecycle_RegisterInteractions(ICoreAPI api)

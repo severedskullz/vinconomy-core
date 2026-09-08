@@ -14,6 +14,7 @@ namespace Commercially.Vinconomy.Inventory.Impl
 
         public RegisterInventory(ICoreAPI api) : base("-", api)
         {
+            TradePass = new VinconCloningSlot(this);
         }
 
         public override ItemSlot this[int slotId] {
@@ -47,7 +48,7 @@ namespace Commercially.Vinconomy.Inventory.Impl
 
         public override int Count => 1 + (CurrencySlots?.Length ?? 0) + (CouponSlots?.Length ?? 0);
 
-        public bool IsSlotsInitialized => CurrencySlots != null && CouponSlots != null && TradePass != null;
+        public bool IsSlotsInitialized => CurrencySlots?.Length > 0 && CouponSlots?.Length > 0 && TradePass != null;
 
         //TODO: Not effecient due to multiple nested trees, but IDGAF right now.
         public override void FromTreeAttributes(ITreeAttribute tree)
@@ -116,9 +117,9 @@ namespace Commercially.Vinconomy.Inventory.Impl
                     CurrencySlots = ResizeSlots(CurrencySlots, numSlots);
                 }
 
-                if (CouponSlots.Length < numSlots)
+                if (CouponSlots.Length < numCouponSlots)
                 {
-                    CouponSlots = ResizeSlots(CouponSlots, numSlots);
+                    CouponSlots = ResizeSlots(CouponSlots, numCouponSlots);
                 }
             }
 

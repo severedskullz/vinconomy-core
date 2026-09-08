@@ -8,8 +8,8 @@
 
   <ItemGroup>
     <Reference Include="Commercially">
-      <HintPath>..\..\Commercially\Commercially\Releases\commercially\Commercially.dll</HintPath>
-		<Private>False</Private>
+      <HintPath>..\..\..\Commercially\Commercially\Releases\commercially\Commercially.dll</HintPath>
+	  <Private>False</Private>
     </Reference>
     <Reference Include="VintagestoryAPI">
       <HintPath>$(VINTAGE_STORY)/VintagestoryAPI.dll</HintPath>

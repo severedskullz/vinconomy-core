@@ -193,5 +193,17 @@ namespace Commercially.Vinconomy.Database
             }
 
         }
+
+        public void ClearShopsForPlayer(IPlayer player)
+        {
+            using (SqliteConnection connection = GetConnection())
+            {
+                connection.Open();
+                SqliteCommand cmd = connection.CreateCommand();
+                cmd.CommandText = "UPDATE Shops SET Owner = 'REIMBURSED' WHERE Owner = @Owner;";
+                cmd.Parameters.Add("@Owner", SqliteType.Text).Value = player.PlayerUID;
+                int numUpdated = Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
     }
 }
