@@ -15,7 +15,7 @@
   },
   "entityBehaviors": [
     {
-      "name": "Vinconomy.StallInventory",
+      "name": "Vinconomy.TellerInventory",
       "properties": {
         "numStalls": 5,
         "stallType": "TellerStallSlot"

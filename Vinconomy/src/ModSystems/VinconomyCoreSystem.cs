@@ -203,6 +203,7 @@ namespace Commercially.Vinconomy.ModSystems
             api.RegisterBlockEntityBehaviorClass("Vinconomy.MealInventory", typeof(MealStallInventoryProvider));
             api.RegisterBlockEntityBehaviorClass("Vinconomy.SculptureInventory", typeof(SculptureStallInventoryProvider));
             api.RegisterBlockEntityBehaviorClass("Vinconomy.PurchaseInventory", typeof(PurchaseStallInventoryProvider));
+            api.RegisterBlockEntityBehaviorClass("Vinconomy.TellerInventory", typeof(TellerInventoryProvider));
 
             api.RegisterBlockEntityBehaviorClass("Vinconomy.MealDisplay", typeof(DisplayMealContentsBehavior));
             api.RegisterBlockEntityBehaviorClass("Vinconomy.LiquidDisplay", typeof(DisplayLiquidContentsBehavior));

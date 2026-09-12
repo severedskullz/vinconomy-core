@@ -64,19 +64,6 @@ namespace Commercially.Vinconomy.Inventory.StallSlots
         }
 
 
-        public ItemSlot[] GetProductSlots()
-        {
-            if (this.Inventory.Api.Side == EnumAppSide.Client) return [];
-
-            long? parentId = this.Inventory.BlockEntity.GetBehavior<BEBehaviorOwnableChild>().ParentID;
-            if (parentId != null)
-            {
-                IOwnableReference ownable = this.Inventory.modSystem.CommerciallySystem.GetOwnable(parentId);
-                return ownable.GetComponent<ICurrencySinkProvider>()?.CurrencySlots ?? [];
-            }
-            return [];
-        }
-
         public void TransferProdutToPlayer(TradeResult result)
         {
             if (result.ProductStacks.TotalCount == 0) return;
@@ -110,7 +97,7 @@ namespace Commercially.Vinconomy.Inventory.StallSlots
         {
             ICoreAPI api = Inventory.Api;
             GenericAggregatedSlots slots = new GenericAggregatedSlots(api);
-            ItemSlot[] products = GetProductSlots();
+            ItemSlot[] products = GetStockSlots();
 
             if (products.Length > 0)
             {
@@ -127,12 +114,68 @@ namespace Commercially.Vinconomy.Inventory.StallSlots
 
         public override ItemSlot[] GetStockSlots()
         {
-            return null;
+            if (this.Inventory.Api.Side == EnumAppSide.Client || this.Inventory.modSystem == null) return [];
+
+            long? parentId = this.Inventory.BlockEntity.GetBehavior<BEBehaviorOwnableChild>().ParentID;
+            if (parentId != null)
+            {
+                IOwnableReference ownable = this.Inventory.modSystem.CommerciallySystem.GetOwnable(parentId);
+                return ownable.GetComponent<ICurrencySinkProvider>()?.CurrencySlots ?? [];
+            }
+            return [];
         }
 
         public override AggregatedStacks ExtractProduct(int amount, int numPurchases, bool isAdminOwned)
         {
-            throw new NotImplementedException();
+            int totalProductToMove = amount;
+            AggregatedStacks productStacks = new AggregatedStacks();
+            ItemStack product = GetOfferedProduct();
+            ItemSlot[] stock = GetStockSlots();
+
+            if (isAdminOwned)
+            {
+
+                int maxStackSize = product.Collectible.MaxStackSize;
+                while (totalProductToMove > 0)
+                {
+                    ItemStack transferStack = product.Clone();
+                    int stackSize = Math.Min(totalProductToMove, maxStackSize);
+                    transferStack.StackSize = stackSize;
+                    productStacks.Add(transferStack);
+                    totalProductToMove -= stackSize;
+                }
+            }
+            else
+            {
+                AggregatedSlots products = TradingUtil.GetAllValidSlotsFor(this.Inventory.Api, product, stock, IsFuzzyMatching);
+                foreach (ItemSlot slot in products)
+                {
+                    ItemStack takenStack = slot.TakeOut(totalProductToMove);
+                    if (takenStack != null)
+                    {
+                        this.Inventory.modSystem.Mod.Logger.Debug($"Took out {takenStack.StackSize}x {takenStack} product from Product Stacks");
+                        totalProductToMove -= takenStack.StackSize;
+                        productStacks.Add(takenStack);
+                        slot.MarkDirty();
+                    }
+
+                    if (totalProductToMove <= 0)
+                    {
+                        if (totalProductToMove < 0)
+                        {
+                            this.Inventory.modSystem.Mod.Logger.Error($"Somehow removed {Math.Abs(totalProductToMove)} extra items from Product");
+                        }
+                        break;
+                    }
+                }
+            }
+
+            if (totalProductToMove > 0)
+            {
+                this.Inventory.modSystem.Mod.Logger.Error($"Somehow missing {totalProductToMove}  items from Product");
+            }
+
+            return productStacks;
         }
     }
 }
