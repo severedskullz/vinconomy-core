@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="../../Commercially/Commercially/Commercially/Commercially.csproj" />
   <Project Path="CakeBuild/CakeBuild.csproj" />
   <Project Path="Vinconomy/Vinconomy.csproj" />
 </Solution>

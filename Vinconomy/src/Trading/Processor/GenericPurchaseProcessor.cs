@@ -14,10 +14,10 @@ namespace Commercially.Vinconomy.Trading.Processor
         public static bool CanFitPaymentIntoParent(PurchaseRequest request)
         {
             ICurrencySinkProvider currencySinkProvider = request.StallSlot.GetCurrencySink(request);
-            if (currencySinkProvider == null)
-            {
-                return false;
-            }
+
+            if (currencySinkProvider == null && request.IsAdminShop) return true;
+
+            if (currencySinkProvider == null) return false;
 
             ItemSlot[] currencySlots = currencySinkProvider.CurrencySlots;
             int maxStackSize = request.CurrencyNeeded.Collectible.MaxStackSize;

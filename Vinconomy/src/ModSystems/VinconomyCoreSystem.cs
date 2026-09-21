@@ -209,6 +209,7 @@ namespace Commercially.Vinconomy.ModSystems
             api.RegisterBlockEntityBehaviorClass("Vinconomy.LiquidDisplay", typeof(DisplayLiquidContentsBehavior));
             api.RegisterBlockEntityBehaviorClass("Vinconomy.StallDisplay", typeof(DisplayContentsBehavior));
             api.RegisterBlockEntityBehaviorClass("Vinconomy.SculptureDisplay", typeof(DisplaySculptureBehavior));
+            api.RegisterBlockEntityBehaviorClass("Vinconomy.PurchaseDisplay", typeof(DisplayPurchaseContentsBehavior));
         }
 
         public override void StartServerSide(ICoreServerAPI api)
@@ -602,6 +603,9 @@ namespace Commercially.Vinconomy.ModSystems
                     AddItemToSlots(result.Request.Api, nextStack, slots);
                 }
                 currencyProvider.GetBlockEntity().MarkDirty();
+            } else if (!result.Request.IsAdminShop){
+                ItemStack nextStack = result.CurrencyStacks.RemoveStack();
+                this.Mod.Logger.Error($"Error moving {nextStack.StackSize}x {nextStack} currency to Parent Currency Provider (Null)");
             }
 
             /// Give Ownable Coupons
@@ -616,6 +620,11 @@ namespace Commercially.Vinconomy.ModSystems
                     AddItemToSlots(result.Request.Api, nextStack, slots);
                 }
                 couponProvider.GetBlockEntity().MarkDirty();
+            }
+            else if (!result.Request.IsAdminShop)
+            {
+                ItemStack nextStack = result.CurrencyStacks.RemoveStack();
+                this.Mod.Logger.Error($"Error moving {nextStack.StackSize}x {nextStack} currency to Parent Coupon Provider (Null)");
             }
         }
 

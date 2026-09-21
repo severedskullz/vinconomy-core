@@ -2,8 +2,6 @@
 using Commercially.Common.Inventory.Slots;
 using Commercially.Common.Util;
 using Commercially.Vinconomy.Interfaces;
-using Commercially.Vinconomy.Inventory.Impl;
-using System;
 using Vinconomy.ItemTypes;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -137,6 +135,11 @@ namespace Commercially.Vinconomy.Trading
 
         public static ItemSlot GetCouponsSlotsForShop(IPlayer customer, ItemStack desiredItem, IShopComponent register)
         {
+            if (register == null || desiredItem == null || customer == null)
+            {
+                return null;
+            }
+
             IOwnableReference ownable = register.GetComponent<IOwnableReference>();
 
             ItemSlot handItem = customer.InventoryManager.ActiveHotbarSlot;

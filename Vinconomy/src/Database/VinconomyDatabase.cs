@@ -55,7 +55,7 @@ namespace Commercially.Vinconomy.Database
         public void SavePurchase(TradeResult purchaseResult) {
             TradeRequest req = purchaseResult.Request;
             SavePurchase(
-                   req.ParentEntity.Ownable.ID,
+                   req.ParentEntity?.Ownable.ID ?? 0,
                    req.Customer.PlayerUID,
                    req.ProductNeeded,
                    purchaseResult.TotalProductAmount,
@@ -70,7 +70,7 @@ namespace Commercially.Vinconomy.Database
         {
             PurchaseRequest req = purchaseResult.Request;
             SavePurchase(
-                req.ParentEntity.Ownable.ID,
+                req.ParentEntity?.Ownable.ID ?? 0,
                 req.Customer.PlayerUID,
                 req.ProductNeeded,
                 purchaseResult.TotalProductAmount,

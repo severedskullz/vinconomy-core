@@ -25,11 +25,64 @@
       }
     },
     {
-      "name": "Vinconomy.StallDisplay",
+      "name": "Vinconomy.PurchaseDisplay",
       "properties": {
         "displayTransformType": "toolrackTransform",
+        "currencyTransforms": [
+          [
+            {
+              "x": -0.15,
+              "y": 0.05,
+              "z": -0.28,
+              "scaleX": 0.7,
+              "scaleY": 0.7,
+              "scaleZ": 0.7
+            },
+            {
+              "x": -0.305,
+              "y": 0.05,
+              "z": 0,
+              "scaleX": 0.7,
+              "scaleY": 0.7,
+              "scaleZ": 0.7
+            },
+            {
+              "x": -0.15,
+              "y": 0.05,
+              "z": 0.28,
+              "scaleX": 0.7,
+              "scaleY": 0.7,
+              "scaleZ": 0.7
+            }
+          ],
+          [
+            {
+              "x": 0.255,
+              "y": 0.05,
+              "z": -0.25,
+              "scaleX": 0.7,
+              "scaleY": 0.7,
+              "scaleZ": 0.7
+            },
+            {
+              "x": 0.225,
+              "y": 0.05,
+              "z": 0,
+              "scaleX": 0.7,
+              "scaleY": 0.7,
+              "scaleZ": 0.7
+            },
+            {
+              "x": 0.255,
+              "y": 0.05,
+              "z": 0.25,
+              "scaleX": 0.7,
+              "scaleY": 0.7,
+              "scaleZ": 0.7
+            }
+          ]
+        ],
         "displayTransforms": [
-
           {
             "x": -0.225,
             "y": 1,
@@ -46,6 +99,8 @@
     {
       "name": "Vinconomy.Stall",
       "properties": {
+        "ownableType": "ShopStall",
+        "allowedTypes": [ "ShopRegister" ],
         "ownerTab": "Vinconomy.PurchaseStallOwner",
         "customerTab": "Vinconomy.ShopCustomer",
         "stallSelectionIndexes": {

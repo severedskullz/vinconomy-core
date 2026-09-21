@@ -120,6 +120,9 @@ namespace Commercially.Vinconomy.Inventory.StallSlots
             if (parentId != null)
             {
                 IOwnableReference ownable = this.Inventory.modSystem.CommerciallySystem.GetOwnable(parentId);
+                if (ownable == null)
+                    return [];
+
                 return ownable.GetComponent<ICurrencySinkProvider>()?.CurrencySlots ?? [];
             }
             return [];

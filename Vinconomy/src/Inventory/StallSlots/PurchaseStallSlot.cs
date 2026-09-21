@@ -92,7 +92,7 @@ namespace Commercially.Vinconomy.Inventory.StallSlots
 
         public ItemSlot[] GetParentCurrencySlots()
         {
-            ICurrencySinkProvider provider = this.Inventory.StallComponent?.Ownable?.GetParent().GetComponent<ICurrencySinkProvider>();
+            ICurrencySinkProvider provider = this.Inventory.StallComponent?.Ownable?.GetParent()?.GetComponent<ICurrencySinkProvider>();
             if (provider != null)
             {
                 return provider.CurrencySlots;
