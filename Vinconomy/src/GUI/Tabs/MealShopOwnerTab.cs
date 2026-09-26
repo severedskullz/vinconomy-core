@@ -131,8 +131,7 @@ namespace Commercially.Vinconomy.GUI.Tabs
 
                 ElementBounds servingsLabel = ElementBounds.FixedSize(sectionFullHeaderWidth, 25).FixedUnder(stockLabel);
                 stallBounds.WithChildren(servingsLabel);
-                composer.AddDynamicText(NumServings.ToString(), labelTextFont, servingsLabel, "numServings");
-                composer.AddHoverText(Lang.Get("vinconomy:tooltip-servings"), hoverText, 500, servingsLabel);
+                composer.AddDynamicText($"{NumServings} / {stall.ServingCapacity}", labelTextFont, servingsLabel, "numServings");
 
                 int[] ingredientArray = new int[NumIngredients];
                 for (int i = 0; i < NumIngredients; i++)
