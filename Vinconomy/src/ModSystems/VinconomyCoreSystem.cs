@@ -14,6 +14,7 @@ using Commercially.Vinconomy.Database;
 using Commercially.Vinconomy.GUI.Tabs;
 using Commercially.Vinconomy.Interactions;
 using Commercially.Vinconomy.Interfaces;
+using Commercially.Vinconomy.Inventory;
 using Commercially.Vinconomy.Inventory.StallSlots;
 using Commercially.Vinconomy.Network.Packets;
 using Commercially.Vinconomy.Registry;
@@ -552,9 +553,9 @@ namespace Commercially.Vinconomy.ModSystems
         private void CommitTrade(PurchaseResult result)
         {
             CommerciallyModSystem.PrintClientMessage(result.Request.Customer, TradingConstants.PURCHASED_ITEMS, new object[] {
-                result.ProductStacks.TotalCount,
+                result.TotalProductAmount,
                 result.Request.ProductNeeded.GetName(),
-                result.CurrencyStacks.TotalCount,
+                result.TotalCurrencyAmount,
                 result.Request.CurrencyNeeded.GetName()
             });
 
@@ -593,14 +594,19 @@ namespace Commercially.Vinconomy.ModSystems
 
             /// Give Ownable Currency
             ICurrencySinkProvider currencyProvider = result.Request.StallSlot.GetCurrencySink(result.Request);
+            VinconBaseInventory vinconInv = currencyProvider?.Inventory as VinconBaseInventory;
+            bool shouldAddToParent = vinconInv == null || vinconInv.DiscardCurrency == false;
             if (currencyProvider != null)
             {
                 ItemSlot[] slots = currencyProvider.CurrencySlots;
                 while (result.CurrencyStacks.CanRemoveStack())
                 {
                     ItemStack nextStack = result.CurrencyStacks.RemoveStack();
-                    this.Mod.Logger.Debug($"Adding {nextStack.StackSize}x {nextStack} currency to Parent");
-                    AddItemToSlots(result.Request.Api, nextStack, slots);
+                    if (shouldAddToParent) {
+                        this.Mod.Logger.Debug($"Adding {nextStack.StackSize}x {nextStack} currency to Parent");
+                        AddItemToSlots(result.Request.Api, nextStack, slots);
+                    }
+                    
                 }
                 currencyProvider.GetBlockEntity().MarkDirty();
             } else if (!result.Request.IsAdminShop){
@@ -616,8 +622,11 @@ namespace Commercially.Vinconomy.ModSystems
                 while (result.CouponStacks.CanRemoveStack())
                 {
                     ItemStack nextStack = result.CouponStacks.RemoveStack();
-                    this.Mod.Logger.Debug($"Adding {nextStack.StackSize}x {nextStack} currency to Parent");
-                    AddItemToSlots(result.Request.Api, nextStack, slots);
+                    if (shouldAddToParent)
+                    {
+                        this.Mod.Logger.Debug($"Adding {nextStack.StackSize}x {nextStack} currency to Parent");
+                        AddItemToSlots(result.Request.Api, nextStack, slots);
+                    }
                 }
                 couponProvider.GetBlockEntity().MarkDirty();
             }

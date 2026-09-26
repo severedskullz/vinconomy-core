@@ -6,8 +6,6 @@ namespace Commercially.Vinconomy.Inventory.Impl
 {
     public class PurchaseStallShopInventory : VinconBaseInventory
     {
-        public bool IsDiscardProduct;
-
         public PurchaseStallShopInventory(BlockEntity entity, ICoreAPI api) : base(entity, api)
         {
         }
@@ -33,7 +31,7 @@ namespace Commercially.Vinconomy.Inventory.Impl
         public override void FromTreeAttributes(ITreeAttribute tree)
         {
             int numStalls = tree.GetInt("numStalls");
-
+            DiscardCurrency = tree.GetBool("discardCurrency");
             if (!IsSlotsInitialized)
             {
                 SlotsPerStall = tree.GetInt("numSlotsPerStall", 9);
@@ -94,7 +92,7 @@ namespace Commercially.Vinconomy.Inventory.Impl
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             tree.SetInt("numStalls", StallSlots.Length);
-
+            tree.SetBool("discardCurrency", DiscardCurrency);
             for (int i = 0; i < StallSlots.Length; i++)
             {
                 ITreeAttribute stallTree = tree.GetOrAddTreeAttribute("stall" + i);

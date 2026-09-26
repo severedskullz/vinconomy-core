@@ -2,6 +2,8 @@
 using Commercially.Common.Inventory.Slots;
 using Commercially.Common.Util;
 using Commercially.Vinconomy.Interfaces;
+using Commercially.Vinconomy.Inventory.StallSlots;
+using Commercially.Vinconomy.Util;
 using System;
 using Vinconomy.ItemTypes;
 using Vintagestory.API.Common;
@@ -208,19 +210,25 @@ namespace Commercially.Vinconomy.Trading
             if (productNeeded > 0 && !IsAdminShop)
                 totalTrades = Math.Min(totalTrades, StallSlot.GetTotalProductAvailable() / productNeeded);
 
-            /*
-            if (ToolSourceSlots != null)
+            //If it is a Purchase Stall, we need to re-check the productNeeded integer as it doesnt matter if its an Admin Shop or not... We want to honor the Limited flag
+            if (StallSlot is PurchaseStallSlot purchaseSlot && purchaseSlot.IsLimited)
+            {
+                totalTrades = Math.Min(purchaseSlot.NumPurchasesRemaining, totalTrades);
+            }
+
+            
+            if (ContainerSourceSlots != null)
             {
 
-                if (ToolSourceSlots is LiquidCapacityAggregatedSlots liquid)
+                if (ContainerSourceSlots is LiquidCapacityAggregatedSlots liquid)
                 {
-                    float neededCapacity = LiquidTradeHandler.ConvertStackToLiters(this.ProductNeeded, productNeeded);
+                    float neededCapacity = LiquidUtils.GetLitersFromStackSize(this.ProductNeeded, productNeeded);
                     totalTrades = Math.Min(totalTrades, (int)(liquid.TotalCapacity / neededCapacity));
                 }
-                else if (ToolUsesNeededPerTrade > 0)
-                    totalTrades = Math.Min(totalTrades, ToolSourceSlots.TotalCount / ToolUsesNeededPerTrade);
+                else if (ContainerSourceSlots is ServingCapacityAggregatedSlots meal)
+                    totalTrades = Math.Min(totalTrades, (int)ContainerSourceSlots.TotalCapacity / productNeeded);
             }
-            */
+            
 
             if (CouponSourceSlots != null)
             {

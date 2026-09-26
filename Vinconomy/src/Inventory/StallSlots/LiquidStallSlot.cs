@@ -1,7 +1,6 @@
 ﻿using Commercially.Common.Inventory.Slots;
 using Commercially.Vinconomy.Interfaces;
 using Commercially.Vinconomy.Trading;
-using Commercially.Vinconomy.Trading.Processor;
 using Commercially.Vinconomy.Util;
 using System;
 using Vinconomy.Inventory.Slots;
@@ -107,136 +106,6 @@ namespace Commercially.Vinconomy.Inventory.StallSlots
             return slots;
         }
 
-        public override AggregatedStacks ExtractProduct(int amount, int numPurchases, bool isAdminOwned)
-        {
-            AggregatedStacks result = new AggregatedStacks();
-            int totalProductToMove = amount;
-            if (isAdminOwned)
-            {
-                ItemStack productStack = GetOfferedProduct();
-                int maxStackSize = productStack.Collectible.MaxStackSize;
-                while (totalProductToMove > 0)
-                {
-                    ItemStack transferStack = productStack.Clone();
-                    int stackSize = Math.Min(totalProductToMove, maxStackSize);
-                    transferStack.StackSize = stackSize;
-                    result.Add(transferStack);
-                    totalProductToMove -= stackSize;
-                }
-            }
-            else
-            {
-                ItemSlot[] slots = GetStockSlots();
-                foreach (ItemSlot slot in slots)
-                {
-                    ItemStack takenStack = slot.TakeOut(totalProductToMove);
-                    if (takenStack != null)
-                    {
-                        this.Inventory.modSystem.Mod.Logger.Debug($"Took out {takenStack.StackSize}x {takenStack} product from Product Stacks");
-                        totalProductToMove -= takenStack.StackSize;
-                        result.Add(takenStack);
-                        slot.MarkDirty();
-                    }
-
-                    if (totalProductToMove <= 0)
-                    {
-                        if (totalProductToMove < 0)
-                        {
-                            this.Inventory.modSystem.Mod.Logger.Error($"Somehow removed {Math.Abs(totalProductToMove)} extra items from Product");
-                        }
-                        break;
-                    }
-                }
-            }
-
-            return result;
-        }
-
-        public void ExtractProductFromStall(TradeResult result)
-        {
-            int totalProductToMove = result.TotalProductAmount;
-            AggregatedStacks productStacks = result.ProductStacks;
-
-            if (result.Request.IsAdminShop)
-            {
-                int maxStackSize = result.Request.ProductNeeded.Collectible.MaxStackSize;
-                while (totalProductToMove > 0)
-                {
-                    ItemStack transferStack = result.Request.ProductNeeded.Clone();
-                    int stackSize = Math.Min(totalProductToMove, maxStackSize);
-                    transferStack.StackSize = stackSize;
-                    productStacks.Add(transferStack);
-                    totalProductToMove -= stackSize;
-                }
-            }
-            else
-            {
-                AggregatedSlots products = result.Request.ProductSourceSlots;
-                foreach (ItemSlot slot in products)
-                {
-                    ItemStack takenStack = slot.TakeOut(totalProductToMove);
-                    if (takenStack != null)
-                    {
-                        this.Inventory.modSystem.Mod.Logger.Debug($"Took out {takenStack.StackSize}x {takenStack} product from Product Stacks");
-                        totalProductToMove -= takenStack.StackSize;
-                        productStacks.Add(takenStack);
-                        slot.MarkDirty();
-                    }
-
-                    if (totalProductToMove <= 0)
-                    {
-                        if (totalProductToMove < 0)
-                        {
-                            this.Inventory.modSystem.Mod.Logger.Error($"Somehow removed {Math.Abs(totalProductToMove)} extra items from Product");
-                        }
-                        break;
-                    }
-                }
-            }
-
-            if (totalProductToMove > 0)
-            {
-                this.Inventory.modSystem.Mod.Logger.Error($"Somehow missing {totalProductToMove}  items from Product");
-            }
-        }
-
-        public void TransferProdutToPlayer(TradeResult result)
-        {
-            if (result.ProductStacks.TotalCount == 0)
-            {
-                GenericTradingProcessor.AuditLogError(result, "Tried to give player products, but has nothing to give");
-            }
-
-            IPlayer player = result.Request.Customer;
-            while (result.ProductStacks.CanRemoveStack())
-            {
-                ItemStack item = result.ProductStacks.RemoveStack();
-
-                foreach (ItemSlot containerSlot in result.Request.ContainerSourceSlots.Slots)
-                {
-                    while (containerSlot.StackSize > 0)
-                    {
-                        ItemStack filledStack = LiquidUtils.TransferLiquidContentsToContainer(containerSlot, item, item.StackSize, out int moved);
-                        item.StackSize -= moved;
-
-                        if (filledStack != null)
-                        {
-                            player.InventoryManager.TryGiveItemstack(filledStack, true);
-                            containerSlot.MarkDirty();
-                        }
-
-                        if (item.StackSize <= 0)
-                            break;
-                    }
-
-                    if (item.StackSize <= 0)
-                        break;
-                }
-            }
-
-            result.Request.Api.World.PlaySoundAt(fillSound, player.Entity, player, true, 16f, 1f);
-        }
-
         public CapacityAggregatedSlots GetRequiredContainers(IPlayer player)
         {
             ItemStack desiredStack = Product.Itemstack;
@@ -312,36 +181,37 @@ namespace Commercially.Vinconomy.Inventory.StallSlots
             return moved;
         }
 
-        public int AddContentsToStall(ItemStack sourceStack, int liters)
+        //TODO: Cleanup. Redundant and not reusable.
+        public int AddContentsToStall(ItemStack sourceContainer, float liters)
         {
-            if (sourceStack?.StackSize > 1)
+            if (sourceContainer?.StackSize > 1)
             {
                 throw new ArgumentException("Liquid Source Stack must be a stack size of 1, otherwise we risk deleting multiple stacks worth of liquid! You're WELCOME!");
             }
 
-            BlockLiquidContainerBase container = sourceStack?.Block as BlockLiquidContainerBase;
+            BlockLiquidContainerBase container = sourceContainer?.Block as BlockLiquidContainerBase;
             if (container == null)
                 return 0;
 
-            ItemStack contents = container.GetContent(sourceStack);
-            if (contents == null)
+            ItemStack sourceContents = container.GetContent(sourceContainer);
+            if (sourceContents == null)
                 return 0;
 
-            if (Liquid.Itemstack != null && !Liquid.Itemstack.Equals(Inventory.Api.World, contents, GlobalConstants.IgnoredStackAttributes))
+            if (Liquid.Itemstack != null && !Liquid.Itemstack.Equals(Inventory.Api.World, sourceContents, GlobalConstants.IgnoredStackAttributes))
                 return 0;
 
-            float itemsPerLiter = LiquidUtils.GetItemsPerLiter(contents);
+            float itemsPerLiter = LiquidUtils.GetItemsPerLiter(sourceContents);
             float stallCapacity = LiterCapacity * itemsPerLiter;
             float currentCapacity = LiquidUtils.GetItemsPerLiter(Liquid.Itemstack);
             float remainingCapacity = stallCapacity - currentCapacity;
             
-            float containerCurrentLiters = container.GetCurrentLitres(sourceStack);
+            float containerCurrentLiters = container.GetCurrentLitres(sourceContainer);
             float fromTransferLimit = Math.Min(liters, containerCurrentLiters);
             float toTransferLimit = Math.Min(fromTransferLimit, remainingCapacity);
 
-            int numItemsFromLiters = LiquidUtils.GetStackSizeFromLiters(contents, toTransferLimit);
+            int numItemsFromLiters = LiquidUtils.GetStackSizeFromLiters(sourceContents, toTransferLimit);
 
-            ItemStack? taken = container.TryTakeContent(sourceStack, numItemsFromLiters);
+            ItemStack? taken = container.TryTakeContent(sourceContainer, numItemsFromLiters);
             DummySlot slot = new DummySlot(taken);
             Liquid.IsLocked = false;
             int takenAmt = slot.TryPutInto(Inventory.Api.World, Liquid, slot.StackSize);
@@ -351,35 +221,38 @@ namespace Commercially.Vinconomy.Inventory.StallSlots
             return takenAmt;
         }
 
-        public int RemoveContentsFromStall(ItemStack destContainer, int liters)
+        //TODO: Cleanup. Redundant and not reusable.
+        public int TransferToContainer(ItemStack destContainer, ItemStack liquid, float desiredLitersToTransfer)
         {
             if (destContainer?.StackSize > 1)
             {
                 throw new ArgumentException("Liquid Source Stack must be a stack size of 1, otherwise we risk adding multiple stacks worth of liquid! You're WELCOME!");
             }
 
+            int actualItemsToTransfer = GetTransferrableCapacity(destContainer, liquid, desiredLitersToTransfer);
+            if (actualItemsToTransfer <= 0)
+                return 0;
+
+            float actualLitersToTransfer = LiquidUtils.GetLitersFromStackSize(liquid, actualItemsToTransfer);
+            return (destContainer?.Block as BlockLiquidContainerBase)?.TryPutLiquid(destContainer, liquid, actualLitersToTransfer) ?? 0; ;
+        }
+
+        public int GetTransferrableCapacity(ItemStack destContainer, ItemStack contentsToTransfer, float liters)
+        {
             BlockLiquidContainerBase container = destContainer?.Block as BlockLiquidContainerBase;
             if (container == null)
                 return 0;
-
-            ItemStack contents = container.GetContent(destContainer);
-            if (contents != null && !contents.Equals(Inventory.Api.World, Liquid.Itemstack, GlobalConstants.IgnoredStackAttributes))
+            ItemStack containerContents = container.GetContent(destContainer);
+            if (containerContents != null && !containerContents.Equals(Inventory.Api.World, contentsToTransfer, GlobalConstants.IgnoredStackAttributes))
                 return 0;
-
-            float itemsPerLiter = LiquidUtils.GetItemsPerLiter(contents);
+            float itemsPerLiter = LiquidUtils.GetItemsPerLiter(contentsToTransfer);
             float containerCurrentLiters = container.GetCurrentLitres(destContainer);
 
-            int desiredItemsToTransfer = LiquidUtils.GetStackSizeFromLiters(Liquid.Itemstack, liters);
-            int capacityItemsToTransfer = LiquidUtils.GetStackSizeFromLiters(Liquid.Itemstack, container.CapacityLitres - containerCurrentLiters);
+            int desiredItemsToTransfer = LiquidUtils.GetStackSizeFromLiters(contentsToTransfer, liters);
+            int capacityItemsToTransfer = LiquidUtils.GetStackSizeFromLiters(contentsToTransfer, container.CapacityLitres - containerCurrentLiters);
             int actualItemsToTransfer = Math.Min(desiredItemsToTransfer, capacityItemsToTransfer);
-            float actualLitersToTransfer = LiquidUtils.GetLitersFromStackSize(Liquid.Itemstack, actualItemsToTransfer);
 
-            Liquid.IsLocked = false;
-            int moved = container.TryPutLiquid(destContainer, Liquid.Itemstack, actualLitersToTransfer);
-            Liquid.TakeOut(moved);
-            Liquid.IsLocked = true;
-            if (moved > 0) Liquid.MarkDirty();
-            return moved;
+            return actualItemsToTransfer;
         }
 
         public override void DropInventory(Vec3d pos, int maxStackSize, bool markDirty = false)
@@ -387,10 +260,76 @@ namespace Commercially.Vinconomy.Inventory.StallSlots
             // DO NOTHING. Liquids go bye-bye! Needs a container since liquid-portion isnt an actual obtainable item. Pretend they spilled on the floor, I don't care.
         }
 
+        public override AggregatedStacks ExtractProduct(int amount, int numPurchases, bool isAdminOwned)
+        {
+            AggregatedStacks result = new AggregatedStacks();
+            if (!isAdminOwned)
+            {
+                ItemStack taken = Liquid.TakeOut(amount);
+                if (taken != null)
+                {
+                    Liquid.MarkDirty();
+                    result.Add(taken);
+                }
+            } else
+            {
+                ItemStack taken = Liquid.Itemstack?.Clone();
+                if (taken != null)
+                {
+                    taken.StackSize = amount;
+                    result.Add(taken);
+                }
+            }
+            return result;
+        }
+
         public AggregatedStacks ExtractProduct(int totalProductNeeded, int numPurchases, CapacityAggregatedSlots containerSourceSlots, bool isAdminShop)
         {
-            throw new NotImplementedException();
+            AggregatedStacks result = new AggregatedStacks();
+            int totalItemsToTransfer = totalProductNeeded;
+
+            AggregatedStacks stacks = ExtractProduct(totalItemsToTransfer, numPurchases, isAdminShop);
+            ItemStack liquidStack = null;
+            if (stacks.CanRemoveStack())
+            {
+                //TODO: Im writing myself into a corner here by assuming I will always get 1 stack, but right now thats just how the stalls work. Too tired to figure out a more elegant solution for multi-stack / multi-container logic
+                liquidStack = stacks.RemoveStack(); 
+            } else 
+            {
+                return result;
+            }
+            
+
+            foreach (ItemSlot containerSlot in containerSourceSlots)
+            {
+                // Save stacksize as variable. We will be taking items OUT of this stack, so it would exit the loop early.
+                // Eg. Had 2 buckets, loop ran, took one out, 'i' is now 1, and stack size is 1, so loop terminates and doesnt run on second buckets.
+                int numAttempts = containerSlot.StackSize;
+                for (int i = 0; i < numAttempts; i++)
+                {
+                    ItemStack container = containerSlot.TakeOut(1);
+                    containerSlot.MarkDirty();
+                    float actualLitersToTransfer = LiquidUtils.GetLitersFromStackSize(liquidStack, totalItemsToTransfer);
+                    totalItemsToTransfer -= TransferToContainer(container, liquidStack, actualLitersToTransfer);
+
+                    result.Add(container);
+                    if (totalItemsToTransfer <= 0)
+                        break;
+                }
+
+                if (totalItemsToTransfer <= 0)
+                    return result;
+
+            }
+
+            if (totalItemsToTransfer > 0)
+            {
+                //GenericTradingProcessor.AuditLogError(result, "Somehow allowed purchase of " + totalItemsToTransfer + " extra servings even though we didnt have enough containers");
+                this.Inventory.Api.World.Logger.Error("Somehow allowed purchase of " + totalItemsToTransfer + " extra servings even though we didnt have enough containers");
+            }
+            return result;
         }
+
 
         public bool AddContents(ItemSlot sourceSlot, int amount)
         {
@@ -402,14 +341,24 @@ namespace Commercially.Vinconomy.Inventory.StallSlots
             return moved > 0;
         }
 
-        public bool RemoveContents(ItemSlot sourceSlot, int amount)
+        public bool RemoveContents(ItemSlot sourceSlot, int liters)
         {
-            int moved = RemoveContentsFromStall(sourceSlot.Itemstack, amount);
-            if (moved > 0)
+            int actualItemsToTransfer = GetTransferrableCapacity(sourceSlot.Itemstack, Liquid.Itemstack, liters);
+            AggregatedStacks stacks = ExtractProduct(actualItemsToTransfer, 0, false);
+            if (stacks.CanRemoveStack())
             {
-                ResetProduct();
+                ItemStack removedStack = stacks.RemoveStack();
+                int moved = TransferToContainer(sourceSlot.Itemstack, removedStack, actualItemsToTransfer);
+                if (moved > 0)
+                {
+                    ResetProduct();
+                    sourceSlot.MarkDirty();
+                    return true;
+                }
+
             }
-            return moved > 0;
+            
+            return false;
         }
 
         public void ResetProduct()

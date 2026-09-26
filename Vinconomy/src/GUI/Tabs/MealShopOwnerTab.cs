@@ -32,6 +32,7 @@ namespace Commercially.Vinconomy.GUI.Tabs
         int StallSlot;
         int SelectedIndex;
         int NumIngredients;
+        int NumServings;
 
         public override void Compose(GuiComposer composer, ElementBounds rootBounds)
         {
@@ -54,8 +55,8 @@ namespace Commercially.Vinconomy.GUI.Tabs
                     stallSlotOffset += StallProvider.GetStallSlot(i).TotalItemSlots;
                 }
 
-                int slotGridWidth = (int) (NumIngredients * (GuiElementPassiveItemSlot.unscaledSlotSize + GuiElementItemSlotGridBase.unscaledSlotPadding));
-                int sectionPageHeaderWidth = Math.Max(slotGridWidth, 250);
+                //int slotGridWidth = (int) (NumIngredients * (GuiElementPassiveItemSlot.unscaledSlotSize + GuiElementItemSlotGridBase.unscaledSlotPadding));
+                int sectionPageHeaderWidth = 330; //Math.Max(slotGridWidth, 250);
                 int sectionFullHeaderWidth = sectionPageHeaderWidth + 80; // 2 x (30w buttons + 10w paddings) for < and > buttons is 80
                 UpdateContents();
 
@@ -128,13 +129,18 @@ namespace Commercially.Vinconomy.GUI.Tabs
                 composer.AddStaticText(Lang.Get("vinconomy:gui-product"), labelTextFont, stockLabel);
                 composer.AddHoverText(Lang.Get("vinconomy:tooltip-product"), hoverText, 500, stockLabel);
 
+                ElementBounds servingsLabel = ElementBounds.FixedSize(sectionFullHeaderWidth, 25).FixedUnder(stockLabel);
+                stallBounds.WithChildren(servingsLabel);
+                composer.AddDynamicText(NumServings.ToString(), labelTextFont, servingsLabel, "numServings");
+                composer.AddHoverText(Lang.Get("vinconomy:tooltip-servings"), hoverText, 500, servingsLabel);
+
                 int[] ingredientArray = new int[NumIngredients];
                 for (int i = 0; i < NumIngredients; i++)
                 {
                     ingredientArray[i] = i;
                 }
 
-                ElementBounds slotGrid = ElementStdBounds.SlotGrid(EnumDialogArea.CenterTop, 0, 20, NumIngredients, 1).FixedUnder(stockLabel,-20);
+                ElementBounds slotGrid = ElementStdBounds.SlotGrid(EnumDialogArea.CenterTop, 0, 20, NumIngredients, 1).FixedUnder(servingsLabel, -20);
                 stallBounds.WithChild(slotGrid);
                 composer.AddItemSlotGrid(ProductInv, null, NumIngredients, ingredientArray, slotGrid, "inventory");
 
@@ -143,7 +149,7 @@ namespace Commercially.Vinconomy.GUI.Tabs
                 composer.AddStaticText(Lang.Get("vinconomy:gui-transfer-product"), labelTextFont, transferLabel);
                 composer.AddHoverText(Lang.Get("vinconomy:tooltip-transfer-product"), hoverText, 500, transferLabel);
 
-                ElementBounds tranIn = ElementBounds.FixedSize(40, 40).FixedUnder(transferLabel);
+                ElementBounds tranIn = ElementBounds.FixedSize(40, 40).FixedUnder(transferLabel).WithFixedOffset(100,0);
                 stallBounds.WithChild(tranIn);
                 composer.AddButton("^", TransferIn, tranIn, EnumButtonStyle.Small, "transferIn");
                 ElementBounds tranInBulk = ElementBounds.FixedSize(40, 40).FixedUnder(transferLabel).FixedRightOf(tranIn);
@@ -170,6 +176,7 @@ namespace Commercially.Vinconomy.GUI.Tabs
 
                 composer.GetNumberInput("costQuantity").SetValue(Math.Max(1,Inventory.GetStall(StallSlot).Currency.StackSize));
                 composer.GetNumberInput("sellQuantity").SetValue(Math.Max(1, Inventory.GetStall(StallSlot).Product.StackSize));
+                UpdateNumServings();
 
             }
             else if (StallProvider == null)
@@ -194,6 +201,7 @@ namespace Commercially.Vinconomy.GUI.Tabs
         {
             MealStallSlot stall = StallProvider.GetStallSlot<MealStallSlot>(StallSlot);
             NumIngredients = ProductInv.Slots.Length;
+            NumServings = stall.GetTotalProductAvailable();
             ItemStack[] productContents = stall.GetProductContents();
             if (productContents != null)
             {
@@ -210,9 +218,17 @@ namespace Commercially.Vinconomy.GUI.Tabs
                 {
                     ProductInv[i].Itemstack = null;
                 }
-                
-
             }
+            if (this.Gui.Composer.Composed)
+            {
+                UpdateNumServings();
+            }
+        }
+
+        private void UpdateNumServings()
+        {
+            MealStallSlot stall = StallProvider.GetStallSlot<MealStallSlot>(StallSlot);
+            this.Gui.Composer.GetDynamicText("numServings").SetNewText($"{NumServings} / {stall.ServingCapacity}");
         }
 
         private bool TransferInBulk()
@@ -222,7 +238,7 @@ namespace Commercially.Vinconomy.GUI.Tabs
             {
                 BinaryWriter writer = new BinaryWriter(ms);
                 writer.Write(StallSlot);
-                writer.Write(10);
+                writer.Write(6);
                 data = ms.ToArray();
             }
             ClientApi.Network.SendBlockEntityPacket(BlockEntity.Pos, CommerciallyConstants.TRANSFER_CONTENTS, data);

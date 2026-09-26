@@ -18,6 +18,9 @@ namespace Commercially.Vinconomy.Util
 
         public static int GetStackSizeFromLiters(ItemStack stack, float liters)
         {
+            if (stack == null)
+                return 0;
+
             WaterTightContainableProps contentProps = BlockLiquidContainerBase.GetContainableProps(stack);
             if (contentProps == null)
             {

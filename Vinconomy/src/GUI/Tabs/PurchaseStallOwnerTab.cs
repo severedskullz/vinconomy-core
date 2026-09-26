@@ -202,6 +202,7 @@ namespace Commercially.Vinconomy.GUI.Tabs
                 composer.GetSwitch("registerFallback").SetValue(stall.RegisterFallback);
                 composer.GetSwitch("limitPurchases").SetValue(stall.IsLimited);
                 composer.GetSwitch("fuzzyMatching").SetValue(stall.IsFuzzyMatching);
+                composer.GetSwitch("fuzzyMatching").SetValue(stall.Inventory.DiscardCurrency);
                 composer.GetTextInput("numPurchases").SetValue(stall.NumPurchasesRemaining);
 
             }

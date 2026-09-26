@@ -133,7 +133,7 @@ namespace Commercially.Vinconomy.GUI.Tabs
                 composer.AddStaticText(Lang.Get("vinconomy:gui-transfer-product"), labelTextFont, transferLabel);
                 composer.AddHoverText(Lang.Get("vinconomy:tooltip-transfer-product"), hoverText, 500, transferLabel);
 
-                ElementBounds tranIn = ElementBounds.FixedSize(40, 40).FixedUnder(transferLabel);
+                ElementBounds tranIn = ElementBounds.FixedSize(40, 40).FixedUnder(transferLabel).WithFixedOffset(60,0);
                 stallBounds.WithChild(tranIn);
                 composer.AddButton("^", TransferIn, tranIn, EnumButtonStyle.Small, "transferIn");
                 ElementBounds tranInBulk = ElementBounds.FixedSize(40, 40).FixedUnder(transferLabel).FixedRightOf(tranIn);
