@@ -114,16 +114,24 @@ namespace Commercially.Vinconomy.Inventory.StallSlots
 
         public override ItemSlot[] GetStockSlots()
         {
+            IOwnableChild ownable = Inventory.StallComponent.Ownable;
+            if (ownable.IsAdminOwned && ownable.ParentID == null)
+            {
+                DummySlot dSlot = new DummySlot();
+                dSlot.Itemstack = GetOfferedProduct()?.Clone();
+                return [dSlot];
+            }
+
             if (this.Inventory.Api.Side == EnumAppSide.Client || this.Inventory.modSystem == null) return [];
 
             long? parentId = this.Inventory.BlockEntity.GetBehavior<BEBehaviorOwnableChild>().ParentID;
             if (parentId != null)
             {
-                IOwnableReference ownable = this.Inventory.modSystem.CommerciallySystem.GetOwnable(parentId);
-                if (ownable == null)
+                IOwnableReference parent = this.Inventory.modSystem.CommerciallySystem.GetOwnable(parentId);
+                if (parent == null)
                     return [];
 
-                return ownable.GetComponent<ICurrencySinkProvider>()?.CurrencySlots ?? [];
+                return parent.GetComponent<ICurrencySinkProvider>()?.CurrencySlots ?? [];
             }
             return [];
         }
@@ -133,11 +141,9 @@ namespace Commercially.Vinconomy.Inventory.StallSlots
             int totalProductToMove = amount;
             AggregatedStacks productStacks = new AggregatedStacks();
             ItemStack product = GetOfferedProduct();
-            ItemSlot[] stock = GetStockSlots();
 
             if (isAdminOwned)
             {
-
                 int maxStackSize = product.Collectible.MaxStackSize;
                 while (totalProductToMove > 0)
                 {
@@ -150,6 +156,7 @@ namespace Commercially.Vinconomy.Inventory.StallSlots
             }
             else
             {
+                ItemSlot[] stock = GetStockSlots();
                 AggregatedSlots products = TradingUtil.GetAllValidSlotsFor(this.Inventory.Api, product, stock, IsFuzzyMatching);
                 foreach (ItemSlot slot in products)
                 {
