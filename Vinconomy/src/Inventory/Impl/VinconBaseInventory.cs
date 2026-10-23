@@ -516,7 +516,7 @@ namespace Commercially.Vinconomy.Inventory
             // Tyron, it would be fucking GREAT if you gave us the ItemSlot instead!!! That way I can check the class, damnit!
             foreach (BaseStallSlot stall in StallSlots)
             {
-                if (stall.Currency.Itemstack == stack || stall.Product.Itemstack == stack) return 0;
+                if (IsTemplateStack(stall.Currency.Itemstack, stack) || IsTemplateStack(stall.Product.Itemstack, stack)) return 0;
             }
 
             VinconomyConfig config = modSystem.Config;
@@ -531,6 +531,23 @@ namespace Commercially.Vinconomy.Inventory
                 return 0;
             }
 
+        }
+
+        private static bool IsTemplateStack(ItemStack template, ItemStack stack)
+        {
+            if (template == stack) return true;
+
+            // The game's container callbacks pass the ingredient stack, not its
+            // parent container. Preview and currency contents are clones too.
+            ITreeAttribute contents = template?.Attributes?.GetTreeAttribute("contents");
+            if (contents != null)
+            {
+                foreach (var entry in contents)
+                {
+                    if (entry.Value is ItemstackAttribute item && IsTemplateStack(item.value, stack)) return true;
+                }
+            }
+            return false;
         }
 
         public override void DropAll(Vec3d pos, int maxStackSize = 0)

@@ -1,4 +1,5 @@
 ﻿using Commercially.Common.Blocks.BlockEntityBehaviors;
+using Commercially.Vinconomy.Inventory;
 using System;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -20,6 +21,15 @@ namespace Commercially.Vinconomy.BlockEntityBehaviors.InventoryProviders
 
         protected virtual float Inventory_OnAcquireTransitionSpeed(EnumTransitionType transType, ItemStack stack, float baseMul)
         {
+            if (transType == EnumTransitionType.Perish && Inventory is VinconBaseInventory inventory)
+            {
+                // Container ingredients invoke these delegates directly, bypassing
+                // GetTransitionSpeedMul. Apply the same shop policy to that path.
+                // InvokeTransitionSpeedDelegates already multiplies by baseMul.
+                float shopMul = inventory.GetTransitionSpeedMul(transType, stack);
+                return shopMul == 0 ? 0 : shopMul * (Api != null ? GetPerishRate() : 1f);
+            }
+
             float num = Api != null && transType == EnumTransitionType.Perish ? GetPerishRate() : 1f;
             if (transType == EnumTransitionType.Dry || transType == EnumTransitionType.Melt)
             {

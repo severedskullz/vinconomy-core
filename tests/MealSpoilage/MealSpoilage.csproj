@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <CommerciallyPath Condition="'$(CommerciallyPath)' == ''">../../../../Commercially/Commercially/Releases/commercially/Commercially.dll</CommerciallyPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../Vinconomy/Vinconomy.csproj" Condition="'$(VinconomyAssembly)' == ''" />
+    <Reference Include="Vinconomy" HintPath="$(VinconomyAssembly)" Condition="'$(VinconomyAssembly)' != ''" />
+    <Reference Include="Commercially" HintPath="$(CommerciallyPath)" />
+    <Reference Include="VintagestoryAPI" HintPath="$(VINTAGE_STORY)/VintagestoryAPI.dll" />
+    <Reference Include="VintagestoryLib" HintPath="$(VINTAGE_STORY)/VintagestoryLib.dll" />
+    <Reference Include="VSSurvivalMod" HintPath="$(VINTAGE_STORY)/Mods/VSSurvivalMod.dll" />
+    <Reference Include="Newtonsoft.Json" HintPath="$(VINTAGE_STORY)/Lib/Newtonsoft.Json.dll" />
+    <Reference Include="protobuf-net" HintPath="$(VINTAGE_STORY)/Lib/protobuf-net.dll" />
+  </ItemGroup>
+</Project>

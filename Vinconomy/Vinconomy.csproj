@@ -2,13 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <CommerciallyPath Condition="'$(CommerciallyPath)' == ''">..\..\..\Commercially\Commercially\Releases\commercially\Commercially.dll</CommerciallyPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>bin\$(Configuration)\Mods\mod</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
     <Reference Include="Commercially">
-      <HintPath>..\..\..\Commercially\Commercially\Releases\commercially\Commercially.dll</HintPath>
+      <HintPath>$(CommerciallyPath)</HintPath>
 	  <Private>False</Private>
     </Reference>
     <Reference Include="VintagestoryAPI">
